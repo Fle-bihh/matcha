@@ -1,0 +1,91 @@
+# 🖧 Backend Architecture
+
+The backend uses **Express + TypeScript** and follows a **feature-driven, layered architecture** that is suitable for any project exposing a REST API and WebSocket events.
+
+This structure maximizes **modularity, testability, and scalability**, allowing new features to be added without modifying unrelated parts of the codebase.
+
+---
+
+## 📁 Global Folder Structure
+
+```plaintext
+apps/backend
+ ├── src/
+ │   ├── api/              # Routes + controllers grouped by feature
+ │   │   └── users/
+ │   │       ├── users.controller.ts
+ │   │       ├── users.routes.ts
+ │   │       └── users.validators.ts
+ │   │
+ │   ├── services/         # Business logic (feature-specific)
+ │   │   └── users.service.ts
+ │   │
+ │   ├── repositories/     # Data access layer (manual SQL queries)
+ │   │   └── users.repo.ts
+ │   │
+ │   ├── sockets/          # WebSocket event handlers (chat, notifications)
+ │   │   └── chat.socket.ts
+ │   │
+ │   ├── middlewares/      # Express middlewares (auth, error handling, logging)
+ │   ├── utils/            # Helper functions, shared libs
+ │   ├── config/           # Env vars loading, DB connection, global constants
+ │   ├── types/            # Backend-specific types
+ │   └── app.ts            # Express app setup (routes, middlewares)
+ │
+ ├── tests/                # Unit/integration tests (Jest or similar)
+ ├── package.json
+ └── tsconfig.json
+```
+
+---
+
+## 🏛️ Layered Architecture Principles
+
+### 1️⃣ Controllers (API Layer)
+- Receive HTTP requests, validate input, and call the corresponding service.
+- Return formatted HTTP responses (JSON).
+
+### 2️⃣ Services (Business Logic Layer)
+- Contain business rules (e.g., match suggestions, fame rating calculation).
+- Call repositories for data access.
+- Can be unit tested in isolation.
+
+### 3️⃣ Repositories (Data Access Layer)
+- Directly interact with the database using manual SQL queries.
+- Return raw or shaped data objects.
+
+This separation ensures that changing the database implementation (e.g., switching to PostgreSQL) does not affect controllers or services.
+
+---
+
+## 🔄 Request Lifecycle (Example)
+
+1. **Route receives request:** `POST /users/login`
+2. **Validation:** Input validated with `zod` or `yup`
+3. **Controller:** Calls `authService.login()`
+4. **Service:** Checks password, generates JWT
+5. **Repository:** Reads user from DB
+6. **Response:** Returns `{ token, user }` to the client
+
+---
+
+## 📡 WebSocket Events
+
+WebSocket handlers live in `/sockets`.  
+They follow a similar layered approach:
+
+- **Socket Handler:** Listens for events, validates payload
+- **Service:** Processes the event (e.g., save message, notify recipient)
+- **Emit:** Sends event to specific rooms or users
+
+Example: `chat.socket.ts` listens to `message:send` and emits `message:received`.
+
+---
+
+## 🧪 Testing Strategy
+
+- **Unit tests:** For services and utils (no DB connection required)
+- **Integration tests:** For controllers and repositories (using a test DB)
+- **Socket tests:** Simulate client-server events to ensure correct behavior
+
+This architecture is **test-friendly**, enabling CI/CD pipelines to catch regressions early.
