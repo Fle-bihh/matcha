@@ -1,46 +1,57 @@
-Web Matcha – Full-Stack Dating App
+# 💚 Web Matcha – Full-Stack Dating App
 
-This project is a full-stack dating platform built with React, Express, and MySQL, using TypeScript across the stack. Its main goal is not only to meet the academic requirements of my cursus but also to serve as a clean, modular, and reusable boilerplate for future real-world projects.
+This project is a **full-stack dating platform** built with **React, Express, and MySQL**, using **TypeScript** across the stack.  
+Its main goal is not only to meet the academic requirements of my cursus but also to serve as a **clean, modular, and reusable boilerplate** for future real-world projects.
 
-🎯 Project Goals
+---
 
-Build a production-quality architecture with frontend, backend, and database running in Docker
+## 🎯 Project Goals
 
-Ensure scalability and maintainability through strong separation of concerns and shared types
+-   🏗 **Build a production-quality architecture** with frontend, backend, and database running in Docker
+-   ⚙️ **Ensure scalability and maintainability** through strong separation of concerns and shared types
+-   🔐 **Focus on data flow, security, and modularity**, not just UI polish
+-   🚀 **Provide a solid starting point** for projects with authentication, matching, real-time chat, and notifications
 
-Focus on data flow, security, and modularity, not just UI polish
+---
 
-Provide a solid starting point for projects with authentication, matching, real-time chat, and notifications
+## 🧩 Key Features (Planned)
 
-🧩 Key Features (Planned)
+-   ✅ **Secure registration**, email verification, and JWT-based authentication
+-   👤 **User profiles** with pictures, interests, fame rating, and location-based suggestions
+-   💡 **Smart matching system** with sorting/filtering
+-   💬 **Real-time chat and notifications** via WebSockets
+-   📱 **Mobile-friendly layout** with Material UI
 
-Secure registration, email verification, and JWT-based authentication
+---
 
-User profiles with pictures, interests, fame rating, and location-based suggestions
+## 🛠️ Tech Highlights
 
-Smart matching system with sorting/filtering
+**Frontend:**  
+React · Redux Toolkit (Entity Adapter) · React Router · Axios Adapter
 
-Real-time chat and notifications via WebSockets
+**Backend:**  
+Express · Socket.io · Layered Architecture · Manual SQL
 
-Mobile-friendly layout with Material UI
+**Database:**  
+MySQL with relational design and metadata columns
 
-🛠️ Tech Highlights
+**Monorepo:**  
+Shared types/constants between frontend and backend
 
-Frontend: React + Redux Toolkit (Entity Adapter) + React Router + Axios Adapter
+**DevOps:**  
+Docker Compose for full local environment
 
-Backend: Express + Socket.io + Layered Architecture + Manual SQL
+---
 
-Database: MySQL with relational design and metadata columns
+## 📖 Documentation
 
-Monorepo: Shared types/constants between frontend and backend
+All project decisions, schemas, and API contracts are documented in `/docs`.  
+This ensures every choice is explicit and the project is **easy to understand, extend, and reuse**.
 
-DevOps: Docker Compose for full local environment
+---
 
-📖 Documentation
+## 📜 Development History
 
-All project decisions, schemas, and API contracts are documented in /docs.
-This ensures every choice is explicit and the project is easy to understand, extend, and reuse.
+Progress and key decisions are tracked in `HISTORY.md`.
 
-📜 Development History
-
-Progress and key decisions are tracked in HISTORY.md
+---
