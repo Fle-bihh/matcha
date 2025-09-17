@@ -1,91 +1,119 @@
-# 🖧 Backend Architecture
+# 🖥️ Backend Architecture
 
 The backend uses **Express + TypeScript** and follows a **feature-driven, layered architecture** that is suitable for any project exposing a REST API and WebSocket events.
 
-This structure maximizes **modularity, testability, and scalability**, allowing new features to be added without modifying unrelated parts of the codebase.
+This structure maximizes **modularity**, **testability**, and **scalability**, allowing new features to be added without modifying unrelated parts of the codebase.
 
 ---
 
 ## 📁 Global Folder Structure
 
-```plaintext
-apps/backend
+```bash
+/apps/backend
  ├── src/
- │   ├── api/              # Routes + controllers grouped by feature
- │   │   └── users/
- │   │       ├── users.controller.ts
- │   │       ├── users.routes.ts
- │   │       └── users.validators.ts
+ │   ├── config/               # Global configuration & environment handling
+ │   │   ├── env.ts            # Loads & validates .env variables
+ │   │   └── db.ts             # Database connection pool setup
  │   │
- │   ├── services/         # Business logic (feature-specific)
- │   │   └── users.service.ts
+ │   ├── core/                 # Global middlewares, error handling, base classes
+ │   │   ├── app.ts            # Express app setup (middleware, routes)
+ │   │   ├── server.ts         # Entry point, starts HTTP + WebSocket server
+ │   │   ├── middlewares/      # Global middlewares (auth, error, validation)
+ │   │   └── sockets.ts        # WebSocket server bootstrap
  │   │
- │   ├── repositories/     # Data access layer (manual SQL queries)
- │   │   └── users.repo.ts
+ │   ├── features/             # Feature-based modules (one folder per feature)
+ │   │   ├── example-feature/  # Example feature folder (see below)
+ │   │   └── ...
  │   │
- │   ├── sockets/          # WebSocket event handlers (chat, notifications)
- │   │   └── chat.socket.ts
- │   │
- │   ├── middlewares/      # Express middlewares (auth, error handling, logging)
- │   ├── utils/            # Helper functions, shared libs
- │   ├── config/           # Env vars loading, DB connection, global constants
- │   ├── types/            # Backend-specific types
- │   └── app.ts            # Express app setup (routes, middlewares)
+ │   ├── utils/                # Reusable helpers (hashing, token, logger, etc.)
+ │   └── types/                # Backend-only types & interfaces
  │
- ├── tests/                # Unit/integration tests (Jest or similar)
  ├── package.json
  └── tsconfig.json
 ```
 
 ---
 
-## 🏛️ Layered Architecture Principles
+## 🧩 Feature Folder Structure
 
-### 1️⃣ Controllers (API Layer)
-- Receive HTTP requests, validate input, and call the corresponding service.
-- Return formatted HTTP responses (JSON).
+Each **feature** lives in its own folder inside `src/features/`.  
+A feature can represent **any business domain**: `auth`, `users`, `chat`, `notifications`, `products`, etc.
 
-### 2️⃣ Services (Business Logic Layer)
-- Contain business rules (e.g., match suggestions, fame rating calculation).
-- Call repositories for data access.
-- Can be unit tested in isolation.
+Example:
 
-### 3️⃣ Repositories (Data Access Layer)
-- Directly interact with the database using manual SQL queries.
-- Return raw or shaped data objects.
-
-This separation ensures that changing the database implementation (e.g., switching to PostgreSQL) does not affect controllers or services.
-
----
-
-## 🔄 Request Lifecycle (Example)
-
-1. **Route receives request:** `POST /users/login`
-2. **Validation:** Input validated with `zod` or `yup`
-3. **Controller:** Calls `authService.login()`
-4. **Service:** Checks password, generates JWT
-5. **Repository:** Reads user from DB
-6. **Response:** Returns `{ token, user }` to the client
+```bash
+/src/features/example-feature
+ ├── example.routes.ts         # REST API endpoints for this feature
+ ├── example.controller.ts     # Handles HTTP requests, calls service layer
+ ├── example.service.ts        # Business logic, independent from Express
+ ├── example.repository.ts     # Database queries (manual SQL)
+ ├── example.socket.ts         # WebSocket event handlers for this feature
+ ├── example.types.ts          # Feature-specific types/interfaces
+ └── index.ts                  # Exports everything for easy import
+```
 
 ---
 
-## 📡 WebSocket Events
+## 🔑 Layered Responsibilities
 
-WebSocket handlers live in `/sockets`.  
-They follow a similar layered approach:
+Each feature contains the same **4–5 layers**, following strict separation of concerns:
 
-- **Socket Handler:** Listens for events, validates payload
-- **Service:** Processes the event (e.g., save message, notify recipient)
-- **Emit:** Sends event to specific rooms or users
+```mermaid
+flowchart TD
+    R[Routes] --> C[Controllers]
+    C --> S[Services]
+    S --> Repo[Repositories]
+    Repo --> DB[(Database)]
+    S --> Sock[Sockets]:::ws
+    classDef ws fill=#ffe9b3,stroke=#d4a017,stroke-width=1px;
+```
 
-Example: `chat.socket.ts` listens to `message:send` and emits `message:received`.
+**Routes:**
+- Define API endpoints (method + path)
+- Attach middlewares (auth, validation)
+- No business logic
+
+**Controllers:**
+- Translate HTTP requests into service calls
+- Return standardized HTTP responses
+- No DB or business logic
+
+**Services:**
+- Contain all business logic
+- Reuse repositories for data access
+- Throw typed errors (handled globally)
+
+**Repositories:**
+- Perform SQL queries (CRUD + custom queries)
+- Return plain data objects (no HTTP awareness)
+
+**Sockets (optional):**
+- Define event listeners & emitters
+- Use the same services as controllers to keep logic DRY
 
 ---
 
-## 🧪 Testing Strategy
+## 📐 Modularity & Extensibility
 
-- **Unit tests:** For services and utils (no DB connection required)
-- **Integration tests:** For controllers and repositories (using a test DB)
-- **Socket tests:** Simulate client-server events to ensure correct behavior
+- **Feature Encapsulation:** Each feature owns its routes, controllers, services, repositories, and socket handlers. Adding a new feature only means adding a new folder and registering its routes/socket namespace.
+- **Dependency Injection:** Services receive repositories as constructor parameters, making them swappable or mockable.
+- **Shared Types:** Use `/packages/shared` for types shared between backend and frontend. Keep backend-only types in `example.types.ts` (e.g., internal DB row structure).
+- **Global Middleware:** Shared middlewares (auth, validation, error handler) are stored in `/core/middlewares` and automatically applied to routes where needed.
 
-This architecture is **test-friendly**, enabling CI/CD pipelines to catch regressions early.
+---
+
+## 🧩 Naming Conventions
+
+- **Feature Folders:** Named after the domain (`auth`, `users`, `chat`, etc.)
+- **Files:** `<feature>.<layer>.ts` (e.g., `chat.service.ts`, `user.repository.ts`)
+- **Exports:** Each feature has an `index.ts` that exports its route(s), controller(s), service(s), and socket(s)
+
+---
+
+## 🚀 Benefits of This Architecture
+
+- **Feature-driven:** New features are self-contained → minimal risk of regressions
+- **Highly reusable:** Architecture works for any REST + WebSocket project
+- **Scalable:** Easy to add more features, new transports (GraphQL, gRPC), or swap DB layer
+- **Consistent:** Every feature follows the same structure → no guessing where logic lives
+- **Future-proof:** Mobile apps, microservices, or additional clients can reuse the same services
