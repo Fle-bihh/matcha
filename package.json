@@ -1,0 +1,15 @@
+{
+	"private": true,
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
+	"scripts": {
+		"dev:web": "npm --workspace apps/web run dev",
+		"dev:server": "npm --workspace apps/server run dev",
+		"type-check": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"typescript": "^5.5.0"
+	}
+}

@@ -1,0 +1,23 @@
+# ───────────────
+# Node & Package
+# ───────────────
+node_modules/
+package-lock.json
+
+# ───────────────
+# TypeScript build artifacts
+# ───────────────
+dist/
+*.tsbuildinfo
+
+# ───────────────
+# Environment files (secrets)
+# ───────────────
+.env
+apps/*/.env
+
+# ───────────────
+# Docker
+# ───────────────
+# Named volumes are managed by Docker, not Git
+docker/db_data/
