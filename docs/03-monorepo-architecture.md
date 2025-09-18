@@ -1,15 +1,3 @@
-Got it — we’ll update your **Monorepo Architecture document** to reflect how your monorepo actually looks right now, based on the setup you’ve built:
-
--   ✅ **apps/web** → Minimal React + Webpack + TypeScript, reading env vars and proxying `/api` to backend
--   ✅ **apps/server** → Express + dotenv-safe + MySQL pool + `/api/hello` and `/api/users` endpoints
--   ✅ **packages/shared** → shared constants/types
--   ✅ **docker/** → Web + Server Dockerfiles (ports via ARG/ENV), MySQL via official image
--   ✅ **docker-compose.yml** → runs web, server, db, and db-admin (Adminer) using `.env`
--   ✅ **.env / .env.example** → store ports, db credentials, and shared config
-
-Here’s the updated doc:
-
----
 
 # 🏗️ Monorepo Architecture
 
@@ -170,7 +158,3 @@ This document now accurately describes:
 -   ✅ How minimal full-stack data flow is implemented
 
 Next docs (in `/docs`) can go deeper into **frontend architecture** (state management, routing) and **backend architecture** (layered controllers/services/repositories).
-
----
-
-Would you like me to add a small **diagram of the Docker network** (showing how `web → server → db` communicate inside Compose)? It would make it very clear for future contributors why we use `server:API_PORT` instead of `localhost`.
