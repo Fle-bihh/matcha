@@ -1,0 +1,87 @@
+{
+	"info": {
+		"_postman_id": "b02a429d-f909-4b26-9ab2-9d335118107b",
+		"name": "example",
+		"description": "Basic starter collection for the project. Includes a healthcheck endpoint and a users endpoint with minimal, professional smoke tests (status, latency, and JSON headers/body).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25289744"
+	},
+	"item": [
+		{
+			"name": "hello",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{API_URL}}/hello",
+					"host": ["{{API_URL}}"],
+					"path": ["hello"]
+				},
+				"description": "Simple healthcheck/hello endpoint to verify the service is reachable."
+			},
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time < 800 ms\", function () {",
+							"  pm.expect(pm.response.responseTime).to.be.below(800);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"  pm.response.to.have.header(\"Content-Type\");",
+							"  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});"
+						],
+						"packages": {}
+					}
+				}
+			],
+			"response": []
+		},
+		{
+			"name": "getUsers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{API_URL}}/users",
+					"host": ["{{API_URL}}"],
+					"path": ["users"]
+				},
+				"description": "Returns the list of users. Early smoke tests check status, latency, and a loose JSON shape."
+			},
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time < 800 ms\", function () {",
+							"  pm.expect(pm.response.responseTime).to.be.below(800);",
+							"});",
+							"",
+							"pm.test(\"Body is valid JSON (object or array)\", function () {",
+							"  pm.response.to.have.header(\"Content-Type\");",
+							"  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"  const json = pm.response.json();",
+							"  pm.expect(Array.isArray(json) || typeof json === 'object').to.be.true;",
+							"});"
+						],
+						"packages": {}
+					}
+				}
+			],
+			"response": []
+		}
+	]
+}
