@@ -1,3 +1,4 @@
+import { TestValue } from "@/models/HelloModels";
 import { z } from "zod";
 
 export const GetHelloRequestSchema = z.object({
@@ -32,4 +33,8 @@ export interface GetHealthResponseDto {
 		memory_usage?: NodeJS.MemoryUsage;
 		cpu_usage?: number;
 	};
+}
+
+export interface DbTestResponseDto {
+	message: TestValue;
 }

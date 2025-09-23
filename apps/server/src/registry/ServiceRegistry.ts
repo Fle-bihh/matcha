@@ -10,9 +10,11 @@ class ServiceRegistry {
 	private services: ServiceContext;
 
 	private constructor() {
+		const databaseService = new DatabaseService();
+
 		this.services = {
-			HelloService: new HelloService(),
-			DatabaseService: new DatabaseService(),
+			HelloService: new HelloService(databaseService),
+			DatabaseService: databaseService,
 		};
 	}
 

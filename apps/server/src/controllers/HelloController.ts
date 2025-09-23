@@ -30,7 +30,7 @@ export class HelloController extends BaseController {
 	@Route("GET", "HELLO", "db-test")
 	private async getDbTest(req: Request, res: Response): Promise<void> {
 		try {
-			const testValue = await this.ctx.DatabaseService.getTestValue();
+			const testValue = await this.ctx.HelloService.getTestValue();
 			res.json({
 				status: "success",
 				message: testValue,

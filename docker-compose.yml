@@ -5,37 +5,44 @@ services:
         build:
             context: .
             dockerfile: ./apps/server/Dockerfile
+            args:
+                PORT: ${PORT}
         ports:
-            - "3000:3000"
-        container_name: matcha-server
+            - "${PORT}:${PORT}"
+        container_name: ${CONTAINER_SERVER}
         restart: unless-stopped
-        environment:
-            - NODE_ENV=development
-            - DB_HOST=mysql
-            - DB_USER=matcha_user
-            - DB_PASSWORD=matcha_password
-            - DB_NAME=matcha
+        env_file:
+            - .env
         volumes:
             - ./apps/server/src:/app/apps/server/src
             - ./packages/shared/src:/app/packages/shared/src
             - /app/node_modules
             - /app/apps/server/node_modules
         depends_on:
-            - mysql
+            - db
 
-    mysql:
+    db:
         image: mysql:8.0
-        container_name: matcha-mysql
+        container_name: ${CONTAINER_DB}
         restart: unless-stopped
         environment:
-            MYSQL_ROOT_PASSWORD: rootpassword
-            MYSQL_DATABASE: matcha
-            MYSQL_USER: matcha_user
-            MYSQL_PASSWORD: matcha_password
+            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${DB_NAME}
+            MYSQL_USER: ${DB_USER}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
         ports:
-            - "3306:3306"
+            - "${DB_PORT}:3306"
         volumes:
             - mysql_data:/var/lib/mysql
+
+    adminer:
+        image: adminer:latest
+        container_name: ${CONTAINER_ADMINER}
+        restart: unless-stopped
+        ports:
+            - "${ADMINER_PORT}:8080"
+        depends_on:
+            - db
 
 volumes:
     mysql_data:

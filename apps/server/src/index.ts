@@ -41,8 +41,14 @@ class Server {
 				ServiceRegistry.getInstance().getService("DatabaseService");
 			await dbService.connect();
 			console.log("Database connected successfully");
+
+			// Initialiser les tables via les services
+			const helloService =
+				ServiceRegistry.getInstance().getService("HelloService");
+			await helloService.initializeTable();
+			console.log("Tables initialized successfully");
 		} catch (error) {
-			console.error("Failed to connect to database:", error);
+			console.error("Failed to initialize database:", error);
 		}
 	}
 
