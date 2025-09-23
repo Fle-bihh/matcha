@@ -11,10 +11,31 @@ services:
         restart: unless-stopped
         environment:
             - NODE_ENV=development
+            - DB_HOST=mysql
+            - DB_USER=matcha_user
+            - DB_PASSWORD=matcha_password
+            - DB_NAME=matcha
         volumes:
-            # Monte le code source pour le rechargement automatique
             - ./apps/server/src:/app/apps/server/src
             - ./packages/shared/src:/app/packages/shared/src
-            # Exclut node_modules pour éviter les conflits
             - /app/node_modules
             - /app/apps/server/node_modules
+        depends_on:
+            - mysql
+
+    mysql:
+        image: mysql:8.0
+        container_name: matcha-mysql
+        restart: unless-stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: rootpassword
+            MYSQL_DATABASE: matcha
+            MYSQL_USER: matcha_user
+            MYSQL_PASSWORD: matcha_password
+        ports:
+            - "3306:3306"
+        volumes:
+            - mysql_data:/var/lib/mysql
+
+volumes:
+    mysql_data:

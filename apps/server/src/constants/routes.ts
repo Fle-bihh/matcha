@@ -5,6 +5,7 @@ export const ROUTES = {
 	HELLO: {
 		test: "/",
 		health: "/health",
+		"db-test": "/db-test",
 	},
 } as const;
 

@@ -26,4 +26,22 @@ export class HelloController extends BaseController {
 			this.ctx.HelloService.getHealthStatus(include_details);
 		res.json(healthStatus);
 	}
+
+	@Route("GET", "HELLO", "db-test")
+	private async getDbTest(req: Request, res: Response): Promise<void> {
+		try {
+			const testValue = await this.ctx.DatabaseService.getTestValue();
+			res.json({
+				status: "success",
+				message: testValue,
+				timestamp: new Date().toISOString(),
+			});
+		} catch (error) {
+			res.status(500).json({
+				status: "error",
+				message: "Database connection failed",
+				error: (error as Error).message,
+			});
+		}
+	}
 }

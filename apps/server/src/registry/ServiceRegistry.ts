@@ -1,7 +1,8 @@
-import { HelloService } from "@/services";
+import { HelloService, DatabaseService } from "@/services";
 
 export interface ServiceContext {
 	HelloService: HelloService;
+	DatabaseService: DatabaseService;
 }
 
 class ServiceRegistry {
@@ -11,6 +12,7 @@ class ServiceRegistry {
 	private constructor() {
 		this.services = {
 			HelloService: new HelloService(),
+			DatabaseService: new DatabaseService(),
 		};
 	}
 
