@@ -1,4 +1,4 @@
-import { DatabaseService } from "./DatabaseService";
+import { DatabaseService } from "./db";
 import {
 	TestValue,
 	CreateTestValue,
@@ -21,7 +21,6 @@ export class HelloService {
 			 value VARCHAR(255) NOT NULL`
 		);
 
-		// Vérifier s'il y a des données, sinon créer un enregistrement de test
 		const count = await this.dbService.countDocs(this.tableName);
 		if (count === 0) {
 			await this.createTestValue({
@@ -120,8 +119,6 @@ export class HelloService {
 
 		return baseStatus;
 	}
-
-	// Méthodes spécifiques au modèle TestValue utilisant le DatabaseService générique
 
 	async createTestValue(data: CreateTestValue): Promise<TestValue> {
 		return this.dbService.createDocument<TestValue>(this.tableName, data);

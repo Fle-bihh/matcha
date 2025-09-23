@@ -1,2 +1,2 @@
 export { HelloService } from "./HelloService";
-export { DatabaseService } from "./DatabaseService";
+export { DatabaseService } from "./db";

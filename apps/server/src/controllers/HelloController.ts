@@ -37,6 +37,7 @@ export class HelloController extends BaseController {
 				timestamp: new Date().toISOString(),
 			});
 		} catch (error) {
+			console.error("Database test failed:", error);
 			res.status(500).json({
 				status: "error",
 				message: "Database connection failed",

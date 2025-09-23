@@ -28,7 +28,6 @@ class ControllerRegistry {
 			const handler =
 				controllerInstance[route.handler].bind(controllerInstance);
 
-			console.log(`Registering route: ${route.method} ${route.path}`);
 			(app as any)[method](route.path, handler);
 		});
 	}

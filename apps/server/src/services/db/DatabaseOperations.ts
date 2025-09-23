@@ -1,30 +1,34 @@
-import mysql from "mysql2/promise";
-import { config } from "@/config";
+import { DatabaseConnectionManager } from "./DatabaseConnectionManager";
+import { DatabaseSchemaManager } from "./DatabaseSchemaManager";
 import { DocumentWithMetadata } from "@/validation/CommonValidation";
 
-export class DatabaseService {
-	private connection: mysql.Connection | null = null;
+export class DatabaseOperations {
+	private connectionManager: DatabaseConnectionManager;
+	private schemaManager: DatabaseSchemaManager;
+	private metadataCache: Map<string, boolean> = new Map();
 
-	async connect(): Promise<void> {
-		try {
-			this.connection = await mysql.createConnection({
-				host: config.database.host,
-				user: config.database.user,
-				password: config.database.password,
-				database: config.database.database,
-			});
-
-			console.log(`Connected to database at ${config.database.host}`);
-		} catch (error) {
-			console.error("Database connection failed:", error);
-			throw error;
-		}
+	constructor() {
+		this.connectionManager = DatabaseConnectionManager.getInstance();
+		this.schemaManager = new DatabaseSchemaManager();
 	}
 
-	async disconnect(): Promise<void> {
-		if (this.connection) {
-			await this.connection.end();
-			this.connection = null;
+	private async hasMetadataColumns(tableName: string): Promise<boolean> {
+		if (this.metadataCache.has(tableName)) {
+			return this.metadataCache.get(tableName)!;
+		}
+
+		const hasMetadata = await this.schemaManager.hasMetadataColumns(
+			tableName
+		);
+		this.metadataCache.set(tableName, hasMetadata);
+		return hasMetadata;
+	}
+
+	public clearMetadataCache(tableName?: string): void {
+		if (tableName) {
+			this.metadataCache.delete(tableName);
+		} else {
+			this.metadataCache.clear();
 		}
 	}
 
@@ -32,16 +36,14 @@ export class DatabaseService {
 		tableName: string,
 		data: Omit<T, "id" | "created_at" | "updated_at" | "deleted_at">
 	): Promise<T & DocumentWithMetadata> {
-		if (!this.connection) {
-			throw new Error("Database not connected");
-		}
+		const connection = this.connectionManager.getConnection();
 
 		const fields = Object.keys(data);
 		const values = Object.values(data);
 		const placeholders = fields.map(() => "?").join(", ");
 		const fieldsList = fields.join(", ");
 
-		const [result] = await this.connection.execute(
+		const [result] = await connection.execute(
 			`INSERT INTO ${tableName} (${fieldsList}) VALUES (${placeholders})`,
 			values
 		);
@@ -65,9 +67,8 @@ export class DatabaseService {
 			Omit<T, "id" | "created_at" | "updated_at" | "deleted_at">
 		>
 	): Promise<(T & DocumentWithMetadata) | null> {
-		if (!this.connection) {
-			throw new Error("Database not connected");
-		}
+		const connection = this.connectionManager.getConnection();
+		const hasMetadata = await this.hasMetadataColumns(tableName);
 
 		const updateFields = Object.keys(data).filter(
 			(key) => data[key] !== undefined
@@ -83,8 +84,12 @@ export class DatabaseService {
 		const values: any[] = updateFields.map((field) => data[field]);
 		values.push(id);
 
-		await this.connection.execute(
-			`UPDATE ${tableName} SET ${setClause} WHERE id = ? AND deleted_at IS NULL`,
+		const whereClause = hasMetadata
+			? "WHERE id = ? AND deleted_at IS NULL"
+			: "WHERE id = ?";
+
+		await connection.execute(
+			`UPDATE ${tableName} SET ${setClause} ${whereClause}`,
 			values
 		);
 
@@ -92,24 +97,25 @@ export class DatabaseService {
 	}
 
 	async deleteDoc(tableName: string, id: number): Promise<boolean> {
-		if (!this.connection) {
-			throw new Error("Database not connected");
+		const connection = this.connectionManager.getConnection();
+		const hasMetadata = await this.hasMetadataColumns(tableName);
+
+		if (hasMetadata) {
+			const [result] = await connection.execute(
+				`UPDATE ${tableName} SET deleted_at = CURRENT_TIMESTAMP WHERE id = ? AND deleted_at IS NULL`,
+				[id]
+			);
+			return (result as any).affectedRows > 0;
+		} else {
+			// Fallback to hard delete if no metadata columns
+			return this.hardDeleteDoc(tableName, id);
 		}
-
-		const [result] = await this.connection.execute(
-			`UPDATE ${tableName} SET deleted_at = CURRENT_TIMESTAMP WHERE id = ? AND deleted_at IS NULL`,
-			[id]
-		);
-
-		return (result as any).affectedRows > 0;
 	}
 
 	async hardDeleteDoc(tableName: string, id: number): Promise<boolean> {
-		if (!this.connection) {
-			throw new Error("Database not connected");
-		}
+		const connection = this.connectionManager.getConnection();
 
-		const [result] = await this.connection.execute(
+		const [result] = await connection.execute(
 			`DELETE FROM ${tableName} WHERE id = ?`,
 			[id]
 		);
@@ -122,15 +128,15 @@ export class DatabaseService {
 		id: number,
 		includeDeleted: boolean = false
 	): Promise<(T & DocumentWithMetadata) | null> {
-		if (!this.connection) {
-			throw new Error("Database not connected");
-		}
+		const connection = this.connectionManager.getConnection();
+		const hasMetadata = await this.hasMetadataColumns(tableName);
 
-		const whereClause = includeDeleted
-			? "WHERE id = ?"
-			: "WHERE id = ? AND deleted_at IS NULL";
+		const whereClause =
+			hasMetadata && !includeDeleted
+				? "WHERE id = ? AND deleted_at IS NULL"
+				: "WHERE id = ?";
 
-		const [rows] = await this.connection.execute(
+		const [rows] = await connection.execute(
 			`SELECT * FROM ${tableName} ${whereClause}`,
 			[id]
 		);
@@ -150,31 +156,31 @@ export class DatabaseService {
 			includeDeleted?: boolean;
 		} = {}
 	): Promise<(T & DocumentWithMetadata)[]> {
-		if (!this.connection) {
-			throw new Error("Database not connected");
-		}
+		const connection = this.connectionManager.getConnection();
+		const hasMetadata = await this.hasMetadataColumns(tableName);
 
 		const {
 			where = "",
 			values = [],
-			orderBy = "created_at DESC",
+			orderBy = hasMetadata ? "created_at DESC" : "id DESC",
 			limit,
 			offset,
 			includeDeleted = false,
 		} = options;
 
 		let query = `SELECT * FROM ${tableName}`;
-		let queryValues = [...values];
+		let queryValues: any[] = [];
 
 		// Construire la clause WHERE
 		const conditions: string[] = [];
 
-		if (!includeDeleted) {
+		if (hasMetadata && !includeDeleted) {
 			conditions.push("deleted_at IS NULL");
 		}
 
 		if (where) {
 			conditions.push(where);
+			queryValues.push(...values);
 		}
 
 		if (conditions.length > 0) {
@@ -188,16 +194,22 @@ export class DatabaseService {
 
 		// Ajouter LIMIT et OFFSET
 		if (limit) {
-			query += ` LIMIT ?`;
-			queryValues.push(limit);
+			const limitValue = parseInt(limit.toString(), 10);
+			if (isNaN(limitValue) || limitValue < 0) {
+				throw new Error(`Invalid limit value: ${limit}`);
+			}
+			query += ` LIMIT ${limitValue}`;
 		}
 
 		if (offset) {
-			query += ` OFFSET ?`;
-			queryValues.push(offset);
+			const offsetValue = parseInt(offset.toString(), 10);
+			if (isNaN(offsetValue) || offsetValue < 0) {
+				throw new Error(`Invalid offset value: ${offset}`);
+			}
+			query += ` OFFSET ${offsetValue}`;
 		}
 
-		const [rows] = await this.connection.execute(query, queryValues);
+		const [rows] = await connection.execute(query, queryValues);
 		return rows as (T & DocumentWithMetadata)[];
 	}
 
@@ -209,67 +221,49 @@ export class DatabaseService {
 			includeDeleted?: boolean;
 		} = {}
 	): Promise<number> {
-		if (!this.connection) {
-			throw new Error("Database not connected");
-		}
+		const connection = this.connectionManager.getConnection();
+		const hasMetadata = await this.hasMetadataColumns(tableName);
 
 		const { where = "", values = [], includeDeleted = false } = options;
 
 		let query = `SELECT COUNT(*) as count FROM ${tableName}`;
-		const queryValues = [...values];
+		let queryValues: any[] = [];
 
 		const conditions: string[] = [];
 
-		if (!includeDeleted) {
+		if (hasMetadata && !includeDeleted) {
 			conditions.push("deleted_at IS NULL");
 		}
 
 		if (where) {
 			conditions.push(where);
+			queryValues.push(...values);
 		}
 
 		if (conditions.length > 0) {
 			query += ` WHERE ${conditions.join(" AND ")}`;
 		}
 
-		const [rows] = await this.connection.execute(query, queryValues);
+		const [rows] = await connection.execute(query, queryValues);
 		const result = rows as { count: number }[];
 		return result[0]?.count || 0;
 	}
 
 	async restoreDoc(tableName: string, id: number): Promise<boolean> {
-		if (!this.connection) {
-			throw new Error("Database not connected");
+		const connection = this.connectionManager.getConnection();
+		const hasMetadata = await this.hasMetadataColumns(tableName);
+
+		if (!hasMetadata) {
+			throw new Error(
+				`Table ${tableName} does not support soft delete/restore operations`
+			);
 		}
 
-		const [result] = await this.connection.execute(
+		const [result] = await connection.execute(
 			`UPDATE ${tableName} SET deleted_at = NULL WHERE id = ? AND deleted_at IS NOT NULL`,
 			[id]
 		);
 
 		return (result as any).affectedRows > 0;
-	}
-
-	async createTableWithMetadata(
-		tableName: string,
-		fields: string,
-		additionalConstraints: string = ""
-	): Promise<void> {
-		if (!this.connection) {
-			throw new Error("Database not connected");
-		}
-
-		const query = `
-			CREATE TABLE IF NOT EXISTS ${tableName} (
-				id INT AUTO_INCREMENT PRIMARY KEY,
-				${fields},
-				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-				deleted_at TIMESTAMP NULL
-				${additionalConstraints ? "," + additionalConstraints : ""}
-			)
-		`;
-
-		await this.connection.execute(query);
 	}
 }
