@@ -4,13 +4,22 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "node dist/index.js"
+		"start": "node dist/index.js",
+		"dev": "nodemon --watch src --ext ts --exec \"npm run build && npm start\"",
+		"build": "tsc"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"type": "commonjs",
 	"dependencies": {
-		"@matcha/shared": "^1.0.0"
+		"@matcha/shared": "^1.0.0",
+		"dotenv": "^17.2.2",
+		"express": "^5.1.0"
+	},
+	"devDependencies": {
+		"@types/express": "^5.0.3",
+		"@types/node": "^24.5.2",
+		"nodemon": "^3.1.10"
 	}
 }

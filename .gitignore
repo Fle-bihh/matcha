@@ -9,3 +9,6 @@ dist/
 
 # NPM lock file
 package-lock.json
+
+# Environment variables
+.env

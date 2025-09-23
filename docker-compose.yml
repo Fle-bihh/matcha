@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+    server:
+        build:
+            context: .
+            dockerfile: ./apps/server/Dockerfile
+        ports:
+            - "3000:3000"
+        container_name: matcha-server
+        restart: unless-stopped
+        environment:
+            - NODE_ENV=development
+        volumes:
+            # Monte le code source pour le rechargement automatique
+            - ./apps/server/src:/app/apps/server/src
+            - ./packages/shared/src:/app/packages/shared/src
+            # Exclut node_modules pour éviter les conflits
+            - /app/node_modules
+            - /app/apps/server/node_modules
