@@ -1,15 +1,35 @@
 import "@matcha/shared";
-import express from "express";
+import express, { Express } from "express";
 import { config } from "./config";
+import { Router } from "./routing/Router";
+import { ControllerLoader } from "./loaders/ControllerLoader";
 
-console.log("SERVER app");
+class Server {
+	private app: Express;
+	private port: number;
+	private router: Router;
 
-const app = express();
+	constructor(port: number) {
+		this.app = express();
+		this.port = port;
+		this.router = new Router(this.app);
+		this.setupRoutes();
+	}
 
-app.get("/", (req, res) => {
-	res.send("Hello World!");
-});
+	private setupRoutes(): void {
+		const controllers = ControllerLoader.loadAllControllers();
+		controllers.forEach((controller) => {
+			this.router.addController(controller);
+		});
+		this.router.setupRoutes();
+	}
 
-app.listen(config.port, () => {
-	console.log(`Example app listening on port ${config.port}`);
-});
+	public start(): void {
+		this.app.listen(this.port, () => {
+			console.log(`Example app listening on port ${this.port}`);
+		});
+	}
+}
+
+const server = new Server(config.port);
+server.start();
