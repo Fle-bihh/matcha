@@ -1,22 +1,37 @@
-import type { BaseController } from "@/controllers/BaseController";
+import type { HttpMethod } from "@/types/routes";
 
-type ControllerConstructor = new () => BaseController;
+interface RouteInfo {
+	method: HttpMethod;
+	path: string;
+	handler: string;
+	instance: new () => any;
+}
 
 class ControllerRegistry {
-	private static readonly controllers: ControllerConstructor[] = [];
+	private static readonly routes: RouteInfo[] = [];
+	private static readonly instances = new Map<string, any>();
 
-	public static register(controllerClass: ControllerConstructor): void {
-		this.controllers.push(controllerClass);
+	public static registerRoute(route: RouteInfo): void {
+		this.routes.push(route);
 	}
 
-	public static getAll(): readonly ControllerConstructor[] {
-		return this.controllers;
-	}
+	public static setupRoutes(app: Express.Application): void {
+		this.routes.forEach((route) => {
+			const method = route.method.toLowerCase();
 
-	public static createInstances(): BaseController[] {
-		return this.controllers.map((ControllerClass) => new ControllerClass());
+			const instanceKey = route.instance.name;
+			if (!this.instances.has(instanceKey)) {
+				this.instances.set(instanceKey, new route.instance());
+			}
+
+			const controllerInstance = this.instances.get(instanceKey);
+			const handler =
+				controllerInstance[route.handler].bind(controllerInstance);
+
+			console.log(`Registering route: ${route.method} ${route.path}`);
+			(app as any)[method](route.path, handler);
+		});
 	}
 }
 
 export { ControllerRegistry };
-export type { ControllerConstructor };

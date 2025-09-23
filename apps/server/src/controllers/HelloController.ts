@@ -1,19 +1,14 @@
 import type { Request, Response } from "express";
-import { BaseController } from "@/controllers/BaseController";
-import { Controller } from "@/decorators/Controller";
+import { Route } from "@/decorators/Route";
 
-@Controller
-export class HelloController extends BaseController {
-	constructor() {
-		super();
-		this.initializeRoutes();
-	}
-
-	protected initializeRoutes(): void {
-		this.get("HELLO", this.getHello);
-	}
-
-	private getHello(req: Request, res: Response): void {
+export class HelloController {
+	@Route("GET", "HELLO", "test")
+	private getHello(_: Request, res: Response): void {
 		res.send("Hello World!");
+	}
+
+	@Route("GET", "HELLO", "health")
+	private getHealth(_: Request, res: Response): void {
+		res.json({ status: "healthy", timestamp: new Date().toISOString() });
 	}
 }

@@ -1,27 +1,37 @@
 import "@matcha/shared";
 import express, { Express } from "express";
 import { config } from "./config";
-import { Router } from "./routing/Router";
-import { ControllerLoader } from "./loaders/ControllerLoader";
+import { ControllerRegistry } from "./registry/ControllerRegistry";
+import "./controllers";
 
 class Server {
 	private app: Express;
 	private port: number;
-	private router: Router;
 
 	constructor(port: number) {
 		this.app = express();
 		this.port = port;
-		this.router = new Router(this.app);
+		this.setup();
+	}
+
+	private setup(): void {
+		this.setupMiddleware();
 		this.setupRoutes();
+		this.setup404Handler();
 	}
 
 	private setupRoutes(): void {
-		const controllers = ControllerLoader.loadAllControllers();
-		controllers.forEach((controller) => {
-			this.router.addController(controller);
+		ControllerRegistry.setupRoutes(this.app);
+	}
+
+	private setupMiddleware(): void {
+		this.app.use(express.json());
+	}
+
+	private setup404Handler(): void {
+		this.app.use((req, res) => {
+			res.status(404).send("Not Found");
 		});
-		this.router.setupRoutes();
 	}
 
 	public start(): void {
