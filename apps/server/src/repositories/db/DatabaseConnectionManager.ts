@@ -1,5 +1,6 @@
 import mysql from "mysql2/promise";
 import { config } from "@/config";
+import { logger } from "@matcha/shared";
 
 export class DatabaseConnectionManager {
 	private static instance: DatabaseConnectionManager | null = null;
@@ -24,7 +25,7 @@ export class DatabaseConnectionManager {
 				database: config.database.database,
 			});
 		} catch (error) {
-			console.error("Database connection failed:", error);
+			logger.error("Database connection failed:", error);
 			throw error;
 		}
 	}

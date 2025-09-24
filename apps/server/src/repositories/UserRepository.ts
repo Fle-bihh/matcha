@@ -1,5 +1,5 @@
 import { BaseRepository } from "./BaseRepository";
-import { CreateUser, User } from "@matcha/shared";
+import { CreateUser, logger, User } from "@matcha/shared";
 import { IContainer } from "@/types/container";
 
 export class UserRepository extends BaseRepository {
@@ -9,7 +9,7 @@ export class UserRepository extends BaseRepository {
 		super(container);
 
 		this.initializeTable().catch((err) => {
-			console.error("Error initializing UserRepository table:", err);
+			logger.error("Error initializing UserRepository table:", err);
 		});
 	}
 

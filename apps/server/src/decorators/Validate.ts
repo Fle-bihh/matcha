@@ -1,3 +1,4 @@
+import { logger } from "@matcha/shared";
 import type { Request, Response, NextFunction } from "express";
 import { z, type ZodType } from "zod";
 
@@ -47,7 +48,7 @@ export function Validate<T extends ZodType>(
 						Object.assign(req.query, validatedData);
 					}
 				} catch (assignError) {
-					console.warn(
+					logger.debug(
 						`Could not assign validated data to req.${source}, using req.validated.${source} instead`
 					);
 				}

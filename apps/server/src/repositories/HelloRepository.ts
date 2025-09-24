@@ -1,5 +1,5 @@
 import { BaseRepository } from "./BaseRepository";
-import { TestValue, CreateTestValue } from "@matcha/shared";
+import { TestValue, CreateTestValue, logger } from "@matcha/shared";
 import { IContainer } from "@/types/container";
 
 export class HelloRepository extends BaseRepository {
@@ -8,7 +8,7 @@ export class HelloRepository extends BaseRepository {
 	constructor(container: IContainer) {
 		super(container);
 		this.initializeTable().catch((err) => {
-			console.error("Error initializing HelloRepository table:", err);
+			logger.error("Error initializing HelloRepository table:", err);
 		});
 	}
 
