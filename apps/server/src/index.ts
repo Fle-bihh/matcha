@@ -1,5 +1,6 @@
 import "@matcha/shared";
 import express, { Express } from "express";
+import cors from "cors";
 import { config } from "./config";
 import { ControllerRegistry } from "./registry/ControllerRegistry";
 import { Container } from "./container/Container";
@@ -8,6 +9,14 @@ import { BaseRepository } from "@/repositories";
 import "./controllers";
 import { ServiceResponse } from "./types/ServiceResponse";
 import { logger } from "@matcha/shared";
+import {
+	limiter,
+	corsOptions,
+	helmetConfig,
+	sqlSanitize,
+	xssSanitize,
+	hppMiddleware,
+} from "./middleware/security";
 
 class Server {
 	private app: Express;
@@ -33,7 +42,14 @@ class Server {
 	}
 
 	private setupMiddleware(): void {
-		this.app.use(express.json());
+		this.app.use(helmetConfig);
+		this.app.use(limiter);
+		this.app.use(express.json({ limit: "10mb" }));
+		this.app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+		this.app.use(cors(corsOptions));
+		this.app.use(hppMiddleware);
+		this.app.use(sqlSanitize);
+		this.app.use(xssSanitize);
 	}
 
 	private setup404Handler(): void {
