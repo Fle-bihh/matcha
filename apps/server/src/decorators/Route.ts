@@ -20,12 +20,6 @@ export function Route<T extends RouteGroups, K extends RouteKeys<T>>(
 		const route = buildApiRoute(group, key);
 
 		const apiDocs = getApiDocs(target, propertyKey);
-		if (apiDocs) {
-			console.log(
-				`📝 API Documentation - ${method} ${route}: ${apiDocs}`
-			);
-		}
-
 		ControllerRegistry.registerRoute({
 			method,
 			path: route,

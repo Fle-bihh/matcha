@@ -1,6 +1,7 @@
 import type { HttpMethod } from "@/types/routes";
 import type { Request, Response, Application } from "express";
 import { Container } from "@/container/Container";
+import { logger } from "@matcha/shared";
 
 interface RouteInfo {
 	method: HttpMethod;
@@ -78,6 +79,14 @@ class ControllerRegistry {
 				}
 			});
 		});
+
+		const allApiDocs = this.routes
+			.filter((r) => r.apiDocs)
+			.map((r) => `${r.method} ${r.path}: ${r.apiDocs}`);
+		if (allApiDocs.length > 0) {
+			logger.info("API Documentation:");
+			allApiDocs.forEach((doc) => logger.info(`- ${doc}`));
+		}
 	}
 }
 

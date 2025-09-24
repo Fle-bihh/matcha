@@ -23,8 +23,6 @@ export class DatabaseConnectionManager {
 				password: config.database.password,
 				database: config.database.database,
 			});
-
-			console.log(`Connected to database at ${config.database.host}`);
 		} catch (error) {
 			console.error("Database connection failed:", error);
 			throw error;

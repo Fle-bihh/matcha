@@ -30,7 +30,6 @@ export function getRoute<T extends RouteGroups, K extends RouteKeys<T>>(
 	if (route === undefined) {
 		throw new Error(`Route not found: ${group}.${String(key)}`);
 	}
-	console.log(`Resolved route for ${group}.${String(key)}: ${route}`);
 	return `/${group}${route}`;
 }
 
