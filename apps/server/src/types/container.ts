@@ -2,6 +2,8 @@ export enum ETokens {
 	BaseRepository = "BaseRepository",
 	HelloRepository = "HelloRepository",
 	HelloService = "HelloService",
+	UserRepository = "UserRepository",
+	UserService = "UserService",
 }
 
 export interface IContainer {

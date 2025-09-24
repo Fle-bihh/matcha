@@ -20,7 +20,7 @@ export class HelloController extends BaseController {
 	@Route("GET", "hello", "test")
 	@Validate(GetHelloRequestSchema, "query")
 	@ApiDocs(
-		"GET /api/v1/ - Returns a personalized greeting message based on name and greeting type"
+		"Returns a personalized greeting message based on name and greeting type"
 	)
 	private getHello(req: Request, res: Response): void {
 		const { name, greeting_type } = req.query as GetHelloRequestDto;
@@ -34,7 +34,7 @@ export class HelloController extends BaseController {
 	@Route("GET", "hello", "health")
 	@Validate(GetHealthRequestSchema, "query")
 	@ApiDocs(
-		"GET /api/v1/health - Returns application health status with optional detailed information"
+		"Returns application health status with optional detailed information"
 	)
 	private getHealth(req: Request, res: Response): void {
 		const { include_details } = req.query as GetHealthRequestDto;
@@ -46,9 +46,7 @@ export class HelloController extends BaseController {
 
 	@Route("GET", "hello", "db-test")
 	@Auth()
-	@ApiDocs(
-		"GET /api/v1/db-test - Tests database connectivity and returns connection status"
-	)
+	@ApiDocs("Tests database connectivity and returns connection status")
 	private async getDbTest(req: Request, res: Response): Promise<void> {
 		const testValue = await this.helloService.getTestValue();
 		res.status(testValue.statusCode).send(testValue);

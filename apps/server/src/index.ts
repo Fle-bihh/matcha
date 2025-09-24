@@ -7,6 +7,7 @@ import { ETokens } from "./types/container";
 import { BaseRepository } from "@/repositories";
 import { HelloService } from "@/services";
 import "./controllers";
+import { ServiceResponse } from "./types/ServiceResponse";
 
 class Server {
 	private app: Express;
@@ -35,8 +36,10 @@ class Server {
 	}
 
 	private setup404Handler(): void {
+		const response = ServiceResponse.failure("Not Found", null, 404);
 		this.app.use((req, res) => {
-			res.status(404).send("Not Found");
+			console.debug(`404 Not Found: ${req.method} ${req.originalUrl}`);
+			res.status(response.statusCode).send(response);
 		});
 	}
 

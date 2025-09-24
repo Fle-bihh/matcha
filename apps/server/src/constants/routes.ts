@@ -7,21 +7,21 @@ export const ROUTES = {
 		health: "/health",
 		"db-test": "/db-test",
 	},
+	user: {
+		all: "/users",
+	},
 } as const;
 
 export type RouteGroups = keyof typeof ROUTES;
 
 export type RouteKeys<T extends RouteGroups> = keyof (typeof ROUTES)[T];
 
-export type RouteValue<
-	T extends RouteGroups,
-	K extends RouteKeys<T>
-> = (typeof ROUTES)[T][K];
+export type RouteValue = string;
 
 export function getRoute<T extends RouteGroups, K extends RouteKeys<T>>(
 	group: T,
 	key: K
-): RouteValue<T, K> {
+): RouteValue {
 	const routeGroup = ROUTES[group];
 	if (!routeGroup) {
 		throw new Error(`Route group not found: ${group}`);
@@ -30,7 +30,8 @@ export function getRoute<T extends RouteGroups, K extends RouteKeys<T>>(
 	if (route === undefined) {
 		throw new Error(`Route not found: ${group}.${String(key)}`);
 	}
-	return route;
+	console.log(`Resolved route for ${group}.${String(key)}: ${route}`);
+	return `/${group}${route}`;
 }
 
 export function buildApiRoute<T extends RouteGroups, K extends RouteKeys<T>>(
