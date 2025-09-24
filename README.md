@@ -64,16 +64,8 @@ docker-compose exec server sh
 docker-compose exec db mysql -u root -p
 ```
 
-## 🌐 API
-
-**Base URL:** `/api/v1`
-
--   `GET /` - Greeting endpoint
--   `GET /health` - Health status
--   `GET /db-test` - Database test
-
 � **API Documentation**: Available in code or call any route with `OPTIONS` method
 
 ## 🔒 Configuration
 
-Set up `.env` file with database credentials and ports.
+Set up `.env` file with database credentials and ports following the `.env.example` file
