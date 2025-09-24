@@ -1,8 +1,13 @@
-import { BaseRepository } from "./db/BaseRepository";
+import { BaseRepository } from "./BaseRepository";
 import { TestValue, CreateTestValue } from "@/models/HelloModels";
+import { IContainer } from "@/types/container";
 
 export class HelloRepository extends BaseRepository {
 	private readonly tableName = "test_values";
+
+	constructor(container: IContainer) {
+		super(container);
+	}
 
 	async initializeTable(): Promise<void> {
 		await this.createTableWithMetadata(

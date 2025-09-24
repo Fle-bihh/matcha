@@ -3,6 +3,8 @@ import { Route } from "@/decorators/Route";
 import { Validate } from "@/decorators/Validate";
 import { ApiDocs } from "@/decorators/ApiDocs";
 import { BaseController } from "./BaseController";
+import { ETokens } from "@/types/container";
+import { HelloService } from "@/services";
 import {
 	GetHelloRequestSchema,
 	GetHealthRequestSchema,
@@ -11,6 +13,9 @@ import {
 } from "@/dto";
 
 export class HelloController extends BaseController {
+	private get helloService(): HelloService {
+		return this.container.get<HelloService>(ETokens.HelloService);
+	}
 	@Route("GET", "hello", "test")
 	@Validate(GetHelloRequestSchema, "query")
 	@ApiDocs(
@@ -18,7 +23,7 @@ export class HelloController extends BaseController {
 	)
 	private getHello(req: Request, res: Response): void {
 		const { name, greeting_type } = req.query as GetHelloRequestDto;
-		const greetingResponse = this.ctx.HelloService.getGreeting({
+		const greetingResponse = this.helloService.getGreeting({
 			name,
 			greeting_type,
 		});
@@ -32,7 +37,7 @@ export class HelloController extends BaseController {
 	)
 	private getHealth(req: Request, res: Response): void {
 		const { include_details } = req.query as GetHealthRequestDto;
-		const healthStatusResponse = this.ctx.HelloService.getHealthStatus({
+		const healthStatusResponse = this.helloService.getHealthStatus({
 			include_details,
 		});
 		res.status(healthStatusResponse.statusCode).send(healthStatusResponse);
@@ -43,7 +48,7 @@ export class HelloController extends BaseController {
 		"GET /api/v1/db-test - Tests database connectivity and returns connection status"
 	)
 	private async getDbTest(req: Request, res: Response): Promise<void> {
-		const testValue = await this.ctx.HelloService.getTestValue();
+		const testValue = await this.helloService.getTestValue();
 		res.status(testValue.statusCode).send(testValue);
 	}
 }

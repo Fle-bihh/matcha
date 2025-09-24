@@ -2,16 +2,21 @@ import "@matcha/shared";
 import express, { Express } from "express";
 import { config } from "./config";
 import { ControllerRegistry } from "./registry/ControllerRegistry";
-import { ServiceRegistry } from "./registry/ServiceRegistry";
+import { Container } from "./container/Container";
+import { ETokens } from "./types/container";
+import { BaseRepository } from "@/repositories";
+import { HelloService } from "@/services";
 import "./controllers";
 
 class Server {
 	private app: Express;
 	private port: number;
+	private container: Container;
 
 	constructor(port: number) {
 		this.app = express();
 		this.port = port;
+		this.container = new Container();
 		this.setup();
 	}
 
@@ -37,13 +42,15 @@ class Server {
 
 	private async initializeDatabase(): Promise<void> {
 		try {
-			const baseRepository =
-				ServiceRegistry.getInstance().getService("BaseRepository");
+			const baseRepository = this.container.get<BaseRepository>(
+				ETokens.BaseRepository
+			);
 			await baseRepository.connect();
 			console.log("Database connected successfully");
 
-			const helloService =
-				ServiceRegistry.getInstance().getService("HelloService");
+			const helloService = this.container.get<HelloService>(
+				ETokens.HelloService
+			);
 			await helloService.initializeTable();
 		} catch (error) {
 			console.error("Failed to initialize database:", error);

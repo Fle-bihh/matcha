@@ -1,2 +1,2 @@
 export { HelloRepository } from "./HelloRepository";
-export { BaseRepository } from "./db/BaseRepository";
+export { BaseRepository } from "./BaseRepository";

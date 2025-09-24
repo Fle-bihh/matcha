@@ -8,13 +8,18 @@ import { TestValue, CreateTestValue } from "@/models/HelloModels";
 import { ServiceResponse } from "@/types/ServiceResponse";
 import { StatusCodes } from "http-status-codes";
 import { HelloRepository } from "@/repositories";
+import { IContainer, ETokens } from "@/types/container";
+import { BaseService } from "./BaseService";
 
-export class HelloService {
+export class HelloService extends BaseService {
 	private startTime = Date.now();
-	private helloRepository: HelloRepository;
 
-	constructor(helloRepository: HelloRepository) {
-		this.helloRepository = helloRepository;
+	constructor(container: IContainer) {
+		super(container);
+	}
+
+	private get helloRepository(): HelloRepository {
+		return this.container.get<HelloRepository>(ETokens.HelloRepository);
 	}
 
 	async initializeTable(): Promise<void> {

@@ -1,17 +1,19 @@
 import type { HttpMethod } from "@/types/routes";
 import type { Request, Response, Application } from "express";
+import { Container } from "@/container/Container";
 
 interface RouteInfo {
 	method: HttpMethod;
 	path: string;
 	handler: string;
-	instance: new () => any;
+	instance: new (container: any) => any;
 	apiDocs?: string;
 }
 
 class ControllerRegistry {
 	private static readonly routes: RouteInfo[] = [];
 	private static readonly instances = new Map<string, any>();
+	private static container = new Container();
 
 	public static registerRoute(route: RouteInfo): void {
 		this.routes.push(route);
@@ -33,7 +35,10 @@ class ControllerRegistry {
 
 				const instanceKey = route.instance.name;
 				if (!this.instances.has(instanceKey)) {
-					this.instances.set(instanceKey, new route.instance());
+					this.instances.set(
+						instanceKey,
+						new route.instance(this.container)
+					);
 				}
 
 				const controllerInstance = this.instances.get(instanceKey);

@@ -1,14 +1,19 @@
-import { DatabaseConnectionManager } from "./DatabaseConnectionManager";
-import { DatabaseOperations } from "./DatabaseOperations";
-import { DatabaseSchemaManager } from "./DatabaseSchemaManager";
 import { DocumentWithMetadata } from "@/validation/CommonValidation";
+import {
+	DatabaseConnectionManager,
+	DatabaseOperations,
+	DatabaseSchemaManager,
+} from "./db";
+import { IContainer } from "@/types/container";
 
 export class BaseRepository {
+	protected container: IContainer;
 	private connectionManager: DatabaseConnectionManager;
 	private operations: DatabaseOperations;
 	private schemaManager: DatabaseSchemaManager;
 
-	constructor() {
+	constructor(container: IContainer) {
+		this.container = container;
 		this.connectionManager = DatabaseConnectionManager.getInstance();
 		this.operations = new DatabaseOperations();
 		this.schemaManager = new DatabaseSchemaManager();
