@@ -1,0 +1,5 @@
+# Next.js build output
+.next/
+
+# TypeScript build info
+tsconfig.tsbuildinfo
