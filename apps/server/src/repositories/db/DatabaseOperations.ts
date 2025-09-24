@@ -1,6 +1,6 @@
 import { DatabaseConnectionManager } from "./DatabaseConnectionManager";
 import { DatabaseSchemaManager } from "./DatabaseSchemaManager";
-import { DocumentWithMetadata } from "@/validation/CommonValidation";
+import { DocumentWithMetadata } from "@matcha/shared";
 
 export class DatabaseOperations {
 	private connectionManager: DatabaseConnectionManager;

@@ -4,7 +4,7 @@ import {
 	GetHelloRequestDto,
 	GetHelloResponseDto,
 } from "@/dto";
-import { TestValue, CreateTestValue } from "@/models/HelloModels";
+import { TestValue, CreateTestValue } from "@matcha/shared";
 import { ServiceResponse } from "@/types/ServiceResponse";
 import { StatusCodes } from "http-status-codes";
 import { HelloRepository } from "@/repositories";

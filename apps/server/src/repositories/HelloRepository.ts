@@ -1,5 +1,5 @@
 import { BaseRepository } from "./BaseRepository";
-import { TestValue, CreateTestValue } from "@/models/HelloModels";
+import { TestValue, CreateTestValue } from "@matcha/shared";
 import { IContainer } from "@/types/container";
 
 export class HelloRepository extends BaseRepository {

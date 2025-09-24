@@ -1,4 +1,4 @@
-import { TestValue } from "@/models/HelloModels";
+import { TestValue } from "@matcha/shared";
 import { z } from "zod";
 
 export const GetHelloRequestSchema = z.object({

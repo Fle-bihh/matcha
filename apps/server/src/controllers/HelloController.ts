@@ -11,6 +11,7 @@ import {
 	type GetHelloRequestDto,
 	type GetHealthRequestDto,
 } from "@/dto";
+import { Auth } from "@/decorators/Auth";
 
 export class HelloController extends BaseController {
 	private get helloService(): HelloService {
@@ -44,6 +45,7 @@ export class HelloController extends BaseController {
 	}
 
 	@Route("GET", "hello", "db-test")
+	@Auth()
 	@ApiDocs(
 		"GET /api/v1/db-test - Tests database connectivity and returns connection status"
 	)

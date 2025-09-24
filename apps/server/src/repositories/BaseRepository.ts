@@ -1,4 +1,4 @@
-import { DocumentWithMetadata } from "@/validation/CommonValidation";
+import { DocumentWithMetadata } from "@matcha/shared";
 import {
 	DatabaseConnectionManager,
 	DatabaseOperations,

@@ -5,7 +5,7 @@ import {
 	createEntitySchema,
 	createCreateEntitySchema,
 	createUpdateEntitySchema,
-} from "@/validation/CommonValidation";
+} from "../validation";
 
 const testValueFields = {
 	name: z.string().min(1, "Name is required").max(255, "Name too long"),
