@@ -5,7 +5,6 @@ import { ControllerRegistry } from "./registry/ControllerRegistry";
 import { Container } from "./container/Container";
 import { ETokens } from "./types/container";
 import { BaseRepository } from "@/repositories";
-import { HelloService } from "@/services";
 import "./controllers";
 import { ServiceResponse } from "./types/ServiceResponse";
 
@@ -50,11 +49,6 @@ class Server {
 			);
 			await baseRepository.connect();
 			console.log("Database connected successfully");
-
-			const helloService = this.container.get<HelloService>(
-				ETokens.HelloService
-			);
-			await helloService.initializeTable();
 		} catch (error) {
 			console.error("Failed to initialize database:", error);
 		}

@@ -7,6 +7,10 @@ export class UserRepository extends BaseRepository {
 
 	constructor(container: IContainer) {
 		super(container);
+
+		this.initializeTable().catch((err) => {
+			console.error("Error initializing UserRepository table:", err);
+		});
 	}
 
 	async initializeTable(): Promise<void> {

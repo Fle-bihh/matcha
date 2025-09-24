@@ -1,7 +1,8 @@
+import { ApiResponse } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 
-export class ServiceResponse<T = null> {
+export class ServiceResponse<T = null> implements ApiResponse<T> {
 	readonly success: boolean;
 	readonly message: string;
 	readonly responseObject: T;
