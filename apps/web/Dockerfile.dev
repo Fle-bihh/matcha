@@ -1,0 +1,28 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json ./
+COPY packages/shared/package.json ./packages/shared/
+COPY apps/web/package.json ./apps/web/
+
+# Install dependencies
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Build the shared package
+WORKDIR /app/packages/shared
+RUN npm run build
+
+# Set development environment
+WORKDIR /app/apps/web
+ENV NODE_ENV=development
+ENV PORT=${WEB_PORT}
+
+EXPOSE ${WEB_PORT}
+
+# Use dev command for hot reload
+CMD ["npm", "run", "dev"]

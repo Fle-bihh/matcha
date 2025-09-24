@@ -24,7 +24,7 @@ services:
     web:
         build:
             context: .
-            dockerfile: ./apps/web/Dockerfile
+            dockerfile: ./apps/web/Dockerfile.dev
             args:
                 WEB_PORT: ${WEB_PORT}
         ports:
@@ -34,15 +34,15 @@ services:
         env_file:
             - .env
         environment:
-            - NODE_ENV=${NODE_ENV}
+            - NODE_ENV=development
             - PORT=${WEB_PORT}
             - NEXT_PUBLIC_API_URL=http://localhost:${PORT}
         volumes:
-            - ./apps/web/src:/app/apps/web/src
+            - ./apps/web:/app/apps/web
             - ./packages/shared/src:/app/packages/shared/src
             - /app/node_modules
+            - /app/apps/server/node_modules
             - /app/apps/web/node_modules
-            - /app/apps/web/.next
         depends_on:
             - server
 
