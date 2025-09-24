@@ -36,14 +36,14 @@ export class DatabaseOperations {
 		tableName: string,
 		data: Omit<T, "id" | "created_at" | "updated_at" | "deleted_at">
 	): Promise<T & DocumentWithMetadata> {
-		const connection = this.connectionManager.getConnection();
+		const pool = this.connectionManager.getPool();
 
 		const fields = Object.keys(data);
 		const values = Object.values(data);
 		const placeholders = fields.map(() => "?").join(", ");
 		const fieldsList = fields.join(", ");
 
-		const [result] = await connection.execute(
+		const [result] = await pool.execute(
 			`INSERT INTO ${tableName} (${fieldsList}) VALUES (${placeholders})`,
 			values
 		);
@@ -67,7 +67,7 @@ export class DatabaseOperations {
 			Omit<T, "id" | "created_at" | "updated_at" | "deleted_at">
 		>
 	): Promise<(T & DocumentWithMetadata) | null> {
-		const connection = this.connectionManager.getConnection();
+		const pool = this.connectionManager.getPool();
 		const hasMetadata = await this.hasMetadataColumns(tableName);
 
 		const updateFields = Object.keys(data).filter(
@@ -88,7 +88,7 @@ export class DatabaseOperations {
 			? "WHERE id = ? AND deleted_at IS NULL"
 			: "WHERE id = ?";
 
-		await connection.execute(
+		await pool.execute(
 			`UPDATE ${tableName} SET ${setClause} ${whereClause}`,
 			values
 		);
@@ -97,11 +97,11 @@ export class DatabaseOperations {
 	}
 
 	async deleteDoc(tableName: string, id: number): Promise<boolean> {
-		const connection = this.connectionManager.getConnection();
+		const pool = this.connectionManager.getPool();
 		const hasMetadata = await this.hasMetadataColumns(tableName);
 
 		if (hasMetadata) {
-			const [result] = await connection.execute(
+			const [result] = await pool.execute(
 				`UPDATE ${tableName} SET deleted_at = CURRENT_TIMESTAMP WHERE id = ? AND deleted_at IS NULL`,
 				[id]
 			);
@@ -113,9 +113,9 @@ export class DatabaseOperations {
 	}
 
 	async hardDeleteDoc(tableName: string, id: number): Promise<boolean> {
-		const connection = this.connectionManager.getConnection();
+		const pool = this.connectionManager.getPool();
 
-		const [result] = await connection.execute(
+		const [result] = await pool.execute(
 			`DELETE FROM ${tableName} WHERE id = ?`,
 			[id]
 		);
@@ -128,7 +128,7 @@ export class DatabaseOperations {
 		id: number,
 		includeDeleted: boolean = false
 	): Promise<(T & DocumentWithMetadata) | null> {
-		const connection = this.connectionManager.getConnection();
+		const pool = this.connectionManager.getPool();
 		const hasMetadata = await this.hasMetadataColumns(tableName);
 
 		const whereClause =
@@ -136,7 +136,7 @@ export class DatabaseOperations {
 				? "WHERE id = ? AND deleted_at IS NULL"
 				: "WHERE id = ?";
 
-		const [rows] = await connection.execute(
+		const [rows] = await pool.execute(
 			`SELECT * FROM ${tableName} ${whereClause}`,
 			[id]
 		);
@@ -156,7 +156,7 @@ export class DatabaseOperations {
 			includeDeleted?: boolean;
 		} = {}
 	): Promise<(T & DocumentWithMetadata)[]> {
-		const connection = this.connectionManager.getConnection();
+		const pool = this.connectionManager.getPool();
 		const hasMetadata = await this.hasMetadataColumns(tableName);
 
 		const {
@@ -209,7 +209,7 @@ export class DatabaseOperations {
 			query += ` OFFSET ${offsetValue}`;
 		}
 
-		const [rows] = await connection.execute(query, queryValues);
+		const [rows] = await pool.execute(query, queryValues);
 		return rows as (T & DocumentWithMetadata)[];
 	}
 
@@ -221,7 +221,7 @@ export class DatabaseOperations {
 			includeDeleted?: boolean;
 		} = {}
 	): Promise<number> {
-		const connection = this.connectionManager.getConnection();
+		const pool = this.connectionManager.getPool();
 		const hasMetadata = await this.hasMetadataColumns(tableName);
 
 		const { where = "", values = [], includeDeleted = false } = options;
@@ -244,13 +244,13 @@ export class DatabaseOperations {
 			query += ` WHERE ${conditions.join(" AND ")}`;
 		}
 
-		const [rows] = await connection.execute(query, queryValues);
+		const [rows] = await pool.execute(query, queryValues);
 		const result = rows as { count: number }[];
 		return result[0]?.count || 0;
 	}
 
 	async restoreDoc(tableName: string, id: number): Promise<boolean> {
-		const connection = this.connectionManager.getConnection();
+		const pool = this.connectionManager.getPool();
 		const hasMetadata = await this.hasMetadataColumns(tableName);
 
 		if (!hasMetadata) {
@@ -259,7 +259,7 @@ export class DatabaseOperations {
 			);
 		}
 
-		const [result] = await connection.execute(
+		const [result] = await pool.execute(
 			`UPDATE ${tableName} SET deleted_at = NULL WHERE id = ? AND deleted_at IS NOT NULL`,
 			[id]
 		);

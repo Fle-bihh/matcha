@@ -12,7 +12,7 @@ export class DatabaseSchemaManager {
 		fields: string,
 		additionalConstraints: string = ""
 	): Promise<void> {
-		const connection = this.connectionManager.getConnection();
+		const pool = this.connectionManager.getPool();
 
 		const query = `
 			CREATE TABLE IF NOT EXISTS ${tableName} (
@@ -25,37 +25,35 @@ export class DatabaseSchemaManager {
 			)
 		`;
 
-		await connection.execute(query);
+		await pool.execute(query);
 
 		await this.ensureMetadataColumns(tableName);
 	}
 
 	async ensureMetadataColumns(tableName: string): Promise<void> {
-		const connection = this.connectionManager.getConnection();
+		const pool = this.connectionManager.getPool();
 
-		const [columns] = await connection.execute(
-			`SHOW COLUMNS FROM ${tableName}`
-		);
+		const [columns] = await pool.execute(`SHOW COLUMNS FROM ${tableName}`);
 
 		const existingColumns = (columns as any[]).map((col) => col.Field);
 		let hasChanges = false;
 
 		if (!existingColumns.includes("created_at")) {
-			await connection.execute(
+			await pool.execute(
 				`ALTER TABLE ${tableName} ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`
 			);
 			hasChanges = true;
 		}
 
 		if (!existingColumns.includes("updated_at")) {
-			await connection.execute(
+			await pool.execute(
 				`ALTER TABLE ${tableName} ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`
 			);
 			hasChanges = true;
 		}
 
 		if (!existingColumns.includes("deleted_at")) {
-			await connection.execute(
+			await pool.execute(
 				`ALTER TABLE ${tableName} ADD COLUMN deleted_at TIMESTAMP NULL`
 			);
 			hasChanges = true;
@@ -69,11 +67,9 @@ export class DatabaseSchemaManager {
 	}
 
 	async hasMetadataColumns(tableName: string): Promise<boolean> {
-		const connection = this.connectionManager.getConnection();
+		const pool = this.connectionManager.getPool();
 
-		const [columns] = await connection.execute(
-			`SHOW COLUMNS FROM ${tableName}`
-		);
+		const [columns] = await pool.execute(`SHOW COLUMNS FROM ${tableName}`);
 
 		const existingColumns = (columns as any[]).map((col) => col.Field);
 

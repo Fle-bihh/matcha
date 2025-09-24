@@ -7,6 +7,9 @@ class Config {
 		user: string;
 		password: string;
 		database: string;
+		pool: {
+			connectionLimit: number;
+		};
 	};
 
 	constructor() {
@@ -16,6 +19,10 @@ class Config {
 			user: process.env.DB_USER || "root",
 			password: process.env.DB_PASSWORD || "",
 			database: process.env.DB_NAME || "matcha",
+			pool: {
+				connectionLimit:
+					Number(process.env.DB_POOL_CONNECTION_LIMIT) || 10,
+			},
 		};
 	}
 }

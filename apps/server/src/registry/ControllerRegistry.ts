@@ -46,7 +46,20 @@ class ControllerRegistry {
 				const handler =
 					controllerInstance[route.handler].bind(controllerInstance);
 
-				(app as any)[method](route.path, handler);
+				const loggedHandler = (req: Request, res: Response) => {
+					logger.debug(
+						`Route called: ${route.method} ${route.path}`,
+						{
+							handler: route.handler,
+							controller: instanceKey,
+							ip: req.ip,
+							userAgent: req.get("User-Agent"),
+						}
+					);
+					return handler(req, res);
+				};
+
+				(app as any)[method](route.path, loggedHandler);
 			});
 
 			const allowedMethods = routes.map((r) => r.method).join(", ");
