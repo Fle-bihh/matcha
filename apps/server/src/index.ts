@@ -37,10 +37,10 @@ class Server {
 
 	private async initializeDatabase(): Promise<void> {
 		try {
-			const dbService =
-				ServiceRegistry.getInstance().getService("DatabaseService");
-			await dbService.connect();
-			("Database connected successfully");
+			const baseRepository =
+				ServiceRegistry.getInstance().getService("BaseRepository");
+			await baseRepository.connect();
+			console.log("Database connected successfully");
 
 			const helloService =
 				ServiceRegistry.getInstance().getService("HelloService");

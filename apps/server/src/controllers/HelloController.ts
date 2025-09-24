@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { Route } from "@/decorators/Route";
-import { ValidateZod } from "@/decorators/ValidateZod";
+import { Validate } from "@/decorators/Validate";
 import { ApiDocs } from "@/decorators/ApiDocs";
 import { BaseController } from "./BaseController";
 import {
@@ -12,7 +12,7 @@ import {
 
 export class HelloController extends BaseController {
 	@Route("GET", "hello", "test")
-	@ValidateZod(GetHelloRequestSchema, "query")
+	@Validate(GetHelloRequestSchema, "query")
 	@ApiDocs(
 		"GET /api/v1/ - Returns a personalized greeting message based on name and greeting type"
 	)
@@ -26,7 +26,7 @@ export class HelloController extends BaseController {
 	}
 
 	@Route("GET", "hello", "health")
-	@ValidateZod(GetHealthRequestSchema, "query")
+	@Validate(GetHealthRequestSchema, "query")
 	@ApiDocs(
 		"GET /api/v1/health - Returns application health status with optional detailed information"
 	)

@@ -13,7 +13,7 @@ declare global {
 	}
 }
 
-export function ValidateZod<T extends ZodType>(
+export function Validate<T extends ZodType>(
 	schema: T,
 	source: "query" | "body" | "params" = "query"
 ) {

@@ -3,7 +3,7 @@ import { DatabaseOperations } from "./DatabaseOperations";
 import { DatabaseSchemaManager } from "./DatabaseSchemaManager";
 import { DocumentWithMetadata } from "@/validation/CommonValidation";
 
-export class DatabaseService {
+export class BaseRepository {
 	private connectionManager: DatabaseConnectionManager;
 	private operations: DatabaseOperations;
 	private schemaManager: DatabaseSchemaManager;

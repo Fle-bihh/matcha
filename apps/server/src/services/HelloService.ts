@@ -4,38 +4,21 @@ import {
 	GetHelloRequestDto,
 	GetHelloResponseDto,
 } from "@/dto";
-import { DatabaseService } from "./db";
-import {
-	TestValue,
-	CreateTestValue,
-	UpdateTestValue,
-} from "@/models/HelloModels";
+import { TestValue, CreateTestValue } from "@/models/HelloModels";
 import { ServiceResponse } from "@/types/ServiceResponse";
 import { StatusCodes } from "http-status-codes";
+import { HelloRepository } from "@/repositories";
 
 export class HelloService {
 	private startTime = Date.now();
-	private dbService: DatabaseService;
-	private readonly tableName = "test_values";
+	private helloRepository: HelloRepository;
 
-	constructor(dbService: DatabaseService) {
-		this.dbService = dbService;
+	constructor(helloRepository: HelloRepository) {
+		this.helloRepository = helloRepository;
 	}
 
 	async initializeTable(): Promise<void> {
-		await this.dbService.createTableWithMetadata(
-			this.tableName,
-			`name VARCHAR(255) NOT NULL,
-			 value VARCHAR(255) NOT NULL`
-		);
-
-		const count = await this.dbService.countDocs(this.tableName);
-		if (count === 0) {
-			await this.createTestValue({
-				name: "test_connection",
-				value: "Database connection successful!",
-			});
-		}
+		await this.helloRepository.initializeTable();
 	}
 
 	public getGreeting(
@@ -122,10 +105,7 @@ export class HelloService {
 		data: CreateTestValue
 	): Promise<ServiceResponse<TestValue | null>> {
 		try {
-			const newValue = await this.dbService.createDocument<TestValue>(
-				this.tableName,
-				data
-			);
+			const newValue = await this.helloRepository.createTestValue(data);
 			return ServiceResponse.success("Test value created", newValue);
 		} catch (error) {
 			return ServiceResponse.failure(
@@ -136,139 +116,11 @@ export class HelloService {
 		}
 	}
 
-	public async getTestValueById(
-		id: number
-	): Promise<ServiceResponse<TestValue | null>> {
-		try {
-			const value = await this.dbService.getDoc<TestValue>(
-				this.tableName,
-				id
-			);
-			if (value) {
-				return ServiceResponse.success("Test value found", value);
-			} else {
-				return ServiceResponse.failure(
-					"Test value not found",
-					null,
-					StatusCodes.NOT_FOUND
-				);
-			}
-		} catch (error) {
-			return ServiceResponse.failure(
-				"Error retrieving test value",
-				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
-			);
-		}
-	}
-
-	public async getAllTestValues(
-		includeDeleted: boolean = false
-	): Promise<ServiceResponse<TestValue[]>> {
-		try {
-			const values = await this.dbService.getDocs<TestValue>(
-				this.tableName,
-				{
-					includeDeleted,
-					orderBy: "created_at DESC",
-				}
-			);
-			return ServiceResponse.success("Test values retrieved", values);
-		} catch (error) {
-			return ServiceResponse.failure(
-				"Error retrieving test values",
-				[],
-				StatusCodes.INTERNAL_SERVER_ERROR
-			);
-		}
-	}
-
-	public async updateTestValue(
-		data: UpdateTestValue
-	): Promise<ServiceResponse<TestValue | null>> {
-		const { id, ...updateData } = data;
-		try {
-			const updatedValue = await this.dbService.updateDoc<TestValue>(
-				this.tableName,
-				id,
-				updateData
-			);
-			if (updatedValue) {
-				return ServiceResponse.success(
-					"Test value updated",
-					updatedValue
-				);
-			} else {
-				return ServiceResponse.failure(
-					"Test value not found",
-					null,
-					StatusCodes.NOT_FOUND
-				);
-			}
-		} catch (error) {
-			return ServiceResponse.failure(
-				"Failed to update test value",
-				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
-			);
-		}
-	}
-
-	public async deleteTestValue(id: number): Promise<ServiceResponse<null>> {
-		try {
-			const success = await this.dbService.deleteDoc(this.tableName, id);
-			if (success) {
-				return ServiceResponse.success("Test value deleted", null);
-			} else {
-				return ServiceResponse.failure(
-					"Test value not found",
-					null,
-					StatusCodes.NOT_FOUND
-				);
-			}
-		} catch (error) {
-			return ServiceResponse.failure(
-				"Failed to delete test value",
-				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
-			);
-		}
-	}
-
-	public async restoreTestValue(id: number): Promise<ServiceResponse<null>> {
-		try {
-			const success = await this.dbService.restoreDoc(this.tableName, id);
-			if (success) {
-				return ServiceResponse.success("Test value restored", null);
-			} else {
-				return ServiceResponse.failure(
-					"Test value not found or not deleted",
-					null,
-					StatusCodes.NOT_FOUND
-				);
-			}
-		} catch (error) {
-			return ServiceResponse.failure(
-				"Failed to restore test value",
-				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
-			);
-		}
-	}
-
 	public async getTestValueByName(
 		name: string
 	): Promise<ServiceResponse<TestValue | null>> {
 		try {
-			const results = await this.dbService.getDocs<TestValue>(
-				this.tableName,
-				{
-					where: "name = ?",
-					values: [name],
-					limit: 1,
-				}
-			);
-			const value = results[0] || null;
+			const value = await this.helloRepository.getTestValueByName(name);
 			if (value) {
 				return ServiceResponse.success("Test value found", value);
 			} else {
@@ -308,41 +160,6 @@ export class HelloService {
 			return ServiceResponse.failure(
 				"Error retrieving test value",
 				"",
-				StatusCodes.INTERNAL_SERVER_ERROR
-			);
-		}
-	}
-
-	public async searchTestValues(
-		searchTerm: string
-	): Promise<ServiceResponse<TestValue[]>> {
-		try {
-			const results = await this.dbService.getDocs<TestValue>(
-				this.tableName,
-				{
-					where: "name LIKE ? OR value LIKE ?",
-					values: [`%${searchTerm}%`, `%${searchTerm}%`],
-					orderBy: "created_at DESC",
-				}
-			);
-			return ServiceResponse.success("Search completed", results);
-		} catch (error) {
-			return ServiceResponse.failure(
-				"Error searching test values",
-				[],
-				StatusCodes.INTERNAL_SERVER_ERROR
-			);
-		}
-	}
-
-	public async countTestValues(): Promise<ServiceResponse<number>> {
-		try {
-			const count = await this.dbService.countDocs(this.tableName);
-			return ServiceResponse.success("Count retrieved", count);
-		} catch (error) {
-			return ServiceResponse.failure(
-				"Error counting test values",
-				0,
 				StatusCodes.INTERNAL_SERVER_ERROR
 			);
 		}

@@ -1,8 +1,9 @@
-import { HelloService, DatabaseService } from "@/services";
+import { HelloService } from "@/services";
+import { HelloRepository, BaseRepository } from "@/repositories";
 
 export interface ServiceContext {
 	HelloService: HelloService;
-	DatabaseService: DatabaseService;
+	BaseRepository: BaseRepository;
 }
 
 class ServiceRegistry {
@@ -10,11 +11,12 @@ class ServiceRegistry {
 	private services: ServiceContext;
 
 	private constructor() {
-		const databaseService = new DatabaseService();
+		const baseRepository = new BaseRepository();
+		const helloRepository = new HelloRepository();
 
 		this.services = {
-			HelloService: new HelloService(databaseService),
-			DatabaseService: databaseService,
+			HelloService: new HelloService(helloRepository),
+			BaseRepository: baseRepository,
 		};
 	}
 
