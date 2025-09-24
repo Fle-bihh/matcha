@@ -1,10 +1,12 @@
 import type { HttpMethod } from "@/types/routes";
+import type { Request, Response, Application } from "express";
 
 interface RouteInfo {
 	method: HttpMethod;
 	path: string;
 	handler: string;
 	instance: new () => any;
+	apiDocs?: string;
 }
 
 class ControllerRegistry {
@@ -15,20 +17,61 @@ class ControllerRegistry {
 		this.routes.push(route);
 	}
 
-	public static setupRoutes(app: Express.Application): void {
+	public static setupRoutes(app: Application): void {
+		const routesByPath = new Map<string, RouteInfo[]>();
+
 		this.routes.forEach((route) => {
-			const method = route.method.toLowerCase();
-
-			const instanceKey = route.instance.name;
-			if (!this.instances.has(instanceKey)) {
-				this.instances.set(instanceKey, new route.instance());
+			if (!routesByPath.has(route.path)) {
+				routesByPath.set(route.path, []);
 			}
+			routesByPath.get(route.path)!.push(route);
+		});
 
-			const controllerInstance = this.instances.get(instanceKey);
-			const handler =
-				controllerInstance[route.handler].bind(controllerInstance);
+		routesByPath.forEach((routes, path) => {
+			routes.forEach((route) => {
+				const method = route.method.toLowerCase();
 
-			(app as any)[method](route.path, handler);
+				const instanceKey = route.instance.name;
+				if (!this.instances.has(instanceKey)) {
+					this.instances.set(instanceKey, new route.instance());
+				}
+
+				const controllerInstance = this.instances.get(instanceKey);
+				const handler =
+					controllerInstance[route.handler].bind(controllerInstance);
+
+				(app as any)[method](route.path, handler);
+			});
+
+			const allowedMethods = routes.map((r) => r.method).join(", ");
+			const apiDocsForPath = routes
+				.filter((r) => r.apiDocs)
+				.map((r) => ({
+					method: r.method,
+					description: r.apiDocs,
+				}));
+
+			app.options(path, (req: Request, res: Response) => {
+				res.setHeader("Allow", allowedMethods);
+				res.setHeader("Access-Control-Allow-Methods", allowedMethods);
+				res.setHeader(
+					"Access-Control-Allow-Headers",
+					"Content-Type, Authorization"
+				);
+
+				if (apiDocsForPath.length > 0) {
+					res.json({
+						path: path,
+						allowedMethods: allowedMethods.split(", "),
+						documentation: apiDocsForPath,
+					});
+				} else {
+					res.json({
+						path: path,
+						allowedMethods: allowedMethods.split(", "),
+					});
+				}
+			});
 		});
 	}
 }

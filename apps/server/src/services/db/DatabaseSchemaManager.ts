@@ -27,14 +27,12 @@ export class DatabaseSchemaManager {
 
 		await connection.execute(query);
 
-		// Ensure metadata columns exist
 		await this.ensureMetadataColumns(tableName);
 	}
 
 	async ensureMetadataColumns(tableName: string): Promise<void> {
 		const connection = this.connectionManager.getConnection();
 
-		// Check which columns exist
 		const [columns] = await connection.execute(
 			`SHOW COLUMNS FROM ${tableName}`
 		);
@@ -42,7 +40,6 @@ export class DatabaseSchemaManager {
 		const existingColumns = (columns as any[]).map((col) => col.Field);
 		let hasChanges = false;
 
-		// Add missing metadata columns
 		if (!existingColumns.includes("created_at")) {
 			await connection.execute(
 				`ALTER TABLE ${tableName} ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`

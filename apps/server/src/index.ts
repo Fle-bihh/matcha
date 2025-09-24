@@ -42,7 +42,6 @@ class Server {
 			await dbService.connect();
 			("Database connected successfully");
 
-			// Initialiser les tables via les services
 			const helloService =
 				ServiceRegistry.getInstance().getService("HelloService");
 			await helloService.initializeTable();
@@ -54,6 +53,7 @@ class Server {
 	public async start(): Promise<void> {
 		await this.initializeDatabase();
 		this.app.listen(this.port, () => {});
+		console.log(`Server is running on port ${this.port}`);
 	}
 }
 

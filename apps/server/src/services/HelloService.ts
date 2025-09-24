@@ -1,9 +1,17 @@
+import {
+	GetHealthRequestDto,
+	GetHealthResponseDto,
+	GetHelloRequestDto,
+	GetHelloResponseDto,
+} from "@/dto";
 import { DatabaseService } from "./db";
 import {
 	TestValue,
 	CreateTestValue,
 	UpdateTestValue,
 } from "@/models/HelloModels";
+import { ServiceResponse } from "@/types/ServiceResponse";
+import { StatusCodes } from "http-status-codes";
 
 export class HelloService {
 	private startTime = Date.now();
@@ -31,16 +39,12 @@ export class HelloService {
 	}
 
 	public getGreeting(
-		name?: string,
-		greetingType: "standard" | "random" | "formal" = "standard"
-	): {
-		message: string;
-		greeting_type: string;
-		timestamp: string;
-	} {
+		dto: GetHelloRequestDto
+	): ServiceResponse<GetHelloResponseDto> {
+		const { name, greeting_type = "standard" } = dto;
 		let message: string;
 
-		switch (greetingType) {
+		switch (greeting_type) {
 			case "random":
 				message = this.getRandomGreeting(name);
 				break;
@@ -52,11 +56,11 @@ export class HelloService {
 				break;
 		}
 
-		return {
+		return ServiceResponse.success("Greeting generated", {
 			message,
-			greeting_type: greetingType,
+			greeting_type,
 			timestamp: new Date().toISOString(),
-		};
+		});
 	}
 
 	private getStandardGreeting(name?: string): string {
@@ -90,16 +94,10 @@ export class HelloService {
 		return "Good day. I hope this message finds you well.";
 	}
 
-	public getHealthStatus(includeDetails = false): {
-		status: string;
-		timestamp: string;
-		service: string;
-		uptime?: number;
-		details?: {
-			memory_usage?: NodeJS.MemoryUsage;
-			cpu_usage?: number;
-		};
-	} {
+	public getHealthStatus(
+		dto: GetHealthRequestDto
+	): ServiceResponse<GetHealthResponseDto> {
+		const { include_details: includeDetails = false } = dto;
 		const baseStatus = {
 			status: "healthy",
 			timestamp: new Date().toISOString(),
@@ -107,79 +105,246 @@ export class HelloService {
 		};
 
 		if (includeDetails) {
-			return {
+			return ServiceResponse.success("Health status with details", {
 				...baseStatus,
 				uptime: Date.now() - this.startTime,
 				details: {
 					memory_usage: process.memoryUsage(),
-					cpu_usage: process.cpuUsage().user / 1000000, // Convert to seconds
+					cpu_usage: process.cpuUsage().user / 1000000,
 				},
-			};
+			});
 		}
 
-		return baseStatus;
+		return ServiceResponse.success("Basic health status", baseStatus);
 	}
 
-	async createTestValue(data: CreateTestValue): Promise<TestValue> {
-		return this.dbService.createDocument<TestValue>(this.tableName, data);
+	public async createTestValue(
+		data: CreateTestValue
+	): Promise<ServiceResponse<TestValue | null>> {
+		try {
+			const newValue = await this.dbService.createDocument<TestValue>(
+				this.tableName,
+				data
+			);
+			return ServiceResponse.success("Test value created", newValue);
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Failed to create test value",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
 	}
 
-	async getTestValueById(id: number): Promise<TestValue | null> {
-		return this.dbService.getDoc<TestValue>(this.tableName, id);
-	}
-
-	async getAllTestValues(
-		includeDeleted: boolean = false
-	): Promise<TestValue[]> {
-		return this.dbService.getDocs<TestValue>(this.tableName, {
-			includeDeleted,
-			orderBy: "created_at DESC",
-		});
-	}
-
-	async updateTestValue(data: UpdateTestValue): Promise<TestValue | null> {
-		const { id, ...updateData } = data;
-		return this.dbService.updateDoc<TestValue>(
-			this.tableName,
-			id,
-			updateData
-		);
-	}
-
-	async deleteTestValue(id: number): Promise<boolean> {
-		return this.dbService.deleteDoc(this.tableName, id);
-	}
-
-	async restoreTestValue(id: number): Promise<boolean> {
-		return this.dbService.restoreDoc(this.tableName, id);
-	}
-
-	async getTestValueByName(name: string): Promise<TestValue | null> {
-		const results = await this.dbService.getDocs<TestValue>(
-			this.tableName,
-			{
-				where: "name = ?",
-				values: [name],
-				limit: 1,
+	public async getTestValueById(
+		id: number
+	): Promise<ServiceResponse<TestValue | null>> {
+		try {
+			const value = await this.dbService.getDoc<TestValue>(
+				this.tableName,
+				id
+			);
+			if (value) {
+				return ServiceResponse.success("Test value found", value);
+			} else {
+				return ServiceResponse.failure(
+					"Test value not found",
+					null,
+					StatusCodes.NOT_FOUND
+				);
 			}
-		);
-		return results[0] || null;
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Error retrieving test value",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
 	}
 
-	async getTestValue(): Promise<string> {
-		const testValue = await this.getTestValueByName("test_connection");
-		return testValue?.value || "No test value found";
+	public async getAllTestValues(
+		includeDeleted: boolean = false
+	): Promise<ServiceResponse<TestValue[]>> {
+		try {
+			const values = await this.dbService.getDocs<TestValue>(
+				this.tableName,
+				{
+					includeDeleted,
+					orderBy: "created_at DESC",
+				}
+			);
+			return ServiceResponse.success("Test values retrieved", values);
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Error retrieving test values",
+				[],
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
 	}
 
-	async searchTestValues(searchTerm: string): Promise<TestValue[]> {
-		return this.dbService.getDocs<TestValue>(this.tableName, {
-			where: "name LIKE ? OR value LIKE ?",
-			values: [`%${searchTerm}%`, `%${searchTerm}%`],
-			orderBy: "created_at DESC",
-		});
+	public async updateTestValue(
+		data: UpdateTestValue
+	): Promise<ServiceResponse<TestValue | null>> {
+		const { id, ...updateData } = data;
+		try {
+			const updatedValue = await this.dbService.updateDoc<TestValue>(
+				this.tableName,
+				id,
+				updateData
+			);
+			if (updatedValue) {
+				return ServiceResponse.success(
+					"Test value updated",
+					updatedValue
+				);
+			} else {
+				return ServiceResponse.failure(
+					"Test value not found",
+					null,
+					StatusCodes.NOT_FOUND
+				);
+			}
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Failed to update test value",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
 	}
 
-	async countTestValues(): Promise<number> {
-		return this.dbService.countDocs(this.tableName);
+	public async deleteTestValue(id: number): Promise<ServiceResponse<null>> {
+		try {
+			const success = await this.dbService.deleteDoc(this.tableName, id);
+			if (success) {
+				return ServiceResponse.success("Test value deleted", null);
+			} else {
+				return ServiceResponse.failure(
+					"Test value not found",
+					null,
+					StatusCodes.NOT_FOUND
+				);
+			}
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Failed to delete test value",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
+	public async restoreTestValue(id: number): Promise<ServiceResponse<null>> {
+		try {
+			const success = await this.dbService.restoreDoc(this.tableName, id);
+			if (success) {
+				return ServiceResponse.success("Test value restored", null);
+			} else {
+				return ServiceResponse.failure(
+					"Test value not found or not deleted",
+					null,
+					StatusCodes.NOT_FOUND
+				);
+			}
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Failed to restore test value",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
+	public async getTestValueByName(
+		name: string
+	): Promise<ServiceResponse<TestValue | null>> {
+		try {
+			const results = await this.dbService.getDocs<TestValue>(
+				this.tableName,
+				{
+					where: "name = ?",
+					values: [name],
+					limit: 1,
+				}
+			);
+			const value = results[0] || null;
+			if (value) {
+				return ServiceResponse.success("Test value found", value);
+			} else {
+				return ServiceResponse.failure(
+					"Test value not found",
+					null,
+					StatusCodes.NOT_FOUND
+				);
+			}
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Error retrieving test value",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
+	public async getTestValue(): Promise<ServiceResponse<string>> {
+		try {
+			const testValueResponse = await this.getTestValueByName(
+				"test_connection"
+			);
+			if (testValueResponse.success && testValueResponse.responseObject) {
+				return ServiceResponse.success(
+					"Test value retrieved",
+					testValueResponse.responseObject.value
+				);
+			} else {
+				return ServiceResponse.failure(
+					"No test value found",
+					"",
+					StatusCodes.NOT_FOUND
+				);
+			}
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Error retrieving test value",
+				"",
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
+	public async searchTestValues(
+		searchTerm: string
+	): Promise<ServiceResponse<TestValue[]>> {
+		try {
+			const results = await this.dbService.getDocs<TestValue>(
+				this.tableName,
+				{
+					where: "name LIKE ? OR value LIKE ?",
+					values: [`%${searchTerm}%`, `%${searchTerm}%`],
+					orderBy: "created_at DESC",
+				}
+			);
+			return ServiceResponse.success("Search completed", results);
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Error searching test values",
+				[],
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
+	public async countTestValues(): Promise<ServiceResponse<number>> {
+		try {
+			const count = await this.dbService.countDocs(this.tableName);
+			return ServiceResponse.success("Count retrieved", count);
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Error counting test values",
+				0,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
 	}
 }

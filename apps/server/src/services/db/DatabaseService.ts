@@ -98,7 +98,6 @@ export class DatabaseService {
 
 	async ensureMetadataColumns(tableName: string): Promise<void> {
 		await this.schemaManager.ensureMetadataColumns(tableName);
-		// Clear cache after potentially adding metadata columns
 		this.operations.clearMetadataCache(tableName);
 	}
 

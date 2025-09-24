@@ -2,7 +2,7 @@ export const API_VERSION = "v1" as const;
 export const API_PREFIX = `/api/${API_VERSION}` as const;
 
 export const ROUTES = {
-	HELLO: {
+	hello: {
 		test: "/",
 		health: "/health",
 		"db-test": "/db-test",

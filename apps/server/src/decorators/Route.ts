@@ -5,6 +5,7 @@ import {
 	type RouteGroups,
 	type RouteKeys,
 } from "@/constants/routes";
+import { getApiDocs } from "./ApiDocs";
 
 export function Route<T extends RouteGroups, K extends RouteKeys<T>>(
 	method: HttpMethod,
@@ -16,11 +17,21 @@ export function Route<T extends RouteGroups, K extends RouteKeys<T>>(
 		propertyKey: string,
 		descriptor: PropertyDescriptor
 	) {
+		const route = buildApiRoute(group, key);
+
+		const apiDocs = getApiDocs(target, propertyKey);
+		if (apiDocs) {
+			console.log(
+				`📝 API Documentation - ${method} ${route}: ${apiDocs}`
+			);
+		}
+
 		ControllerRegistry.registerRoute({
 			method,
-			path: buildApiRoute(group, key),
+			path: route,
 			handler: propertyKey,
 			instance: target.constructor,
+			apiDocs,
 		});
 	};
 }

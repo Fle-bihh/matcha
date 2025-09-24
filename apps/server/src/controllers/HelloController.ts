@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { Route } from "@/decorators/Route";
 import { ValidateZod } from "@/decorators/ValidateZod";
+import { ApiDocs } from "@/decorators/ApiDocs";
 import { BaseController } from "./BaseController";
 import {
 	GetHelloRequestSchema,
@@ -10,39 +11,39 @@ import {
 } from "@/dto";
 
 export class HelloController extends BaseController {
-	@Route("GET", "HELLO", "test")
+	@Route("GET", "hello", "test")
 	@ValidateZod(GetHelloRequestSchema, "query")
+	@ApiDocs(
+		"GET /api/v1/ - Returns a personalized greeting message based on name and greeting type"
+	)
 	private getHello(req: Request, res: Response): void {
 		const { name, greeting_type } = req.query as GetHelloRequestDto;
-		const result = this.ctx.HelloService.getGreeting(name, greeting_type);
-		res.json(result);
+		const greetingResponse = this.ctx.HelloService.getGreeting({
+			name,
+			greeting_type,
+		});
+		res.status(greetingResponse.statusCode).send(greetingResponse);
 	}
 
-	@Route("GET", "HELLO", "health")
+	@Route("GET", "hello", "health")
 	@ValidateZod(GetHealthRequestSchema, "query")
+	@ApiDocs(
+		"GET /api/v1/health - Returns application health status with optional detailed information"
+	)
 	private getHealth(req: Request, res: Response): void {
 		const { include_details } = req.query as GetHealthRequestDto;
-		const healthStatus =
-			this.ctx.HelloService.getHealthStatus(include_details);
-		res.json(healthStatus);
+		const healthStatusResponse = this.ctx.HelloService.getHealthStatus({
+			include_details,
+		});
+		res.status(healthStatusResponse.statusCode).send(healthStatusResponse);
 	}
 
-	@Route("GET", "HELLO", "db-test")
+	@Route("GET", "hello", "db-test")
+	@ApiDocs(
+		"GET /api/v1/db-test - Tests database connectivity and returns connection status"
+	)
 	private async getDbTest(req: Request, res: Response): Promise<void> {
-		try {
-			const testValue = await this.ctx.HelloService.getTestValue();
-			res.json({
-				status: "success",
-				message: testValue,
-				timestamp: new Date().toISOString(),
-			});
-		} catch (error) {
-			console.error("Database test failed:", error);
-			res.status(500).json({
-				status: "error",
-				message: "Database connection failed",
-				error: (error as Error).message,
-			});
-		}
+		const testValue = await this.ctx.HelloService.getTestValue();
+		res.status(testValue.statusCode).send(testValue);
 	}
 }
