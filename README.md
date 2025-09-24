@@ -1,57 +1,71 @@
-# 💚 Web Matcha – Full-Stack Dating App
+# Matcha
 
-This project is a **full-stack dating platform** built with **React, Express, and MySQL**, using **TypeScript** across the stack.  
-Its main goal is not only to meet the academic requirements of my cursus but also to serve as a **clean, modular, and reusable boilerplate** for future real-world projects.
+**Full-stack TypeScript application** with monorepo architecture and Express.js backend.
 
----
+## 🏗️ Architecture
 
-## 🎯 Project Goals
+**Monorepo structure**:
 
--   🏗 **Build a production-quality architecture** with frontend, backend, and database running in Docker
--   ⚙️ **Ensure scalability and maintainability** through strong separation of concerns and shared types
--   🔐 **Focus on data flow, security, and modularity**, not just UI polish
--   🚀 **Provide a solid starting point** for projects with authentication, matching, real-time chat, and notifications
+-   **Server**: Express.js REST API
+-   **Web**: Frontend application
+-   **Shared**: Common utilities
 
----
+## 🚀 Features
 
-## 🧩 Key Features (Planned)
+-   **Decorator-based routing** with automatic registration
+-   **Input validation** with Zod schemas
+-   **Database operations** with MySQL integration
+-   **Soft delete** functionality
+-   **Health check** endpoints
+-   **Docker** containerization
 
--   ✅ **Secure registration**, email verification, and JWT-based authentication
--   👤 **User profiles** with pictures, interests, fame rating, and location-based suggestions
--   💡 **Smart matching system** with sorting/filtering
--   💬 **Real-time chat and notifications** via WebSockets
--   📱 **Mobile-friendly layout** with Material UI
+## 📁 Project Structure
 
----
+```
+matcha/
+├── apps/server/         # Express.js API
+├── apps/web/           # Frontend app
+├── packages/shared/    # Common utilities
+└── docker-compose.yml  # Container setup
+```
 
-## 🛠️ Tech Highlights
+## 🛠️ Tech Stack
 
-**Frontend:**  
-React · Redux Toolkit (Entity Adapter) · React Router · Axios Adapter
+-   **Express.js** with TypeScript
+-   **MySQL** database
+-   **Zod** validation
+-   **Docker** containerization
 
-**Backend:**  
-Express · Socket.io · Layered Architecture · Manual SQL
+## 🔧 Quick Start
 
-**Database:**  
-MySQL with relational design and metadata columns
+```bash
+docker-compose up      # Start all services
+npm run build          # Build packages
+npm run dev            # Development mode
+```
 
-**Monorepo:**  
-Shared types/constants between frontend and backend
+## 🐳 Docker Commands
 
-**DevOps:**  
-Docker Compose for full local environment
+```bash
+# Start services
+docker-compose up -d
 
----
+# Stop services
+docker-compose down
 
-## 📖 Documentation
+# Rebuild services
+docker-compose up --build
 
-All project decisions, schemas, and API contracts are documented in `/docs`.  
-This ensures every choice is explicit and the project is **easy to understand, extend, and reuse**.
+# View logs
+docker-compose logs server
 
----
+# Access containers
+docker-compose exec server sh
+docker-compose exec db mysql -u root -p
+```
 
-## 📜 Development History
+� **API Documentation**: Available in code or call any route with `OPTIONS` method
 
-Progress and key decisions are tracked in `HISTORY.md`.
+## 🔒 Configuration
 
----
+Set up `.env` file with database credentials and ports following the `.env.example` file
