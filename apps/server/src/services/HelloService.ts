@@ -121,26 +121,16 @@ export class HelloService extends BaseService {
 		}
 	}
 
-	public async getTestValueByName(
-		name: string
-	): Promise<ServiceResponse<TestValue | null>> {
+	private async getTestValueByName(name: string): Promise<TestValue | null> {
 		try {
 			const value = await this.helloRepository.getTestValueByName(name);
 			if (value) {
-				return ServiceResponse.success("Test value found", value);
+				return value;
 			} else {
-				return ServiceResponse.failure(
-					"Test value not found",
-					null,
-					StatusCodes.NOT_FOUND
-				);
+				return null;
 			}
 		} catch (error) {
-			return ServiceResponse.failure(
-				"Error retrieving test value",
-				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
-			);
+			return null;
 		}
 	}
 
@@ -149,10 +139,10 @@ export class HelloService extends BaseService {
 			const testValueResponse = await this.getTestValueByName(
 				"test_connection"
 			);
-			if (testValueResponse.success && testValueResponse.responseObject) {
+			if (testValueResponse) {
 				return ServiceResponse.success(
 					"Test value retrieved",
-					testValueResponse.responseObject.value
+					testValueResponse.value
 				);
 			} else {
 				return ServiceResponse.failure(
