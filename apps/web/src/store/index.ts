@@ -1,16 +1,22 @@
 import { configureStore } from "@reduxjs/toolkit";
-import userReducer, { setContainer } from "./slices/userSlice";
-import { Container } from "../container/Container";
+import { createUserSlice } from "./slices/userSlice";
+import { IContainer } from "../types/container";
 
-const container = new Container();
+export const createStore = (container: IContainer) => {
+	const store = configureStore({
+		reducer: {
+			users: createUserSlice(container).reducer,
+		},
+		middleware: (getDefaultMiddleware) =>
+			getDefaultMiddleware({
+				thunk: {
+					extraArgument: { container },
+				},
+			}),
+	});
 
-setContainer(container);
+	return store;
+};
 
-export const store = configureStore({
-	reducer: {
-		users: userReducer,
-	},
-});
-
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<ReturnType<typeof createStore>["getState"]>;
+export type AppDispatch = ReturnType<typeof createStore>["dispatch"];
