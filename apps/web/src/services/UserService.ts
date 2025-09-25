@@ -1,6 +1,6 @@
 import { logger, User } from "@matcha/shared";
 import { BaseService } from "./ApiService";
-import { ETokens } from "../types/container";
+import { ETokens } from "@/types/container";
 import type { ApiService } from "./ApiService";
 
 export class UserService extends BaseService {

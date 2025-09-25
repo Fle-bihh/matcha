@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { createUserSlice } from "./slices/userSlice";
-import { IContainer } from "../types/container";
+import { IContainer } from "@/types/container";
 
 export const createStore = (container: IContainer) => {
 	const store = configureStore({

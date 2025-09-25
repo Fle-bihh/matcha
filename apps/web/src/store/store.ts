@@ -1,4 +1,4 @@
-import { Container } from "../container/Container";
+import { Container } from "@/container/Container";
 import { createStore } from "./index";
 
 export const container = new Container();

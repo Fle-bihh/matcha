@@ -1,5 +1,5 @@
 import { logger } from "@matcha/shared";
-import { IContainer } from "../types/container";
+import { IContainer } from "@/types/container";
 
 export abstract class BaseService {
 	protected container: IContainer;

@@ -5,8 +5,8 @@ import {
 	createAsyncThunk,
 } from "@reduxjs/toolkit";
 import { logger, User } from "@matcha/shared";
-import { ETokens, IContainer } from "../../types/container";
-import { UserService } from "../../services";
+import { ETokens, IContainer } from "@/types/container";
+import { UserService } from "@/services";
 
 const userAdapter = createEntityAdapter<User>();
 

@@ -1,5 +1,5 @@
-import { ETokens, IContainer } from "../types/container";
-import { ApiService, UserService } from "../services";
+import { ETokens, IContainer } from "@/types/container";
+import { ApiService, UserService } from "@/services";
 
 type ServiceConstructor = new (container: IContainer) => any;
 

@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import { useAppSelector } from "../store/hooks";
-import { useUserActions } from "../store/userActions";
 import {
 	selectUsers,
-	selectUsersLoading,
 	selectUsersError,
-} from "../store/selectors/userSelectors";
+	selectUsersLoading,
+	useAppSelector,
+	useUserActions,
+} from "@/store/exports";
 
 export const UserList: React.FC = () => {
 	const users = useAppSelector(selectUsers);

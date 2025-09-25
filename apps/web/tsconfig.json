@@ -16,7 +16,10 @@
 		"noEmit": true,
 		"jsx": "react-jsx",
 		"baseUrl": "src/",
-		"allowImportingTsExtensions": true
+		"allowImportingTsExtensions": true,
+		"paths": {
+			"@/*": ["./*"]
+		}
 	},
 	"include": ["src"],
 	"references": [{ "path": "../../packages/shared" }]
