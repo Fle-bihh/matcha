@@ -13,7 +13,7 @@ class Config {
 	};
 
 	constructor() {
-		this.port = Number(process.env.PORT) || 3000;
+		this.port = Number(process.env.SERVER_PORT) || 3000;
 		this.database = {
 			host: process.env.DB_HOST || "localhost",
 			user: process.env.DB_USER || "root",

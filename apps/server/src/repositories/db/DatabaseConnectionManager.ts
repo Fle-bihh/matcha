@@ -17,29 +17,49 @@ export class DatabaseConnectionManager {
 	}
 
 	async connect(): Promise<void> {
-		try {
-			this.pool = mysql.createPool({
-				host: config.database.host,
-				user: config.database.user,
-				password: config.database.password,
-				database: config.database.database,
-				connectionLimit: config.database.pool.connectionLimit,
-				// Configuration additionnelle recommandée pour les pools
-				waitForConnections: true,
-				queueLimit: 0,
-			});
+		const maxRetries = 10;
+		const retryDelay = 10000; // 10 secondes
 
-			// Test de la connexion pool
-			const connection = await this.pool.getConnection();
-			await connection.ping();
-			connection.release();
+		for (let attempt = 1; attempt <= maxRetries; attempt++) {
+			try {
+				this.pool = mysql.createPool({
+					host: config.database.host,
+					user: config.database.user,
+					password: config.database.password,
+					database: config.database.database,
+					connectionLimit: config.database.pool.connectionLimit,
+					waitForConnections: true,
+					queueLimit: 0,
+				});
 
-			logger.info(
-				`Database pool connected successfully with ${config.database.pool.connectionLimit} connections`
-			);
-		} catch (error) {
-			logger.error("Database pool connection failed:", error);
-			throw error;
+				const connection = await this.pool.getConnection();
+				await connection.ping();
+				connection.release();
+
+				logger.info(
+					`Database pool connected successfully with ${config.database.pool.connectionLimit} connections`
+				);
+				return;
+			} catch (error) {
+				logger.error(
+					`Database connection attempt ${attempt}/${maxRetries} failed:`,
+					error
+				);
+
+				if (attempt === maxRetries) {
+					logger.error(
+						"Database pool connection failed after all retries"
+					);
+					throw error;
+				}
+
+				logger.info(
+					`Retrying database connection in ${
+						retryDelay / 1000
+					} seconds...`
+				);
+				await new Promise((resolve) => setTimeout(resolve, retryDelay));
+			}
 		}
 	}
 
@@ -87,7 +107,6 @@ export class DatabaseConnectionManager {
 		return this.pool !== null;
 	}
 
-	// Méthode pour obtenir des informations sur le pool
 	async getPoolInfo(): Promise<{
 		connectionLimit: number;
 		activeConnections: number;
@@ -95,7 +114,6 @@ export class DatabaseConnectionManager {
 		if (!this.pool) return null;
 
 		try {
-			// Pour obtenir le nombre de connexions actives, on peut utiliser une requête
 			const [rows] = await this.pool.execute(
 				'SHOW STATUS WHERE variable_name = "Threads_connected"'
 			);

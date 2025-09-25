@@ -7,16 +7,15 @@ COPY tsconfig*.json ./
 
 COPY packages/shared/package.json ./packages/shared/
 COPY apps/server/package.json ./apps/server/
-COPY apps/web/package.json ./apps/web/
 
 RUN npm install
 
 COPY packages ./packages
 COPY apps ./apps
 
-RUN npm run build
+RUN npm run build -w @matcha/server
 
-EXPOSE 3000
+EXPOSE ${SERVER_PORT}
 
 WORKDIR /app/apps/server
 
