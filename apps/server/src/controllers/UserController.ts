@@ -12,7 +12,7 @@ export class UserController extends BaseController {
 	}
 
 	@Route("GET", "user", "all")
-	@Auth()
+	// @Auth()
 	@ApiDocs(" Retrieve all users")
 	private async getAllUsers(req: Request, res: Response): Promise<void> {
 		const testValue = await this.userService.getAllUsers();

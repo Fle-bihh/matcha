@@ -13,6 +13,7 @@ RUN npm install
 COPY packages ./packages
 COPY apps ./apps
 
+RUN npm run build -w @matcha/shared
 RUN npm run build -w @matcha/server
 
 EXPOSE ${SERVER_PORT}
