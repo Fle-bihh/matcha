@@ -2,25 +2,25 @@
 	"name": "@matcha/web",
 	"version": "1.0.0",
 	"description": "",
-	"main": "index.js",
+	"type": "module",
 	"scripts": {
-		"dev": "next dev",
-		"build": "next build",
-		"start": "next start"
+		"dev": "vite --port 3001",
+		"build": "vite build",
+		"start": "vite preview"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
 		"@matcha/shared": "^1.0.0",
-		"next": "^14.0.0",
-		"react": "^18.0.0",
-		"react-dom": "^18.0.0"
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
 	},
 	"devDependencies": {
-		"@types/node": "^24.5.2",
-		"@types/react": "^18.0.0",
-		"@types/react-dom": "^18.0.0",
-		"typescript": "^5.9.2"
+		"@types/react": "^18.2.43",
+		"@types/react-dom": "^18.2.17",
+		"@vitejs/plugin-react": "^4.2.1",
+		"typescript": "^5.9.2",
+		"vite": "^5.0.8"
 	}
 }

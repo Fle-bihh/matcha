@@ -21,31 +21,6 @@ services:
         depends_on:
             - db
 
-    web:
-        build:
-            context: .
-            dockerfile: ./apps/web/Dockerfile
-            args:
-                WEB_PORT: ${WEB_PORT}
-        ports:
-            - "${WEB_PORT}:${WEB_PORT}"
-        container_name: ${CONTAINER_WEB}
-        restart: unless-stopped
-        env_file:
-            - .env
-        environment:
-            - NODE_ENV=${NODE_ENV}
-            - PORT=${WEB_PORT}
-            - NEXT_PUBLIC_API_URL=http://localhost:${PORT}
-        volumes:
-            - ./apps/web/src:/app/apps/web/src
-            - ./packages/shared/src:/app/packages/shared/src
-            - /app/node_modules
-            - /app/apps/web/node_modules
-            - /app/apps/web/.next
-        depends_on:
-            - server
-
     db:
         image: mysql:8.0
         container_name: ${CONTAINER_DB}
