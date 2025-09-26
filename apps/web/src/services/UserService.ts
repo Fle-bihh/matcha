@@ -10,6 +10,7 @@ export class UserService extends BaseService {
 
 	async getUsers(): Promise<User[]> {
 		logger.info("Fetching users from /user/users endpoint");
+
 		const response = await this.apiService.get<{
 			success: boolean;
 			message: string;
@@ -18,5 +19,23 @@ export class UserService extends BaseService {
 		}>("/user/users");
 
 		return response.responseObject || [];
+	}
+
+	async getUserById(id: string): Promise<User | null> {
+		logger.info(`Fetching user with id ${id}`);
+
+		try {
+			const response = await this.apiService.get<{
+				success: boolean;
+				message: string;
+				responseObject: User;
+				statusCode: number;
+			}>(`/user/users/${id}`);
+
+			return response.responseObject;
+		} catch (error) {
+			logger.error(`Failed to fetch user with id ${id}`, error);
+			return null;
+		}
 	}
 }

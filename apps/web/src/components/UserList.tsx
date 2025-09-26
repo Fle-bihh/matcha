@@ -1,29 +1,39 @@
 import React, { useEffect } from "react";
-import {
-	selectUsers,
-	selectUsersError,
-	selectUsersLoading,
-	useAppSelector,
-	useUserActions,
-} from "@/store/exports";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store";
+import { useUserStore } from "@/store/hooks";
+import { fetchUsers } from "@/store/thunks/userThunks";
 
 export const UserList: React.FC = () => {
-	const users = useAppSelector(selectUsers);
-	const loading = useAppSelector(selectUsersLoading);
-	const error = useAppSelector(selectUsersError);
-	const { fetchUsers, clearError } = useUserActions();
+	const dispatch = useDispatch<AppDispatch>();
+	const { getUsers, isUsersLoading, isUsersFetched, hasUsersFetchError } =
+		useUserStore();
+	const users = getUsers;
+	const loading = isUsersLoading;
+	const fetched = isUsersFetched;
+	const error = hasUsersFetchError;
 
 	useEffect(() => {
-		fetchUsers();
-	}, []);
+		if (!fetched && !loading) {
+			dispatch(fetchUsers());
+		}
+	}, [fetched, loading, dispatch]);
+
+	const handleRefresh = async () => {
+		try {
+			await dispatch(fetchUsers()).unwrap();
+		} catch (error) {
+			console.error("Erreur lors du rafraîchissement:", error);
+		}
+	};
 
 	if (loading) return <div>Chargement...</div>;
+
 	if (error) {
 		return (
 			<div>
-				<div>Erreur: {error}</div>
-				<button onClick={clearError}>Effacer l'erreur</button>
-				<button onClick={fetchUsers}>Réessayer</button>
+				<div>Erreur lors du chargement des utilisateurs</div>
+				<button onClick={handleRefresh}>Réessayer</button>
 			</div>
 		);
 	}
@@ -42,7 +52,7 @@ export const UserList: React.FC = () => {
 					))}
 				</ul>
 			)}
-			<button onClick={fetchUsers}>Actualiser</button>
+			<button onClick={handleRefresh}>Actualiser</button>
 		</div>
 	);
 };

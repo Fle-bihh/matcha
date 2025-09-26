@@ -1,8 +1,8 @@
 import { Container } from "@/container/Container";
-import { createStore } from "./index";
+import { createStore } from "@/store";
 
-export const container = new Container();
-export const store = createStore(container);
+// Créer le container et le store séparément pour éviter les dépendances circulaires
+const container = new Container();
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+// Le store sera créé dans le container
+export const store = container.store;

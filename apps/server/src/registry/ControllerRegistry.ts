@@ -20,6 +20,10 @@ class ControllerRegistry {
 		this.routes.push(route);
 	}
 
+	public static get containerInstance(): Container {
+		return this.container;
+	}
+
 	public static setupRoutes(app: Application): void {
 		const routesByPath = new Map<string, RouteInfo[]>();
 

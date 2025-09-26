@@ -30,7 +30,7 @@ class Server {
 		logger.info(`Starting server on port ${port}`);
 		this.app = express();
 		this.port = port;
-		this.container = new Container();
+		this.container = ControllerRegistry.containerInstance;
 		this.gracefulShutdown = GracefulShutdown.getInstance();
 		this.setup();
 	}
