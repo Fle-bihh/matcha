@@ -1,5 +1,5 @@
+import { EEntityTypes, EStoreSlices } from "@/types/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { EEntityTypes } from "@/types/entities";
 
 export interface EntityState {
 	[entityType: string]: { [id: string]: any };
@@ -8,7 +8,7 @@ export interface EntityState {
 const initialState: EntityState = {};
 
 const entitiesSlice = createSlice({
-	name: "entities",
+	name: EStoreSlices.Entities,
 	initialState,
 	reducers: {
 		setEntity: (

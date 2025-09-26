@@ -1,3 +1,4 @@
+import { EStoreSlices } from "@/types/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface FlagState {
@@ -7,7 +8,7 @@ export interface FlagState {
 const initialState: FlagState = {};
 
 const flagsSlice = createSlice({
-	name: "flags",
+	name: EStoreSlices.Flags,
 	initialState,
 	reducers: {
 		setFlag: (

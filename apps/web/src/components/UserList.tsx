@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store";
-import { useUserStore } from "@/store/hooks";
-import { fetchUsers } from "@/store/thunks/userThunks";
+import { useUserStore, fetchUsers } from "@/store";
+import { TAppDispatch } from "@/types/store";
 
 export const UserList: React.FC = () => {
-	const dispatch = useDispatch<AppDispatch>();
+	const dispatch = useDispatch<TAppDispatch>();
 	const { getUsers, isUsersLoading, isUsersFetched, hasUsersFetchError } =
 		useUserStore();
 	const users = getUsers;
@@ -21,7 +20,7 @@ export const UserList: React.FC = () => {
 
 	const handleRefresh = async () => {
 		try {
-			await dispatch(fetchUsers()).unwrap();
+			await dispatch(fetchUsers());
 		} catch (error) {
 			console.error("Erreur lors du rafraîchissement:", error);
 		}

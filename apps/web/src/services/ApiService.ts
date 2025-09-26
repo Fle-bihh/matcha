@@ -1,24 +1,17 @@
 import { logger } from "@matcha/shared";
 import { IContainer } from "@/types/container";
-
-export abstract class BaseService {
-	protected container: IContainer;
-
-	constructor(container: IContainer) {
-		this.container = container;
-	}
-}
+import { BaseService } from "./BaseService";
+import { API_BASE_URL } from "@/constants/api";
 
 export class ApiService extends BaseService {
 	private baseUrl: string;
 
 	constructor(container: IContainer) {
 		super(container);
-		this.baseUrl = "http://localhost:3000/api/v1"; // URL du serveur
+		this.baseUrl = API_BASE_URL;
 	}
 
 	async get<T>(endpoint: string): Promise<T> {
-		logger.debug(`GET request to ${this.baseUrl}${endpoint}`);
 		const response = await fetch(`${this.baseUrl}${endpoint}`, {
 			method: "GET",
 			headers: {
@@ -29,10 +22,6 @@ export class ApiService extends BaseService {
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
-
-		logger.debug(
-			`Response from ${this.baseUrl}${endpoint}: ${response.status}`
-		);
 
 		return response.json();
 	}

@@ -1,3 +1,4 @@
+import { EStoreSlices } from "@/types/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface LoaderState {
@@ -7,7 +8,7 @@ export interface LoaderState {
 const initialState: LoaderState = {};
 
 const loadersSlice = createSlice({
-	name: "loaders",
+	name: EStoreSlices.Loaders,
 	initialState,
 	reducers: {
 		setLoader: (
