@@ -1,5 +1,10 @@
 import { User } from "@matcha/shared";
-import { TRootState, EEntityTypes } from "@/types/store.types";
+import {
+	TRootState,
+	EEntityTypes,
+	EFlagKeys,
+	ELoaderKeys,
+} from "@/types/store.types";
 import { useSelector } from "react-redux";
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo } from "react";
@@ -20,19 +25,22 @@ export const useUsers = () => {
 
 export const useUsersLoading = () => {
 	return useSelector(
-		(state: TRootState): boolean => state.loaders.users || false
+		(state: TRootState): boolean =>
+			state.loaders[ELoaderKeys.fetchUsers] || false
 	);
 };
 
 export const useUsersFetched = () => {
 	return useSelector(
-		(state: TRootState): boolean => state.flags.usersFetched || false
+		(state: TRootState): boolean =>
+			state.flags[EFlagKeys.UsersFetched] || false
 	);
 };
 
 export const useUsersFetchError = () => {
 	return useSelector(
-		(state: TRootState): boolean => state.flags.usersFetchError || false
+		(state: TRootState): boolean =>
+			state.flags[EFlagKeys.UsersFetchError] || false
 	);
 };
 
