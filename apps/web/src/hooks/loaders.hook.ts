@@ -1,5 +1,6 @@
 import { setLoader } from "@/store/slices/loaders.slice";
 import { ELoaderKeys } from "@/types/store.types";
+import { logger } from "@matcha/shared";
 import { useDispatch, useSelector } from "react-redux";
 
 interface IProps {
@@ -11,7 +12,9 @@ export const useLoaders = ({ loaders }: IProps) => {
 	const loadersData = Array.isArray(loaders) ? loaders : [loaders];
 	const isLoading = useSelector((state: any) => {
 		for (const loader of loadersData) {
-			if (state[loader]?.isLoading) return true;
+			if (state.loaders[loader]) {
+				return true;
+			}
 		}
 		return false;
 	});
