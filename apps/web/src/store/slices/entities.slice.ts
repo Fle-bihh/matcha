@@ -1,5 +1,6 @@
 import { EEntityTypes, EStoreSlices } from "@/types/store.types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { sanitizeEntity, sanitizeEntities } from "@/utils/sanitization.utils";
 
 export interface EntityState {
 	[entityType: string]: { [id: string]: any };
@@ -23,7 +24,7 @@ const entitiesSlice = createSlice({
 			if (!state[entityType]) {
 				state[entityType] = {};
 			}
-			state[entityType][id] = entity;
+			state[entityType][id] = sanitizeEntity(entity);
 		},
 		setEntities: (
 			state,
@@ -34,7 +35,8 @@ const entitiesSlice = createSlice({
 		) => {
 			const { entityType, entities } = action.payload;
 			state[entityType] = {};
-			entities.forEach((entity) => {
+			const sanitizedEntities = sanitizeEntities(entities);
+			sanitizedEntities.forEach((entity) => {
 				if (entity && typeof entity === "object" && "id" in entity) {
 					state[entityType][entity.id] = entity;
 				}
