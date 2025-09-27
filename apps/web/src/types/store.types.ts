@@ -11,11 +11,6 @@ export enum EStoreSlices {
 	Flags = "flags",
 }
 
-export enum EFlagKeys {
-	UsersFetched = "usersFetched",
-	UsersFetchError = "usersFetchError",
-}
-
 export enum ELoaderKeys {
 	fetchUsers = "fetchUsers",
 }

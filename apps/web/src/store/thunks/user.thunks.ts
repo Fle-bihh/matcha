@@ -12,6 +12,6 @@ export const fetchUsers = baseThunk<EUserThunks>(
 	EUserThunks.FetchUsers,
 	async (container) => {
 		const userService = container.get<UserService>(ETokens.UserService);
-		return await userService.getUsers();
+		await userService.getUsers();
 	}
 );

@@ -1,21 +1,18 @@
-import { EStoreSlices } from "@/types/store.types";
+import { ELoaderKeys, EStoreSlices } from "@/types/store.types";
+import { TLoaderState, ISetLoaderPayload } from "@/types/loaders.types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface LoaderState {
-	[key: string]: boolean;
-}
-
-const initialState: LoaderState = {};
+const initialState: TLoaderState = {};
 
 const loadersSlice = createSlice({
 	name: EStoreSlices.Loaders,
 	initialState,
 	reducers: {
-		setLoader: (
-			state,
-			action: PayloadAction<{ key: string; loading: boolean }>
-		) => {
+		setLoader: (state, action: PayloadAction<ISetLoaderPayload>) => {
 			const { key, loading } = action.payload;
+			if (state[key] === undefined) {
+				state[key] = false;
+			}
 			state[key] = loading;
 		},
 	},

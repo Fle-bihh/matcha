@@ -1,13 +1,10 @@
 import { User } from "@matcha/shared";
-import {
-	TRootState,
-	EEntityTypes,
-	EFlagKeys,
-	ELoaderKeys,
-} from "@/types/store.types";
+import { TRootState, EEntityTypes, ELoaderKeys } from "@/types/store.types";
 import { useSelector } from "react-redux";
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo } from "react";
+import { useFlagger } from "@/hooks/flags.hook";
+import { EFlagKeys } from "@/types/flags.types";
 
 const selectUsersEntity = (state: TRootState) =>
 	state.entities[EEntityTypes.Users];
@@ -30,33 +27,21 @@ export const useUsersLoading = () => {
 	);
 };
 
-export const useUsersFetched = () => {
-	return useSelector(
-		(state: TRootState): boolean =>
-			state.flags[EFlagKeys.UsersFetched] || false
-	);
-};
-
-export const useUsersFetchError = () => {
-	return useSelector(
-		(state: TRootState): boolean =>
-			state.flags[EFlagKeys.UsersFetchError] || false
-	);
-};
-
 export const useUserStore = () => {
 	const getUsers = useUsers();
 	const isUsersLoading = useUsersLoading();
-	const isUsersFetched = useUsersFetched();
-	const hasUsersFetchError = useUsersFetchError();
+	const { data: userFetchedFlag } = useFlagger<EFlagKeys.UsersFetched>({
+		flagger: EFlagKeys.UsersFetched,
+	});
 
 	return useMemo(
 		() => ({
 			getUsers,
 			isUsersLoading,
-			isUsersFetched,
-			hasUsersFetchError,
+			isUsersFetched: userFetchedFlag?.isFetched || false,
+			hasUsersFetchError: !!userFetchedFlag?.error,
+			userFetchError: userFetchedFlag?.error || null,
 		}),
-		[getUsers, isUsersLoading, isUsersFetched, hasUsersFetchError]
+		[getUsers, isUsersLoading, userFetchedFlag]
 	);
 };

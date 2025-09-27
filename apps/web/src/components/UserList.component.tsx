@@ -5,18 +5,23 @@ import { TAppDispatch } from "@/types/store.types";
 
 export const UserList: React.FC = () => {
 	const dispatch = useDispatch<TAppDispatch>();
-	const { getUsers, isUsersLoading, isUsersFetched, hasUsersFetchError } =
-		useUserStore();
+	const {
+		getUsers,
+		isUsersLoading,
+		isUsersFetched,
+		hasUsersFetchError,
+		userFetchError,
+	} = useUserStore();
 	const users = getUsers;
 	const loading = isUsersLoading;
 	const fetched = isUsersFetched;
 	const error = hasUsersFetchError;
 
 	useEffect(() => {
-		if (!fetched && !loading) {
+		if (!fetched && !loading && !error) {
 			dispatch(fetchUsers());
 		}
-	}, [fetched, loading, dispatch]);
+	}, [fetched, loading, error, dispatch]);
 
 	const handleRefresh = async () => {
 		try {
@@ -32,6 +37,9 @@ export const UserList: React.FC = () => {
 		return (
 			<div>
 				<div>Erreur lors du chargement des utilisateurs</div>
+				{userFetchError && (
+					<div>Détails de l'erreur: {userFetchError.message}</div>
+				)}
 				<button onClick={handleRefresh}>Réessayer</button>
 			</div>
 		);
