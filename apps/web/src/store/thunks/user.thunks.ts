@@ -2,21 +2,16 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { UserService } from "@/services/user.service";
 import { ETokens } from "@/types/container.types";
 import { Container } from "@/container/container";
+import { baseThunk } from "./base.thunks";
 
 export enum EUserThunks {
 	FetchUsers = "users/fetchUsers",
 }
 
-export const fetchUsers = createAsyncThunk(
+export const fetchUsers = baseThunk<EUserThunks>(
 	EUserThunks.FetchUsers,
-	async (_, { rejectWithValue, extra }) => {
-		try {
-			const { container } = extra as { container: Container };
-			const userService = container.get<UserService>(ETokens.UserService);
-
-			await userService.getUsers();
-		} catch (error) {
-			return rejectWithValue(error);
-		}
+	async (container) => {
+		const userService = container.get<UserService>(ETokens.UserService);
+		return await userService.getUsers();
 	}
 );
