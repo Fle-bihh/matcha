@@ -5,6 +5,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import { useMemo } from "react";
 import { useFlagger } from "@/hooks/flags.hook";
 import { EFlagKeys } from "@/types/flags.types";
+import { useLoaders } from "@/hooks/loaders.hook";
 
 const selectUsersEntity = (state: TRootState) =>
 	state.entities[EEntityTypes.Users];
@@ -20,16 +21,11 @@ export const useUsers = () => {
 	return useSelector(selectUsers);
 };
 
-export const useUsersLoading = () => {
-	return useSelector(
-		(state: TRootState): boolean =>
-			state.loaders[ELoaderKeys.fetchUsers] || false
-	);
-};
-
 export const useUserStore = () => {
 	const getUsers = useUsers();
-	const isUsersLoading = useUsersLoading();
+	const { isLoading: isUsersLoading } = useLoaders({
+		loaders: [ELoaderKeys.fetchUsers],
+	});
 	const { data: userFetchedFlag } = useFlagger<EFlagKeys.UsersFetched>({
 		flagger: EFlagKeys.UsersFetched,
 	});

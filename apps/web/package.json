@@ -14,6 +14,7 @@
 	"dependencies": {
 		"@matcha/shared": "^1.0.0",
 		"@reduxjs/toolkit": "^2.9.0",
+		"dotenv": "^17.2.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-redux": "^9.2.0"
