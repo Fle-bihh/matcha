@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
-import { Route } from "@/decorators/Route";
-import { Validate } from "@/decorators/Validate";
-import { ApiDocs } from "@/decorators/ApiDocs";
-import { BaseController } from "./BaseController";
-import { ETokens } from "@/types/container";
+import { Route } from "@/decorators/route.decorator";
+import { Validate } from "@/decorators/validate.decorator";
+import { ApiDocs } from "@/decorators/api-docs.decorator";
+import { BaseController } from "./base.controller";
+import { ETokens } from "@/types/container.types";
 import { HelloService } from "@/services";
 import {
 	GetHelloRequestSchema,
@@ -11,7 +11,7 @@ import {
 	type GetHelloRequestDto,
 	type GetHealthRequestDto,
 } from "@/dto";
-import { Auth } from "@/decorators/Auth";
+import { Auth } from "@/decorators/auth.decorator";
 
 export class HelloController extends BaseController {
 	private get helloService(): HelloService {

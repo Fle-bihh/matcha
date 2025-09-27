@@ -1,6 +1,6 @@
-import { BaseRepository } from "./BaseRepository";
+import { BaseRepository } from "./base.repository";
 import { TestValue, CreateTestValue, logger } from "@matcha/shared";
-import { IContainer } from "@/types/container";
+import { IContainer } from "@/types/container.types";
 
 export class HelloRepository extends BaseRepository {
 	private readonly tableName = "test_values";

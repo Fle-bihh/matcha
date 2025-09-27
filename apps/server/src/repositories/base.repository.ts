@@ -4,7 +4,7 @@ import {
 	DatabaseOperations,
 	DatabaseSchemaManager,
 } from "./db";
-import { IContainer } from "@/types/container";
+import { IContainer } from "@/types/container.types";
 
 export class BaseRepository {
 	protected container: IContainer;

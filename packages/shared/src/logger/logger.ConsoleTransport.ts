@@ -1,4 +1,4 @@
-import { LogEntry, LogTransport, LogLevel } from "./types";
+import { LogEntry, LogTransport, LogLevel } from "./logger.types";
 
 export class ConsoleTransport implements LogTransport {
 	private colors = {

@@ -1,7 +1,7 @@
 import { logger } from "@matcha/shared";
 import { Server } from "http";
-import { Container } from "@/container/Container";
-import { ETokens } from "@/types/container";
+import { Container } from "@/container/container";
+import { ETokens } from "@/types/container.types";
 import { BaseRepository } from "@/repositories";
 
 interface ShutdownOptions {
@@ -70,7 +70,7 @@ export class GracefulShutdown {
 		try {
 			// Close HTTP server
 			await this.closeHttpServer();
-			
+
 			// Close database connection
 			await this.closeDatabaseConnection();
 

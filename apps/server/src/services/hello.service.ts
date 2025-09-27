@@ -5,11 +5,11 @@ import {
 	GetHelloResponseDto,
 } from "@/dto";
 import { TestValue, CreateTestValue } from "@matcha/shared";
-import { ServiceResponse } from "@/types/ServiceResponse";
+import { ServiceResponse } from "@/types/service.types";
 import { StatusCodes } from "http-status-codes";
 import { HelloRepository } from "@/repositories";
-import { IContainer, ETokens } from "@/types/container";
-import { BaseService } from "./BaseService";
+import { IContainer, ETokens } from "@/types/container.types";
+import { BaseService } from "./base.service";
 
 export class HelloService extends BaseService {
 	private startTime = Date.now();

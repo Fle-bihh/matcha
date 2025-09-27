@@ -2,14 +2,14 @@ import "@matcha/shared";
 import express, { Express } from "express";
 import cors from "cors";
 import { config } from "./config";
-import { ControllerRegistry } from "./registry/ControllerRegistry";
-import { Container } from "./container/Container";
-import { ETokens } from "./types/container";
+import { ControllerRegistry } from "./registry/controller.registry";
+import { Container } from "./container/container";
+import { ETokens } from "./types/container.types";
 import { BaseRepository } from "@/repositories";
 import "./controllers";
-import { ServiceResponse } from "./types/ServiceResponse";
+import { ServiceResponse } from "./types/service.types";
 import { logger } from "@matcha/shared";
-import { GracefulShutdown } from "./utils/GracefulShutdown";
+import { GracefulShutdown } from "./utils/graceful-shutdown.utils";
 import {
 	limiter,
 	corsOptions,
@@ -17,7 +17,7 @@ import {
 	sqlSanitize,
 	xssSanitize,
 	hppMiddleware,
-} from "./middleware/security";
+} from "./middleware/security.middleware";
 
 class Server {
 	private app: Express;

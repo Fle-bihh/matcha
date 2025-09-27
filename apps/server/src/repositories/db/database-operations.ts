@@ -1,5 +1,5 @@
-import { DatabaseConnectionManager } from "./DatabaseConnectionManager";
-import { DatabaseSchemaManager } from "./DatabaseSchemaManager";
+import { DatabaseConnectionManager } from "./database-connection-manager";
+import { DatabaseSchemaManager } from "./database-schema-manager";
 import { DocumentWithMetadata } from "@matcha/shared";
 
 export class DatabaseOperations {

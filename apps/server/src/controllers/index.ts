@@ -1,4 +1,4 @@
-import "./HelloController";
-import "./UserController";
+import "./hello.controller";
+import "./user.controller";
 
-export { BaseController } from "./BaseController";
+export { BaseController } from "./base.controller";

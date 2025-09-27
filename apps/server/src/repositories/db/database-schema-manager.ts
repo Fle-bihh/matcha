@@ -1,4 +1,4 @@
-import { DatabaseConnectionManager } from "./DatabaseConnectionManager";
+import { DatabaseConnectionManager } from "./database-connection-manager";
 
 export class DatabaseSchemaManager {
 	private connectionManager: DatabaseConnectionManager;

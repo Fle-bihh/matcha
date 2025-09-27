@@ -1,4 +1,4 @@
-import { LogLevel, LogEntry, LogTransport } from "./types";
+import { LogLevel, LogEntry, LogTransport } from "./logger.types";
 
 export class Logger {
 	private transports: LogTransport[] = [];

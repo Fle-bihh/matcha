@@ -1,6 +1,6 @@
-import { IContainer } from "@/types/container";
+import { IContainer } from "@/types/container.types";
 
-export abstract class BaseController {
+export abstract class BaseService {
 	protected container: IContainer;
 
 	constructor(container: IContainer) {

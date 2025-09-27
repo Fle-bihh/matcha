@@ -1,11 +1,11 @@
-import type { HttpMethod } from "@/types/routes";
-import { ControllerRegistry } from "@/registry/ControllerRegistry";
+import type { HttpMethod } from "@/types/routes.types";
+import { ControllerRegistry } from "@/registry/controller.registry";
 import {
 	buildApiRoute,
 	type RouteGroups,
 	type RouteKeys,
-} from "@/constants/routes";
-import { getApiDocs } from "./ApiDocs";
+} from "@/constants/routes.constants";
+import { getApiDocs } from "./api-docs.decorator";
 
 export function Route<T extends RouteGroups, K extends RouteKeys<T>>(
 	method: HttpMethod,

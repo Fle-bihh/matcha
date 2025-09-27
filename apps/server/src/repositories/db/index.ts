@@ -1,3 +1,3 @@
-export { DatabaseConnectionManager } from "./DatabaseConnectionManager";
-export { DatabaseOperations } from "./DatabaseOperations";
-export { DatabaseSchemaManager } from "./DatabaseSchemaManager";
+export { DatabaseConnectionManager } from "./database-connection-manager";
+export { DatabaseOperations } from "./database-operations";
+export { DatabaseSchemaManager } from "./database-schema-manager";
