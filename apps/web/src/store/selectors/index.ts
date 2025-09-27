@@ -1,1 +1,1 @@
-export { useUserStore } from "./userSelectors";
+export { useUserStore } from "./user.selector";

@@ -1,4 +1,4 @@
-import { TReduxStore } from "./store";
+import { TReduxStore } from "./store.types";
 
 export enum ETokens {
 	ApiService = "ApiService",

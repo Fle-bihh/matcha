@@ -1,7 +1,6 @@
-import { logger } from "@matcha/shared";
-import { IContainer } from "@/types/container";
-import { BaseService } from "./BaseService";
-import { API_BASE_URL } from "@/constants/api";
+import { IContainer } from "@/types/container.types";
+import { BaseService } from "./base.service";
+import { API_BASE_URL } from "@/constants/api.constants";
 
 export class ApiService extends BaseService {
 	private baseUrl: string;

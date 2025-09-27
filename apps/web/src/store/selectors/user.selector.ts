@@ -1,11 +1,11 @@
-import { logger, User } from "@matcha/shared";
-import { TRootState, EEntityTypes } from "@/types/store";
+import { User } from "@matcha/shared";
+import { TRootState, EEntityTypes } from "@/types/store.types";
 import { useSelector } from "react-redux";
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo } from "react";
 
 const selectUsersEntity = (state: TRootState) =>
-	state.entities[EEntityTypes.User];
+	state.entities[EEntityTypes.Users];
 
 const selectUsers = createSelector(
 	[selectUsersEntity],

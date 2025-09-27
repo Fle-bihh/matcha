@@ -1,5 +1,5 @@
-import { UserList } from "./components/UserList";
-import Provider from "./Provider";
+import { UserList } from "@/components/UserList.component";
+import Provider from "@/components/Provider.component";
 
 function App() {
 	return (

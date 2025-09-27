@@ -1,7 +1,7 @@
-import { ETokens, IContainer } from "@/types/container";
+import { ETokens, IContainer } from "@/types/container.types";
 import { ApiService, UserService } from "@/services";
 import { Store } from "@reduxjs/toolkit";
-import { TAppDispatch, TRootState } from "@/types/store";
+import { TAppDispatch, TRootState } from "@/types/store.types";
 import { createStore } from "@/store";
 
 type ServiceConstructor = new (container: IContainer) => any;

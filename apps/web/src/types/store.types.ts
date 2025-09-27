@@ -2,13 +2,22 @@ import { Store } from "@reduxjs/toolkit";
 import { createStore } from "@/store";
 
 export enum EEntityTypes {
-	User = "user",
+	Users = "users",
 }
 
 export enum EStoreSlices {
 	Entities = "entities",
 	Loaders = "loaders",
 	Flags = "flags",
+}
+
+export enum EFlagKeys {
+	UsersFetched = "usersFetched",
+	UsersFetchError = "usersFetchError",
+}
+
+export enum ELoaderKeys {
+	fetchUsers = "fetchUsers",
 }
 
 export type TRootState = ReturnType<ReturnType<typeof createStore>["getState"]>;

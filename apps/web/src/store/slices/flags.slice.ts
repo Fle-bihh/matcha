@@ -1,4 +1,4 @@
-import { EStoreSlices } from "@/types/store";
+import { EStoreSlices } from "@/types/store.types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface FlagState {

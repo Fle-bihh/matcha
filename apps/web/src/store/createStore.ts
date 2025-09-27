@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { IContainer } from "@/types/container";
-import entitiesReducer from "./slices/entitiesSlice";
-import loadersReducer from "./slices/loadersSlice";
-import flagsReducer from "./slices/flagsSlice";
+import { IContainer } from "@/types/container.types";
+import entitiesReducer from "./slices/entities.slice";
+import loadersReducer from "./slices/loaders.slice";
+import flagsReducer from "./slices/flags.slice";
 
 export const createStore = (container: IContainer) => {
 	const store = configureStore({
