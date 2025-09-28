@@ -1,3 +1,4 @@
+import { ROUTES } from "@/constants";
 import { FunctionComponent } from "react";
 import { Navigate } from "react-router-dom";
 
@@ -6,7 +7,7 @@ export function withCondition(
 	condition: boolean,
 	redirectTo: string
 ) {
-	return function InnerComponent(props: any) {
+	return function InnerComponent(props?: any) {
 		return condition ? (
 			<Component {...props} />
 		) : (
@@ -14,3 +15,6 @@ export function withCondition(
 		);
 	};
 }
+
+export const withLoggedOut = (Component: React.FunctionComponent) =>
+	withCondition(Component, true, ROUTES.notFound);

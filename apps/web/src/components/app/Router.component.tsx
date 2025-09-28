@@ -1,12 +1,12 @@
-import { ROUTES } from "@/constants/routing.constants";
-import EntryPage from "@/pages/Entry.page";
-import NotFoundPage from "@/pages/NotFound.page";
+import { ROUTES } from "@/constants";
 import { Route, Routes } from "react-router-dom";
+import { withLoggedOut } from "../utils";
+import { EntryPage, NotFoundPage } from "@/pages";
 
 export function Router() {
 	return (
 		<Routes>
-			<Route path={ROUTES.entry} element={<EntryPage />} />
+			<Route path={ROUTES.entry} element={withLoggedOut(EntryPage)()} />
 			<Route path={ROUTES.notFound} element={<NotFoundPage />} />
 		</Routes>
 	);
