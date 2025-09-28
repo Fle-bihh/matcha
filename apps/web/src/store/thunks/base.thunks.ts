@@ -1,4 +1,4 @@
-import { IContainer } from "@/types/container.types";
+import { IContainer } from "@/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export interface IBaseThunkParams {

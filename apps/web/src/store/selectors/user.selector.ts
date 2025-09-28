@@ -1,10 +1,9 @@
 import { User } from "@matcha/shared";
-import { TRootState, EEntityTypes, ELoaderKeys } from "@/types/store.types";
+import { TRootState, EEntityTypes, ELoaderKeys, EFlagKeys } from "@/types";
 import { useSelector } from "react-redux";
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo } from "react";
 import { useFlagger } from "@/hooks/flags.hook";
-import { EFlagKeys } from "@/types/flags.types";
 import { useLoaders } from "@/hooks/loaders.hook";
 
 const selectUsersEntity = (state: TRootState) =>

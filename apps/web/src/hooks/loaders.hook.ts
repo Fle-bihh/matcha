@@ -1,6 +1,5 @@
 import { setLoader } from "@/store/slices/loaders.slice";
-import { ELoaderKeys } from "@/types/store.types";
-import { logger } from "@matcha/shared";
+import { ELoaderKeys } from "@/types";
 import { useDispatch, useSelector } from "react-redux";
 
 interface IProps {

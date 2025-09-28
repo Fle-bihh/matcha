@@ -1,7 +1,6 @@
-import { ServiceResponse } from "@/types/service.types";
-import { IContainer, ETokens } from "@/types/container.types";
+import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
-import { UserRepository } from "@/repositories/user.repository";
+import { UserRepository } from "@/repositories";
 import { User } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 

@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { IContainer } from "@/types/container.types";
+import { IContainer } from "@/types";
 import entitiesReducer from "./slices/entities.slice";
 import loadersReducer from "./slices/loaders.slice";
 import flagsReducer from "./slices/flags.slice";

@@ -1,6 +1,6 @@
 import { BaseRepository } from "./base.repository";
 import { CreateUser, logger, User } from "@matcha/shared";
-import { IContainer } from "@/types/container.types";
+import { IContainer } from "@/types";
 
 export class UserRepository extends BaseRepository {
 	private readonly tableName = "users";

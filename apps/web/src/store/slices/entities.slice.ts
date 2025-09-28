@@ -1,4 +1,4 @@
-import { EEntityTypes, EStoreSlices } from "@/types/store.types";
+import { EEntityTypes, EStoreSlices } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { sanitizeEntity, sanitizeEntities } from "@/utils/sanitization.utils";
 

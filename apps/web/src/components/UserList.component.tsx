@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useUserStore, fetchUsers } from "@/store";
-import { TAppDispatch } from "@/types/store.types";
+import { TAppDispatch } from "@/types";
 
 export const UserList: React.FC = () => {
 	const dispatch = useDispatch<TAppDispatch>();

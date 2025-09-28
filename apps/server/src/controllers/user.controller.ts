@@ -1,10 +1,8 @@
 import type { Request, Response } from "express";
-import { Route } from "@/decorators/route.decorator";
-import { ApiDocs } from "@/decorators/api-docs.decorator";
 import { BaseController } from "./base.controller";
-import { ETokens } from "@/types/container.types";
-import { Auth } from "@/decorators/auth.decorator";
+import { ETokens } from "@/types";
 import { UserService } from "@/services";
+import { Route, ApiDocs } from "@/decorators";
 
 export class UserController extends BaseController {
 	private get userService(): UserService {

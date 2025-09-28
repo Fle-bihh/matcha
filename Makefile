@@ -13,12 +13,15 @@ install:
 dev:
 	docker compose up --build
 
+up:
+	docker compose up -d --build
+
 down:
 	docker compose down
 
 re:
 	docker compose down
-	docker compose up --build
+	docker compose up -d --build
 
 no-cache:
 	docker compose down
