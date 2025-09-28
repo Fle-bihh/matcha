@@ -1,15 +1,7 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import { User } from "@matcha/shared";
-
-const JWT_SECRET =
-	process.env.JWT_SECRET || "your-secret-key-change-this-in-production";
-const JWT_EXPIRES_IN = Number(process.env.JWT_EXPIRES_IN) || 24 * 60 * 60;
-
-export interface JwtPayload {
-	id: number;
-	username: string;
-	email: string;
-}
+import { config } from "@/config";
+import { JwtPayload } from "@/types";
 
 export class JwtUtils {
 	static generateToken(user: User): string {
@@ -20,14 +12,14 @@ export class JwtUtils {
 		};
 
 		const options: SignOptions = {
-			expiresIn: JWT_EXPIRES_IN,
+			expiresIn: config.jwtExpiresIn as SignOptions["expiresIn"],
 		};
 
-		return jwt.sign(payload, JWT_SECRET, options);
+		return jwt.sign(payload, config.jwtSecret, options);
 	}
 
 	static verifyToken(token: string): JwtPayload {
-		return jwt.verify(token, JWT_SECRET) as JwtPayload;
+		return jwt.verify(token, config.jwtSecret) as JwtPayload;
 	}
 
 	static decodeToken(token: string): JwtPayload | null {

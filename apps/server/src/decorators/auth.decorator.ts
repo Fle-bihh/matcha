@@ -26,10 +26,9 @@ export function Auth() {
 					return res.status(response.statusCode).json(response);
 				}
 
-				const token = authHeader.substring(7); // Remove "Bearer " prefix
+				const token = authHeader.substring(7);
 				const decoded = JwtUtils.verifyToken(token);
 
-				// Add user info to request
 				req.user = decoded;
 
 				return originalMethod.apply(this, args);

@@ -12,6 +12,8 @@ class Config {
 			connectionLimit: number;
 		};
 	};
+	public readonly jwtSecret: string;
+	public readonly jwtExpiresIn: string;
 
 	constructor() {
 		this.port = Number(process.env.SERVER_PORT) || 3000;
@@ -26,6 +28,10 @@ class Config {
 					Number(process.env.DB_POOL_CONNECTION_LIMIT) || 10,
 			},
 		};
+		this.jwtSecret =
+			process.env.JWT_SECRET ||
+			"your-secret-key-change-this-in-production";
+		this.jwtExpiresIn = process.env.JWT_EXPIRES_IN || "24h";
 	}
 }
 
