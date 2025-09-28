@@ -3,7 +3,11 @@ import { BaseController } from "./base.controller";
 import { ETokens } from "@/types";
 import { AuthService } from "@/services";
 import { Route, ApiDocs, Validate } from "@/decorators";
-import { RegisterRequestSchema, LoginRequestSchema } from "@/dto/auth.dto";
+import {
+	RegisterRequestSchema,
+	LoginRequestSchema,
+	RefreshTokenRequestSchema,
+} from "@/dto/auth.dto";
 
 export class AuthController extends BaseController {
 	private get authService(): AuthService {
@@ -24,6 +28,14 @@ export class AuthController extends BaseController {
 	private async login(req: Request, res: Response): Promise<void> {
 		const { email, password } = req.body;
 		const result = await this.authService.login(email, password);
+		res.status(result.statusCode).send(result);
+	}
+
+	@Route("POST", "auth", "refresh")
+	@ApiDocs("Refresh access token")
+	@Validate(RefreshTokenRequestSchema, "body")
+	private async refresh(req: Request, res: Response): Promise<void> {
+		const result = await this.authService.refreshToken(req.body);
 		res.status(result.statusCode).send(result);
 	}
 }

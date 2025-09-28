@@ -5,10 +5,13 @@ import {
 	RegisterRequestDto,
 	RegisterResponseDto,
 	LoginResponseDto,
+	RefreshTokenRequestDto,
+	RefreshTokenResponseDto,
 } from "@/dto/auth.dto";
 import { StatusCodes } from "http-status-codes";
 import { JwtUtils } from "@/utils/jwt.utils";
 import { HashUtils } from "@/utils/hash.utils";
+import { UserWithPassword } from "@matcha/shared";
 
 export class AuthService extends BaseService {
 	constructor(container: IContainer) {
@@ -43,10 +46,11 @@ export class AuthService extends BaseService {
 
 			const user = await this.userRepository.createUser(userData);
 
-			const token = JwtUtils.generateToken(user);
+			const { accessToken, refreshToken } = JwtUtils.generateTokens(user);
 
 			return ServiceResponse.success("User registered successfully", {
-				token,
+				accessToken,
+				refreshToken,
 				user,
 			});
 		} catch (error) {
@@ -88,10 +92,11 @@ export class AuthService extends BaseService {
 			}
 
 			const { password: _, ...user } = userWithPassword;
-			const token = JwtUtils.generateToken(user);
+			const { accessToken, refreshToken } = JwtUtils.generateTokens(user);
 
 			return ServiceResponse.success("User logged in successfully", {
-				token,
+				accessToken,
+				refreshToken,
 				user,
 			});
 		} catch (error) {
@@ -99,6 +104,45 @@ export class AuthService extends BaseService {
 				"Error during login",
 				null,
 				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
+	public async refreshToken(
+		dto: RefreshTokenRequestDto
+	): Promise<ServiceResponse<RefreshTokenResponseDto | null>> {
+		try {
+			const { userId } = JwtUtils.verifyRefreshToken(dto.refreshToken);
+
+			const users = await this.userRepository.getDocs<UserWithPassword>(
+				"users",
+				{
+					where: "id = ?",
+					values: [userId],
+				}
+			);
+
+			if (!users || users.length === 0) {
+				return ServiceResponse.failure(
+					"Invalid refresh token",
+					null,
+					StatusCodes.UNAUTHORIZED
+				);
+			}
+
+			const userWithPassword = users[0];
+			const { password: _, ...user } = userWithPassword;
+			const { accessToken, refreshToken } = JwtUtils.generateTokens(user);
+
+			return ServiceResponse.success("Token refreshed successfully", {
+				accessToken,
+				refreshToken,
+			});
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Invalid or expired refresh token",
+				null,
+				StatusCodes.UNAUTHORIZED
 			);
 		}
 	}

@@ -13,11 +13,24 @@ export const LoginRequestSchema = z.object({
 export type LoginRequestDto = z.infer<typeof LoginRequestSchema>;
 
 export interface RegisterResponseDto {
-	token: string;
+	accessToken: string;
+	refreshToken: string;
 	user: User;
 }
 
 export interface LoginResponseDto {
-	token: string;
+	accessToken: string;
+	refreshToken: string;
 	user: User;
+}
+
+export const RefreshTokenRequestSchema = z.object({
+	refreshToken: z.string().min(1, "Refresh token is required"),
+});
+
+export type RefreshTokenRequestDto = z.infer<typeof RefreshTokenRequestSchema>;
+
+export interface RefreshTokenResponseDto {
+	accessToken: string;
+	refreshToken: string;
 }

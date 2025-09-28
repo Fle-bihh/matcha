@@ -14,6 +14,8 @@ class Config {
 	};
 	public readonly jwtSecret: string;
 	public readonly jwtExpiresIn: string;
+	public readonly jwtRefreshSecret: string;
+	public readonly jwtRefreshExpiresIn: string;
 
 	constructor() {
 		this.port = Number(process.env.SERVER_PORT) || 3000;
@@ -31,7 +33,11 @@ class Config {
 		this.jwtSecret =
 			process.env.JWT_SECRET ||
 			"your-secret-key-change-this-in-production";
-		this.jwtExpiresIn = process.env.JWT_EXPIRES_IN || "24h";
+		this.jwtExpiresIn = process.env.JWT_EXPIRES_IN || "15m";
+		this.jwtRefreshSecret =
+			process.env.JWT_REFRESH_SECRET ||
+			"your-refresh-secret-key-change-this-in-production";
+		this.jwtRefreshExpiresIn = process.env.JWT_REFRESH_EXPIRES_IN || "7d";
 	}
 }
 

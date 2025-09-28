@@ -13,6 +13,7 @@ export const ROUTES = {
 	auth: {
 		register: "/register",
 		login: "/login",
+		refresh: "/refresh",
 	},
 } as const;
 
