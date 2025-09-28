@@ -6,7 +6,7 @@ import cors from "cors";
 
 import { config } from "@/config";
 import { ControllerRegistry } from "./registry/controller.registry";
-import { Container } from "@/container/Container";
+import { Container } from "@/container/container";
 import { BaseRepository } from "@/repositories";
 import { logger } from "@matcha/shared";
 import { GracefulShutdown } from "@/utils/graceful-shutdown.utils";

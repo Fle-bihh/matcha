@@ -1,6 +1,6 @@
 import type { HttpMethod } from "@/types";
 import type { Request, Response, Application } from "express";
-import { Container } from "@/container/Container";
+import { Container } from "@/container/container";
 import { logger } from "@matcha/shared";
 
 interface RouteInfo {

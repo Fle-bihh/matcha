@@ -1,6 +1,6 @@
 import { logger } from "@matcha/shared";
 import { Server } from "http";
-import { Container } from "@/container/Container";
+import { Container } from "@/container/container";
 import { ETokens } from "@/types";
 import { BaseRepository } from "@/repositories";
 
