@@ -109,13 +109,6 @@ apps/server/src/
 └── utils/            # Utilities
 ```
 
-### Used Patterns:
-
--   **Dependency Injection**: IoC Container for dependency management
--   **Decorators**: Metadata for routes, validation, authentication
--   **Repository Pattern**: Data access abstraction
--   **Middleware Chain**: Security, validation, rate limiting
-
 ## 🎨 Web Structure (`apps/web`)
 
 Modern React application with Redux and modular architecture:
@@ -131,14 +124,6 @@ apps/web/src/
 ├── utils/            # Frontend utilities
 └── constants/        # Constants and configuration
 ```
-
-### Frontend Architecture:
-
--   **React 18**: Functional components with hooks
--   **Redux Toolkit**: Modern and optimized state management
--   **Vite**: Ultra-fast build tool with HMR
--   **TypeScript**: Strict typing for robustness
--   **Dependency Injection**: Container for frontend services
 
 ---
 
