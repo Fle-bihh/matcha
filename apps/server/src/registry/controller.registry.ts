@@ -16,6 +16,8 @@ class ControllerRegistry {
 	private static readonly instances = new Map<string, any>();
 	private static container = new Container();
 
+	private setupRouteOptions(app: Application, route: RouteInfo) {}
+
 	public static registerRoute(route: RouteInfo): void {
 		this.routes.push(route);
 	}

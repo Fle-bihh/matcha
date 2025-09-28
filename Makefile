@@ -21,4 +21,5 @@ no-cache:
 	docker compose down
 	docker system prune -a -f
 	docker volume prune -f
+	docker volume rm matcha_mysql_data 2>/dev/null || true
 	docker compose up --build

@@ -2,10 +2,10 @@ import { z } from "zod";
 
 export const commonValidations = {
 	id: z.number().int().positive("ID must be a positive integer"),
-	metadata_date: z.date().or(z.string().datetime()),
+	metadata_date: z.string().and(z.iso.datetime()),
 	metadata_data_optional: z
-		.date()
-		.or(z.string().datetime())
+		.string()
+		.and(z.iso.datetime())
 		.nullable()
 		.optional(),
 };
@@ -32,9 +32,9 @@ export type BaseUpdateEntity = z.infer<typeof BaseUpdateEntitySchema>;
 
 export interface DocumentWithMetadata {
 	id: number;
-	created_at: Date | string;
-	updated_at: Date | string;
-	deleted_at?: Date | string | null;
+	created_at: string;
+	updated_at: string;
+	deleted_at?: string | null;
 }
 
 export function createEntitySchema<T extends z.ZodRawShape>(fields: T) {

@@ -17,6 +17,7 @@ export const corsOptions = {
 	origin: config.webUrl,
 	credentials: true,
 	optionsSuccessStatus: 200,
+	preflightContinue: true,
 };
 
 export const helmetConfig = helmet({
