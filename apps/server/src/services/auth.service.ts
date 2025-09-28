@@ -63,9 +63,10 @@ export class AuthService extends BaseService {
 		password: string
 	): Promise<ServiceResponse<LoginResponseDto | null>> {
 		try {
-			const user = await this.userRepository.findUserByEmail(email);
+			const userWithPassword =
+				await this.userRepository.findUserByEmailWithPassword(email);
 
-			if (!user) {
+			if (!userWithPassword) {
 				return ServiceResponse.failure(
 					"Invalid credentials",
 					null,
@@ -75,7 +76,7 @@ export class AuthService extends BaseService {
 
 			const isPasswordValid = await HashUtils.comparePassword(
 				password,
-				user.password
+				userWithPassword.password
 			);
 
 			if (!isPasswordValid) {
@@ -86,6 +87,7 @@ export class AuthService extends BaseService {
 				);
 			}
 
+			const { password: _, ...user } = userWithPassword;
 			const token = JwtUtils.generateToken(user);
 
 			return ServiceResponse.success("User logged in successfully", {
