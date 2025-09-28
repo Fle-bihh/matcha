@@ -1,7 +1,7 @@
 import { BaseRepository, HelloRepository } from "@/repositories";
-import { UserRepository } from "@/repositories/UserRepository";
+import { UserRepository } from "@/repositories/user.repository";
 import { HelloService, UserService } from "@/services";
-import { ETokens, IContainer } from "@/types/container";
+import { ETokens, IContainer } from "@/types/container.types";
 
 type ServiceConstructor = new (container: IContainer) => any;
 

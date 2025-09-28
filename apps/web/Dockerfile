@@ -2,28 +2,22 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy package files
-COPY package.json ./
+COPY package*.json ./
+COPY tsconfig*.json ./
+
 COPY packages/shared/package.json ./packages/shared/
 COPY apps/web/package.json ./apps/web/
 
-# Install dependencies
 RUN npm install
 
-# Copy source code
-COPY . .
+COPY packages ./packages
+COPY apps ./apps
 
-# Build the shared package
-WORKDIR /app/packages/shared
-RUN npm run build
-
-# Build the web app
-WORKDIR /app/apps/web
-RUN npm run build
+RUN npm run build -w @matcha/shared
+RUN npm run build -w @matcha/web
 
 EXPOSE ${WEB_PORT}
 
-ENV NODE_ENV=production
-ENV PORT=${WEB_PORT}
+WORKDIR /app/apps/web
 
-CMD ["npm", "start"]
+CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"development\" ]; then npm run dev; else npm run start; fi"]

@@ -1,9 +1,9 @@
-export * from "./types";
-export { ConsoleTransport } from "./ConsoleTransport";
-export { Logger } from "./Logger";
+export * from "./logger.types";
+export { ConsoleTransport } from "./logger.ConsoleTransport";
+export { Logger } from "./logger.Logger";
 
-import { Logger } from "./Logger";
-import { ConsoleTransport } from "./ConsoleTransport";
+import { Logger } from "./logger.Logger";
+import { ConsoleTransport } from "./logger.ConsoleTransport";
 
 export const logger = new Logger();
 logger.addTransport(new ConsoleTransport());

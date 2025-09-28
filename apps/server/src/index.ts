@@ -2,13 +2,14 @@ import "@matcha/shared";
 import express, { Express } from "express";
 import cors from "cors";
 import { config } from "./config";
-import { ControllerRegistry } from "./registry/ControllerRegistry";
-import { Container } from "./container/Container";
-import { ETokens } from "./types/container";
+import { ControllerRegistry } from "./registry/controller.registry";
+import { Container } from "./container/container";
+import { ETokens } from "./types/container.types";
 import { BaseRepository } from "@/repositories";
 import "./controllers";
-import { ServiceResponse } from "./types/ServiceResponse";
+import { ServiceResponse } from "./types/service.types";
 import { logger } from "@matcha/shared";
+import { GracefulShutdown } from "./utils/graceful-shutdown.utils";
 import {
 	limiter,
 	corsOptions,
@@ -16,18 +17,21 @@ import {
 	sqlSanitize,
 	xssSanitize,
 	hppMiddleware,
-} from "./middleware/security";
+} from "./middleware/security.middleware";
 
 class Server {
 	private app: Express;
 	private port: number;
 	private container: Container;
+	private server: any;
+	private gracefulShutdown: GracefulShutdown;
 
 	constructor(port: number) {
 		logger.info(`Starting server on port ${port}`);
 		this.app = express();
 		this.port = port;
-		this.container = new Container();
+		this.container = ControllerRegistry.containerInstance;
+		this.gracefulShutdown = GracefulShutdown.getInstance();
 		this.setup();
 	}
 
@@ -73,7 +77,15 @@ class Server {
 
 	public async start(): Promise<void> {
 		await this.initializeDatabase();
-		this.app.listen(this.port, () => {});
+		this.server = this.app.listen(this.port, () => {});
+
+		this.gracefulShutdown.configure({
+			server: this.server,
+			container: this.container,
+			timeout: 30000, // 30 seconds
+		});
+		this.gracefulShutdown.setup();
+
 		logger.info(`Server is running on port ${this.port}`);
 	}
 }

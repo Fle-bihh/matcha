@@ -1,14 +1,37 @@
 version: "3.8"
 
 services:
+    db:
+        image: mysql:8.0
+        container_name: ${CONTAINER_DB}
+        restart: unless-stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${DB_NAME}
+            MYSQL_USER: ${DB_USER}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - "${DB_PORT}:${DB_PORT}"
+        volumes:
+            - mysql_data:/var/lib/mysql
+
+    adminer:
+        image: adminer:latest
+        container_name: ${CONTAINER_ADMINER}
+        restart: unless-stopped
+        ports:
+            - "${ADMINER_PORT}:${ADMINER_PORT}"
+        depends_on:
+            - db
+
     server:
         build:
             context: .
             dockerfile: ./apps/server/Dockerfile
             args:
-                PORT: ${PORT}
+                SERVER_PORT: ${SERVER_PORT}
         ports:
-            - "${PORT}:${PORT}"
+            - "${SERVER_PORT}:${SERVER_PORT}"
         container_name: ${CONTAINER_SERVER}
         restart: unless-stopped
         env_file:
@@ -17,7 +40,6 @@ services:
             - ./apps/server/src:/app/apps/server/src
             - ./packages/shared/src:/app/packages/shared/src
             - /app/node_modules
-            - /app/apps/server/node_modules
         depends_on:
             - db
 
@@ -33,39 +55,10 @@ services:
         restart: unless-stopped
         env_file:
             - .env
-        environment:
-            - NODE_ENV=${NODE_ENV}
-            - PORT=${WEB_PORT}
-            - NEXT_PUBLIC_API_URL=http://localhost:${PORT}
         volumes:
             - ./apps/web/src:/app/apps/web/src
             - ./packages/shared/src:/app/packages/shared/src
             - /app/node_modules
-            - /app/apps/web/node_modules
-            - /app/apps/web/.next
-        depends_on:
-            - server
-
-    db:
-        image: mysql:8.0
-        container_name: ${CONTAINER_DB}
-        restart: unless-stopped
-        environment:
-            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-            MYSQL_DATABASE: ${DB_NAME}
-            MYSQL_USER: ${DB_USER}
-            MYSQL_PASSWORD: ${DB_PASSWORD}
-        ports:
-            - "${DB_PORT}:3306"
-        volumes:
-            - mysql_data:/var/lib/mysql
-
-    adminer:
-        image: adminer:latest
-        container_name: ${CONTAINER_ADMINER}
-        restart: unless-stopped
-        ports:
-            - "${ADMINER_PORT}:8080"
         depends_on:
             - db
 

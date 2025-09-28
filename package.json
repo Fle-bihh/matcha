@@ -20,8 +20,8 @@
 	"homepage": "https://github.com/Fle-bihh/matcha#readme",
 	"workspaces": [
 		"packages/shared",
-		"apps/web",
-		"apps/server"
+		"apps/server",
+		"apps/web"
 	],
 	"devDependencies": {
 		"typescript": "^5.9.2"
