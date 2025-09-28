@@ -3,6 +3,7 @@ import "@/controllers";
 
 import express, { Express } from "express";
 import cors from "cors";
+import multer from "multer";
 
 import { config } from "@/config";
 import { ControllerRegistry } from "./registry/controller.registry";
@@ -47,10 +48,13 @@ class Server {
 	}
 
 	private setupMiddleware(): void {
+		const upload = multer();
+
 		this.app.use(helmetConfig);
 		this.app.use(limiter);
 		this.app.use(express.json({ limit: "10mb" }));
 		this.app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+		this.app.use(upload.none());
 		this.app.use(cors(corsOptions));
 		this.app.use(hppMiddleware);
 		this.app.use(sqlSanitize);

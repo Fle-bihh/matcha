@@ -32,6 +32,7 @@ export function Validate<T extends ZodType>(
 		) {
 			try {
 				const data = req[source];
+
 				const validatedData = schema.parse(data);
 
 				if (!req.validated) {

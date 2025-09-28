@@ -12,7 +12,7 @@ export class AuthController extends BaseController {
 
 	@Route("POST", "auth", "register")
 	@ApiDocs("Register a new user")
-	@Validate(RegisterRequestSchema)
+	@Validate(RegisterRequestSchema, "body")
 	private async register(req: Request, res: Response): Promise<void> {
 		const result = await this.authService.register(req.body);
 		res.status(result.statusCode).send(result);
@@ -20,7 +20,7 @@ export class AuthController extends BaseController {
 
 	@Route("POST", "auth", "login")
 	@ApiDocs("Login user")
-	@Validate(LoginRequestSchema)
+	@Validate(LoginRequestSchema, "body")
 	private async login(req: Request, res: Response): Promise<void> {
 		const { email, password } = req.body;
 		const result = await this.authService.login(email, password);

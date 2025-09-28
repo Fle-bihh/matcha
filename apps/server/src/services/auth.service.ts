@@ -23,10 +23,19 @@ export class AuthService extends BaseService {
 		dto: RegisterRequestDto
 	): Promise<ServiceResponse<RegisterResponseDto | null>> {
 		try {
-			// Hash the password before saving
+			const emailAlreadyExists =
+				await this.userRepository.findUserByEmail(dto.email);
+
+			if (emailAlreadyExists) {
+				return ServiceResponse.failure(
+					"Email already in use",
+					null,
+					StatusCodes.CONFLICT
+				);
+			}
+
 			const hashedPassword = await HashUtils.hashPassword(dto.password);
 
-			// Create user with hashed password
 			const userData = {
 				...dto,
 				password: hashedPassword,
@@ -34,15 +43,11 @@ export class AuthService extends BaseService {
 
 			const user = await this.userRepository.createUser(userData);
 
-			// Generate JWT token
 			const token = JwtUtils.generateToken(user);
-
-			// Return user data without password
-			const { password: _, ...userWithoutPassword } = user;
 
 			return ServiceResponse.success("User registered successfully", {
 				token,
-				user: userWithoutPassword as any, // Cast needed due to password field removal
+				user,
 			});
 		} catch (error) {
 			return ServiceResponse.failure(
@@ -58,7 +63,6 @@ export class AuthService extends BaseService {
 		password: string
 	): Promise<ServiceResponse<LoginResponseDto | null>> {
 		try {
-			// Find user by email
 			const user = await this.userRepository.findUserByEmail(email);
 
 			if (!user) {
@@ -69,7 +73,6 @@ export class AuthService extends BaseService {
 				);
 			}
 
-			// Check password
 			const isPasswordValid = await HashUtils.comparePassword(
 				password,
 				user.password
@@ -83,15 +86,11 @@ export class AuthService extends BaseService {
 				);
 			}
 
-			// Generate JWT token
 			const token = JwtUtils.generateToken(user);
-
-			// Return user data without password
-			const { password: _, ...userWithoutPassword } = user;
 
 			return ServiceResponse.success("User logged in successfully", {
 				token,
-				user: userWithoutPassword as any,
+				user,
 			});
 		} catch (error) {
 			return ServiceResponse.failure(
