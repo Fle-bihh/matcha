@@ -10,6 +10,10 @@ export const ROUTES = {
 	user: {
 		all: "/users",
 	},
+	auth: {
+		register: "/register",
+		login: "/login",
+	},
 } as const;
 
 export type RouteGroups = keyof typeof ROUTES;

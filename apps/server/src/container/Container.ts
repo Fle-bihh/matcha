@@ -3,7 +3,7 @@ import {
 	HelloRepository,
 	UserRepository,
 } from "@/repositories";
-import { HelloService, UserService } from "@/services";
+import { HelloService, UserService, AuthService } from "@/services";
 import { ETokens, IContainer } from "@/types";
 
 type ServiceConstructor = new (container: IContainer) => any;
@@ -14,6 +14,7 @@ const services: Record<ETokens, ServiceConstructor> = {
 	[ETokens.HelloService]: HelloService,
 	[ETokens.UserRepository]: UserRepository,
 	[ETokens.UserService]: UserService,
+	[ETokens.AuthService]: AuthService,
 } as const;
 
 export class Container implements IContainer {
