@@ -1,5 +1,8 @@
-import { BaseRepository, HelloRepository } from "@/repositories";
-import { UserRepository } from "@/repositories/user.repository";
+import {
+	BaseRepository,
+	HelloRepository,
+	UserRepository,
+} from "@/repositories";
 import { HelloService, UserService } from "@/services";
 import { ETokens, IContainer } from "@/types";
 

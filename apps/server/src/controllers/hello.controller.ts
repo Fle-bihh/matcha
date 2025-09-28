@@ -1,7 +1,4 @@
 import type { Request, Response } from "express";
-import { Route } from "@/decorators/route.decorator";
-import { Validate } from "@/decorators/validate.decorator";
-import { ApiDocs } from "@/decorators/api-docs.decorator";
 import { BaseController } from "./base.controller";
 import { ETokens } from "@/types";
 import { HelloService } from "@/services";
@@ -11,7 +8,7 @@ import {
 	type GetHelloRequestDto,
 	type GetHealthRequestDto,
 } from "@/dto";
-import { Auth } from "@/decorators/auth.decorator";
+import { ApiDocs, Route, Validate, Auth } from "@/decorators";
 
 export class HelloController extends BaseController {
 	private get helloService(): HelloService {

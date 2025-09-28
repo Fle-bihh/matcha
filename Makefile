@@ -21,7 +21,7 @@ down:
 
 re:
 	docker compose down
-	docker compose up --build
+	docker compose up -d --build
 
 no-cache:
 	docker compose down
