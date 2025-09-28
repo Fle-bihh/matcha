@@ -17,6 +17,7 @@ export const createStore = (container: IContainer) => {
 					extraArgument: { container },
 				},
 			}),
+		devTools: process.env.NODE_ENV !== "production",
 	});
 
 	return store;
