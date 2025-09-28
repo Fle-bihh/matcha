@@ -12,6 +12,11 @@ const userFields = {
 		.string()
 		.min(3, "Username must be at least 3 characters")
 		.max(30, "Username too long"),
+	email: z.string().and(z.email("Invalid email address")),
+	password: z
+		.string()
+		.min(8, "Password must be at least 8 characters")
+		.max(100, "Password too long"),
 };
 
 export const UserSchema = createEntitySchema(userFields);

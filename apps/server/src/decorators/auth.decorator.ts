@@ -1,5 +1,6 @@
 import { ServiceResponse } from "@/types";
 import { StatusCodes } from "http-status-codes";
+import { JwtUtils } from "@/utils/jwt.utils";
 
 export function Auth() {
 	return function (
@@ -11,27 +12,35 @@ export function Auth() {
 
 		descriptor.value = function (...args: any[]) {
 			const req = args[0];
-			const authHeader = req.headers["authorization"];
-			if (!authHeader || !authHeader.startsWith("Bearer ")) {
-				const res = args[1];
+			const res = args[1];
+
+			try {
+				const authHeader = req.headers["authorization"];
+
+				if (!authHeader || !authHeader.startsWith("Bearer ")) {
+					const response = ServiceResponse.failure(
+						"Unauthorized: No token provided",
+						null,
+						StatusCodes.UNAUTHORIZED
+					);
+					return res.status(response.statusCode).json(response);
+				}
+
+				const token = authHeader.substring(7); // Remove "Bearer " prefix
+				const decoded = JwtUtils.verifyToken(token);
+
+				// Add user info to request
+				req.user = decoded;
+
+				return originalMethod.apply(this, args);
+			} catch (error) {
 				const response = ServiceResponse.failure(
-					"Unauthorized: No token provided",
+					"Unauthorized: Invalid or expired token",
 					null,
 					StatusCodes.UNAUTHORIZED
 				);
 				return res.status(response.statusCode).json(response);
 			}
-			const token = authHeader.split(" ")[1];
-			if (token !== "temp-token") {
-				const res = args[1];
-				const response = ServiceResponse.failure(
-					"Unauthorized: Invalid token",
-					null,
-					StatusCodes.UNAUTHORIZED
-				);
-				return res.status(response.statusCode).json(response);
-			}
-			return originalMethod.apply(this, args);
 		};
 
 		return descriptor;
