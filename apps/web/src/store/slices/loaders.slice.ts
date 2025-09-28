@@ -1,5 +1,4 @@
-import { ELoaderKeys, EStoreSlices } from "@/types/store.types";
-import { TLoaderState, ISetLoaderPayload } from "@/types/loaders.types";
+import { EStoreSlices, ISetLoaderPayload, TLoaderState } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: TLoaderState = {};

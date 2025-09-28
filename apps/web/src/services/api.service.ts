@@ -1,6 +1,6 @@
-import { IContainer } from "@/types/container.types";
+import { IContainer } from "@/types";
 import { BaseService } from "./base.service";
-import { API_BASE_URL } from "@/constants/api.constants";
+import { API_BASE_URL } from "@/constants";
 
 export class ApiService extends BaseService {
 	private baseUrl: string;

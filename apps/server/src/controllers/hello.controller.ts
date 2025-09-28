@@ -3,7 +3,7 @@ import { Route } from "@/decorators/route.decorator";
 import { Validate } from "@/decorators/validate.decorator";
 import { ApiDocs } from "@/decorators/api-docs.decorator";
 import { BaseController } from "./base.controller";
-import { ETokens } from "@/types/container.types";
+import { ETokens } from "@/types";
 import { HelloService } from "@/services";
 import {
 	GetHelloRequestSchema,

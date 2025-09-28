@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { UserService } from "@/services/user.service";
-import { ETokens } from "@/types/container.types";
+import { ETokens } from "@/types";
 import { Container } from "@/container/container";
 import { baseThunk } from "./base.thunks";
 

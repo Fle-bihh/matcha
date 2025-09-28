@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { setFlag as setSliceFlag } from "@/store/slices/flags.slice";
-import { EFlagKeys, IFlagDataTypes, TFlagData } from "@/types/flags.types";
+import { EFlagKeys, IFlagDataTypes, TFlagData } from "@/types";
 
 interface IProps<T extends EFlagKeys> {
 	flagger: T;

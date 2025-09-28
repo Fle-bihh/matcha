@@ -5,10 +5,10 @@ import {
 	GetHelloResponseDto,
 } from "@/dto";
 import { TestValue, CreateTestValue } from "@matcha/shared";
-import { ServiceResponse } from "@/types/service.types";
+import { ServiceResponse } from "@/types";
 import { StatusCodes } from "http-status-codes";
 import { HelloRepository } from "@/repositories";
-import { IContainer, ETokens } from "@/types/container.types";
+import { IContainer, ETokens } from "@/types";
 import { BaseService } from "./base.service";
 
 export class HelloService extends BaseService {

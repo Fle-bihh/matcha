@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { Route } from "@/decorators/route.decorator";
 import { ApiDocs } from "@/decorators/api-docs.decorator";
 import { BaseController } from "./base.controller";
-import { ETokens } from "@/types/container.types";
+import { ETokens } from "@/types";
 import { Auth } from "@/decorators/auth.decorator";
 import { UserService } from "@/services";
 

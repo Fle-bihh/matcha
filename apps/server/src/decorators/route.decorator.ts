@@ -1,4 +1,4 @@
-import type { HttpMethod } from "@/types/routes.types";
+import type { HttpMethod } from "@/types";
 import { ControllerRegistry } from "@/registry/controller.registry";
 import {
 	buildApiRoute,

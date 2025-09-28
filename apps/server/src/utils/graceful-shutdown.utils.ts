@@ -1,7 +1,7 @@
 import { logger } from "@matcha/shared";
 import { Server } from "http";
 import { Container } from "@/container/container";
-import { ETokens } from "@/types/container.types";
+import { ETokens } from "@/types";
 import { BaseRepository } from "@/repositories";
 
 interface ShutdownOptions {

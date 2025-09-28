@@ -1,14 +1,15 @@
-import { ApiResponse, logger, User } from "@matcha/shared";
-import { ETokens } from "@/types/container.types";
+import { ApiResponse, User } from "@matcha/shared";
+import {
+	EEntityTypes,
+	EFlagKeys,
+	ELoaderKeys,
+	ETokens,
+	ServiceResponse,
+} from "@/types";
+import { setEntities, setFlag, setLoader } from "@/store";
+import { API_ROUTES } from "@/constants";
 import type { ApiService } from "./api.service";
 import { BaseService } from "./base.service";
-import { API_ROUTES } from "@/constants/api.constants";
-import { setLoader } from "@/store/slices/loaders.slice";
-import { EEntityTypes, ELoaderKeys } from "@/types/store.types";
-import { setFlag } from "@/store/slices/flags.slice";
-import { ServiceResponse } from "@/types/service.types";
-import { setEntities } from "@/store/slices/entities.slice";
-import { EFlagKeys } from "@/types/flags.types";
 import { parseErrorMessage } from "@/utils/error.utils";
 import { createTimestampString } from "@/utils/date.utils";
 

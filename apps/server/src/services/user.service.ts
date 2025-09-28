@@ -1,5 +1,5 @@
-import { ServiceResponse } from "@/types/service.types";
-import { IContainer, ETokens } from "@/types/container.types";
+import { ServiceResponse } from "@/types";
+import { IContainer, ETokens } from "@/types";
 import { BaseService } from "./base.service";
 import { UserRepository } from "@/repositories/user.repository";
 import { User } from "@matcha/shared";

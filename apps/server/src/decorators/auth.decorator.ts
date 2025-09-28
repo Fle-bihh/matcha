@@ -1,4 +1,4 @@
-import { ServiceResponse } from "@/types/service.types";
+import { ServiceResponse } from "@/types";
 import { StatusCodes } from "http-status-codes";
 
 export function Auth() {

@@ -1,4 +1,4 @@
-import { IContainer } from "@/types/container.types";
+import { IContainer } from "@/types";
 
 export abstract class BaseService {
 	protected container: IContainer;

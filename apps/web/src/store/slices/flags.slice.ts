@@ -1,5 +1,5 @@
-import { EFlagKeys, IFlagDataTypes } from "@/types/flags.types";
-import { EStoreSlices } from "@/types/store.types";
+import { EFlagKeys, IFlagDataTypes } from "@/types";
+import { EStoreSlices } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type FlagState = {
