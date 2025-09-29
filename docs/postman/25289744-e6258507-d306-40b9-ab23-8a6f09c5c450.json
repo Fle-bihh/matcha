@@ -1302,25 +1302,11 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "username",
-									"value": "felix",
-									"description": "Username for the user account",
+									"key": "refreshToken",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc1OTE2MDg2MiwiZXhwIjoxNzU5NzY1NjYyfQ.vAZ3Pzg24GGHm7iQZTigJr_aUEdU3fwhwOlP1XatsV",
+									"description": "Refresh token received when loggin in / registering",
 									"type": "text",
-									"uuid": "39631fc7-d5c6-4614-89d2-19897cbdd47a"
-								},
-								{
-									"key": "email",
-									"value": "felixlebihan@icloud.com",
-									"description": "Unique email that will serve later for authentication",
-									"type": "text",
-									"uuid": "63d02f48-8e75-46ea-8329-7e6c94d01bdb"
-								},
-								{
-									"key": "password",
-									"value": "test_password",
-									"description": "Password required for later authentication",
-									"type": "text",
-									"uuid": "e25f6502-60c4-4628-bbfb-ae0af1523220"
+									"uuid": "bd7c025f-9966-4270-9331-0c9a6c4f74c5"
 								}
 							]
 						},
