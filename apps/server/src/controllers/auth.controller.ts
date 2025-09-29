@@ -35,4 +35,10 @@ export class AuthController extends BaseController {
 		const result = await this.authService.refreshToken(req.body);
 		res.status(result.statusCode).send(result);
 	}
+
+	@Route("POST", "logout")
+	private async logout(req: Request, res: Response): Promise<void> {
+		// const result = await this.authService.logout(token);
+		// res.status(result.statusCode).send(result);
+	}
 }

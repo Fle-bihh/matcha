@@ -1,6 +1,6 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
-import { UserRepository } from "@/repositories";
+import { UserService } from "./user.service";
 import {
 	RegisterRequestDto,
 	RegisterResponseDto,
@@ -11,25 +11,28 @@ import {
 import { StatusCodes } from "http-status-codes";
 import { JwtUtils } from "@/utils/jwt.utils";
 import { HashUtils } from "@/utils/hash.utils";
-import { UserWithPassword } from "@matcha/shared";
 
 export class AuthService extends BaseService {
 	constructor(container: IContainer) {
 		super(container);
 	}
 
-	private get userRepository(): UserRepository {
-		return this.container.get<UserRepository>(ETokens.UserRepository);
+	private get userService(): UserService {
+		return this.container.get<UserService>(ETokens.UserService);
 	}
 
 	public async register(
 		dto: RegisterRequestDto
 	): Promise<ServiceResponse<RegisterResponseDto | null>> {
 		try {
-			const emailAlreadyExists =
-				await this.userRepository.findUserByEmail(dto.email);
+			const existingUserResponse = await this.userService.findByEmail(
+				dto.email
+			);
 
-			if (emailAlreadyExists) {
+			if (
+				!existingUserResponse.success ||
+				existingUserResponse.responseObject
+			) {
 				return ServiceResponse.failure(
 					"Email already in use",
 					null,
@@ -44,14 +47,24 @@ export class AuthService extends BaseService {
 				password: hashedPassword,
 			};
 
-			const user = await this.userRepository.createUser(userData);
+			const userResponse = await this.userService.createUser(userData);
 
-			const { accessToken, refreshToken } = JwtUtils.generateTokens(user);
+			if (!userResponse.success || !userResponse.responseObject) {
+				return ServiceResponse.failure(
+					userResponse.message,
+					null,
+					userResponse.statusCode
+				);
+			}
+
+			const { accessToken, refreshToken } = JwtUtils.generateTokens(
+				userResponse.responseObject
+			);
 
 			return ServiceResponse.success("User registered successfully", {
 				accessToken,
 				refreshToken,
-				user,
+				user: userResponse.responseObject,
 			});
 		} catch (error) {
 			return ServiceResponse.failure(
@@ -67,10 +80,11 @@ export class AuthService extends BaseService {
 		password: string
 	): Promise<ServiceResponse<LoginResponseDto | null>> {
 		try {
-			const userWithPassword =
-				await this.userRepository.findUserByEmailWithPassword(email);
+			const userResponse = await this.userService.findByEmailWithPassword(
+				email
+			);
 
-			if (!userWithPassword) {
+			if (!userResponse.success || !userResponse.responseObject) {
 				return ServiceResponse.failure(
 					"Invalid credentials",
 					null,
@@ -78,6 +92,7 @@ export class AuthService extends BaseService {
 				);
 			}
 
+			const userWithPassword = userResponse.responseObject;
 			const isPasswordValid = await HashUtils.comparePassword(
 				password,
 				userWithPassword.password
@@ -114,15 +129,11 @@ export class AuthService extends BaseService {
 		try {
 			const { userId } = JwtUtils.verifyRefreshToken(dto.refreshToken);
 
-			const users = await this.userRepository.getDocs<UserWithPassword>(
-				"users",
-				{
-					where: "id = ?",
-					values: [userId],
-				}
+			const userResponse = await this.userService.findById(
+				userId.toString()
 			);
 
-			if (!users || users.length === 0) {
+			if (!userResponse.success || !userResponse.responseObject) {
 				return ServiceResponse.failure(
 					"Invalid refresh token",
 					null,
@@ -130,8 +141,7 @@ export class AuthService extends BaseService {
 				);
 			}
 
-			const userWithPassword = users[0];
-			const { password: _, ...user } = userWithPassword;
+			const user = userResponse.responseObject;
 			const { accessToken, refreshToken } = JwtUtils.generateTokens(user);
 
 			return ServiceResponse.success("Token refreshed successfully", {

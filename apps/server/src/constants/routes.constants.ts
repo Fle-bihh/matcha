@@ -12,6 +12,7 @@ export const ROUTES = {
 		register: "/register",
 		login: "/login",
 		refresh: "/refresh",
+		logout: "/logout",
 	},
 } as const;
 

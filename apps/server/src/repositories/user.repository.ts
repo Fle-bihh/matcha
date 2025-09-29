@@ -13,7 +13,7 @@ export class UserRepository extends BaseRepository {
 		});
 	}
 
-	async initializeTable(): Promise<void> {
+	private async initializeTable(): Promise<void> {
 		await this.createTableWithMetadata(
 			this.tableName,
 			`username VARCHAR(30) NOT NULL UNIQUE,
