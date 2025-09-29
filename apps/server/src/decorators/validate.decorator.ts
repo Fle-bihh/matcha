@@ -3,7 +3,8 @@ import { logger } from "@matcha/shared";
 import type { Request, Response, NextFunction } from "express";
 import { z, type ZodType } from "zod";
 import { METADATA_KEYS } from "@/constants/metadata.constants";
-import { ValidateMetadata } from "@/types";
+import { ServiceResponse, ValidateMetadata } from "@/types";
+import { StatusCodes } from "http-status-codes";
 
 export function Validate<T extends ZodType>(
 	schema: T,
@@ -66,26 +67,30 @@ export function Validate<T extends ZodType>(
 				return originalMethod.call(this, req, res, next);
 			} catch (error) {
 				if (error instanceof z.ZodError) {
-					return res.status(400).json({
-						error: "Validation failed",
-						details: error.issues.map((issue) => {
-							const fieldPath =
-								issue.path.length > 0
-									? issue.path.join(".")
-									: source === "body"
-									? "request body"
-									: source;
+					const response = ServiceResponse.failure(
+						"Validation failed",
+						{
+							details: error.issues.map((issue) => {
+								const fieldPath =
+									issue.path.length > 0
+										? issue.path.join(".")
+										: source === "body"
+										? "request body"
+										: source;
 
-							return {
-								field: fieldPath,
-								message: issue.message,
-								value:
-									"received" in issue
-										? issue.received
-										: undefined,
-							};
-						}),
-					});
+								return {
+									field: fieldPath,
+									message: issue.message,
+									value:
+										"received" in issue
+											? issue.received
+											: undefined,
+								};
+							}),
+						},
+						StatusCodes.BAD_REQUEST
+					);
+					return res.status(StatusCodes.BAD_REQUEST).json(response);
 				}
 
 				throw error;
