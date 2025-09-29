@@ -26,7 +26,11 @@
 						{
 							"key": "include_details",
 							"value": "true",
+<<<<<<< HEAD
 							"type": null
+=======
+							"description": "Boolean to ask for more details about the server status test"
+>>>>>>> 6776053 (Updated Postman collection)
 						}
 					]
 				}
