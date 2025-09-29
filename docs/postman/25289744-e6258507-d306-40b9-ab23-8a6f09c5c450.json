@@ -312,7 +312,160 @@
 						"method": "GET",
 						"header": []
 					},
-					"response": []
+					"response": [
+						{
+							"id": "25289744-aad16fdd-0bcd-41ce-8974-232887180224",
+							"name": "New Request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "felix",
+											"description": "Username for the user account",
+											"type": "text",
+											"uuid": "39631fc7-d5c6-4614-89d2-19897cbdd47a"
+										},
+										{
+											"key": "email",
+											"value": "felixlebihan@icloud.com",
+											"description": "Unique email that will serve later for authentication",
+											"type": "text",
+											"uuid": "63d02f48-8e75-46ea-8329-7e6c94d01bdb"
+										},
+										{
+											"key": "password",
+											"value": "test_password",
+											"description": "Password required for later authentication",
+											"type": "text",
+											"uuid": "e25f6502-60c4-4628-bbfb-ae0af1523220"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{api_url}}/auth/register",
+									"host": [
+										"{{api_url}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';style-src 'self' 'unsafe-inline';script-src 'self';img-src 'self' data: https:;base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "RateLimit-Policy",
+									"value": "100;w=900"
+								},
+								{
+									"key": "RateLimit-Limit",
+									"value": "100"
+								},
+								{
+									"key": "RateLimit-Remaining",
+									"value": "99"
+								},
+								{
+									"key": "RateLimit-Reset",
+									"value": "900"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "http://localhost:3001"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "646"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"286-ogHoEi1hnNiRQnSxuUKiqPTxUlE\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 29 Sep 2025 14:11:47 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"responseTime": null,
+							"body": "{\n    \"success\": true,\n    \"message\": \"User registered successfully\",\n    \"responseObject\": {\n        \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJmZWxpeCIsImVtYWlsIjoiZmVsaXhsZWJpaGFuQGljbG91ZC5jb20iLCJpYXQiOjE3NTkxNTUxMDcsImV4cCI6MTc1OTE1NjAwN30.xJIm0dap904yQ4bLMJ0tkzMgLdeNtdH5BdExVw4Xf1M\",\n        \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc1OTE1NTEwNywiZXhwIjoxNzU5NzU5OTA3fQ.B9Dsylc5HqGEI-D6huwSpsCogBlpQ4ivZi92CjAegHI\",\n        \"user\": {\n            \"id\": 1,\n            \"username\": \"felix\",\n            \"email\": \"felixlebihan@icloud.com\",\n            \"created_at\": \"2025-09-29T14:11:46.000Z\",\n            \"updated_at\": \"2025-09-29T14:11:46.000Z\",\n            \"deleted_at\": null\n        }\n    },\n    \"statusCode\": 200\n}"
+						}
+					]
 				}
 			],
 			"id": "25289744-89a6ae2a-77cf-4ba3-8748-7a8be39452a5"
