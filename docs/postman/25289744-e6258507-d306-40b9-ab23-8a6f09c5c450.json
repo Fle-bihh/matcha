@@ -1035,7 +1035,7 @@
 							},
 							"status": "Bad Request",
 							"code": 400,
-							"_postman_previewlanguage": null,
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Security-Policy",
@@ -1095,11 +1095,11 @@
 								},
 								{
 									"key": "RateLimit-Remaining",
-									"value": "97"
+									"value": "91"
 								},
 								{
 									"key": "RateLimit-Reset",
-									"value": "521"
+									"value": "774"
 								},
 								{
 									"key": "Access-Control-Allow-Origin",
@@ -1119,15 +1119,15 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "125"
+									"value": "179"
 								},
 								{
 									"key": "ETag",
-									"value": "W/\"7d-WA5yEo9eFeXnR3znX8bnmL5hAmI\""
+									"value": "W/\"b3-3RaHafaZZ1SV2/nlVfXnaExjlHA\""
 								},
 								{
 									"key": "Date",
-									"value": "Mon, 29 Sep 2025 14:36:19 GMT"
+									"value": "Mon, 29 Sep 2025 15:49:17 GMT"
 								},
 								{
 									"key": "Connection",
@@ -1140,7 +1140,7 @@
 							],
 							"cookie": [],
 							"responseTime": null,
-							"body": "{\n    \"error\": \"Validation failed\",\n    \"details\": [\n        {\n            \"field\": \"password\",\n            \"message\": \"Invalid input: expected string, received undefined\"\n        }\n    ]\n}"
+							"body": "{\n    \"success\": false,\n    \"message\": \"Validation failed\",\n    \"responseObject\": {\n        \"details\": [\n            {\n                \"field\": \"password\",\n                \"message\": \"Invalid input: expected string, received undefined\"\n            }\n        ]\n    },\n    \"statusCode\": 400\n}"
 						},
 						{
 							"id": "25289744-e8eab846-1725-4048-bf73-c3bca904ea31",
