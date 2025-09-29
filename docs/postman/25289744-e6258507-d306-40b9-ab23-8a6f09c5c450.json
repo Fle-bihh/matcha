@@ -33,8 +33,7 @@
 									"description": "When set to true, the response will include additional details about the service's health, such as memory and CPU usage statistics."
 								}
 							]
-						},
-						"description": "Placeholder description"
+						}
 					},
 					"response": [
 						{
