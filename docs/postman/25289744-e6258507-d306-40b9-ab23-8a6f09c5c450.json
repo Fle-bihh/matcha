@@ -358,7 +358,7 @@
 							},
 							"status": "OK",
 							"code": 200,
-							"_postman_previewlanguage": null,
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "Content-Security-Policy",
@@ -438,7 +438,9 @@
 								},
 								{
 									"key": "Content-Type",
-									"value": "application/json; charset=utf-8"
+									"value": "application/json",
+									"description": "",
+									"type": "text"
 								},
 								{
 									"key": "Content-Length",
