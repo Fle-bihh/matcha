@@ -1303,7 +1303,7 @@
 							"formdata": [
 								{
 									"key": "refreshToken",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc1OTE2MDg2MiwiZXhwIjoxNzU5NzY1NjYyfQ.vAZ3Pzg24GGHm7iQZTigJr_aUEdU3fwhwOlP1XatsV",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc1OTE2MTA4OSwiZXhwIjoxNzU5NzY1ODg5fQ.7bULSmPr76oRZD_NU_S2dAqTVWj7yGAOnDgU36deCsU",
 									"description": "Refresh token received when loggin in / registering",
 									"type": "text",
 									"uuid": "bd7c025f-9966-4270-9331-0c9a6c4f74c5"
