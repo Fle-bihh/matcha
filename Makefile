@@ -9,8 +9,10 @@ clean:
 install:
 	npm install
 	npm run build -w @matcha/shared
+	npm run build -w @matcha/server
+	npm run build -w @matcha/web
 
-dev:
+with-logs:
 	docker compose up --build
 
 up:
@@ -28,4 +30,4 @@ no-cache:
 	docker system prune -a -f
 	docker volume prune -f
 	docker volume rm matcha_mysql_data 2>/dev/null || true
-	docker compose up --build
+	docker compose up -d --build

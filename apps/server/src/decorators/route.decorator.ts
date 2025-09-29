@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import type { HttpMethod } from "@/types";
 import { ControllerRegistry } from "@/registry/controller.registry";
 import {
@@ -5,7 +6,10 @@ import {
 	type RouteGroups,
 	type RouteKeys,
 } from "@/constants/routes.constants";
-import { getApiDocs } from "./api-docs.decorator";
+import {
+	METADATA_KEYS,
+	type RouteMetadata,
+} from "@/constants/metadata.constants";
 
 export function Route<T extends RouteGroups, K extends RouteKeys<T>>(
 	method: HttpMethod,
@@ -19,13 +23,25 @@ export function Route<T extends RouteGroups, K extends RouteKeys<T>>(
 	) {
 		const route = buildApiRoute(group, key);
 
-		const apiDocs = getApiDocs(target, propertyKey);
+		// Stocker les métadonnées avec reflect-metadata
+		const metadata: RouteMetadata = {
+			method,
+			path: route,
+			group: group as string,
+			key: key as string,
+		};
+		Reflect.defineMetadata(
+			METADATA_KEYS.ROUTE,
+			metadata,
+			target,
+			propertyKey
+		);
+
 		ControllerRegistry.registerRoute({
 			method,
 			path: route,
 			handler: propertyKey,
 			instance: target.constructor,
-			apiDocs,
 		});
 	};
 }

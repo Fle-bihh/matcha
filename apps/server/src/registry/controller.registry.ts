@@ -8,15 +8,12 @@ interface RouteInfo {
 	path: string;
 	handler: string;
 	instance: new (container: any) => any;
-	apiDocs?: string;
 }
 
 class ControllerRegistry {
 	private static readonly routes: RouteInfo[] = [];
 	private static readonly instances = new Map<string, any>();
 	private static container = new Container();
-
-	private setupRouteOptions(app: Application, route: RouteInfo) {}
 
 	public static registerRoute(route: RouteInfo): void {
 		this.routes.push(route);
@@ -69,12 +66,6 @@ class ControllerRegistry {
 			});
 
 			const allowedMethods = routes.map((r) => r.method).join(", ");
-			const apiDocsForPath = routes
-				.filter((r) => r.apiDocs)
-				.map((r) => ({
-					method: r.method,
-					description: r.apiDocs,
-				}));
 
 			app.options(path, (req: Request, res: Response) => {
 				res.setHeader("Allow", allowedMethods);
@@ -83,29 +74,8 @@ class ControllerRegistry {
 					"Access-Control-Allow-Headers",
 					"Content-Type, Authorization"
 				);
-
-				if (apiDocsForPath.length > 0) {
-					res.json({
-						path: path,
-						allowedMethods: allowedMethods.split(", "),
-						documentation: apiDocsForPath,
-					});
-				} else {
-					res.json({
-						path: path,
-						allowedMethods: allowedMethods.split(", "),
-					});
-				}
 			});
 		});
-
-		const allApiDocs = this.routes
-			.filter((r) => r.apiDocs)
-			.map((r) => `${r.method} ${r.path}: ${r.apiDocs}`);
-		if (allApiDocs.length > 0) {
-			logger.info("API Documentation:");
-			allApiDocs.forEach((doc) => logger.info(`- ${doc}`));
-		}
 	}
 }
 

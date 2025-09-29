@@ -1,1 +1,1 @@
-export * from "./hello.dto";
+export * from "./health.dto";

@@ -1,7 +1,6 @@
 export enum ETokens {
 	BaseRepository = "BaseRepository",
-	HelloRepository = "HelloRepository",
-	HelloService = "HelloService",
+	HealthService = "HealthService",
 	UserRepository = "UserRepository",
 	UserService = "UserService",
 	AuthService = "AuthService",

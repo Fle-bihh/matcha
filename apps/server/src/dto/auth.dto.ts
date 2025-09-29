@@ -1,4 +1,4 @@
-import { CreateUserSchema, TestValue, User } from "@matcha/shared";
+import { CreateUserSchema, User } from "@matcha/shared";
 import { z } from "zod";
 
 export const RegisterRequestSchema = CreateUserSchema;

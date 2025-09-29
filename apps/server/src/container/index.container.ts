@@ -1,17 +1,12 @@
-import {
-	BaseRepository,
-	HelloRepository,
-	UserRepository,
-} from "@/repositories";
-import { HelloService, UserService, AuthService } from "@/services";
+import { BaseRepository, UserRepository } from "@/repositories";
+import { HealthService, UserService, AuthService } from "@/services";
 import { ETokens, IContainer } from "@/types";
 
 type ServiceConstructor = new (container: IContainer) => any;
 
 const services: Record<ETokens, ServiceConstructor> = {
 	[ETokens.BaseRepository]: BaseRepository,
-	[ETokens.HelloRepository]: HelloRepository,
-	[ETokens.HelloService]: HelloService,
+	[ETokens.HealthService]: HealthService,
 	[ETokens.UserRepository]: UserRepository,
 	[ETokens.UserService]: UserService,
 	[ETokens.AuthService]: AuthService,

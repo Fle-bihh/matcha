@@ -1,18 +1,11 @@
+import "reflect-metadata";
 import { logger } from "@matcha/shared";
 import type { Request, Response, NextFunction } from "express";
 import { z, type ZodType } from "zod";
-
-declare global {
-	namespace Express {
-		interface Request {
-			validated?: {
-				query?: any;
-				body?: any;
-				params?: any;
-			};
-		}
-	}
-}
+import {
+	METADATA_KEYS,
+	type ValidateMetadata,
+} from "@/constants/metadata.constants";
 
 export function Validate<T extends ZodType>(
 	schema: T,
@@ -23,6 +16,15 @@ export function Validate<T extends ZodType>(
 		propertyKey: string,
 		descriptor: PropertyDescriptor
 	) {
+		// Stocker les métadonnées
+		const metadata: ValidateMetadata = { schema, source };
+		Reflect.defineMetadata(
+			METADATA_KEYS.VALIDATE,
+			metadata,
+			target,
+			propertyKey
+		);
+
 		const originalMethod = descriptor.value;
 
 		descriptor.value = function (
