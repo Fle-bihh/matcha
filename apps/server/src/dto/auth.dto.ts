@@ -1,7 +1,25 @@
 import { CreateUserSchema, User } from "@matcha/shared";
 import { z } from "zod";
 
-export const RegisterRequestSchema = CreateUserSchema;
+export const RegisterRequestSchema = CreateUserSchema.refine(
+	(data) => {
+		const emailPrefix = data.email.split("@")[0].toLowerCase();
+		const password = data.password.toLowerCase();
+
+		if (
+			emailPrefix.length >= 3 &&
+			(password.includes(emailPrefix) || emailPrefix.includes(password))
+		) {
+			return false;
+		}
+
+		return true;
+	},
+	{
+		message: "Password cannot be too similar to your email address",
+		path: ["password"],
+	}
+);
 
 export type RegisterRequestDto = z.infer<typeof RegisterRequestSchema>;
 

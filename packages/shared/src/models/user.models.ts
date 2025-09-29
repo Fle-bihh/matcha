@@ -18,8 +18,16 @@ const baseUserFields = {
 const passwordField = {
 	password: z
 		.string()
-		.min(8, "Password must be at least 8 characters")
-		.max(100, "Password too long"),
+		.min(7, "Password must be at least 7 characters")
+		.max(30, "Password must not exceed 30 characters")
+		.regex(/[0-9]/, "Password must contain at least one number")
+		.regex(
+			/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
+			"Password must contain at least one special character"
+		)
+		.refine((password) => {
+			return true;
+		}, "Password validation error"),
 };
 
 const userFieldsWithPassword = {
