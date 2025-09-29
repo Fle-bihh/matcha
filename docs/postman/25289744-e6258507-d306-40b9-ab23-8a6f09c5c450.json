@@ -349,7 +349,8 @@
 								"auth",
 								"register"
 							]
-						}
+						},
+						"description": "## Register User Endpoint\n\nThis endpoint allows for the registration of a new user account. It requires the submission of a username as part of the request body.\n\n### Response\n\nThe response from this endpoint will indicate the success or failure of the registration attempt.\n\n- **Status Codes**:\n    \n    - `200 OK`: Successful registration.\n        \n    - `400 Bad Request`: The request was invalid. This may occur if required fields are missing or invalid.\n        \n- {\"success\": true,\"message\": \"\",\"responseObject\": { \"accessToken\": \"\", \"refreshToken\": \"\", \"user\": { \"id\": 0, \"username\": \"\", \"email\": \"\", \"created_at\": \"\", \"updated_at\": \"\", \"deleted_at\": null }},\"statusCode\": 0}\n    \n- {\"error\": \"\",\"details\": \\[ { \"field\": \"\", \"message\": \"\" }\\]}\n    \n\n### Notes\n\n- Ensure that the username provided is unique and meets any specified criteria to avoid validation errors.\n    \n- The response may include an access token and refresh token upon successful registration, which can be used for subsequent authenticated requests."
 					},
 					"response": [
 						{
