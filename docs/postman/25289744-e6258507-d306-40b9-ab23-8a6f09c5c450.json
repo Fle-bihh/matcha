@@ -309,8 +309,46 @@
 						"disableBodyPruning": true
 					},
 					"request": {
-						"method": "GET",
-						"header": []
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "felix",
+									"description": "Username for the user account",
+									"type": "text",
+									"uuid": "39631fc7-d5c6-4614-89d2-19897cbdd47a"
+								},
+								{
+									"key": "email",
+									"value": "felixlebihan@icloud.com",
+									"description": "Unique email that will serve later for authentication",
+									"type": "text",
+									"uuid": "63d02f48-8e75-46ea-8329-7e6c94d01bdb",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "test_password",
+									"description": "Password required for later authentication",
+									"type": "text",
+									"uuid": "e25f6502-60c4-4628-bbfb-ae0af1523220",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api_url}}/auth/register",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
 					},
 					"response": [
 						{
