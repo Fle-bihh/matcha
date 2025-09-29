@@ -1,10 +1,15 @@
 {
 	"info": {
 		"_postman_id": "25289744-e6258507-d306-40b9-ab23-8a6f09c5c450",
-		"name": "health",
+		"name": "matcha",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
+		{
+			"name": "New Folder",
+			"item": [],
+			"id": "25289744-d4141b90-15e0-4d9e-a4fa-edfc86960269"
+		},
 		{
 			"name": "Check server's health",
 			"id": "25289744-ef830ecf-63fd-4c4e-a112-191a9ebe21fd",
