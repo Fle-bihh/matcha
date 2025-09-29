@@ -610,11 +610,11 @@
 								},
 								{
 									"key": "RateLimit-Remaining",
-									"value": "98"
+									"value": "92"
 								},
 								{
 									"key": "RateLimit-Reset",
-									"value": "863"
+									"value": "792"
 								},
 								{
 									"key": "Access-Control-Allow-Origin",
@@ -630,21 +630,19 @@
 								},
 								{
 									"key": "Content-Type",
-									"value": "application/json",
-									"description": "",
-									"type": "text"
+									"value": "application/json; charset=utf-8"
 								},
 								{
 									"key": "Content-Length",
-									"value": "258"
+									"value": "312"
 								},
 								{
 									"key": "ETag",
-									"value": "W/\"102-NkgSyGrmkMe52vvOta2NXrQl6co\""
+									"value": "W/\"138-4i689p+ghP/6ZIhOXcX7iXQ2ick\""
 								},
 								{
 									"key": "Date",
-									"value": "Mon, 29 Sep 2025 14:12:24 GMT"
+									"value": "Mon, 29 Sep 2025 15:48:59 GMT"
 								},
 								{
 									"key": "Connection",
@@ -657,7 +655,7 @@
 							],
 							"cookie": [],
 							"responseTime": null,
-							"body": "{\n    \"error\": \"Validation failed\",\n    \"details\": [\n        {\n            \"field\": \"email\",\n            \"message\": \"Invalid input: expected string, received undefined\"\n        },\n        {\n            \"field\": \"email\",\n            \"message\": \"Invalid email address\"\n        },\n        {\n            \"field\": \"password\",\n            \"message\": \"Invalid input: expected string, received undefined\"\n        }\n    ]\n}"
+							"body": "{\n    \"success\": false,\n    \"message\": \"Validation failed\",\n    \"responseObject\": {\n        \"details\": [\n            {\n                \"field\": \"email\",\n                \"message\": \"Invalid input: expected string, received undefined\"\n            },\n            {\n                \"field\": \"email\",\n                \"message\": \"Invalid email address\"\n            },\n            {\n                \"field\": \"password\",\n                \"message\": \"Invalid input: expected string, received undefined\"\n            }\n        ]\n    },\n    \"statusCode\": 400\n}"
 						},
 						{
 							"id": "25289744-270f84b7-8aac-4c14-9430-03b52c22967a",
