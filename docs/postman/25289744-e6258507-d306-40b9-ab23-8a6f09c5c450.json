@@ -301,7 +301,20 @@
 		},
 		{
 			"name": "auth",
-			"item": [],
+			"item": [
+				{
+					"name": "Register user",
+					"id": "25289744-dc8863cb-9b09-42fc-8088-beacee5be216",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			],
 			"id": "25289744-89a6ae2a-77cf-4ba3-8748-7a8be39452a5"
 		}
 	]
