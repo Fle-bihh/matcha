@@ -26,7 +26,8 @@
 					"query": [
 						{
 							"key": "include_details",
-							"value": "true"
+							"value": "true",
+							"description": "Boolean to ask for more details about the server status test"
 						}
 					]
 				}
