@@ -10,7 +10,7 @@ export class HealthController extends BaseController {
 		return this.container.get<HealthService>(ETokens.HealthService);
 	}
 
-	@Route("GET", "health", "get-health")
+	@Route("GET", "get-health")
 	@Validate(GetHealthRequestSchema, "query")
 	private getHealth(req: Request, res: Response): void {
 		const { include_details } = req.validated?.query as GetHealthRequestDto;

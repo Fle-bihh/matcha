@@ -9,7 +9,7 @@ export class UserController extends BaseController {
 		return this.container.get<UserService>(ETokens.UserService);
 	}
 
-	@Route("GET", "user", "all")
+	@Route("GET", "all")
 	@Auth()
 	private async getAllUsers(req: Request, res: Response): Promise<void> {
 		const testValue = await this.userService.getAllUsers();

@@ -1,37 +1,65 @@
 import "reflect-metadata";
-import type { HttpMethod } from "@/types";
+import type { HttpMethod, RouteMetadata } from "@/types";
 import { ControllerRegistry } from "@/registry/controller.registry";
 import {
-	buildApiRoute,
+	buildApiRouteUnsafe,
 	type RouteGroups,
-	type RouteKeys,
+	type AllRouteKeys,
+	ROUTES,
 } from "@/constants/routes.constants";
-import {
-	METADATA_KEYS,
-	type RouteMetadata,
-} from "@/constants/metadata.constants";
+import { METADATA_KEYS } from "@/constants/metadata.constants";
+import { logger } from "@matcha/shared";
 
-export function Route<T extends RouteGroups, K extends RouteKeys<T>>(
-	method: HttpMethod,
-	group: T,
-	key: K
-) {
+function getControllerGroup(className: string): RouteGroups {
+	const match = className.match(/^(\w+)Controller$/);
+	if (!match) {
+		throw new Error(
+			`Invalid controller name: ${className}. Must end with 'Controller'`
+		);
+	}
+	const groupName = match[1].toLowerCase();
+
+	if (!(groupName in ROUTES)) {
+		throw new Error(
+			`Unknown route group: ${groupName}. Available groups: ${Object.keys(
+				ROUTES
+			).join(", ")}`
+		);
+	}
+
+	return groupName as RouteGroups;
+}
+
+export function Route(method: HttpMethod, key: AllRouteKeys) {
 	return function (
 		target: any,
 		propertyKey: string,
 		descriptor: PropertyDescriptor
 	) {
-		const route = buildApiRoute(group, key);
+		const controllerGroup = getControllerGroup(target.constructor.name);
 
-		// Stocker les métadonnées avec reflect-metadata
+		const routeGroup = ROUTES[controllerGroup];
+		if (!routeGroup || !(key in routeGroup)) {
+			logger.warn(
+				`Invalid route key "${String(key)}" for controller ${
+					target.constructor.name
+				}. Available keys: ${Object.keys(routeGroup || {}).join(
+					", "
+				)}. Route not registered.`
+			);
+
+			return;
+		}
+
+		const route = buildApiRouteUnsafe(controllerGroup, key);
+
 		const metadata: RouteMetadata = {
 			method,
 			path: route,
-			group: group as string,
-			key: key as string,
+			key,
 		};
 		Reflect.defineMetadata(
-			METADATA_KEYS.ROUTE,
+			METADATA_KEYS.Route,
 			metadata,
 			target,
 			propertyKey

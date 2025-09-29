@@ -2,10 +2,8 @@ import "reflect-metadata";
 import { logger } from "@matcha/shared";
 import type { Request, Response, NextFunction } from "express";
 import { z, type ZodType } from "zod";
-import {
-	METADATA_KEYS,
-	type ValidateMetadata,
-} from "@/constants/metadata.constants";
+import { METADATA_KEYS } from "@/constants/metadata.constants";
+import { ValidateMetadata } from "@/types";
 
 export function Validate<T extends ZodType>(
 	schema: T,
@@ -16,10 +14,9 @@ export function Validate<T extends ZodType>(
 		propertyKey: string,
 		descriptor: PropertyDescriptor
 	) {
-		// Stocker les métadonnées
 		const metadata: ValidateMetadata = { schema, source };
 		Reflect.defineMetadata(
-			METADATA_KEYS.VALIDATE,
+			METADATA_KEYS.Validate,
 			metadata,
 			target,
 			propertyKey
@@ -33,7 +30,17 @@ export function Validate<T extends ZodType>(
 			next?: NextFunction
 		) {
 			try {
-				const data = req[source];
+				let data = req[source];
+
+				if (data === undefined) {
+					if (source === "body") {
+						data = {};
+					} else if (source === "query") {
+						data = {};
+					} else if (source === "params") {
+						data = {};
+					}
+				}
 
 				const validatedData = schema.parse(data);
 
@@ -61,14 +68,23 @@ export function Validate<T extends ZodType>(
 				if (error instanceof z.ZodError) {
 					return res.status(400).json({
 						error: "Validation failed",
-						details: error.issues.map((issue) => ({
-							field: issue.path.join("."),
-							message: issue.message,
-							value:
-								"received" in issue
-									? issue.received
-									: undefined,
-						})),
+						details: error.issues.map((issue) => {
+							const fieldPath =
+								issue.path.length > 0
+									? issue.path.join(".")
+									: source === "body"
+									? "request body"
+									: source;
+
+							return {
+								field: fieldPath,
+								message: issue.message,
+								value:
+									"received" in issue
+										? issue.received
+										: undefined,
+							};
+						}),
 					});
 				}
 

@@ -64,17 +64,6 @@ class ControllerRegistry {
 
 				(app as any)[method](route.path, loggedHandler);
 			});
-
-			const allowedMethods = routes.map((r) => r.method).join(", ");
-
-			app.options(path, (req: Request, res: Response) => {
-				res.setHeader("Allow", allowedMethods);
-				res.setHeader("Access-Control-Allow-Methods", allowedMethods);
-				res.setHeader(
-					"Access-Control-Allow-Headers",
-					"Content-Type, Authorization"
-				);
-			});
 		});
 	}
 }

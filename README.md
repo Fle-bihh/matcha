@@ -40,7 +40,6 @@ When Docker is running, you have access to:
 ### 🔗 Backend API - Port 3000
 
 -   **Base URL**: `http://localhost:3000/api/v1`
--   **Documentation**: Auto-documented routes + OPTIONS method on each endpoint
 
 ### 🗄️ Database Administration - Port 8080
 
