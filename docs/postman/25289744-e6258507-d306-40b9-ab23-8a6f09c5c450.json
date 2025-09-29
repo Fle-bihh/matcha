@@ -315,7 +315,7 @@
 					"response": [
 						{
 							"id": "25289744-aad16fdd-0bcd-41ce-8974-232887180224",
-							"name": "New Request",
+							"name": "Success",
 							"originalRequest": {
 								"method": "POST",
 								"header": [],
