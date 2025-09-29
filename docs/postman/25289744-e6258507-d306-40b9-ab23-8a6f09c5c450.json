@@ -1290,6 +1290,18 @@
 							"body": "{\n    \"success\": false,\n    \"message\": \"Invalid credentials\",\n    \"responseObject\": null,\n    \"statusCode\": 401\n}"
 						}
 					]
+				},
+				{
+					"name": "Refresh token",
+					"id": "25289744-f2dd6de3-4f5d-46cc-b3f0-47e93226dfb8",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
 				}
 			],
 			"id": "25289744-89a6ae2a-77cf-4ba3-8748-7a8be39452a5"
