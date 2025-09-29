@@ -14,6 +14,10 @@
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{api_url}}/health/?include_details=true",
 					"host": [
@@ -27,7 +31,7 @@
 						{
 							"key": "include_details",
 							"value": "true",
-							"description": "Boolean to ask for more details about the server status"
+							"type": null
 						}
 					]
 				}
