@@ -8,4 +8,7 @@ export enum ETokens {
 
 export interface IContainer {
 	get<T>(token: ETokens): T;
+	has(token: ETokens): boolean;
+	getInstantiatedTokens(): ETokens[];
+	clear(): void;
 }
