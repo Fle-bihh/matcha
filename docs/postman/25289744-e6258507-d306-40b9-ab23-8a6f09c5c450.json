@@ -15,13 +15,20 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{api_url}}/health/",
+					"raw": "{{api_url}}/health/?include_details=true",
 					"host": [
 						"{{api_url}}"
 					],
 					"path": [
 						"health",
 						""
+					],
+					"query": [
+						{
+							"key": "include_details",
+							"value": "true",
+							"description": "Boolean to ask for more details about the server status"
+						}
 					]
 				}
 			},
