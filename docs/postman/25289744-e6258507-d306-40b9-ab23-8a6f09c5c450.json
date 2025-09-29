@@ -661,7 +661,7 @@
 						},
 						{
 							"id": "25289744-270f84b7-8aac-4c14-9430-03b52c22967a",
-							"name": "Register user",
+							"name": "Email already in use",
 							"originalRequest": {
 								"method": "POST",
 								"header": [],
