@@ -20,13 +20,8 @@
 				},
 				"url": {
 					"raw": "{{api_url}}/health/?include_details=true",
-					"host": [
-						"{{api_url}}"
-					],
-					"path": [
-						"health",
-						""
-					],
+					"host": ["{{api_url}}"],
+					"path": ["health", ""],
 					"query": [
 						{
 							"key": "include_details",
@@ -45,13 +40,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{api_url}}/health/",
-							"host": [
-								"{{api_url}}"
-							],
-							"path": [
-								"health",
-								""
-							]
+							"host": ["{{api_url}}"],
+							"path": ["health", ""]
 						}
 					},
 					"status": "OK",
@@ -171,13 +161,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{api_url}}/health/?include_details=true",
-							"host": [
-								"{{api_url}}"
-							],
-							"path": [
-								"health",
-								""
-							],
+							"host": ["{{api_url}}"],
+							"path": ["health", ""],
 							"query": [
 								{
 									"key": "include_details",
