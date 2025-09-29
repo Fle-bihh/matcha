@@ -346,8 +346,7 @@
 								"auth",
 								"register"
 							]
-						},
-						"description": "## Register User Endpoint\n\nThis endpoint allows for the registration of a new user account. It accepts user details such as username, email, and password, which are required for creating a new account.\n\n### Response Format\n\nThe response will be returned in JSON format. Below are the possible responses:\n\n- { \"success\": true, \"message\": \"\", \"responseObject\": { \"accessToken\": \"\", \"refreshToken\": \"\", \"user\": { \"id\": 0, \"username\": \"\", \"email\": \"\", \"created_at\": \"\", \"updated_at\": \"\", \"deleted_at\": null } }, \"statusCode\": 0}\n    \n- { \"error\": \"\", \"details\": \\[ { \"field\": \"\", \"message\": \"\" } \\]}\n    \n\n### Notes\n\n- Ensure that the email provided is valid, as it will be used for authentication.\n    \n- The password must meet any security requirements set by the application."
+						}
 					},
 					"response": [
 						{
