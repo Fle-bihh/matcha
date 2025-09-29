@@ -660,6 +660,18 @@
 							"body": "{\n    \"error\": \"Validation failed\",\n    \"details\": [\n        {\n            \"field\": \"email\",\n            \"message\": \"Invalid input: expected string, received undefined\"\n        },\n        {\n            \"field\": \"email\",\n            \"message\": \"Invalid email address\"\n        },\n        {\n            \"field\": \"password\",\n            \"message\": \"Invalid input: expected string, received undefined\"\n        }\n    ]\n}"
 						}
 					]
+				},
+				{
+					"name": "New Request",
+					"id": "25289744-9ac40908-9e1f-4558-ae51-eeefb353ba47",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
 				}
 			],
 			"id": "25289744-89a6ae2a-77cf-4ba3-8748-7a8be39452a5"
