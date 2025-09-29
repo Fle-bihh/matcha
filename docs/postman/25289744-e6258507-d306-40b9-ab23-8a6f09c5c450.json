@@ -668,8 +668,37 @@
 						"disableBodyPruning": true
 					},
 					"request": {
-						"method": "GET",
-						"header": []
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "felixlebihan@icloud.com",
+									"description": "Unique email of user's account",
+									"type": "text",
+									"uuid": "63d02f48-8e75-46ea-8329-7e6c94d01bdb"
+								},
+								{
+									"key": "password",
+									"value": "test_password",
+									"description": "Corresponding password of this account",
+									"type": "text",
+									"uuid": "e25f6502-60c4-4628-bbfb-ae0af1523220"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api_url}}/auth/login",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
 					},
 					"response": []
 				}
