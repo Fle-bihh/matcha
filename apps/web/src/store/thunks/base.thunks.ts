@@ -1,9 +1,9 @@
-import { EFlaggerKeys, IContainer } from "@/types";
+import { EThunkFlaggerKeys, IContainer } from "@/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { clearFlagger, setFlagger } from "../slices";
 import { serializeError } from "@/utils/error.utils";
 
-export const baseThunk = <T extends EFlaggerKeys>(
+export const baseThunk = <T extends EThunkFlaggerKeys>(
 	thunkType: T,
 	thunkFunction: (container: IContainer) => Promise<void>
 ) => {

@@ -9,7 +9,7 @@ export enum EStoreSlices {
 	Entities = "entities",
 	Loaders = "loaders",
 	Flaggers = "flaggers",
-	Apis = "apis",
+	AuthUser = "auth-user",
 }
 
 export enum ELoaderKeys {}

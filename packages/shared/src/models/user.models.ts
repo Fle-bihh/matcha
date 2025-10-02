@@ -1,18 +1,17 @@
 import { z } from "zod";
 
-import {
-	commonValidations,
-	createEntitySchema,
-	createCreateEntitySchema,
-	createUpdateEntitySchema,
-} from "../validation";
+import { createEntitySchema, createCreateEntitySchema } from "../validation";
 
 const baseUserFields = {
 	username: z
 		.string()
 		.min(3, "Username must be at least 3 characters")
 		.max(30, "Username too long"),
+};
+
+const authUserFields = {
 	email: z.string().and(z.email("Invalid email address")),
+	...baseUserFields,
 };
 
 const passwordField = {
@@ -31,25 +30,21 @@ const passwordField = {
 };
 
 const userFieldsWithPassword = {
-	...baseUserFields,
+	...authUserFields,
 	...passwordField,
 };
 
 export const UserSchema = createEntitySchema(baseUserFields);
+export const AuthUserSchema = createEntitySchema(authUserFields);
 export const CreateUserSchema = createCreateEntitySchema(
 	userFieldsWithPassword
 );
-export const UpdateUserSchema = createUpdateEntitySchema(baseUserFields);
 
 export const UserWithPasswordSchema = createEntitySchema(
 	userFieldsWithPassword
 );
 
 export type User = z.infer<typeof UserSchema>;
+export type AuthUser = z.infer<typeof AuthUserSchema>;
 export type UserWithPassword = z.infer<typeof UserWithPasswordSchema>;
 export type CreateUser = z.infer<typeof CreateUserSchema>;
-export type UpdateUser = z.infer<typeof UpdateUserSchema>;
-
-export const GetUserSchema = z.object({
-	params: z.object({ id: commonValidations.id }),
-});

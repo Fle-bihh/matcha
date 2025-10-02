@@ -1,9 +1,14 @@
-import { EFlaggerKeys, IFlaggerDataTypes } from "@/types";
+import {
+	EAllFlaggerKeys,
+	EFlaggerKeys,
+	EThunkFlaggerKeys,
+	IFlaggerDataTypes,
+} from "@/types";
 import { EStoreSlices } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type FlaggerState = {
-	[K in EFlaggerKeys]?: IFlaggerDataTypes[K] | undefined;
+	[K in EFlaggerKeys | EThunkFlaggerKeys]?: IFlaggerDataTypes[K] | undefined;
 };
 
 const initialState: FlaggerState = {};
@@ -12,7 +17,7 @@ const flaggersSlice = createSlice({
 	name: EStoreSlices.Flaggers,
 	initialState,
 	reducers: {
-		setFlagger: <T extends EFlaggerKeys>(
+		setFlagger: <T extends EAllFlaggerKeys>(
 			state: FlaggerState,
 			action: PayloadAction<{ key: T; value: IFlaggerDataTypes[T] }>
 		) => {
@@ -21,7 +26,7 @@ const flaggersSlice = createSlice({
 		},
 		clearFlagger: (
 			state: FlaggerState,
-			action: PayloadAction<{ key: EFlaggerKeys }>
+			action: PayloadAction<{ key: EAllFlaggerKeys }>
 		) => {
 			const { key } = action.payload;
 			delete state[key];

@@ -1,7 +1,7 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { UserRepository } from "@/repositories";
-import { User, UserWithPassword, CreateUser } from "@matcha/shared";
+import { User, UserWithPassword, CreateUser, AuthUser } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 
 export class UserService extends BaseService {
@@ -15,7 +15,7 @@ export class UserService extends BaseService {
 
 	public async findByEmail(
 		email: string
-	): Promise<ServiceResponse<User | null>> {
+	): Promise<ServiceResponse<AuthUser | null>> {
 		try {
 			const user = await this.userRepository.findUserByEmail(email);
 			return ServiceResponse.success("User found", user);
@@ -47,7 +47,7 @@ export class UserService extends BaseService {
 
 	public async findById(
 		userId: string
-	): Promise<ServiceResponse<User | null>> {
+	): Promise<ServiceResponse<AuthUser | null>> {
 		try {
 			const users = await this.userRepository.getDocs<UserWithPassword>(
 				"users",
@@ -74,7 +74,7 @@ export class UserService extends BaseService {
 
 	public async createUser(
 		userData: CreateUser
-	): Promise<ServiceResponse<User | null>> {
+	): Promise<ServiceResponse<AuthUser | null>> {
 		try {
 			const existingUser = await this.userRepository.findUserByEmail(
 				userData.email
@@ -94,22 +94,6 @@ export class UserService extends BaseService {
 			return ServiceResponse.failure(
 				"Error creating user",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
-			);
-		}
-	}
-
-	public async getAllUsers(): Promise<ServiceResponse<User[]>> {
-		try {
-			const users = await this.userRepository.getAllUsers();
-			return ServiceResponse.success(
-				"Users retrieved successfully",
-				users
-			);
-		} catch (error) {
-			return ServiceResponse.failure(
-				"Error retrieving users",
-				[],
 				StatusCodes.INTERNAL_SERVER_ERROR
 			);
 		}

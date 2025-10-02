@@ -1,10 +1,21 @@
-export enum EFlaggerKeys {
-	FetchUsersThunk = "usersFetched",
+export enum EThunkFlaggerKeys {
+	Register = "register",
+	FetchUsers = "fetch-users",
 }
 
-export interface IFlaggerDataTypes {
-	[EFlaggerKeys.FetchUsersThunk]: IThunkFlagger;
-}
+export enum EFlaggerKeys {}
+
+export type EAllFlaggerKeys = EFlaggerKeys | EThunkFlaggerKeys;
+
+type ThunkFlaggerDataTypes = {
+	[K in EThunkFlaggerKeys]: IThunkFlagger;
+};
+
+type OtherFlaggerDataTypes = {
+	[K in EFlaggerKeys]: IThunkFlagger;
+};
+
+export type IFlaggerDataTypes = ThunkFlaggerDataTypes & OtherFlaggerDataTypes;
 
 export interface IThunkFlagger {
 	isLoading: boolean;
@@ -16,4 +27,5 @@ export interface IThunkFlagger {
 	};
 }
 
-export type TFlaggerData<T extends EFlaggerKeys> = IFlaggerDataTypes[T];
+export type TFlaggerData<T extends EFlaggerKeys | EThunkFlaggerKeys> =
+	IFlaggerDataTypes[T];

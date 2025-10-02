@@ -1,5 +1,11 @@
 import { BaseRepository } from "./base.repository";
-import { CreateUser, logger, User, UserWithPassword } from "@matcha/shared";
+import {
+	AuthUser,
+	CreateUser,
+	logger,
+	User,
+	UserWithPassword,
+} from "@matcha/shared";
 import { IContainer } from "@/types";
 
 export class UserRepository extends BaseRepository {
@@ -22,7 +28,7 @@ export class UserRepository extends BaseRepository {
 		);
 	}
 
-	public async createUser(data: CreateUser): Promise<User> {
+	public async createUser(data: CreateUser): Promise<AuthUser> {
 		const userWithPassword = await this.createDocument<UserWithPassword>(
 			this.tableName,
 			data
@@ -30,14 +36,7 @@ export class UserRepository extends BaseRepository {
 		return this.excludePassword(userWithPassword);
 	}
 
-	public async getAllUsers(): Promise<User[]> {
-		const usersWithPassword = await this.getDocs<UserWithPassword>(
-			this.tableName
-		);
-		return usersWithPassword.map((user) => this.excludePassword(user));
-	}
-
-	public async findUserByEmail(email: string): Promise<User | null> {
+	public async findUserByEmail(email: string): Promise<AuthUser | null> {
 		try {
 			const users = await this.getDocs<UserWithPassword>(this.tableName, {
 				where: "email = ?",
@@ -65,7 +64,7 @@ export class UserRepository extends BaseRepository {
 		}
 	}
 
-	private excludePassword(userWithPassword: UserWithPassword): User {
+	private excludePassword(userWithPassword: UserWithPassword): AuthUser {
 		const { password, ...userWithoutPassword } = userWithPassword;
 		return userWithoutPassword;
 	}

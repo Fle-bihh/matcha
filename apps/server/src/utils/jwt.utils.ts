@@ -1,5 +1,5 @@
 import jwt, { SignOptions } from "jsonwebtoken";
-import { User } from "@matcha/shared";
+import { AuthUser, User } from "@matcha/shared";
 import { config } from "@/config";
 import { JwtPayload } from "@/types";
 
@@ -9,7 +9,7 @@ export interface TokenPair {
 }
 
 export class JwtUtils {
-	static generateTokens(user: User): TokenPair {
+	static generateTokens(user: AuthUser): TokenPair {
 		const payload: JwtPayload = {
 			id: user.id,
 			username: user.username,

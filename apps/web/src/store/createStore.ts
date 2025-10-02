@@ -3,6 +3,7 @@ import { IContainer } from "@/types";
 import entitiesReducer from "./slices/entities.slice";
 import loadersReducer from "./slices/loaders.slice";
 import flagsReducer from "./slices/flaggers.slice";
+import authUserReducer from "./slices/auth-user.slice";
 
 export const createStore = (container: IContainer) => {
 	const store = configureStore({
@@ -10,6 +11,7 @@ export const createStore = (container: IContainer) => {
 			entities: entitiesReducer,
 			loaders: loadersReducer,
 			flaggers: flagsReducer,
+			authUser: authUserReducer,
 		},
 		middleware: (getDefaultMiddleware) =>
 			getDefaultMiddleware({
