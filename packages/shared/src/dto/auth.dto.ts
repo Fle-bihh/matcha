@@ -1,5 +1,5 @@
-import { CreateUserSchema, User } from "@matcha/shared";
 import { z } from "zod";
+import { CreateUserSchema, User } from "../models";
 
 export const RegisterRequestSchema = CreateUserSchema.refine(
 	(data) => {

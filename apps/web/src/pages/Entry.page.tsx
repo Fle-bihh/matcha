@@ -1,10 +1,18 @@
-import { UserList } from "@/components/UserList.component";
+import { useAuthUser } from "@/hooks/auth.hook";
 
 export function EntryPage() {
+	const { authUser, register, isLoading, error } = useAuthUser();
+
 	return (
 		<div>
 			<h1>Entry Page</h1>
-			<UserList />
+			{authUser ? (
+				<p>Welcome, {authUser.username}!</p>
+			) : (
+				<button onClick={register}>Register</button>
+			)}
+			{isLoading && <p>Loading...</p>}
+			{error && <p style={{ color: "red" }}>Error: {error}</p>}
 		</div>
 	);
 }

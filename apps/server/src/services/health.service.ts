@@ -1,4 +1,4 @@
-import { GetHealthRequestDto, GetHealthResponseDto } from "@/dto";
+import { GetHealthRequestDto, GetHealthResponseDto } from "@matcha/shared";
 import { IContainer, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 

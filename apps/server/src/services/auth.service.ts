@@ -7,7 +7,7 @@ import {
 	LoginResponseDto,
 	RefreshTokenRequestDto,
 	RefreshTokenResponseDto,
-} from "@/dto/auth.dto";
+} from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { JwtUtils } from "@/utils/jwt.utils";
 import { HashUtils } from "@/utils/hash.utils";

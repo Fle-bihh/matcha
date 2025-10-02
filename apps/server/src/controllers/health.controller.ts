@@ -2,7 +2,10 @@ import type { Request, Response } from "express";
 import { BaseController } from "./base.controller";
 import { ETokens } from "@/types";
 import { HealthService } from "@/services";
-import { GetHealthRequestSchema, type GetHealthRequestDto } from "@/dto";
+import {
+	GetHealthRequestSchema,
+	type GetHealthRequestDto,
+} from "@matcha/shared";
 import { route, validate } from "@/decorators";
 
 export class HealthController extends BaseController {

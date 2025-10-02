@@ -7,7 +7,7 @@ import {
 	RegisterRequestSchema,
 	LoginRequestSchema,
 	RefreshTokenRequestSchema,
-} from "@/dto";
+} from "@matcha/shared";
 
 export class AuthController extends BaseController {
 	private get authService(): AuthService {
