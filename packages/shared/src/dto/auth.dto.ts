@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CreateUserSchema, User } from "../models";
+import { AuthUser, CreateUserSchema, User } from "../models";
 
 export const RegisterRequestSchema = CreateUserSchema.refine(
 	(data) => {
@@ -33,13 +33,13 @@ export type LoginRequestDto = z.infer<typeof LoginRequestSchema>;
 export interface RegisterResponseDto {
 	accessToken: string;
 	refreshToken: string;
-	user: User;
+	user: AuthUser;
 }
 
 export interface LoginResponseDto {
 	accessToken: string;
 	refreshToken: string;
-	user: User;
+	user: AuthUser;
 }
 
 export const RefreshTokenRequestSchema = z.object({

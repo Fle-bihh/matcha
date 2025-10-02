@@ -1,6 +1,6 @@
 import { EThunkFlaggerKeys, IContainer } from "@/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { clearFlagger, setFlagger } from "../slices";
+import { setFlagger } from "../slices";
 import { serializeError } from "@/utils/error.utils";
 
 export const baseThunk = <T extends EThunkFlaggerKeys>(
@@ -12,7 +12,16 @@ export const baseThunk = <T extends EThunkFlaggerKeys>(
 		async (_, { rejectWithValue, extra }) => {
 			const { container } = extra as { container: IContainer };
 			try {
-				container.store.dispatch(clearFlagger({ key: thunkType }));
+				container.store.dispatch(
+					setFlagger({
+						key: thunkType,
+						value: {
+							isLoading: true,
+							success: undefined,
+							error: undefined,
+						},
+					})
+				);
 				await thunkFunction(container);
 				container.store.dispatch(
 					setFlagger({

@@ -25,7 +25,13 @@ export const useAuthUser = () => {
 	});
 
 	const register = useCallback(async () => {
-		await dispatch(registerThunk());
+		await dispatch(
+			registerThunk({
+				email: "test2@test.com",
+				username: "test2",
+				password: "password654-",
+			})
+		);
 	}, [dispatch, registerThunk]);
 
 	return useMemo(

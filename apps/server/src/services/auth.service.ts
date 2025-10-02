@@ -7,6 +7,7 @@ import {
 	LoginResponseDto,
 	RefreshTokenRequestDto,
 	RefreshTokenResponseDto,
+	logger,
 } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { JwtUtils } from "@/utils/jwt.utils";
@@ -25,7 +26,7 @@ export class AuthService extends BaseService {
 		dto: RegisterRequestDto
 	): Promise<ServiceResponse<RegisterResponseDto | null>> {
 		try {
-			const existingUserResponse = await this.userService.findByEmail(
+			let existingUserResponse = await this.userService.findByEmail(
 				dto.email
 			);
 
@@ -35,6 +36,21 @@ export class AuthService extends BaseService {
 			) {
 				return ServiceResponse.failure(
 					"Email already in use",
+					null,
+					StatusCodes.CONFLICT
+				);
+			}
+
+			existingUserResponse = await this.userService.findByUsername(
+				dto.username
+			);
+
+			if (
+				!existingUserResponse.success ||
+				existingUserResponse.responseObject
+			) {
+				return ServiceResponse.failure(
+					"Username already in use",
 					null,
 					StatusCodes.CONFLICT
 				);
@@ -67,6 +83,7 @@ export class AuthService extends BaseService {
 				user: userResponse.responseObject,
 			});
 		} catch (error) {
+			logger.error("Error in register:", error);
 			return ServiceResponse.failure(
 				"Error creating user",
 				null,

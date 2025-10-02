@@ -1,7 +1,13 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { UserRepository } from "@/repositories";
-import { User, UserWithPassword, CreateUser, AuthUser } from "@matcha/shared";
+import {
+	User,
+	UserWithPassword,
+	CreateUser,
+	AuthUser,
+	logger,
+} from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 
 export class UserService extends BaseService {
@@ -18,6 +24,24 @@ export class UserService extends BaseService {
 	): Promise<ServiceResponse<AuthUser | null>> {
 		try {
 			const user = await this.userRepository.findUserByEmail(email);
+			return ServiceResponse.success("User found", user);
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Error finding user",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
+	public async findByUsername(
+		username: string
+	): Promise<ServiceResponse<AuthUser | null>> {
+		try {
+			const user = await this.userRepository.findUserByUsername(username);
+			if (!user) {
+				return ServiceResponse.success("User not found", null);
+			}
 			return ServiceResponse.success("User found", user);
 		} catch (error) {
 			return ServiceResponse.failure(
@@ -91,6 +115,7 @@ export class UserService extends BaseService {
 			const user = await this.userRepository.createUser(userData);
 			return ServiceResponse.success("User created successfully", user);
 		} catch (error) {
+			logger.error("Error in createUser:", error);
 			return ServiceResponse.failure(
 				"Error creating user",
 				null,

@@ -37,12 +37,12 @@ export class ApiService extends BaseService {
 			body: JSON.stringify(data),
 		});
 
-		const responseData = (await response.json()) as ApiResponse<T>;
-
 		if (!response.ok) {
-			logger.error("ApiService.post error", responseData);
 			throw new Error(
-				responseData.message || `HTTP error! status: ${response.status}`
+				`Error ${response.status}: ${
+					(await (response.json() as any).message) ||
+					response.statusText
+				}`
 			);
 		}
 
