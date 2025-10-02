@@ -8,7 +8,7 @@ export enum EUserThunks {
 	FetchUsers = "users/fetchUsers",
 }
 
-export const fetchUsers = baseThunk<EUserThunks>(
+export const fetchUsersThunk = baseThunk<EUserThunks>(
 	EUserThunks.FetchUsers,
 	async (container) => {
 		const userService = container.get<UserService>(ETokens.UserService);
