@@ -1,16 +1,9 @@
 import { User } from "@matcha/shared";
-import {
-	TRootState,
-	EEntityTypes,
-	ELoaderKeys,
-	EFlaggerKeys,
-	TAppDispatch,
-} from "@/types";
+import { TRootState, EEntityTypes, EFlaggerKeys, TAppDispatch } from "@/types";
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo } from "react";
 import { useFlagger } from "@/hooks/flaggers.hook";
-import { useLoaders } from "@/hooks/loaders.hook";
 import { fetchUsersThunk } from "@/store";
 
 const selectUsersEntity = (state: TRootState) =>
@@ -26,11 +19,8 @@ const selectUsers = createSelector(
 export const useUser = () => {
 	const dispatch = useDispatch<TAppDispatch>();
 	const users = useSelector(selectUsers);
-	const { isLoading: isUsersLoading } = useLoaders({
-		loaders: [ELoaderKeys.fetchUsers],
-	});
-	const { data: userFetchedFlag } = useFlagger<EFlaggerKeys.UsersFetched>({
-		flagger: EFlaggerKeys.UsersFetched,
+	const { data: thunk } = useFlagger({
+		flagger: EFlaggerKeys.FetchUsersThunk,
 	});
 
 	const fetchUsers = async () => {
@@ -41,11 +31,11 @@ export const useUser = () => {
 		() => ({
 			users,
 			fetchUsers,
-			isUsersLoading,
-			isUsersFetched: userFetchedFlag?.isFetched || false,
-			hasUsersFetchError: !!userFetchedFlag?.error,
-			userFetchError: userFetchedFlag?.error || null,
+			isUsersLoading: thunk?.isLoading || false,
+			isUsersFetched: thunk?.success || false,
+			hasUsersFetchError: !!thunk?.error,
+			userFetchError: thunk?.error || null,
 		}),
-		[users, isUsersLoading, userFetchedFlag]
+		[users, thunk]
 	);
 };

@@ -20,13 +20,15 @@ export class ApiService extends BaseService {
 		})) as Response & ApiResponse<T>;
 
 		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
+			const error = new Error(`HTTP error! status: ${response.status}`);
+			error.name = "HTTPError";
+			throw error;
 		}
 
 		return response.json();
 	}
 
-	async post<T>(endpoint: string, data: any): Promise<T> {
+	async post<T>(endpoint: string, data: any): Promise<ApiResponse<T>> {
 		const response = await fetch(`${this.baseUrl}${endpoint}`, {
 			method: "POST",
 			headers: {

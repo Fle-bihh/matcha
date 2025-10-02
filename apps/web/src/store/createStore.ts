@@ -16,6 +16,7 @@ export const createStore = (container: IContainer) => {
 				thunk: {
 					extraArgument: { container },
 				},
+				serializableCheck: {},
 			}),
 		devTools: process.env.NODE_ENV !== "production",
 	});

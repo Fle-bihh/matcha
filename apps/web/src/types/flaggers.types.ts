@@ -1,13 +1,14 @@
 export enum EFlaggerKeys {
-	UsersFetched = "usersFetched",
+	FetchUsersThunk = "usersFetched",
 }
 
 export interface IFlaggerDataTypes {
-	[EFlaggerKeys.UsersFetched]: IUserFetchedFlagger;
+	[EFlaggerKeys.FetchUsersThunk]: IThunkFlagger;
 }
 
-export interface IUserFetchedFlagger {
-	isFetched: boolean;
+export interface IThunkFlagger {
+	isLoading: boolean;
+	success?: boolean;
 	error?: {
 		message: string;
 		code?: number;

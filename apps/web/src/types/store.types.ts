@@ -12,9 +12,7 @@ export enum EStoreSlices {
 	Apis = "apis",
 }
 
-export enum ELoaderKeys {
-	fetchUsers = "fetchUsers",
-}
+export enum ELoaderKeys {}
 
 export type TRootState = ReturnType<ReturnType<typeof createStore>["getState"]>;
 export type TAppDispatch = ReturnType<typeof createStore>["dispatch"];
