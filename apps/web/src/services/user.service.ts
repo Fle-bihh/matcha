@@ -1,12 +1,12 @@
 import { ApiResponse, User } from "@matcha/shared";
 import {
 	EEntityTypes,
-	EFlagKeys,
+	EFlaggerKeys,
 	ELoaderKeys,
 	ETokens,
 	ServiceResponse,
 } from "@/types";
-import { setEntities, setFlag, setLoader } from "@/store";
+import { setEntities, setFlagger, setLoader } from "@/store";
 import { API_ROUTES } from "@/constants";
 import type { ApiService } from "./api.service";
 import { BaseService } from "./base.service";
@@ -27,15 +27,15 @@ export class UserService extends BaseService {
 			setLoader({ key: ELoaderKeys.fetchUsers, loading: true })
 		);
 		this.dispatch(
-			setFlag({
-				key: EFlagKeys.UsersFetched,
+			setFlagger({
+				key: EFlaggerKeys.UsersFetched,
 				value: { isFetched: false },
 			})
 		);
 		try {
-			const response = await this.apiService.get<
-				ApiResponse<User[] | null>
-			>(API_ROUTES.getAllUsers);
+			const response = await this.apiService.get<User[] | null>(
+				API_ROUTES.getAllUsers
+			);
 			this.dispatch(
 				setEntities({
 					entityType: EEntityTypes.Users,
@@ -43,16 +43,16 @@ export class UserService extends BaseService {
 				})
 			);
 			this.dispatch(
-				setFlag({
-					key: EFlagKeys.UsersFetched,
+				setFlagger({
+					key: EFlaggerKeys.UsersFetched,
 					value: { isFetched: true },
 				})
 			);
 			return ServiceResponse.success({});
 		} catch (error) {
 			this.dispatch(
-				setFlag({
-					key: EFlagKeys.UsersFetched,
+				setFlagger({
+					key: EFlaggerKeys.UsersFetched,
 					value: {
 						isFetched: false,
 						error: {

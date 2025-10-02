@@ -3,13 +3,13 @@ import {
 	TRootState,
 	EEntityTypes,
 	ELoaderKeys,
-	EFlagKeys,
+	EFlaggerKeys,
 	TAppDispatch,
 } from "@/types";
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo } from "react";
-import { useFlagger } from "@/hooks/flags.hook";
+import { useFlagger } from "@/hooks/flaggers.hook";
 import { useLoaders } from "@/hooks/loaders.hook";
 import { fetchUsersThunk } from "@/store";
 
@@ -29,8 +29,8 @@ export const useUser = () => {
 	const { isLoading: isUsersLoading } = useLoaders({
 		loaders: [ELoaderKeys.fetchUsers],
 	});
-	const { data: userFetchedFlag } = useFlagger<EFlagKeys.UsersFetched>({
-		flagger: EFlagKeys.UsersFetched,
+	const { data: userFetchedFlag } = useFlagger<EFlaggerKeys.UsersFetched>({
+		flagger: EFlaggerKeys.UsersFetched,
 	});
 
 	const fetchUsers = async () => {

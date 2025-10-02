@@ -8,7 +8,8 @@ export enum EEntityTypes {
 export enum EStoreSlices {
 	Entities = "entities",
 	Loaders = "loaders",
-	Flags = "flags",
+	Flaggers = "flaggers",
+	Apis = "apis",
 }
 
 export enum ELoaderKeys {

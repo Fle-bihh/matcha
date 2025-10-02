@@ -6,7 +6,7 @@ import { METADATA_KEYS } from "@/constants/metadata.constants";
 import { ServiceResponse, ValidateMetadata } from "@/types";
 import { StatusCodes } from "http-status-codes";
 
-export function Validate<T extends ZodType>(
+export function validate<T extends ZodType>(
 	schema: T,
 	source: "query" | "body" | "params" = "query"
 ) {

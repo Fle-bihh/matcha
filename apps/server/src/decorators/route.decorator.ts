@@ -30,7 +30,7 @@ function getControllerGroup(className: string): RouteGroups {
 	return groupName as RouteGroups;
 }
 
-export function Route(method: HttpMethod, key: AllRouteKeys) {
+export function route(method: HttpMethod, key: AllRouteKeys) {
 	return function (
 		target: any,
 		propertyKey: string,

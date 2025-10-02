@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import { JwtUtils } from "@/utils/jwt.utils";
 import { METADATA_KEYS } from "@/constants/metadata.constants";
 
-export function Auth() {
+export function auth() {
 	return function (
 		target: any,
 		propertyKey: string,

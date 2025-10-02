@@ -1,6 +1,7 @@
 import { IContainer } from "@/types";
 import { BaseService } from "./base.service";
 import { API_BASE_URL } from "@/constants";
+import { ApiResponse } from "@matcha/shared";
 
 export class ApiService extends BaseService {
 	private baseUrl: string;
@@ -10,13 +11,13 @@ export class ApiService extends BaseService {
 		this.baseUrl = API_BASE_URL;
 	}
 
-	async get<T>(endpoint: string): Promise<T> {
-		const response = await fetch(`${this.baseUrl}${endpoint}`, {
+	async get<T>(endpoint: string): Promise<ApiResponse<T>> {
+		const response = (await fetch(`${this.baseUrl}${endpoint}`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
 			},
-		});
+		})) as Response & ApiResponse<T>;
 
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
