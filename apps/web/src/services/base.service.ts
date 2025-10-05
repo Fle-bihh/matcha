@@ -1,5 +1,6 @@
 import { ETokens, IContainer } from "@/types";
 import { ApiService } from "./api.service";
+import { StorageService } from "./storage.service";
 
 export abstract class BaseService {
 	protected container: IContainer;
@@ -14,5 +15,9 @@ export abstract class BaseService {
 
 	protected get apiService(): ApiService {
 		return this.container.get<ApiService>(ETokens.ApiService);
+	}
+
+	protected get storageService(): StorageService {
+		return this.container.get<StorageService>(ETokens.StorageService);
 	}
 }

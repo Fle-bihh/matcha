@@ -27,8 +27,8 @@ export const useAuthUser = () => {
 	const register = useCallback(async () => {
 		await dispatch(
 			registerThunk({
-				email: "test2@test.com",
-				username: "test2",
+				email: "test1@test.com",
+				username: "test1",
 				password: "password654-",
 			})
 		);

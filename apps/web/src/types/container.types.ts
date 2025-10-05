@@ -4,6 +4,7 @@ export enum ETokens {
 	ApiService = "ApiService",
 	UserService = "UserService",
 	AuthService = "AuthService",
+	StorageService = "StorageService",
 }
 
 export interface IContainer {

@@ -1,4 +1,5 @@
 import { ROUTES } from "@/constants";
+import { useAuthUser } from "@/hooks/auth.hook";
 import { FunctionComponent } from "react";
 import { Navigate } from "react-router-dom";
 
@@ -17,4 +18,7 @@ export function withCondition(
 }
 
 export const withLoggedOut = (Component: React.FunctionComponent) =>
-	withCondition(Component, true, ROUTES.notFound);
+	withCondition(Component, !useAuthUser().authUser, ROUTES.protected);
+
+export const withLoggedIn = (Component: React.FunctionComponent) =>
+	withCondition(Component, !!useAuthUser().authUser, ROUTES.entry);

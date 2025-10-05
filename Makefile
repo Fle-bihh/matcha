@@ -15,6 +15,9 @@ install:
 with-logs:
 	docker compose up --build
 
+show-logs:
+	docker compose logs -f
+
 up:
 	docker compose up -d --build
 
@@ -31,3 +34,8 @@ no-cache:
 	docker volume prune -f
 	docker volume rm matcha_mysql_data 2>/dev/null || true
 	docker compose up -d --build
+
+clear-cache:
+	docker system prune -a -f
+	docker volume prune -f
+	docker volume rm matcha_mysql_data 2>/dev/null || true
