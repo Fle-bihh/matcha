@@ -2,16 +2,16 @@ import { EStorageKeys, StorageDataType } from "@/types/storage.constants";
 import { BaseService } from "./base.service";
 
 export class StorageService extends BaseService {
-	public async getItem(
-		key: EStorageKeys
-	): Promise<StorageDataType[typeof key]> {
+	public async getItem<T extends EStorageKeys>(
+		key: T
+	): Promise<StorageDataType[T]> {
 		const item = localStorage.getItem(key);
 		if (!item) return null;
 
 		try {
 			return JSON.parse(item);
 		} catch {
-			return item;
+			return item as StorageDataType[typeof key];
 		}
 	}
 

@@ -1,4 +1,10 @@
-import { RegisterRequestDto, RegisterResponseDto } from "@matcha/shared";
+import {
+	logger,
+	LoginRequestDto,
+	LoginResponseDto,
+	RegisterRequestDto,
+	RegisterResponseDto,
+} from "@matcha/shared";
 import { BaseService } from "./base.service";
 import { API_ROUTES } from "@/constants";
 import { ServiceResponse } from "@/types";
@@ -27,7 +33,43 @@ export class AuthService extends BaseService {
 		}
 	}
 
-	async register(data: RegisterRequestDto): Promise<ServiceResponse<{}>> {
+	public async authenticate(): Promise<ServiceResponse<{}>> {
+		const accessToken = await this.storageService.getItem(
+			EStorageKeys.AccessToken
+		);
+		const refreshToken = await this.storageService.getItem(
+			EStorageKeys.RefreshToken
+		);
+
+		const user = await this.storageService.getItem(EStorageKeys.User);
+
+		if (accessToken && refreshToken && user) {
+			this.dispatch(setAuthUser(user));
+			return ServiceResponse.success({});
+		}
+
+		await this.storageService.clear();
+		this.dispatch(setAuthUser(null));
+		return ServiceResponse.success("No valid authentication data found");
+	}
+
+	public async login(dto: LoginRequestDto): Promise<ServiceResponse<{}>> {
+		const response = await this.apiService.post<LoginResponseDto>(
+			API_ROUTES.login,
+			dto
+		);
+		if (!response.success) {
+			return ServiceResponse.failure(response.message);
+		}
+
+		await this.updateStorageAuthData(response.responseObject);
+		this.dispatch(setAuthUser(response.responseObject.user));
+		return ServiceResponse.success({});
+	}
+
+	public async register(
+		data: RegisterRequestDto
+	): Promise<ServiceResponse<{}>> {
 		const response = await this.apiService.post<RegisterResponseDto>(
 			API_ROUTES.register,
 			data
@@ -41,5 +83,16 @@ export class AuthService extends BaseService {
 
 		this.dispatch(setAuthUser(response.responseObject.user));
 		return ServiceResponse.success({});
+	}
+
+	public async logout(): Promise<ServiceResponse<{}>> {
+		try {
+			await this.storageService.clear();
+			this.dispatch(setAuthUser(null));
+			return ServiceResponse.success({});
+		} catch (error) {
+			logger.error("Error during logout", error);
+			return ServiceResponse.failure("Error during logout");
+		}
 	}
 }

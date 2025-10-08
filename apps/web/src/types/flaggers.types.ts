@@ -1,6 +1,9 @@
 export enum EThunkFlaggerKeys {
+	Authenticate = "authenticate",
 	Register = "register",
 	FetchUsers = "fetch-users",
+	Logout = "logout",
+	Login = "login",
 }
 
 export enum EFlaggerKeys {}

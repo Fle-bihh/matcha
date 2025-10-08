@@ -1,10 +1,19 @@
 import { EThunkFlaggerKeys, TAppDispatch, TRootState } from "@/types";
-import { AuthUser, logger } from "@matcha/shared";
+import { AuthUser } from "@matcha/shared";
 import { createSelector } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
-import { useFlagger } from "./flaggers.hook";
-import { registerThunk } from "@/store/thunks/auth.thunks";
+import { useThunks } from "./thunks.hook";
+import {
+	authenticateThunk,
+	loginThunk,
+	logoutThunk,
+	registerThunk,
+} from "@/store/thunks";
 import { useCallback, useMemo } from "react";
+
+const TEST_EMAIL = "test@test.com";
+const TEST_USERNAME = "testuser";
+const TEST_PASSWORD = "password123-";
 
 const selectAuthUserState = (state: TRootState) => state.authUser;
 
@@ -15,32 +24,74 @@ const selectAuthUser = createSelector(
 	}
 );
 
-export const useAuthUser = () => {
-	const dispatch = useDispatch<TAppDispatch>();
+export interface IUseAuthUserReturn {
+	authUser: AuthUser | null;
+	register: () => Promise<void>;
+	isLoading: boolean;
+	error: string | null;
+	hasError: boolean;
+	authenticate: () => Promise<void>;
+	logout: () => Promise<void>;
+	login: () => Promise<void>;
+}
 
+export const useAuthUser = (): IUseAuthUserReturn => {
+	const dispatch = useDispatch<TAppDispatch>();
 	const authUser = useSelector(selectAuthUser);
 
-	const { data: thunk } = useFlagger({
-		flagger: EThunkFlaggerKeys.Register,
-	});
+	const { isLoading, error, hasError } = useThunks([
+		EThunkFlaggerKeys.Register,
+		EThunkFlaggerKeys.Logout,
+		EThunkFlaggerKeys.Login,
+	]);
 
 	const register = useCallback(async () => {
 		await dispatch(
 			registerThunk({
-				email: "test1@test.com",
-				username: "test1",
-				password: "password654-",
+				email: TEST_EMAIL,
+				username: TEST_USERNAME,
+				password: TEST_PASSWORD,
 			})
 		);
-	}, [dispatch, registerThunk]);
+	}, [dispatch]);
+
+	const authenticate = useCallback(async () => {
+		await dispatch(authenticateThunk());
+	}, [dispatch]);
+
+	const logout = useCallback(async () => {
+		await dispatch(logoutThunk());
+	}, [dispatch]);
+
+	const login = useCallback(async () => {
+		await dispatch(
+			loginThunk({
+				email: TEST_EMAIL,
+				password: TEST_PASSWORD,
+			})
+		);
+	}, [dispatch]);
 
 	return useMemo(
 		() => ({
 			authUser,
 			register,
-			isLoading: thunk?.isLoading || false,
-			error: thunk?.error?.message || null,
+			authenticate,
+			logout,
+			login,
+			isLoading,
+			error,
+			hasError,
 		}),
-		[authUser, thunk, register]
+		[
+			authUser,
+			register,
+			isLoading,
+			error,
+			hasError,
+			authenticate,
+			logout,
+			login,
+		]
 	);
 };

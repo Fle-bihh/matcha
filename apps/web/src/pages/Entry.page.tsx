@@ -1,7 +1,7 @@
 import { useAuthUser } from "@/hooks/auth.hook";
 
 export function EntryPage() {
-	const { authUser, register, isLoading, error } = useAuthUser();
+	const { authUser, register, isLoading, error, login } = useAuthUser();
 
 	return (
 		<div>
@@ -9,7 +9,10 @@ export function EntryPage() {
 			{authUser ? (
 				<p>Welcome, {authUser.username}!</p>
 			) : (
-				<button onClick={register}>Register</button>
+				<>
+					<button onClick={register}>Register</button>
+					<button onClick={login}>Login</button>
+				</>
 			)}
 			{isLoading && <p>Loading...</p>}
 			{error && <p style={{ color: "red" }}>Error: {error}</p>}
