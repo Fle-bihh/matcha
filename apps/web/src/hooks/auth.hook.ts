@@ -24,8 +24,16 @@ const selectAuthUser = createSelector(
 	}
 );
 
+const selectIsAuthInitialized = createSelector(
+	[selectAuthUserState],
+	(state): boolean => {
+		return state.isInitialized;
+	}
+);
+
 export interface IUseAuthUserReturn {
 	authUser: AuthUser | null;
+	isInitialized: boolean;
 	register: () => Promise<void>;
 	isLoading: boolean;
 	error: string | null;
@@ -38,6 +46,7 @@ export interface IUseAuthUserReturn {
 export const useAuthUser = (): IUseAuthUserReturn => {
 	const dispatch = useDispatch<TAppDispatch>();
 	const authUser = useSelector(selectAuthUser);
+	const isInitialized = useSelector(selectIsAuthInitialized);
 
 	const { isLoading, error, hasError } = useThunks([
 		EThunkFlaggerKeys.Register,
@@ -75,6 +84,7 @@ export const useAuthUser = (): IUseAuthUserReturn => {
 	return useMemo(
 		() => ({
 			authUser,
+			isInitialized,
 			register,
 			authenticate,
 			logout,
@@ -85,6 +95,7 @@ export const useAuthUser = (): IUseAuthUserReturn => {
 		}),
 		[
 			authUser,
+			isInitialized,
 			register,
 			isLoading,
 			error,

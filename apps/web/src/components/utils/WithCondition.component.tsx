@@ -17,8 +17,24 @@ export function withCondition(
 	};
 }
 
-export const withLoggedOut = (Component: React.FunctionComponent) =>
-	withCondition(Component, !useAuthUser().authUser, ROUTES.protected);
+export function withLoggedOut(Component: React.FunctionComponent) {
+	return function WrappedComponent(props?: any) {
+		const { authUser } = useAuthUser();
+		return !authUser ? (
+			<Component {...props} />
+		) : (
+			<Navigate to={ROUTES.protected} />
+		);
+	};
+}
 
-export const withLoggedIn = (Component: React.FunctionComponent) =>
-	withCondition(Component, !!useAuthUser().authUser, ROUTES.entry);
+export function withLoggedIn(Component: React.FunctionComponent) {
+	return function WrappedComponent(props?: any) {
+		const { authUser } = useAuthUser();
+		return authUser ? (
+			<Component {...props} />
+		) : (
+			<Navigate to={ROUTES.entry} />
+		);
+	};
+}

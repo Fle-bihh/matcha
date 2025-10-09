@@ -34,23 +34,30 @@ export class AuthService extends BaseService {
 	}
 
 	public async authenticate(): Promise<ServiceResponse<{}>> {
-		const accessToken = await this.storageService.getItem(
-			EStorageKeys.AccessToken
-		);
-		const refreshToken = await this.storageService.getItem(
-			EStorageKeys.RefreshToken
-		);
+		try {
+			const accessToken = await this.storageService.getItem(
+				EStorageKeys.AccessToken
+			);
+			const refreshToken = await this.storageService.getItem(
+				EStorageKeys.RefreshToken
+			);
 
-		const user = await this.storageService.getItem(EStorageKeys.User);
+			const user = await this.storageService.getItem(EStorageKeys.User);
 
-		if (accessToken && refreshToken && user) {
-			this.dispatch(setAuthUser(user));
-			return ServiceResponse.success({});
+			if (accessToken && refreshToken && user) {
+				this.dispatch(setAuthUser(user));
+				return ServiceResponse.success({});
+			}
+
+			await this.storageService.clear();
+			this.dispatch(setAuthUser(null));
+			return ServiceResponse.success(
+				"No valid authentication data found"
+			);
+		} catch (error) {
+			this.dispatch(setAuthUser(null));
+			return ServiceResponse.failure("Authentication check failed");
 		}
-
-		await this.storageService.clear();
-		this.dispatch(setAuthUser(null));
-		return ServiceResponse.success("No valid authentication data found");
 	}
 
 	public async login(dto: LoginRequestDto): Promise<ServiceResponse<{}>> {
