@@ -8,17 +8,17 @@ import { ServerSetup } from "./server.setup";
 import { logger } from "@matcha/shared";
 
 export class ApplicationSetup {
-	private containerBootstrap: ContainerSetup;
-	private databaseBootstrap: DatabaseSetup;
-	private serverBootstrap: ServerSetup;
+	private containerSetup: ContainerSetup;
+	private databaseSetup: DatabaseSetup;
+	private serverSetup: ServerSetup;
 
 	constructor(port: number) {
-		this.containerBootstrap = new ContainerSetup();
-		this.databaseBootstrap = new DatabaseSetup(
-			this.containerBootstrap.getContainer()
+		this.containerSetup = new ContainerSetup();
+		this.databaseSetup = new DatabaseSetup(
+			this.containerSetup.getContainer()
 		);
-		this.serverBootstrap = new ServerSetup(
-			this.containerBootstrap.getContainer(),
+		this.serverSetup = new ServerSetup(
+			this.containerSetup.getContainer(),
 			port
 		);
 	}
@@ -27,13 +27,13 @@ export class ApplicationSetup {
 		try {
 			logger.info("Starting application initialization...");
 
-			await this.containerBootstrap.initialize();
+			await this.containerSetup.initialize();
 
-			await this.databaseBootstrap.initialize();
+			await this.databaseSetup.initialize();
 
-			await this.serverBootstrap.initialize();
+			await this.serverSetup.initialize();
 
-			const containerInfo = this.containerBootstrap.getContainerInfo();
+			const containerInfo = this.containerSetup.getContainerInfo();
 			logger.info("Container status:", containerInfo);
 
 			logger.info("Application initialized successfully");
@@ -44,6 +44,6 @@ export class ApplicationSetup {
 	}
 
 	public getContainer() {
-		return this.containerBootstrap.getContainer();
+		return this.containerSetup.getContainer();
 	}
 }
