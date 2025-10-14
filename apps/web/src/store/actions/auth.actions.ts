@@ -24,17 +24,11 @@ const authActionsConfig = {
 
 const authActions = createActions(authActionsConfig);
 
-const registerAction = (dto: RegisterRequestDto) =>
-	authActions[EActionKeys.Register](dto)();
-const authenticateAction = () => authActions[EActionKeys.Authenticate]()();
-const logoutAction = () => authActions[EActionKeys.Logout]()();
-const loginAction = (dto: LoginRequestDto) =>
-	authActions[EActionKeys.Login](dto)();
-
 export const AuthActions = {
-	register: registerAction,
-	authenticate: authenticateAction,
+	register: (dto: RegisterRequestDto) =>
+		authActions[EActionKeys.Register](dto)(),
+	authenticate: () => authActions[EActionKeys.Authenticate]()(),
 
-	logout: logoutAction,
-	login: loginAction,
+	logout: () => authActions[EActionKeys.Logout]()(),
+	login: (dto: LoginRequestDto) => authActions[EActionKeys.Login](dto)(),
 };
