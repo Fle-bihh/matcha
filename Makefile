@@ -1,5 +1,8 @@
 .PHONY: clean dev re no-cache
 
+up:
+	docker compose up -d --build
+
 clean:
 	find . -name "dist" -type d -exec rm -rf {} +
 	find . -name "node_modules" -type d -exec rm -rf {} +
@@ -16,10 +19,8 @@ with-logs:
 	docker compose up --build
 
 show-logs:
-	docker compose logs -f
+	docker compose logs -f --tail=100
 
-up:
-	docker compose up -d --build
 
 down:
 	docker compose down

@@ -1,6 +1,6 @@
-import { ApiResponse, User } from "@matcha/shared";
+import { User } from "@matcha/shared";
 import { EEntityTypes, ETokens, ServiceResponse } from "@/types";
-import { setEntities, setFlagger, setLoader } from "@/store";
+import { setEntities } from "@/store";
 import { API_ROUTES } from "@/constants";
 import { BaseService } from "./base.service";
 

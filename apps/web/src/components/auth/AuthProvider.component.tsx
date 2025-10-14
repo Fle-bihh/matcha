@@ -1,11 +1,12 @@
+import { useActions } from "@/hooks/actions.hooks";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { useThunks } from "@/hooks/thunks.hook";
 import { EThunkFlaggerKeys } from "@/types";
+import { EActionKeys } from "@/types/actions.types";
 import { PropsWithChildren, useEffect, useRef } from "react";
 
 export function AuthProvider({ children }: PropsWithChildren<{}>) {
 	const { authenticate, isInitialized } = useAuthUser();
-	const { isLoading } = useThunks([EThunkFlaggerKeys.Authenticate]);
+	const { isLoading } = useActions([EActionKeys.Authenticate]);
 	const hasAttemptedAuth = useRef(false);
 
 	useEffect(() => {

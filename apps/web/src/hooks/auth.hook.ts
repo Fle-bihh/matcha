@@ -1,15 +1,11 @@
-import { EThunkFlaggerKeys, TAppDispatch, TRootState } from "@/types";
+import { TAppDispatch, TRootState } from "@/types";
 import { AuthUser } from "@matcha/shared";
 import { createSelector } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
-import { useThunks } from "./thunks.hook";
-import {
-	authenticateThunk,
-	loginThunk,
-	logoutThunk,
-	registerThunk,
-} from "@/store/thunks";
 import { useCallback, useMemo } from "react";
+import { AuthActions } from "@/store";
+import { useActions } from "./actions.hooks";
+import { EActionKeys } from "@/types/actions.types";
 
 const TEST_EMAIL = "test@test.com";
 const TEST_USERNAME = "testuser";
@@ -36,15 +32,15 @@ export const useAuthUser = () => {
 	const authUser = useSelector(selectAuthUser);
 	const isInitialized = useSelector(selectIsAuthInitialized);
 
-	const { isLoading, error, hasError } = useThunks([
-		EThunkFlaggerKeys.Register,
-		EThunkFlaggerKeys.Logout,
-		EThunkFlaggerKeys.Login,
+	const { isLoading, error, hasError } = useActions([
+		EActionKeys.Register,
+		EActionKeys.Logout,
+		EActionKeys.Login,
 	]);
 
 	const register = useCallback(async () => {
 		await dispatch(
-			registerThunk({
+			AuthActions.register({
 				email: TEST_EMAIL,
 				username: TEST_USERNAME,
 				password: TEST_PASSWORD,
@@ -53,16 +49,16 @@ export const useAuthUser = () => {
 	}, [dispatch]);
 
 	const authenticate = useCallback(async () => {
-		await dispatch(authenticateThunk());
+		dispatch(AuthActions.authenticate());
 	}, [dispatch]);
 
 	const logout = useCallback(async () => {
-		await dispatch(logoutThunk());
+		await dispatch(AuthActions.logout());
 	}, [dispatch]);
 
 	const login = useCallback(async () => {
 		await dispatch(
-			loginThunk({
+			AuthActions.login({
 				email: TEST_EMAIL,
 				password: TEST_PASSWORD,
 			})
