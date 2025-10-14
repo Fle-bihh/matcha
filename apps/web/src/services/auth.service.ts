@@ -93,13 +93,8 @@ export class AuthService extends BaseService {
 	}
 
 	public async logout(): Promise<ServiceResponse<{}>> {
-		try {
-			await this.storageService.clear();
-			this.dispatch(setAuthUser(null));
-			return ServiceResponse.success({});
-		} catch (error) {
-			logger.error("Error during logout", error);
-			return ServiceResponse.failure("Error during logout");
-		}
+		await this.storageService.clear();
+		this.dispatch(setAuthUser(null));
+		return ServiceResponse.success({});
 	}
 }

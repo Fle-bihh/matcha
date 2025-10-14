@@ -31,19 +31,7 @@ const selectIsAuthInitialized = createSelector(
 	}
 );
 
-export interface IUseAuthUserReturn {
-	authUser: AuthUser | null;
-	isInitialized: boolean;
-	register: () => Promise<void>;
-	isLoading: boolean;
-	error: string | null;
-	hasError: boolean;
-	authenticate: () => Promise<void>;
-	logout: () => Promise<void>;
-	login: () => Promise<void>;
-}
-
-export const useAuthUser = (): IUseAuthUserReturn => {
+export const useAuthUser = () => {
 	const dispatch = useDispatch<TAppDispatch>();
 	const authUser = useSelector(selectAuthUser);
 	const isInitialized = useSelector(selectIsAuthInitialized);
