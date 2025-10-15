@@ -1,129 +1,106 @@
 # Matcha 💕
 
-A modern dating website developed for 42 Porto school, combining an elegant React interface with a robust API to connect students and create authentic relationships.
+🚧 **Project in active development for 42 Porto** 🚧
 
-## 🚀 Global Technology Stack
+Modern dating website developed for 42 Porto school, combining an elegant React interface with a robust API to connect students and create authentic relationships.
+
+## 🚀 Technology Stack
 
 -   **Frontend**: React 18 + TypeScript + Vite + Redux Toolkit
 -   **Backend**: Node.js + Express + TypeScript
 -   **Database**: MySQL 8.0
 -   **Infrastructure**: Docker + Docker Compose
 -   **Architecture**: Monorepo with npm workspaces
--   **Development Tools**: TSX, Adminer, Redux DevTools
 
-## 📋 Available Make Commands
+## ⚡ Quick Start
 
-### Local Commands (VS Code)
-
-These commands help avoid TypeScript errors in VS Code by installing dependencies locally:
+### Local Installation (recommended for VS Code)
 
 ```bash
-make clean    # Cleans all node_modules, dist, and build files
-make install  # Installs dependencies and builds the shared package
+make install  # Install dependencies and avoid TypeScript errors
 ```
 
-### Docker Commands
-
-These commands use Docker for development:
+### Development with Docker
 
 ```bash
-make dev      # Launches the complete environment with Docker Compose
-make down     # Stops all containers
-make re       # Restarts the environment (down + up --build)
-make no-cache # Complete reset: removes volumes and Docker cache
+make re       # Launch complete environment
 ```
 
-## 🌐 Available Services (Docker)
+### Available Services
 
-When Docker is running, you have access to:
+-   **Backend API**: http://localhost:3000/api/v1
+-   **Web Application**: http://localhost:3001
+-   **Database**: http://localhost:8080 (Adminer)
 
-### 🔗 Backend API - Port 3000
+## 🏗️ Architecture
 
--   **Base URL**: `http://localhost:3000/api/v1`
-
-### 🗄️ Database Administration - Port 8080
-
--   **Adminer**: Web interface to manage MySQL
--   **URL**: `http://localhost:8080`
-
-### 🎨 Web Interface - Port 3001
-
--   **React Application**: `http://localhost:3001`
--   **Redux DevTools**: Available in browser for debugging (Redux DevTools extension on browser)
-
-## 🏗️ Monorepo Architecture
+### Monorepo Structure
 
 ```
 matcha/
-├── apps/                    # Main applications
-│   ├── server/             # Backend API
-│   └── web/               # React Frontend
-├── packages/              # Shared packages
-│   └── shared/           # Common code (types, models, validation)
-└── docker-compose.yml    # Infrastructure configuration
+├── apps/
+│   ├── server/         # Backend API (Node.js/Express)
+│   └── web/           # React Frontend
+├── packages/
+│   └── shared/        # Shared code (types, models, validation)
+└── docs/             # Technical documentation
 ```
 
-### Monorepo Advantages:
+### Monorepo Advantages
 
--   **Code Sharing**: Common types and models via `@matcha/shared`
--   **Synchronization**: Ensures consistency between frontend and backend
--   **Simplified Development**: Single repository to manage
--   **Optimized Build**: Shared dependencies
+-   **Code sharing** via `@matcha/shared`
+-   **Synchronization** between frontend and backend
+-   **Simplified development** in a single repository
+-   **Optimized builds** with shared dependencies
 
-## 📦 Shared Package (`packages/shared`)
+## 🛠️ Available Commands
 
-The core of code sharing between applications:
+### Development
 
-### Structure
-
-```
-packages/shared/src/
-├── models/              # Data models (User, Hello)
-├── types/              # Common TypeScript types
-├── validation/         # Zod validation schemas
-└── logger/            # Unified logging system
+```bash
+make re         # Restart environment
+make with-logs  # Launch with visible logs
+make show-logs  # Display logs
+make down       # Stop containers
 ```
 
-### Usage
+### Maintenance
 
-```typescript
-// In server and web
-import { UserModel, HelloModel } from "@matcha/shared";
-import { ApiResponse, UserCreateRequest } from "@matcha/shared/types";
+```bash
+make clean      # Clean local builds
+make no-cache   # Complete reset (removes volumes)
 ```
 
-## 🖥️ Server Structure (`apps/server`)
+## � Documentation
 
-Architecture based on dependency inversion with containers and decorators:
+-   **[Root.doc.md](./Root.doc.md)** - Root configuration and infrastructure
+-   **apps/server/** - Backend API documentation _(coming soon)_
+-   **apps/web/** - React frontend documentation _(coming soon)_
+-   **packages/shared/** - Shared package documentation _(coming soon)_
 
-```
-apps/server/src/
-├── controllers/        # REST controllers with decorators
-├── services/          # Business logic
-├── repositories/      # Data access
-├── decorators/        # Custom decorators (@Route, @Auth, etc.)
-├── middleware/        # Express middlewares
-├── dto/              # Data Transfer Objects
-├── types/            # Server-specific types
-└── utils/            # Utilities
-```
+## 🔧 Technical Features
 
-## 🎨 Web Structure (`apps/web`)
+### Backend (`apps/server`)
 
-Modern React application with Redux and modular architecture:
+-   Architecture based on dependency inversion
+-   Custom decorators system (@Route, @Auth)
+-   Dependency injection with container
+-   Integrated Zod validation
 
-```
-apps/web/src/
-├── app/               # Main configuration (App.tsx)
-├── components/        # Reusable React components
-├── hooks/            # Custom hooks
-├── services/         # API services and business logic
-├── store/            # Redux configuration (slices, thunks, selectors)
-├── types/            # Frontend-specific types
-├── utils/            # Frontend utilities
-└── constants/        # Constants and configuration
-```
+### Frontend (`apps/web`)
+
+-   Modular architecture with Redux Toolkit
+-   React Router routing system
+-   Client-side dependency injection
+-   Reusable components
+
+### Shared Package (`packages/shared`)
+
+-   Common TypeScript types
+-   Data models (User, etc.)
+-   Zod validation schemas
+-   Unified logger
 
 ---
 
-🚧 **Project in active development for 42 Porto** 🚧
+_Developed with ❤️ for the 42 Porto community_
