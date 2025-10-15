@@ -1,8 +1,6 @@
-import "reflect-metadata";
 import { AuthMetadata, ServiceResponse } from "@/types";
 import { StatusCodes } from "http-status-codes";
 import { JwtUtils } from "@/utils/jwt.utils";
-import { METADATA_KEYS } from "@/constants/metadata.constants";
 
 export function auth() {
 	return function (
@@ -10,14 +8,6 @@ export function auth() {
 		propertyKey: string,
 		descriptor: PropertyDescriptor
 	) {
-		const metadata: AuthMetadata = { required: true };
-		Reflect.defineMetadata(
-			METADATA_KEYS.Auth,
-			metadata,
-			target,
-			propertyKey
-		);
-
 		const originalMethod = descriptor.value;
 
 		descriptor.value = function (...args: any[]) {

@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import type { HttpMethod, RouteMetadata } from "@/types";
 import { ControllerRegistry } from "@/registry/controller.registry";
 import {
@@ -7,7 +6,6 @@ import {
 	type AllRouteKeys,
 	ROUTES,
 } from "@/constants/routes.constants";
-import { METADATA_KEYS } from "@/constants/metadata.constants";
 import { logger } from "@matcha/shared";
 
 function getControllerGroup(className: string): RouteGroups {
@@ -52,18 +50,6 @@ export function route(method: HttpMethod, key: AllRouteKeys) {
 		}
 
 		const route = buildApiRouteUnsafe(controllerGroup, key);
-
-		const metadata: RouteMetadata = {
-			method,
-			path: route,
-			key,
-		};
-		Reflect.defineMetadata(
-			METADATA_KEYS.Route,
-			metadata,
-			target,
-			propertyKey
-		);
 
 		ControllerRegistry.registerRoute({
 			method,

@@ -2,7 +2,12 @@
 
 🚧 **Project in active development for 42 Porto** 🚧
 
-Modern dating website developed for 42 Porto school, combining an elegant React interface with a robust API to connect students and create authentic relationships.
+Modern dating we## 📚 Documentation
+
+-   **[Root.doc.md](./Root.doc.md)** - Root configuration and infrastructure
+-   **[apps/server/Server.doc.md](./apps/server/Server.doc.md)** - Backend API architecture and features
+-   **[apps/web/Web.doc.md](./apps/web/Web.doc.md)** - React frontend architecture and components
+-   **[packages/shared/Shared.doc.md](./packages/shared/Shared.doc.md)** - Shared package types and validationdeveloped for 42 Porto school, combining an elegant React interface with a robust API to connect students and create authentic relationships.
 
 ## 🚀 Technology Stack
 
