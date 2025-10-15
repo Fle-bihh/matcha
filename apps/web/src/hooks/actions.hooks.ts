@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { setAction as setSliceAction } from "@/store/slices/actions.slice";
 import { EActionKeys, EActionStatus, IActionData } from "@/types/actions.types";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 interface IProps<T extends EActionKeys> {
 	action: T;
@@ -39,4 +39,12 @@ export const useActions = <T extends EActionKeys>(actions: T[]) => {
 			hasError,
 		};
 	}, [actionData, actions]);
+};
+
+export const useCreateAction = () => {
+	const dispatch = useDispatch();
+	return useCallback(
+		(action: () => any) => () => dispatch(action()),
+		[dispatch]
+	);
 };
