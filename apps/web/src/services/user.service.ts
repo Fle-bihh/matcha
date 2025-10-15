@@ -1,72 +1,20 @@
-import { ApiResponse, User } from "@matcha/shared";
-import {
-	EEntityTypes,
-	EFlagKeys,
-	ELoaderKeys,
-	ETokens,
-	ServiceResponse,
-} from "@/types";
-import { setEntities, setFlag, setLoader } from "@/store";
+import { User } from "@matcha/shared";
+import { EEntityTypes, ETokens, ServiceResponse } from "@/types";
+import { setEntities } from "@/store";
 import { API_ROUTES } from "@/constants";
-import type { ApiService } from "./api.service";
 import { BaseService } from "./base.service";
-import { parseErrorMessage } from "@/utils/error.utils";
-import { createTimestampString } from "@/utils/date.utils";
 
 export class UserService extends BaseService {
-	private get apiService(): ApiService {
-		return this.container.get<ApiService>(ETokens.ApiService);
-	}
-
-	private get dispatch() {
-		return this.container.store.dispatch;
-	}
-
 	async getUsers(): Promise<ServiceResponse<{}>> {
-		this.dispatch(
-			setLoader({ key: ELoaderKeys.fetchUsers, loading: true })
+		const response = await this.apiService.get<User[] | null>(
+			API_ROUTES.getAllUsers
 		);
 		this.dispatch(
-			setFlag({
-				key: EFlagKeys.UsersFetched,
-				value: { isFetched: false },
+			setEntities({
+				entityType: EEntityTypes.Users,
+				entities: response.responseObject || [],
 			})
 		);
-		try {
-			const response = await this.apiService.get<
-				ApiResponse<User[] | null>
-			>(API_ROUTES.getAllUsers);
-			this.dispatch(
-				setEntities({
-					entityType: EEntityTypes.Users,
-					entities: response.responseObject || [],
-				})
-			);
-			this.dispatch(
-				setFlag({
-					key: EFlagKeys.UsersFetched,
-					value: { isFetched: true },
-				})
-			);
-			return ServiceResponse.success({});
-		} catch (error) {
-			this.dispatch(
-				setFlag({
-					key: EFlagKeys.UsersFetched,
-					value: {
-						isFetched: false,
-						error: {
-							message: parseErrorMessage(error),
-							timestamp: createTimestampString(),
-						},
-					},
-				})
-			);
-			return ServiceResponse.failure({});
-		} finally {
-			this.dispatch(
-				setLoader({ key: ELoaderKeys.fetchUsers, loading: false })
-			);
-		}
+		return ServiceResponse.success({});
 	}
 }

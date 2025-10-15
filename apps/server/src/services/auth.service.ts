@@ -1,11 +1,14 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
-import { UserRepository } from "@/repositories";
+import { UserService } from "./user.service";
 import {
 	RegisterRequestDto,
 	RegisterResponseDto,
 	LoginResponseDto,
-} from "@/dto/auth.dto";
+	RefreshTokenRequestDto,
+	RefreshTokenResponseDto,
+	logger,
+} from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { JwtUtils } from "@/utils/jwt.utils";
 import { HashUtils } from "@/utils/hash.utils";
@@ -15,36 +18,72 @@ export class AuthService extends BaseService {
 		super(container);
 	}
 
-	private get userRepository(): UserRepository {
-		return this.container.get<UserRepository>(ETokens.UserRepository);
+	private get userService(): UserService {
+		return this.container.get<UserService>(ETokens.UserService);
 	}
 
 	public async register(
 		dto: RegisterRequestDto
 	): Promise<ServiceResponse<RegisterResponseDto | null>> {
 		try {
-			// Hash the password before saving
+			let existingUserResponse = await this.userService.findByEmail(
+				dto.email
+			);
+
+			if (
+				!existingUserResponse.success ||
+				existingUserResponse.responseObject
+			) {
+				return ServiceResponse.failure(
+					"Email already in use",
+					null,
+					StatusCodes.CONFLICT
+				);
+			}
+
+			existingUserResponse = await this.userService.findByUsername(
+				dto.username
+			);
+
+			if (
+				!existingUserResponse.success ||
+				existingUserResponse.responseObject
+			) {
+				return ServiceResponse.failure(
+					"Username already in use",
+					null,
+					StatusCodes.CONFLICT
+				);
+			}
+
 			const hashedPassword = await HashUtils.hashPassword(dto.password);
 
-			// Create user with hashed password
 			const userData = {
 				...dto,
 				password: hashedPassword,
 			};
 
-			const user = await this.userRepository.createUser(userData);
+			const userResponse = await this.userService.createUser(userData);
 
-			// Generate JWT token
-			const token = JwtUtils.generateToken(user);
+			if (!userResponse.success || !userResponse.responseObject) {
+				return ServiceResponse.failure(
+					userResponse.message,
+					null,
+					userResponse.statusCode
+				);
+			}
 
-			// Return user data without password
-			const { password: _, ...userWithoutPassword } = user;
+			const { accessToken, refreshToken } = JwtUtils.generateTokens(
+				userResponse.responseObject
+			);
 
 			return ServiceResponse.success("User registered successfully", {
-				token,
-				user: userWithoutPassword as any, // Cast needed due to password field removal
+				accessToken,
+				refreshToken,
+				user: userResponse.responseObject,
 			});
 		} catch (error) {
+			logger.error("Error in register:", error);
 			return ServiceResponse.failure(
 				"Error creating user",
 				null,
@@ -58,10 +97,11 @@ export class AuthService extends BaseService {
 		password: string
 	): Promise<ServiceResponse<LoginResponseDto | null>> {
 		try {
-			// Find user by email
-			const user = await this.userRepository.findUserByEmail(email);
+			const userResponse = await this.userService.findByEmailWithPassword(
+				email
+			);
 
-			if (!user) {
+			if (!userResponse.success || !userResponse.responseObject) {
 				return ServiceResponse.failure(
 					"Invalid credentials",
 					null,
@@ -69,10 +109,10 @@ export class AuthService extends BaseService {
 				);
 			}
 
-			// Check password
+			const userWithPassword = userResponse.responseObject;
 			const isPasswordValid = await HashUtils.comparePassword(
 				password,
-				user.password
+				userWithPassword.password
 			);
 
 			if (!isPasswordValid) {
@@ -83,21 +123,53 @@ export class AuthService extends BaseService {
 				);
 			}
 
-			// Generate JWT token
-			const token = JwtUtils.generateToken(user);
-
-			// Return user data without password
-			const { password: _, ...userWithoutPassword } = user;
+			const { password: _, ...user } = userWithPassword;
+			const { accessToken, refreshToken } = JwtUtils.generateTokens(user);
 
 			return ServiceResponse.success("User logged in successfully", {
-				token,
-				user: userWithoutPassword as any,
+				accessToken,
+				refreshToken,
+				user,
 			});
 		} catch (error) {
 			return ServiceResponse.failure(
 				"Error during login",
 				null,
 				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
+	public async refreshToken(
+		dto: RefreshTokenRequestDto
+	): Promise<ServiceResponse<RefreshTokenResponseDto | null>> {
+		try {
+			const { userId } = JwtUtils.verifyRefreshToken(dto.refreshToken);
+
+			const userResponse = await this.userService.findById(
+				userId.toString()
+			);
+
+			if (!userResponse.success || !userResponse.responseObject) {
+				return ServiceResponse.failure(
+					"Invalid refresh token",
+					null,
+					StatusCodes.UNAUTHORIZED
+				);
+			}
+
+			const user = userResponse.responseObject;
+			const { accessToken, refreshToken } = JwtUtils.generateTokens(user);
+
+			return ServiceResponse.success("Token refreshed successfully", {
+				accessToken,
+				refreshToken,
+			});
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Invalid or expired refresh token",
+				null,
+				StatusCodes.UNAUTHORIZED
 			);
 		}
 	}

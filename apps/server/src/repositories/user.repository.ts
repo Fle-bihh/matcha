@@ -1,5 +1,11 @@
 import { BaseRepository } from "./base.repository";
-import { CreateUser, logger, User } from "@matcha/shared";
+import {
+	AuthUser,
+	CreateUser,
+	logger,
+	User,
+	UserWithPassword,
+} from "@matcha/shared";
 import { IContainer } from "@/types";
 
 export class UserRepository extends BaseRepository {
@@ -13,7 +19,7 @@ export class UserRepository extends BaseRepository {
 		});
 	}
 
-	async initializeTable(): Promise<void> {
+	private async initializeTable(): Promise<void> {
 		await this.createTableWithMetadata(
 			this.tableName,
 			`username VARCHAR(30) NOT NULL UNIQUE,
@@ -22,24 +28,59 @@ export class UserRepository extends BaseRepository {
 		);
 	}
 
-	public async createUser(data: CreateUser): Promise<User> {
-		return await this.createDocument<User>(this.tableName, data);
+	public async createUser(data: CreateUser): Promise<AuthUser> {
+		const userWithPassword = await this.createDocument<UserWithPassword>(
+			this.tableName,
+			data
+		);
+		return this.excludePassword(userWithPassword);
 	}
 
-	public async getAllUsers(): Promise<User[]> {
-		return await this.getDocs<User>(this.tableName);
-	}
-
-	public async findUserByEmail(email: string): Promise<User | null> {
+	public async findUserByEmail(email: string): Promise<AuthUser | null> {
 		try {
-			const users = await this.getDocs<User>(this.tableName, {
+			const users = await this.getDocs<UserWithPassword>(this.tableName, {
+				where: "email = ?",
+				values: [email],
+			});
+			return users.length > 0 ? this.excludePassword(users[0]) : null;
+		} catch (error) {
+			logger.error("Error finding user by email:", error);
+			return null;
+		}
+	}
+
+	public async findUserByEmailWithPassword(
+		email: string
+	): Promise<UserWithPassword | null> {
+		try {
+			const users = await this.getDocs<UserWithPassword>(this.tableName, {
 				where: "email = ?",
 				values: [email],
 			});
 			return users.length > 0 ? users[0] : null;
 		} catch (error) {
-			logger.error("Error finding user by email:", error);
+			logger.error("Error finding user by email with password:", error);
 			return null;
 		}
+	}
+
+	public async findUserByUsername(
+		username: string
+	): Promise<AuthUser | null> {
+		try {
+			const users = await this.getDocs<UserWithPassword>(this.tableName, {
+				where: "username = ?",
+				values: [username],
+			});
+			return users.length > 0 ? this.excludePassword(users[0]) : null;
+		} catch (error) {
+			logger.error("Error finding user by username:", error);
+			return null;
+		}
+	}
+
+	private excludePassword(userWithPassword: UserWithPassword): AuthUser {
+		const { password, ...userWithoutPassword } = userWithPassword;
+		return userWithoutPassword;
 	}
 }

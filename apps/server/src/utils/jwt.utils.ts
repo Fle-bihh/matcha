@@ -1,33 +1,43 @@
 import jwt, { SignOptions } from "jsonwebtoken";
-import { User } from "@matcha/shared";
+import { AuthUser, User } from "@matcha/shared";
+import { config } from "@/config";
+import { JwtPayload } from "@/types";
 
-const JWT_SECRET =
-	process.env.JWT_SECRET || "your-secret-key-change-this-in-production";
-const JWT_EXPIRES_IN = Number(process.env.JWT_EXPIRES_IN) || 24 * 60 * 60;
-
-export interface JwtPayload {
-	id: number;
-	username: string;
-	email: string;
+export interface TokenPair {
+	accessToken: string;
+	refreshToken: string;
 }
 
 export class JwtUtils {
-	static generateToken(user: User): string {
+	static generateTokens(user: AuthUser): TokenPair {
 		const payload: JwtPayload = {
 			id: user.id,
 			username: user.username,
 			email: user.email,
 		};
 
-		const options: SignOptions = {
-			expiresIn: JWT_EXPIRES_IN,
-		};
+		const accessToken = jwt.sign(payload, config.jwtSecret, {
+			expiresIn: config.jwtExpiresIn as SignOptions["expiresIn"],
+		});
 
-		return jwt.sign(payload, JWT_SECRET, options);
+		const refreshToken = jwt.sign(
+			{ userId: user.id },
+			config.jwtRefreshSecret,
+			{
+				expiresIn:
+					config.jwtRefreshExpiresIn as SignOptions["expiresIn"],
+			}
+		);
+
+		return { accessToken, refreshToken };
 	}
 
 	static verifyToken(token: string): JwtPayload {
-		return jwt.verify(token, JWT_SECRET) as JwtPayload;
+		return jwt.verify(token, config.jwtSecret) as JwtPayload;
+	}
+
+	static verifyRefreshToken(token: string): { userId: number } {
+		return jwt.verify(token, config.jwtRefreshSecret) as { userId: number };
 	}
 
 	static decodeToken(token: string): JwtPayload | null {

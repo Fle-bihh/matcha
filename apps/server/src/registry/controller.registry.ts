@@ -8,28 +8,25 @@ interface RouteInfo {
 	path: string;
 	handler: string;
 	instance: new (container: any) => any;
-	apiDocs?: string;
 }
 
-class ControllerRegistry {
+export class ControllerRegistry {
 	private static readonly routes: RouteInfo[] = [];
-	private static readonly instances = new Map<string, any>();
-	private static container = new Container();
+	private readonly controllerInstances = new Map<string, any>();
+	private readonly container: Container;
 
-	private setupRouteOptions(app: Application, route: RouteInfo) {}
+	constructor(container: Container) {
+		this.container = container;
+	}
 
 	public static registerRoute(route: RouteInfo): void {
 		this.routes.push(route);
 	}
 
-	public static get containerInstance(): Container {
-		return this.container;
-	}
-
-	public static setupRoutes(app: Application): void {
+	public setupRoutes(app: Application): void {
 		const routesByPath = new Map<string, RouteInfo[]>();
 
-		this.routes.forEach((route) => {
+		ControllerRegistry.routes.forEach((route) => {
 			if (!routesByPath.has(route.path)) {
 				routesByPath.set(route.path, []);
 			}
@@ -38,75 +35,51 @@ class ControllerRegistry {
 
 		routesByPath.forEach((routes, path) => {
 			routes.forEach((route) => {
-				const method = route.method.toLowerCase();
-
-				const instanceKey = route.instance.name;
-				if (!this.instances.has(instanceKey)) {
-					this.instances.set(
-						instanceKey,
-						new route.instance(this.container)
-					);
-				}
-
-				const controllerInstance = this.instances.get(instanceKey);
-				const handler =
-					controllerInstance[route.handler].bind(controllerInstance);
-
-				const loggedHandler = (req: Request, res: Response) => {
-					logger.debug(
-						`Route called: ${route.method} ${route.path}`,
-						{
-							handler: route.handler,
-							controller: instanceKey,
-							ip: req.ip,
-							userAgent: req.get("User-Agent"),
-						}
-					);
-					return handler(req, res);
-				};
-
-				(app as any)[method](route.path, loggedHandler);
-			});
-
-			const allowedMethods = routes.map((r) => r.method).join(", ");
-			const apiDocsForPath = routes
-				.filter((r) => r.apiDocs)
-				.map((r) => ({
-					method: r.method,
-					description: r.apiDocs,
-				}));
-
-			app.options(path, (req: Request, res: Response) => {
-				res.setHeader("Allow", allowedMethods);
-				res.setHeader("Access-Control-Allow-Methods", allowedMethods);
-				res.setHeader(
-					"Access-Control-Allow-Headers",
-					"Content-Type, Authorization"
-				);
-
-				if (apiDocsForPath.length > 0) {
-					res.json({
-						path: path,
-						allowedMethods: allowedMethods.split(", "),
-						documentation: apiDocsForPath,
-					});
-				} else {
-					res.json({
-						path: path,
-						allowedMethods: allowedMethods.split(", "),
-					});
-				}
+				this.setupRoute(app, route);
 			});
 		});
 
-		const allApiDocs = this.routes
-			.filter((r) => r.apiDocs)
-			.map((r) => `${r.method} ${r.path}: ${r.apiDocs}`);
-		if (allApiDocs.length > 0) {
-			logger.info("API Documentation:");
-			allApiDocs.forEach((doc) => logger.info(`- ${doc}`));
+		logger.info(`Registered ${ControllerRegistry.routes.length} routes`);
+	}
+
+	private setupRoute(app: Application, route: RouteInfo): void {
+		const method = route.method.toLowerCase();
+		const instanceKey = route.instance.name;
+
+		if (!this.controllerInstances.has(instanceKey)) {
+			logger.debug(`Creating controller instance: ${instanceKey}`);
+			this.controllerInstances.set(
+				instanceKey,
+				new route.instance(this.container)
+			);
 		}
+
+		const controllerInstance = this.controllerInstances.get(instanceKey);
+		const handler =
+			controllerInstance[route.handler].bind(controllerInstance);
+
+		const loggedHandler = (req: Request, res: Response) => {
+			logger.debug(`Route called: ${route.method} ${route.path}`, {
+				handler: route.handler,
+				controller: instanceKey,
+				ip: req.ip,
+				userAgent: req.get("User-Agent"),
+			});
+			return handler(req, res);
+		};
+
+		(app as any)[method](route.path, loggedHandler);
+
+		logger.debug(
+			`Route registered: ${route.method} ${route.path} -> ${instanceKey}.${route.handler}`
+		);
+	}
+
+	public static getRoutes(): RouteInfo[] {
+		return [...this.routes];
+	}
+
+	public static clearRoutes(): void {
+		this.routes.length = 0;
 	}
 }
-
-export { ControllerRegistry };

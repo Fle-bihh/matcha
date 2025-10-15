@@ -1,4 +1,4 @@
-import "./hello.controller";
+import "./health.controller";
 import "./user.controller";
 import "./auth.controller";
 

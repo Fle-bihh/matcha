@@ -1,5 +1,8 @@
 .PHONY: clean dev re no-cache
 
+up:
+	docker compose up -d --build
+
 clean:
 	find . -name "dist" -type d -exec rm -rf {} +
 	find . -name "node_modules" -type d -exec rm -rf {} +
@@ -9,12 +12,15 @@ clean:
 install:
 	npm install
 	npm run build -w @matcha/shared
+	npm run build -w @matcha/server
+	npm run build -w @matcha/web
 
-dev:
+with-logs:
 	docker compose up --build
 
-up:
-	docker compose up -d --build
+show-logs:
+	docker compose logs -f --tail=100
+
 
 down:
 	docker compose down
@@ -28,4 +34,9 @@ no-cache:
 	docker system prune -a -f
 	docker volume prune -f
 	docker volume rm matcha_mysql_data 2>/dev/null || true
-	docker compose up --build
+	docker compose up -d --build
+
+clear-cache:
+	docker system prune -a -f
+	docker volume prune -f
+	docker volume rm matcha_mysql_data 2>/dev/null || true

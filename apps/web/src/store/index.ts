@@ -1,4 +1,3 @@
-export * from "./thunks";
-export * from "./selectors";
+export * from "./actions";
 export * from "./createStore";
 export * from "./slices";

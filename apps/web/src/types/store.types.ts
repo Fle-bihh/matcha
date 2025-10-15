@@ -7,12 +7,8 @@ export enum EEntityTypes {
 
 export enum EStoreSlices {
 	Entities = "entities",
-	Loaders = "loaders",
-	Flags = "flags",
-}
-
-export enum ELoaderKeys {
-	fetchUsers = "fetchUsers",
+	Actions = "actions",
+	AuthUser = "auth-user",
 }
 
 export type TRootState = ReturnType<ReturnType<typeof createStore>["getState"]>;

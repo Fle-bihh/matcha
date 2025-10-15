@@ -1,20 +1,10 @@
 import { logger } from "@matcha/shared";
 import type { Request, Response, NextFunction } from "express";
 import { z, type ZodType } from "zod";
+import { ServiceResponse, ValidateMetadata } from "@/types";
+import { StatusCodes } from "http-status-codes";
 
-declare global {
-	namespace Express {
-		interface Request {
-			validated?: {
-				query?: any;
-				body?: any;
-				params?: any;
-			};
-		}
-	}
-}
-
-export function Validate<T extends ZodType>(
+export function validate<T extends ZodType>(
 	schema: T,
 	source: "query" | "body" | "params" = "query"
 ) {
@@ -31,7 +21,18 @@ export function Validate<T extends ZodType>(
 			next?: NextFunction
 		) {
 			try {
-				const data = req[source];
+				let data = req[source];
+
+				if (data === undefined) {
+					if (source === "body") {
+						data = {};
+					} else if (source === "query") {
+						data = {};
+					} else if (source === "params") {
+						data = {};
+					}
+				}
+
 				const validatedData = schema.parse(data);
 
 				if (!req.validated) {
@@ -56,17 +57,30 @@ export function Validate<T extends ZodType>(
 				return originalMethod.call(this, req, res, next);
 			} catch (error) {
 				if (error instanceof z.ZodError) {
-					return res.status(400).json({
-						error: "Validation failed",
-						details: error.issues.map((issue) => ({
-							field: issue.path.join("."),
-							message: issue.message,
-							value:
-								"received" in issue
-									? issue.received
-									: undefined,
-						})),
-					});
+					const response = ServiceResponse.failure(
+						"Validation failed",
+						{
+							details: error.issues.map((issue) => {
+								const fieldPath =
+									issue.path.length > 0
+										? issue.path.join(".")
+										: source === "body"
+										? "request body"
+										: source;
+
+								return {
+									field: fieldPath,
+									message: issue.message,
+									value:
+										"received" in issue
+											? issue.received
+											: undefined,
+								};
+							}),
+						},
+						StatusCodes.BAD_REQUEST
+					);
+					return res.status(StatusCodes.BAD_REQUEST).json(response);
 				}
 
 				throw error;

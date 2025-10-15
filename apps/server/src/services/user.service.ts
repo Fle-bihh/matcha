@@ -1,7 +1,13 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { UserRepository } from "@/repositories";
-import { User } from "@matcha/shared";
+import {
+	User,
+	UserWithPassword,
+	CreateUser,
+	AuthUser,
+	logger,
+} from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 
 export class UserService extends BaseService {
@@ -13,20 +19,105 @@ export class UserService extends BaseService {
 		return this.container.get<UserRepository>(ETokens.UserRepository);
 	}
 
-	async initializeTable(): Promise<void> {
-		await this.userRepository.initializeTable();
-	}
-
-	public async getAllUsers(): Promise<ServiceResponse<User[] | null>> {
+	public async findByEmail(
+		email: string
+	): Promise<ServiceResponse<AuthUser | null>> {
 		try {
-			const users = await this.userRepository.getAllUsers();
-			return ServiceResponse.success(
-				"Users retrieved successfully",
-				users
-			);
+			const user = await this.userRepository.findUserByEmail(email);
+			return ServiceResponse.success("User found", user);
 		} catch (error) {
 			return ServiceResponse.failure(
-				"Failed to retrieve users",
+				"Error finding user",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
+	public async findByUsername(
+		username: string
+	): Promise<ServiceResponse<AuthUser | null>> {
+		try {
+			const user = await this.userRepository.findUserByUsername(username);
+			if (!user) {
+				return ServiceResponse.success("User not found", null);
+			}
+			return ServiceResponse.success("User found", user);
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Error finding user",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
+	public async findByEmailWithPassword(
+		email: string
+	): Promise<ServiceResponse<UserWithPassword | null>> {
+		try {
+			const user = await this.userRepository.findUserByEmailWithPassword(
+				email
+			);
+			return ServiceResponse.success("User found", user);
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Error finding user with password",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
+	public async findById(
+		userId: string
+	): Promise<ServiceResponse<AuthUser | null>> {
+		try {
+			const users = await this.userRepository.getDocs<UserWithPassword>(
+				"users",
+				{
+					where: "id = ?",
+					values: [userId],
+				}
+			);
+
+			if (!users || users.length === 0) {
+				return ServiceResponse.success("User not found", null);
+			}
+
+			const { password: _, ...user } = users[0];
+			return ServiceResponse.success("User found", user);
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Error finding user by ID",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
+	public async createUser(
+		userData: CreateUser
+	): Promise<ServiceResponse<AuthUser | null>> {
+		try {
+			const existingUser = await this.userRepository.findUserByEmail(
+				userData.email
+			);
+
+			if (existingUser) {
+				return ServiceResponse.failure(
+					"Email already in use",
+					null,
+					StatusCodes.CONFLICT
+				);
+			}
+
+			const user = await this.userRepository.createUser(userData);
+			return ServiceResponse.success("User created successfully", user);
+		} catch (error) {
+			logger.error("Error in createUser:", error);
+			return ServiceResponse.failure(
+				"Error creating user",
 				null,
 				StatusCodes.INTERNAL_SERVER_ERROR
 			);

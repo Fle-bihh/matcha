@@ -17,7 +17,9 @@ export const corsOptions = {
 	origin: config.webUrl,
 	credentials: true,
 	optionsSuccessStatus: 200,
-	preflightContinue: true,
+	preflightContinue: false,
+	methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+	allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
 };
 
 export const helmetConfig = helmet({

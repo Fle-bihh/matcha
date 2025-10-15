@@ -1,6 +1,6 @@
 import { logger } from "@matcha/shared";
 import { Server } from "http";
-import { Container } from "@/container/container";
+import { Container } from "@/container";
 import { ETokens } from "@/types";
 import { BaseRepository } from "@/repositories";
 
@@ -18,7 +18,7 @@ export class GracefulShutdown {
 	private container?: Container;
 
 	private constructor(options: ShutdownOptions = {}) {
-		this.timeout = options.timeout || 30000; // 30 seconds default
+		this.timeout = options.timeout || 30000;
 		this.server = options.server;
 		this.container = options.container;
 	}
@@ -68,10 +68,8 @@ export class GracefulShutdown {
 		}, this.timeout);
 
 		try {
-			// Close HTTP server
 			await this.closeHttpServer();
 
-			// Close database connection
 			await this.closeDatabaseConnection();
 
 			clearTimeout(forceExitTimer);
