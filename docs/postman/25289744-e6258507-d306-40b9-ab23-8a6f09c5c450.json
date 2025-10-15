@@ -20,18 +20,17 @@
 				},
 				"url": {
 					"raw": "{{api_url}}/health/?include_details=true",
-					"host": [
-						"{{api_url}}"
-					],
-					"path": [
-						"health",
-						""
-					],
+					"host": ["{{api_url}}"],
+					"path": ["health", ""],
 					"query": [
 						{
 							"key": "include_details",
 							"value": "true",
+<<<<<<< HEAD
 							"type": null
+=======
+							"description": "Boolean to ask for more details about the server status test"
+>>>>>>> 6776053 (Updated Postman collection)
 						}
 					]
 				}
@@ -45,13 +44,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{api_url}}/health/",
-							"host": [
-								"{{api_url}}"
-							],
-							"path": [
-								"health",
-								""
-							]
+							"host": ["{{api_url}}"],
+							"path": ["health", ""]
 						}
 					},
 					"status": "OK",
@@ -171,13 +165,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{api_url}}/health/?include_details=true",
-							"host": [
-								"{{api_url}}"
-							],
-							"path": [
-								"health",
-								""
-							],
+							"host": ["{{api_url}}"],
+							"path": ["health", ""],
 							"query": [
 								{
 									"key": "include_details",
