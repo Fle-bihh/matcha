@@ -1,7 +1,6 @@
 import { ETokens } from "@/types";
 import { EActionKeys } from "@/types/actions.types";
 import { createActions } from "./base.actions";
-import { LoginRequestDto, RegisterRequestDto } from "@matcha/shared";
 
 const authActionsConfig = {
 	[EActionKeys.Register]: {
@@ -22,13 +21,4 @@ const authActionsConfig = {
 	},
 } as const;
 
-const authActions = createActions(authActionsConfig);
-
-export const AuthActions = {
-	register: (dto: RegisterRequestDto) =>
-		authActions[EActionKeys.Register](dto)(),
-	authenticate: () => authActions[EActionKeys.Authenticate]()(),
-
-	logout: () => authActions[EActionKeys.Logout]()(),
-	login: (dto: LoginRequestDto) => authActions[EActionKeys.Login](dto)(),
-};
+export const AuthActions = createActions(authActionsConfig);

@@ -1,8 +1,7 @@
 import {
-	logger,
-	LoginRequestDto,
+	type LoginRequestDto,
 	LoginResponseDto,
-	RegisterRequestDto,
+	type RegisterRequestDto,
 	RegisterResponseDto,
 } from "@matcha/shared";
 import { BaseService } from "./base.service";
@@ -10,91 +9,108 @@ import { API_ROUTES } from "@/constants";
 import { ServiceResponse } from "@/types";
 import { setAuthUser } from "@/store";
 import { EStorageKeys } from "@/types/storage.constants";
+import { action } from "@/decorators";
+
+type AuthData = Partial<RegisterResponseDto>;
 
 export class AuthService extends BaseService {
-	private async updateStorageAuthData(
-		data: Partial<RegisterResponseDto>
-	): Promise<void> {
-		if (data.accessToken) {
+	private static readonly MESSAGES = {
+		NO_AUTH_DATA: "No valid authentication data found",
+		AUTH_CHECK_FAILED: "Authentication check failed",
+	} as const;
+
+	private async storeAuthData(data: AuthData): Promise<void> {
+		const { accessToken, refreshToken, user } = data;
+
+		if (accessToken) {
 			await this.storageService.setItem(
 				EStorageKeys.AccessToken,
-				data.accessToken
+				accessToken
 			);
 		}
-		if (data.refreshToken) {
+
+		if (refreshToken) {
 			await this.storageService.setItem(
 				EStorageKeys.RefreshToken,
-				data.refreshToken
+				refreshToken
 			);
 		}
-		if (data.user) {
-			await this.storageService.setItem(EStorageKeys.User, data.user);
-			this.dispatch(setAuthUser(data.user));
+
+		if (user) {
+			await this.storageService.setItem(EStorageKeys.User, user);
+			this.dispatch(setAuthUser(user));
 		}
 	}
 
-	public async authenticate(): Promise<ServiceResponse<{}>> {
+	private async clearAuthData(): Promise<void> {
+		await this.storageService.clear();
+		this.dispatch(setAuthUser(null));
+	}
+
+	private async hasValidAuthData(): Promise<boolean> {
+		const [accessToken, refreshToken, user] = await Promise.all([
+			this.storageService.getItem(EStorageKeys.AccessToken),
+			this.storageService.getItem(EStorageKeys.RefreshToken),
+			this.storageService.getItem(EStorageKeys.User),
+		]);
+
+		return !!(accessToken && refreshToken && user);
+	}
+
+	@action()
+	public async authenticate() {
 		try {
-			const accessToken = await this.storageService.getItem(
-				EStorageKeys.AccessToken
-			);
-			const refreshToken = await this.storageService.getItem(
-				EStorageKeys.RefreshToken
-			);
-
-			const user = await this.storageService.getItem(EStorageKeys.User);
-
-			if (accessToken && refreshToken && user) {
+			if (await this.hasValidAuthData()) {
+				const user = await this.storageService.getItem(
+					EStorageKeys.User
+				);
 				this.dispatch(setAuthUser(user));
-				return ServiceResponse.success({});
+				return ServiceResponse.success("User authenticated");
 			}
 
-			await this.storageService.clear();
-			this.dispatch(setAuthUser(null));
-			return ServiceResponse.success(
-				"No valid authentication data found"
-			);
+			await this.clearAuthData();
+			return ServiceResponse.failure(AuthService.MESSAGES.NO_AUTH_DATA);
 		} catch (error) {
-			this.dispatch(setAuthUser(null));
-			return ServiceResponse.failure("Authentication check failed");
+			await this.clearAuthData();
+			return ServiceResponse.failure(
+				AuthService.MESSAGES.AUTH_CHECK_FAILED
+			);
 		}
 	}
 
-	public async login(dto: LoginRequestDto): Promise<ServiceResponse<{}>> {
+	@action()
+	public async login(dto: LoginRequestDto) {
 		const response = await this.apiService.post<LoginResponseDto>(
 			API_ROUTES.login,
 			dto
 		);
+
 		if (!response.success) {
 			return ServiceResponse.failure(response.message);
 		}
 
-		await this.updateStorageAuthData(response.responseObject);
-		this.dispatch(setAuthUser(response.responseObject.user));
-		return ServiceResponse.success({});
+		await this.storeAuthData(response.responseObject);
+		return ServiceResponse.success("User logged in");
 	}
 
-	public async register(
-		data: RegisterRequestDto
-	): Promise<ServiceResponse<{}>> {
+	@action()
+	public async register(dto: RegisterRequestDto) {
 		const response = await this.apiService.post<RegisterResponseDto>(
 			API_ROUTES.register,
-			data
+			dto
 		);
 
 		if (!response.success) {
 			return ServiceResponse.failure(response.message);
 		}
 
-		await this.updateStorageAuthData(response.responseObject);
-
-		this.dispatch(setAuthUser(response.responseObject.user));
-		return ServiceResponse.success({});
+		await this.storeAuthData(response.responseObject);
+		return ServiceResponse.success("User registered");
 	}
 
-	public async logout(): Promise<ServiceResponse<{}>> {
-		await this.storageService.clear();
-		this.dispatch(setAuthUser(null));
-		return ServiceResponse.success({});
+	@action()
+	public async logout() {
+		await this.clearAuthData();
+		return ServiceResponse.success("User logged out");
 	}
 }
