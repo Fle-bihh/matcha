@@ -38,9 +38,4 @@ make re       # Launch complete environment
 -   **Web Application**: http://localhost:3001
 -   **Database**: http://localhost:8080 (Adminer)
 
-## 📚 Documentation
-
--   **[Root.doc.md](./Root.doc.md)** - Root configuration and infrastructure
--   **[Server.doc.md](./apps/server/Server.doc.md)** - Backend API architecture and features
--   **[Web.doc.md](./apps/web/Web.doc.md)** - React frontend architecture and components
--   **[Shared.doc.md](./packages/shared/Shared.doc.md)** - Shared package types and validation
+## 📚 Documentation - Todo...
