@@ -108,4 +108,6 @@ jobs:
                     exit 1
                   fi
 
+                  # Si toutes les validations passent
+
                   echo "✅ PR target validation passed"
