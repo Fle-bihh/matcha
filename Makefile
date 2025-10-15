@@ -9,7 +9,11 @@ clean:
 	find . -name "package-lock.json" -type f -delete
 	find . -name "tsconfig.tsbuildinfo" -type f -delete
 
+setup:
+	./setup-env.sh
+
 install:
+	./setup-env.sh
 	npm install
 	npm run build -w @matcha/shared
 	npm run build -w @matcha/server
