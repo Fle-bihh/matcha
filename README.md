@@ -2,26 +2,17 @@
 
 🚧 **Project in active development for 42 Porto** 🚧
 
-Modern dating we## 📚 Documentation
+## Introduction
 
--   **[Root.doc.md](./Root.doc.md)** - Root configuration and infrastructure
--   **[apps/server/Server.doc.md](./apps/server/Server.doc.md)** - Backend API architecture and features
--   **[apps/web/Web.doc.md](./apps/web/Web.doc.md)** - React frontend architecture and components
--   **[packages/shared/Shared.doc.md](./packages/shared/Shared.doc.md)** - Shared package types and validationdeveloped for 42 Porto school, combining an elegant React interface with a robust API to connect students and create authentic relationships.
+Matcha is a modern dating web application developed as part of the 42 school curriculum. The project aims to create a complete dating platform that facilitates connections between users, covering the entire process from registration to final meetings.
 
-## 🚀 Technology Stack
+Users can register, complete detailed profiles, browse and search for compatible matches based on location and interests, express interest through "likes", and chat with mutual matches. The application implements intelligent matching algorithms considering geographical proximity, shared interests, and user popularity ratings.
 
--   **Frontend**: React 18 + TypeScript + Vite + Redux Toolkit
--   **Backend**: Node.js + Express + TypeScript
--   **Database**: MySQL 8.0
--   **Infrastructure**: Docker + Docker Compose
--   **Architecture**: Monorepo with npm workspaces
+For complete project specifications, see [`docs/42_matcha.subject.pdf`](docs/42_matcha.subject.pdf).
 
-## ⚡ Quick Start
+## 🚀 Quick Start
 
 ### 1. Environment Setup
-
-First, create the environment files:
 
 ```bash
 # Copy environment files
@@ -29,10 +20,10 @@ cp .env.example .env
 cp apps/web/.env.example apps/web/.env
 ```
 
-### 2. Local Installation (recommended for VS Code)
+### 2. Local Installation
 
 ```bash
-make install  # Install dependencies and avoid TypeScript errors
+make install  # Install dependencies
 ```
 
 ### 3. Development with Docker
@@ -47,73 +38,9 @@ make re       # Launch complete environment
 -   **Web Application**: http://localhost:3001
 -   **Database**: http://localhost:8080 (Adminer)
 
-## 🏗️ Architecture
-
-### Monorepo Structure
-
-```
-matcha/
-├── apps/
-│   ├── server/         # Backend API (Node.js/Express)
-│   └── web/           # React Frontend
-├── packages/
-│   └── shared/        # Shared code (types, models, validation)
-└── docs/             # Technical documentation
-```
-
-### Monorepo Advantages
-
--   **Code sharing** via `@matcha/shared`
--   **Synchronization** between frontend and backend
--   **Simplified development** in a single repository
--   **Optimized builds** with shared dependencies
-
-## 🛠️ Available Commands
-
-### Development
-
-```bash
-make re         # Restart environment
-make with-logs  # Launch with visible logs
-make show-logs  # Display logs
-make down       # Stop containers
-```
-
-### Maintenance
-
-```bash
-make clean      # Clean local builds
-make no-cache   # Complete reset (removes volumes)
-```
-
-## � Documentation
+## 📚 Documentation
 
 -   **[Root.doc.md](./Root.doc.md)** - Root configuration and infrastructure
--   **apps/server/** - Backend API documentation _(coming soon)_
--   **apps/web/** - React frontend documentation _(coming soon)_
--   **packages/shared/** - Shared package documentation _(coming soon)_
-
-## 🔧 Technical Features
-
-### Backend (`apps/server`)
-
--   Architecture based on dependency inversion
--   Custom decorators system (@Route, @Auth)
--   Dependency injection with container
--   Integrated Zod validation
-
-### Frontend (`apps/web`)
-
--   Modular architecture with Redux Toolkit
--   React Router routing system
--   Client-side dependency injection
--   Reusable components
-
-### Shared Package (`packages/shared`)
-
--   Common TypeScript types
--   Data models (User, etc.)
--   Zod validation schemas
--   Unified logger
-
----
+-   **[Server.doc.md](./Server.doc.md)** - Backend API architecture and features
+-   **[Web.doc.md](./Web.doc.md)** - React frontend architecture and components
+-   **[Shared.doc.md](./Shared.doc.md)** - Shared package types and validation
