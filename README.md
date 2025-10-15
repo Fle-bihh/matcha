@@ -14,13 +14,23 @@ Modern dating website developed for 42 Porto school, combining an elegant React 
 
 ## ⚡ Quick Start
 
-### Local Installation (recommended for VS Code)
+### 1. Environment Setup
+
+First, create the environment files:
+
+```bash
+# Copy environment files
+cp .env.example .env
+cp apps/web/.env.example apps/web/.env
+```
+
+### 2. Local Installation (recommended for VS Code)
 
 ```bash
 make install  # Install dependencies and avoid TypeScript errors
 ```
 
-### Development with Docker
+### 3. Development with Docker
 
 ```bash
 make re       # Launch complete environment
@@ -102,5 +112,3 @@ make no-cache   # Complete reset (removes volumes)
 -   Unified logger
 
 ---
-
-_Developed with ❤️ for the 42 Porto community_
