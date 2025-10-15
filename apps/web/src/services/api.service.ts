@@ -38,12 +38,8 @@ export class ApiService extends BaseService {
 		});
 
 		if (!response.ok) {
-			throw new Error(
-				`Error ${response.status}: ${
-					(await (response.json() as any).message) ||
-					response.statusText
-				}`
-			);
+			const data = await response.clone().json();
+			throw new Error(`${data.message || response.statusText}`);
 		}
 
 		return response.json();
