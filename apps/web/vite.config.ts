@@ -1,9 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-// require("dotenv").config();
-import dotenv from "dotenv";
-dotenv.config();
+import { config } from "./src/config.ts";
 
 if (process.env.NODE_ENV === "production") {
 	console.log("Production mode");
@@ -21,8 +19,8 @@ export default defineConfig({
 	},
 	server: {
 		host: "0.0.0.0",
-		port: process.env.WEB_PORT ? parseInt(process.env.WEB_PORT) : 3001,
-		allowedHosts: [process.env.WEB_URL || "localhost"],
+		port: config.port,
+		allowedHosts: [config.webUrl],
 	},
 	optimizeDeps: {
 		include: ["@matcha/shared"],
