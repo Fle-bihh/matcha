@@ -12,7 +12,7 @@ export interface GetHealthResponseDto {
 	service: string;
 	uptime?: number;
 	details?: {
-		memory_usage?: number;
+		memory_usage?: NodeJS.MemoryUsage;
 		cpu_usage?: number;
 	};
 }
