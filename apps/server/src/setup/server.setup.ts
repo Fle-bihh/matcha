@@ -24,7 +24,7 @@ export class ServerSetup {
 	private server: http.Server;
 	private gracefulShutdown: GracefulShutdown;
 	private controllerRegistry: ControllerRegistry;
-	private io: WebSocketServer;
+	// private io: WebSocketServer;
 
 	constructor(container: Container, port: number) {
 		this.container = container;
@@ -33,7 +33,7 @@ export class ServerSetup {
 		this.gracefulShutdown = GracefulShutdown.getInstance();
 		this.controllerRegistry = new ControllerRegistry(this.container);
 		this.server = http.createServer(this.app);
-		this.io = this.setupWebSocket();
+		// this.io = this.setupWebSocket();
 	}
 
 	public async initialize(): Promise<void> {
@@ -53,15 +53,15 @@ export class ServerSetup {
 		};
 		const wsServer = new WebSocketServer(this.server, ioOptions);
 
-		this.io.on("connection", (socket) => {
-			logger.info(`New WebSocket connection: ${socket.id}`);
+		// this.io.on("connection", (socket) => {
+		// 	logger.info(`New WebSocket connection: ${socket.id}`);
 
-			socket.on("disconnect", (reason) => {
-				logger.info(
-					`WebSocket disconnected: ${socket.id}, Reason: ${reason}`
-				);
-			});
-		});
+		// 	socket.on("disconnect", (reason) => {
+		// 		logger.info(
+		// 			`WebSocket disconnected: ${socket.id}, Reason: ${reason}`
+		// 		);
+		// 	});
+		// });
 
 		return wsServer;
 	}
