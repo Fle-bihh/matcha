@@ -5,6 +5,12 @@ import path from "path";
 import dotenv from "dotenv";
 dotenv.config();
 
+if (process.env.NODE_ENV === "production") {
+	console.log("Production mode");
+} else {
+	console.log("Development mode");
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
 	plugins: [react()],
