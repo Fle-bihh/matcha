@@ -93,7 +93,7 @@ export class ServerSetup {
 	}
 
 	private async start(): Promise<void> {
-		this.server = this.app.listen(this.port, () => {
+		this.server = this.app.listen(this.port, "0.0.0.0", () => {
 			logger.info(`Server is running on port ${this.port}`);
 		});
 
