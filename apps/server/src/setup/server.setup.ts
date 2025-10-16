@@ -14,14 +14,17 @@ import {
 } from "@/middleware/security.middleware";
 import cors from "cors";
 import multer from "multer";
+import http from "http";
+import { Server as WebSocketServer, ServerOptions } from "socket.io";
 
 export class ServerSetup {
 	private container: Container;
 	private app: Express;
 	private port: number;
-	private server: any;
+	private server: http.Server;
 	private gracefulShutdown: GracefulShutdown;
 	private controllerRegistry: ControllerRegistry;
+	private io: WebSocketServer;
 
 	constructor(container: Container, port: number) {
 		this.container = container;
@@ -29,6 +32,8 @@ export class ServerSetup {
 		this.app = express();
 		this.gracefulShutdown = GracefulShutdown.getInstance();
 		this.controllerRegistry = new ControllerRegistry(this.container);
+		this.server = http.createServer(this.app);
+		this.io = this.setupWebSocket();
 	}
 
 	public async initialize(): Promise<void> {
@@ -36,6 +41,29 @@ export class ServerSetup {
 		this.setupRoutes();
 		this.setup404Handler();
 		await this.start();
+	}
+
+	private setupWebSocket(): WebSocketServer {
+		const ioOptions: Partial<ServerOptions> = {
+			cors: {
+				origin: corsOptions.origin,
+				methods: ["GET", "POST", "PUT", "DELETE"],
+				credentials: true,
+			},
+		};
+		const wsServer = new WebSocketServer(this.server, ioOptions);
+
+		this.io.on("connection", (socket) => {
+			logger.info(`New WebSocket connection: ${socket.id}`);
+
+			socket.on("disconnect", (reason) => {
+				logger.info(
+					`WebSocket disconnected: ${socket.id}, Reason: ${reason}`
+				);
+			});
+		});
+
+		return wsServer;
 	}
 
 	private setupMiddleware(): void {
