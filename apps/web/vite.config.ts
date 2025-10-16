@@ -13,7 +13,7 @@ export default defineConfig({
 	server: {
 		host: "0.0.0.0",
 		port: 3001,
-		allowedHosts: ["82e385e7e11f.ngrok-free.app"],
+		allowedHosts: ["super-really-ray.ngrok-free.app"],
 	},
 	optimizeDeps: {
 		include: ["@matcha/shared"],
