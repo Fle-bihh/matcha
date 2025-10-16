@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+require("dotenv").config();
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,8 +13,8 @@ export default defineConfig({
 	},
 	server: {
 		host: "0.0.0.0",
-		port: 3001,
-		allowedHosts: ["super-really-ray.ngrok-free.app"],
+		port: process.env.WEB_PORT ? parseInt(process.env.WEB_PORT) : 3001,
+		allowedHosts: [process.env.WEB_URL || "localhost"],
 	},
 	optimizeDeps: {
 		include: ["@matcha/shared"],
