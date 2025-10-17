@@ -1,7 +1,21 @@
-.PHONY: clean dev re no-cache
+.PHONY: deploy setup build clean up down re logs clear-cache
 
-up:
-	docker compose up -d --build
+deploy:
+	make clean
+	make clear-cache
+	make setup
+	make build
+	make re
+	make logs
+	
+setup:
+	./setup-env.sh
+	npm install
+
+build:
+	npm run build -w @matcha/shared
+	npm run build -w @matcha/server
+	npm run build -w @matcha/web
 
 clean:
 	find . -name "dist" -type d -exec rm -rf {} +
@@ -9,36 +23,18 @@ clean:
 	find . -name "package-lock.json" -type f -delete
 	find . -name "tsconfig.tsbuildinfo" -type f -delete
 
-setup:
-	./setup-env.sh
-
-install:
-	./setup-env.sh
-	npm install
-	npm run build -w @matcha/shared
-	npm run build -w @matcha/server
-	npm run build -w @matcha/web
-
-with-logs:
-	docker compose up --build
-
-show-logs:
-	docker compose logs -f --tail=100
-
+up:
+	docker compose up -d --build
 
 down:
 	docker compose down
 
 re:
-	docker compose down
-	docker compose up -d --build
+	make down
+	make up
 
-no-cache:
-	docker compose down
-	docker system prune -a -f
-	docker volume prune -f
-	docker volume rm matcha_mysql_data 2>/dev/null || true
-	docker compose up -d --build
+logs:
+	docker compose logs -f 
 
 clear-cache:
 	docker system prune -a -f

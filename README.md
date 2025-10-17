@@ -12,24 +12,8 @@ For complete project specifications, see [`docs/42_matcha.subject.pdf`](docs/42_
 
 ## 🚀 Quick Start
 
-### 1. Environment Setup
-
 ```bash
-# Copy environment files
-cp .env.example .env
-cp apps/web/.env.example apps/web/.env
-```
-
-### 2. Local Installation
-
-```bash
-make install  # Install dependencies
-```
-
-### 3. Development with Docker
-
-```bash
-make re       # Launch complete environment
+make # Cleans, Sets up and Runs the project
 ```
 
 ### Available Services
