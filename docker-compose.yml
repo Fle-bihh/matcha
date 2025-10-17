@@ -44,6 +44,10 @@ services:
         build:
             context: .
             dockerfile: ./apps/web/Dockerfile
+            args:
+                VITE_WEB_PORT: ${WEB_PORT}
+                VITE_WEB_URL: ${WEB_URL}
+                VITE_SERVER_URL: ${SERVER_URL}
         ports:
             - "${WEB_PORT}:${WEB_PORT}"
         container_name: ${CONTAINER_WEB}
