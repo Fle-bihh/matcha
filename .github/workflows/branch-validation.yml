@@ -96,4 +96,18 @@ jobs:
                     fi
                   fi
 
+                  # 4. Production ne peut pas merger vers dev
+                  if [[ "$source_branch" == "production" && "$target_branch" == "dev" ]]; then
+                    echo "❌ 'production' branch cannot be merged into 'dev'"
+                    exit 1
+                  fi
+
+                  # 5. Main ne peut pas merger vers dev ou production
+                  if [[ "$source_branch" == "main" && ( "$target_branch" == "dev" || "$target_branch" == "production" ) ]]; then
+                    echo "❌ 'main' branch cannot be merged into 'dev' or 'production'"
+                    exit 1
+                  fi
+
+                  # Si toutes les validations passent
+
                   echo "✅ PR target validation passed"

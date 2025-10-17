@@ -1,25 +1,33 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import dotenv from "dotenv";
+dotenv.config();
 
-// https://vitejs.dev/config/
-export default defineConfig({
-	plugins: [react()],
-	resolve: {
-		alias: {
-			"@": path.resolve(__dirname, "./src"),
+export default defineConfig(({ mode }) => {
+	const host = "0.0.0.0";
+	const port = process.env.WEB_PORT ? parseInt(process.env.WEB_PORT) : 3001;
+	const allowedHosts = ["localhost", process.env.WEB_URL || ""];
+
+	return {
+		plugins: [react()],
+		resolve: {
+			alias: {
+				"@": path.resolve(__dirname, "./src"),
+			},
 		},
-	},
-	server: {
-		host: "0.0.0.0",
-		port: 3001,
-	},
-	optimizeDeps: {
-		include: ["@matcha/shared"],
-	},
-	build: {
-		commonjsOptions: {
-			include: [/packages/, /node_modules/],
+		server: {
+			host,
+			port,
+			allowedHosts,
 		},
-	},
+		optimizeDeps: {
+			include: ["@matcha/shared"],
+		},
+		build: {
+			commonjsOptions: {
+				include: [/packages/, /node_modules/],
+			},
+		},
+	};
 });
