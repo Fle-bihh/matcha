@@ -1,1 +1,1 @@
-export const APP_NAME = "Matcha 2.0";
+export const APP_NAME = "Matcha";

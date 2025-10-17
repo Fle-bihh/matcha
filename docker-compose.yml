@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
     db:
         image: mysql:8.0
@@ -26,8 +24,6 @@ services:
         build:
             context: .
             dockerfile: ./apps/server/Dockerfile
-            args:
-                SERVER_PORT: ${SERVER_PORT}
         ports:
             - "${SERVER_PORT}:${SERVER_PORT}"
         container_name: ${CONTAINER_SERVER}
@@ -35,8 +31,8 @@ services:
             - .env
         volumes:
             - ./apps/server/src:/app/apps/server/src
-            - ./packages/shared/src:/app/packages/shared/src
-            - /app/node_modules
+            - ./packages/shared:/app/packages/shared
+            - server_node_modules:/app/node_modules
         depends_on:
             - db
 
@@ -55,8 +51,10 @@ services:
             - .env
         volumes:
             - ./apps/web/src:/app/apps/web/src
-            - ./packages/shared/src:/app/packages/shared/src
-            - /app/node_modules
+            - ./packages/shared:/app/packages/shared
+            - web_node_modules:/app/node_modules
 
 volumes:
     mysql_data:
+    server_node_modules:
+    web_node_modules:

@@ -2,7 +2,7 @@ import express, { Express } from "express";
 import { Container } from "@/container/container";
 import { ControllerRegistry } from "@/registry/controller.registry";
 import { GracefulShutdown } from "@/utils/graceful-shutdown.utils";
-import { logger } from "@matcha/shared";
+import { APP_NAME, logger } from "@matcha/shared";
 import { ServiceResponse } from "@/types";
 import {
 	limiter,
@@ -94,7 +94,7 @@ export class ServerSetup {
 
 	private async start(): Promise<void> {
 		this.server = this.app.listen(this.port, "0.0.0.0", () => {
-			logger.info(`Server is running on port ${this.port}`);
+			logger.info(`${APP_NAME} Server is running on port ${this.port}`);
 		});
 
 		this.gracefulShutdown.configure({

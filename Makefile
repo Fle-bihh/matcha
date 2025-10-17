@@ -4,18 +4,12 @@ deploy:
 	make clean
 	make clear-cache
 	make setup
-	make build
 	make re
 	make logs
 	
 setup:
 	./setup-env.sh
 	npm install
-
-build:
-	npm run build -w @matcha/shared
-	npm run build -w @matcha/server
-	npm run build -w @matcha/web
 
 clean:
 	find . -name "dist" -type d -exec rm -rf {} +
@@ -40,3 +34,5 @@ clear-cache:
 	docker system prune -a -f
 	docker volume prune -f
 	docker volume rm matcha_mysql_data 2>/dev/null || true
+	docker volume rm matcha_server_node_modules 2>/dev/null || true
+	docker volume rm matcha_web_node_modules 2>/dev/null || true
