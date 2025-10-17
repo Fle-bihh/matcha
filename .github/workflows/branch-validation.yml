@@ -1,0 +1,113 @@
+name: Branch Validation
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened]
+    push:
+        branches-ignore:
+            - main
+            - production
+            - dev
+
+jobs:
+    validate-branch-name:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check branch name
+              run: |
+                  branch="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+                  echo "Validating branch name: $branch"
+
+                  # Les branches protégées sont autorisées
+                  if [[ "$branch" == "main" || "$branch" == "production" || "$branch" == "dev" ]]; then
+                    echo "✅ Protected branch - validation skipped"
+                    exit 0
+                  fi
+
+                  # Validation du format de la branche
+                  if [[ "$branch" =~ ^(feat|fix|hotfix|chore|docs|refactor|test|style|perf)/[a-z0-9-]+$ ]]; then
+                    echo "✅ Branch name is valid: $branch"
+                    exit 0
+                  else
+                    echo "❌ Invalid branch name: $branch"
+                    echo ""
+                    echo "Branch names must follow the pattern: <type>/<description>"
+                    echo ""
+                    echo "Valid types:"
+                    echo "  - feat/     : New features"
+                    echo "  - fix/      : Bug fixes"
+                    echo "  - hotfix/   : Critical fixes"
+                    echo "  - chore/    : Maintenance tasks"
+                    echo "  - docs/     : Documentation updates"
+                    echo "  - refactor/ : Code refactoring"
+                    echo "  - test/     : Test additions/updates"
+                    echo "  - style/    : Code style changes"
+                    echo "  - perf/     : Performance improvements"
+                    echo ""
+                    echo "Description must be lowercase, alphanumeric with hyphens only"
+                    echo ""
+                    echo "Examples:"
+                    echo "  ✅ feat/user-authentication"
+                    echo "  ✅ fix/login-validation"
+                    echo "  ✅ hotfix/security-patch"
+                    echo "  ❌ feature-branch (missing type prefix)"
+                    echo "  ❌ feat/User_Auth (uppercase/underscores not allowed)"
+                    exit 1
+                  fi
+
+    validate-pr-target:
+        runs-on: ubuntu-latest
+        if: github.event_name == 'pull_request'
+        steps:
+            - name: Validate PR target branch
+              run: |
+                  source_branch="${GITHUB_HEAD_REF}"
+                  target_branch="${GITHUB_BASE_REF}"
+
+                  echo "Source branch: $source_branch"
+                  echo "Target branch: $target_branch"
+
+                  # Règles de merge
+                  # 1. Les branches feat/fix/etc doivent cibler dev
+                  if [[ "$source_branch" =~ ^(feat|fix|hotfix|chore|docs|refactor|test|style|perf)/ ]]; then
+                    if [[ "$target_branch" != "dev" ]]; then
+                      echo "❌ Feature branches must target 'dev' branch"
+                      echo "   Current target: $target_branch"
+                      echo "   Please change the PR target to 'dev'"
+                      exit 1
+                    fi
+                  fi
+
+                  # 2. Seulement dev peut merger vers production
+                  if [[ "$target_branch" == "production" ]]; then
+                    if [[ "$source_branch" != "dev" ]]; then
+                      echo "❌ Only 'dev' branch can be merged into 'production'"
+                      echo "   Current source: $source_branch"
+                      exit 1
+                    fi
+                  fi
+
+                  # 3. Seulement production peut merger vers main
+                  if [[ "$target_branch" == "main" ]]; then
+                    if [[ "$source_branch" != "production" ]]; then
+                      echo "❌ Only 'production' branch can be merged into 'main'"
+                      echo "   Current source: $source_branch"
+                      exit 1
+                    fi
+                  fi
+
+                  # 4. Production ne peut pas merger vers dev
+                  if [[ "$source_branch" == "production" && "$target_branch" == "dev" ]]; then
+                    echo "❌ 'production' branch cannot be merged into 'dev'"
+                    exit 1
+                  fi
+
+                  # 5. Main ne peut pas merger vers dev ou production
+                  if [[ "$source_branch" == "main" && ( "$target_branch" == "dev" || "$target_branch" == "production" ) ]]; then
+                    echo "❌ 'main' branch cannot be merged into 'dev' or 'production'"
+                    exit 1
+                  fi
+
+                  # Si toutes les validations passent
+
+                  echo "✅ PR target validation passed"
