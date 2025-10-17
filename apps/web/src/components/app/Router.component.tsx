@@ -3,11 +3,12 @@ import { Route, Routes, Outlet } from "react-router-dom";
 import { withLoggedIn, withLoggedOut } from "../utils";
 import { EntryPage, NotFoundPage } from "@/pages";
 import { HomePage } from "@/pages/Home.page";
+import { APP_NAME } from "@matcha/shared";
 
 function ProtectedLayout() {
 	return (
 		<div>
-			<h1>Protected Area</h1>
+			<h1>Protected Area - {APP_NAME}</h1>
 			<Outlet />
 		</div>
 	);

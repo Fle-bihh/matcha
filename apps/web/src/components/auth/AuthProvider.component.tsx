@@ -1,6 +1,5 @@
 import { useActions } from "@/hooks/actions.hooks";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { EThunkFlaggerKeys } from "@/types";
 import { EActionKeys } from "@/types/actions.types";
 import { PropsWithChildren, useEffect, useRef } from "react";
 

@@ -4,23 +4,21 @@ services:
     db:
         image: mysql:8.0
         container_name: ${CONTAINER_DB}
-        restart: unless-stopped
         environment:
             MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
             MYSQL_DATABASE: ${DB_NAME}
             MYSQL_USER: ${DB_USER}
             MYSQL_PASSWORD: ${DB_PASSWORD}
         ports:
-            - "${DB_PORT}:${DB_PORT}"
+            - "${DB_PORT}:3306"
         volumes:
             - mysql_data:/var/lib/mysql
 
     adminer:
         image: adminer:latest
         container_name: ${CONTAINER_ADMINER}
-        restart: unless-stopped
         ports:
-            - "${ADMINER_PORT}:${ADMINER_PORT}"
+            - "${ADMINER_PORT}:8080"
         depends_on:
             - db
 
@@ -33,7 +31,6 @@ services:
         ports:
             - "${SERVER_PORT}:${SERVER_PORT}"
         container_name: ${CONTAINER_SERVER}
-        restart: unless-stopped
         env_file:
             - .env
         volumes:
@@ -47,24 +44,15 @@ services:
         build:
             context: .
             dockerfile: ./apps/web/Dockerfile
-            args:
-                WEB_PORT: ${WEB_PORT}
-                VITE_WEB_PORT: ${WEB_PORT}
-                VITE_WEB_URL: http://localhost:${WEB_PORT}
-                VITE_SERVER_PORT: ${SERVER_PORT}
-                VITE_SERVER_URL: http://localhost:${SERVER_PORT}
         ports:
             - "${WEB_PORT}:${WEB_PORT}"
         container_name: ${CONTAINER_WEB}
-        restart: unless-stopped
         env_file:
             - .env
         volumes:
             - ./apps/web/src:/app/apps/web/src
             - ./packages/shared/src:/app/packages/shared/src
             - /app/node_modules
-        depends_on:
-            - db
 
 volumes:
     mysql_data:
