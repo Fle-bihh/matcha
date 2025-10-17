@@ -49,6 +49,10 @@ services:
             dockerfile: ./apps/web/Dockerfile
             args:
                 WEB_PORT: ${WEB_PORT}
+                VITE_WEB_PORT: ${WEB_PORT}
+                VITE_WEB_URL: http://localhost:${WEB_PORT}
+                VITE_SERVER_PORT: ${SERVER_PORT}
+                VITE_SERVER_URL: http://localhost:${SERVER_PORT}
         ports:
             - "${WEB_PORT}:${WEB_PORT}"
         container_name: ${CONTAINER_WEB}

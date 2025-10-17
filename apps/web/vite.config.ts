@@ -7,7 +7,7 @@ dotenv.config();
 export default defineConfig(({ mode }) => {
 	const host = "0.0.0.0";
 	const port = process.env.WEB_PORT ? parseInt(process.env.WEB_PORT) : 3001;
-	const allowedHosts = ["localhost", process.env.WEB_URL || ""];
+	const allowedHosts = [process.env.WEB_URL || "localhost"];
 
 	return {
 		plugins: [react()],
@@ -20,6 +20,10 @@ export default defineConfig(({ mode }) => {
 			host,
 			port,
 			allowedHosts,
+		},
+		preview: {
+			host,
+			port,
 		},
 		optimizeDeps: {
 			include: ["@matcha/shared"],
