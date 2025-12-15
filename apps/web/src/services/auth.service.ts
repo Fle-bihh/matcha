@@ -7,9 +7,10 @@ import {
 import { BaseService } from "./base.service";
 import { API_ROUTES } from "@/constants";
 import { ServiceResponse } from "@/types";
-import { setAuthUser } from "@/store";
+import { clearAction, setAction, setAuthUser } from "@/store";
 import { EStorageKeys } from "@/types/storage.constants";
 import { action } from "@/decorators";
+import { EActionKeys } from "@/types/actions.types";
 
 type AuthData = Partial<RegisterResponseDto>;
 
@@ -80,6 +81,7 @@ export class AuthService extends BaseService {
 
 	@action()
 	public async login(dto: LoginRequestDto) {
+		this.dispatch(clearAction({ key: EActionKeys.Register }))
 		const response = await this.apiService.post<LoginResponseDto>(
 			API_ROUTES.login,
 			dto
@@ -95,6 +97,7 @@ export class AuthService extends BaseService {
 
 	@action()
 	public async register(dto: RegisterRequestDto) {
+		this.dispatch(clearAction({ key: EActionKeys.Login }))
 		const response = await this.apiService.post<RegisterResponseDto>(
 			API_ROUTES.register,
 			dto

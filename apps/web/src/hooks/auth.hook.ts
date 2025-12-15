@@ -18,6 +18,7 @@ const AUTH_ACTION_KEYS = [
 	EActionKeys.Register,
 	EActionKeys.Logout,
 	EActionKeys.Login,
+	EActionKeys.Authenticate
 ];
 
 export const useAuthUser = () => {
