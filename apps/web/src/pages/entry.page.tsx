@@ -1,21 +1,17 @@
-import { useAuthUser } from "@/hooks/auth.hook";
+
+import { ROUTES } from "@/constants";
+import { Link } from "react-router-dom";
 
 export function EntryPage() {
-	const { authUser, register, isLoading, error, login } = useAuthUser();
-
 	return (
 		<div>
 			<h1>Entry Page</h1>
-			{authUser ? (
-				<p>Welcome, {authUser.username}!</p>
-			) : (
-				<>
-					<button onClick={register}>Register</button>
-					<button onClick={login}>Login</button>
-				</>
-			)}
-			{isLoading && <p>Loading...</p>}
-			{error && <p style={{ color: "red" }}>Error: {error}</p>}
+			<Link to={ROUTES.register}>
+				<button>Register</button>
+			</Link>
+			<Link to={ROUTES.login}>
+				<button>Login</button>
+			</Link>
 		</div>
 	);
 }
