@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createEntitySchema, createCreateEntitySchema } from "../validation";
+import { createEntitySchema, createCreateEntitySchema } from "../dto";
 
 const baseUserFields = {
 	username: z
@@ -11,6 +11,14 @@ const baseUserFields = {
 
 const authUserFields = {
 	email: z.string().and(z.email("Invalid email address")),
+	first_name: z
+		.string()
+		.min(1, "First name must be at least 1 character")
+		.max(30, "First name too long"),
+	last_name: z
+		.string()
+		.min(1, "Last name must be at least 1 character")
+		.max(30, "Last name too long"),
 	...baseUserFields,
 };
 
