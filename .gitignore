@@ -12,3 +12,6 @@ package-lock.json
 
 # Environment variables
 *.env*
+
+# Visual Studio Code settings
+.vscode/
