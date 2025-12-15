@@ -70,7 +70,7 @@ export class AuthService extends BaseService {
 			}
 
 			await this.clearAuthData();
-			return ServiceResponse.failure(AuthService.MESSAGES.NO_AUTH_DATA);
+			return ServiceResponse.success(AuthService.MESSAGES.NO_AUTH_DATA);
 		} catch (error) {
 			await this.clearAuthData();
 			return ServiceResponse.failure(

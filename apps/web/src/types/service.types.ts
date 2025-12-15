@@ -1,25 +1,21 @@
 import { z } from "zod";
 
-export class ServiceResponse<T = null> {
+export class ServiceResponse {
 	readonly success: boolean;
-	readonly responseObject: T;
+	// readonly responseObject?: T;
+	readonly message: string;
 
-	private constructor(success: boolean, responseObject: T) {
+	private constructor(success: boolean, message: string) {
 		this.success = success;
-		this.responseObject = responseObject;
+		// this.responseObject = responseObject
+		this.message = message;
 	}
 
-	static success<T>(responseObject: T) {
-		return new ServiceResponse(true, responseObject);
+	static success(message: string) {
+		return new ServiceResponse(true, message);
 	}
 
-	static failure<T>(responseObject: T) {
-		return new ServiceResponse(false, responseObject);
+	static failure(message: string) {
+		return new ServiceResponse(false, message);
 	}
 }
-
-export const ServiceResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
-	z.object({
-		success: z.boolean(),
-		responseObject: dataSchema.optional(),
-	});

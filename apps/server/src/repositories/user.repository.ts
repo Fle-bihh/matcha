@@ -1,7 +1,7 @@
 import { BaseRepository } from "./base.repository";
 import {
 	AuthUser,
-	CreateUser,
+	CreateUserDto,
 	logger,
 	User,
 	UserWithPassword,
@@ -28,7 +28,7 @@ export class UserRepository extends BaseRepository {
 		);
 	}
 
-	public async createUser(data: CreateUser): Promise<AuthUser> {
+	public async createUser(data: CreateUserDto): Promise<AuthUser> {
 		const userWithPassword = await this.createDocument<UserWithPassword>(
 			this.tableName,
 			data

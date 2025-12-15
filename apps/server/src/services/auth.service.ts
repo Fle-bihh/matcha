@@ -22,6 +22,8 @@ export class AuthService extends BaseService {
 		return this.container.get<UserService>(ETokens.UserService);
 	}
 
+	// public async authenticate()
+
 	public async register(
 		dto: RegisterRequestDto
 	): Promise<ServiceResponse<RegisterResponseDto | null>> {

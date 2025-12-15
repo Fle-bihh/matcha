@@ -1,4 +1,4 @@
-import { DocumentWithMetadata } from "@matcha/shared";
+import { BaseEntity } from "@matcha/shared";
 import {
 	DatabaseConnectionManager,
 	DatabaseOperations,
@@ -30,7 +30,7 @@ export class BaseRepository {
 	async createDocument<T extends Record<string, any>>(
 		tableName: string,
 		data: Omit<T, "id" | "created_at" | "updated_at" | "deleted_at">
-	): Promise<T & DocumentWithMetadata> {
+	): Promise<T & BaseEntity> {
 		return this.operations.createDocument<T>(tableName, data);
 	}
 
@@ -40,7 +40,7 @@ export class BaseRepository {
 		data: Partial<
 			Omit<T, "id" | "created_at" | "updated_at" | "deleted_at">
 		>
-	): Promise<(T & DocumentWithMetadata) | null> {
+	): Promise<(T & BaseEntity) | null> {
 		return this.operations.updateDoc<T>(tableName, id, data);
 	}
 
@@ -56,7 +56,7 @@ export class BaseRepository {
 		tableName: string,
 		id: number,
 		includeDeleted: boolean = false
-	): Promise<(T & DocumentWithMetadata) | null> {
+	): Promise<(T & BaseEntity) | null> {
 		return this.operations.getDoc<T>(tableName, id, includeDeleted);
 	}
 
@@ -70,7 +70,7 @@ export class BaseRepository {
 			offset?: number;
 			includeDeleted?: boolean;
 		} = {}
-	): Promise<(T & DocumentWithMetadata)[]> {
+	): Promise<(T & BaseEntity)[]> {
 		return this.operations.getDocs<T>(tableName, options);
 	}
 

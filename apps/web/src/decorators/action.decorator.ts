@@ -2,7 +2,7 @@ import { ServiceResponse } from "@/types";
 
 export function action() {
 	return function <
-		T extends (...args: any[]) => Promise<ServiceResponse<string>>
+		T extends (...args: any[]) => Promise<ServiceResponse>
 	>(
 		target: any,
 		propertyKey: string,

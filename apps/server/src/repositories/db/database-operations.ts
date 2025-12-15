@@ -1,6 +1,6 @@
+import { BaseEntity } from "@matcha/shared";
 import { DatabaseConnectionManager } from "./database-connection-manager";
 import { DatabaseSchemaManager } from "./database-schema-manager";
-import { DocumentWithMetadata } from "@matcha/shared";
 
 export class DatabaseOperations {
 	private connectionManager: DatabaseConnectionManager;
@@ -35,7 +35,7 @@ export class DatabaseOperations {
 	async createDocument<T extends Record<string, any>>(
 		tableName: string,
 		data: Omit<T, "id" | "created_at" | "updated_at" | "deleted_at">
-	): Promise<T & DocumentWithMetadata> {
+	): Promise<T & BaseEntity> {
 		const pool = this.connectionManager.getPool();
 
 		const fields = Object.keys(data);
@@ -66,7 +66,7 @@ export class DatabaseOperations {
 		data: Partial<
 			Omit<T, "id" | "created_at" | "updated_at" | "deleted_at">
 		>
-	): Promise<(T & DocumentWithMetadata) | null> {
+	): Promise<(T & BaseEntity) | null> {
 		const pool = this.connectionManager.getPool();
 		const hasMetadata = await this.hasMetadataColumns(tableName);
 
@@ -127,7 +127,7 @@ export class DatabaseOperations {
 		tableName: string,
 		id: number,
 		includeDeleted: boolean = false
-	): Promise<(T & DocumentWithMetadata) | null> {
+	): Promise<(T & BaseEntity) | null> {
 		const pool = this.connectionManager.getPool();
 		const hasMetadata = await this.hasMetadataColumns(tableName);
 
@@ -141,7 +141,7 @@ export class DatabaseOperations {
 			[id]
 		);
 
-		const results = rows as (T & DocumentWithMetadata)[];
+		const results = rows as (T & BaseEntity)[];
 		return results[0] || null;
 	}
 
@@ -155,7 +155,7 @@ export class DatabaseOperations {
 			offset?: number;
 			includeDeleted?: boolean;
 		} = {}
-	): Promise<(T & DocumentWithMetadata)[]> {
+	): Promise<(T & BaseEntity)[]> {
 		const pool = this.connectionManager.getPool();
 		const hasMetadata = await this.hasMetadataColumns(tableName);
 
@@ -171,7 +171,6 @@ export class DatabaseOperations {
 		let query = `SELECT * FROM ${tableName}`;
 		let queryValues: any[] = [];
 
-		// Construire la clause WHERE
 		const conditions: string[] = [];
 
 		if (hasMetadata && !includeDeleted) {
@@ -187,12 +186,10 @@ export class DatabaseOperations {
 			query += ` WHERE ${conditions.join(" AND ")}`;
 		}
 
-		// Ajouter ORDER BY
 		if (orderBy) {
 			query += ` ORDER BY ${orderBy}`;
 		}
 
-		// Ajouter LIMIT et OFFSET
 		if (limit) {
 			const limitValue = parseInt(limit.toString(), 10);
 			if (isNaN(limitValue) || limitValue < 0) {
@@ -210,7 +207,7 @@ export class DatabaseOperations {
 		}
 
 		const [rows] = await pool.execute(query, queryValues);
-		return rows as (T & DocumentWithMetadata)[];
+		return rows as (T & BaseEntity)[];
 	}
 
 	async countDocs(

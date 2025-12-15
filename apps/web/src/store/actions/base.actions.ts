@@ -1,4 +1,4 @@
-import { IContainer, ETokens } from "@/types";
+import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { setAction } from "../slices";
 import { serializeError } from "@/utils/error.utils";
@@ -6,7 +6,7 @@ import { EActionKeys, EActionStatus, ActionDto } from "@/types/actions.types";
 
 const baseAction = <T extends EActionKeys>(
 	actionType: T,
-	actionFunction: (container: IContainer, dto?: ActionDto<T>) => Promise<void>
+	actionFunction: (container: IContainer, dto?: ActionDto<T>) => Promise<ServiceResponse>
 ) => {
 	return createAsyncThunk(
 		actionType,
@@ -22,13 +22,20 @@ const baseAction = <T extends EActionKeys>(
 						},
 					})
 				);
-				await actionFunction(container, dto);
+
+				const response = await actionFunction(container, dto);
+
+				if (!response.success) {
+					throw new Error(response.message || "Action failed");
+				}
+
 				container.store.dispatch(
 					setAction({
 						key: actionType,
 						value: { status: EActionStatus.Success },
 					})
 				);
+
 				return;
 			} catch (error) {
 				const serializedError = serializeError(error);
@@ -76,7 +83,8 @@ const createBaseActions = <T extends Partial<ActionConfig>>(
 				actionKey as EActionKeys,
 				async (container, actionDto) => {
 					const service = container.get(serviceToken);
-					await (service as any)[methodName](actionDto);
+					const serviceResponse = await (service as any)[methodName](actionDto);
+					return serviceResponse;
 				}
 			)(dto)) as any;
 	}
