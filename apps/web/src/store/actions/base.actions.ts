@@ -24,7 +24,6 @@ const baseAction = <T extends EActionKeys>(
 				);
 
 				const response = await actionFunction(container, dto);
-
 				if (!response.success) {
 					throw new Error(response.message || "Action failed");
 				}

@@ -1,4 +1,4 @@
-import { AllRouteKeys } from "@/constants/routes.constants";
+import { AllRouteKeys } from "@matcha/shared";
 import { HttpMethod } from "./routes.types";
 
 export interface RouteMetadata {

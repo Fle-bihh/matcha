@@ -1,7 +1,7 @@
 import { useAuthUser } from "@/hooks/auth.hook";
 
 export function HomePage() {
-	const { logout } = useAuthUser();
+	const { logout, authUser } = useAuthUser();
 	return (
 		<div
 			style={{
@@ -11,7 +11,7 @@ export function HomePage() {
 				gap: 10,
 			}}
 		>
-			Home, logged in
+			Home, logged in as {authUser?.username}
 			<button onClick={logout}>Logout</button>
 		</div>
 	);

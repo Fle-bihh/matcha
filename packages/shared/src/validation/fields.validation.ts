@@ -33,5 +33,7 @@ export const fields = {
 		.min(1, "Last name must be at least 1 character")
 		.max(30, "Last name too long"),
 
+	accessToken: z.string().min(1, "Access token is required"),
+	
 	refreshToken: z.string().min(1, "Refresh token is required"),
 };

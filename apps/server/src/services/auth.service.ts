@@ -8,6 +8,9 @@ import {
 	RefreshTokenRequestDto,
 	RefreshTokenResponseDto,
 	logger,
+	AuthenticateRequestDto,
+	AuthenticateResponseDto,
+	LoginRequestDto,
 } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { JwtUtils } from "@/utils/jwt.utils";
@@ -22,7 +25,40 @@ export class AuthService extends BaseService {
 		return this.container.get<UserService>(ETokens.UserService);
 	}
 
-	// public async authenticate()
+	public async authenticate(dto: AuthenticateRequestDto): Promise<ServiceResponse<AuthenticateResponseDto | null>> {
+		try {
+			const payload = JwtUtils.decodeToken(dto.accessToken);
+
+			if (!payload || !payload.id) {
+				return ServiceResponse.failure(
+					"Invalid access token",
+					null,
+					StatusCodes.UNAUTHORIZED
+				);
+			}
+
+			const userResponse = await this.userService.findById(payload.id.toString());
+
+			if (!userResponse.success || !userResponse.responseObject) {
+				return ServiceResponse.failure(
+					"User not found",
+					null,
+					StatusCodes.UNAUTHORIZED
+				);
+			}
+
+			return ServiceResponse.success("User authenticated successfully", {
+				user: userResponse.responseObject,
+			});
+			
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Authentication failed",
+				null,
+				StatusCodes.UNAUTHORIZED
+			);
+		}
+	}
 
 	public async register(
 		dto: RegisterRequestDto
@@ -95,10 +131,10 @@ export class AuthService extends BaseService {
 	}
 
 	public async login(
-		email: string,
-		password: string
+		dto: LoginRequestDto
 	): Promise<ServiceResponse<LoginResponseDto | null>> {
 		try {
+			const { email, password } = dto;
 			const userResponse = await this.userService.findByEmailWithPassword(
 				email
 			);

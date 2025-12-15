@@ -5,7 +5,7 @@ import {
 	type RouteGroups,
 	type AllRouteKeys,
 	ROUTES,
-} from "@/constants/routes.constants";
+} from "@matcha/shared";
 import { logger } from "@matcha/shared";
 
 function getControllerGroup(className: string): RouteGroups {

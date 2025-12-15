@@ -7,6 +7,7 @@ import {
 	RegisterRequestSchema,
 	LoginRequestSchema,
 	RefreshTokenRequestSchema,
+	AuthenticateRequestSchema,
 } from "@matcha/shared";
 
 export class AuthController extends BaseController {
@@ -21,11 +22,17 @@ export class AuthController extends BaseController {
 		res.status(result.statusCode).send(result);
 	}
 
+	@route("POST", "authenticate")
+	@validate(AuthenticateRequestSchema, "body")
+	private async authenticate(req: Request, res: Response): Promise<void> {
+		const result = await this.authService.authenticate(req.body);
+		res.status(result.statusCode).send(result);
+	}
+
 	@route("POST", "login")
 	@validate(LoginRequestSchema, "body")
 	private async login(req: Request, res: Response): Promise<void> {
-		const { email, password } = req.body;
-		const result = await this.authService.login(email, password);
+		const result = await this.authService.login(req.body);
 		res.status(result.statusCode).send(result);
 	}
 

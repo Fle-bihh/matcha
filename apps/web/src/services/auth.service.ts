@@ -1,11 +1,13 @@
 import {
+	AuthenticateResponseDto,
+	getRoute,
 	type LoginRequestDto,
 	LoginResponseDto,
 	type RegisterRequestDto,
 	RegisterResponseDto,
+	RouteKeys,
 } from "@matcha/shared";
 import { BaseService } from "./base.service";
-import { API_ROUTES } from "@/constants";
 import { ServiceResponse } from "@/types";
 import { clearAction, setAction, setAuthUser } from "@/store";
 import { EStorageKeys } from "@/types/storage.constants";
@@ -15,9 +17,11 @@ import { EActionKeys } from "@/types/actions.types";
 type AuthData = Partial<RegisterResponseDto>;
 
 export class AuthService extends BaseService {
-	private static readonly MESSAGES = {
+	private readonly MESSAGES = {
 		NO_AUTH_DATA: "No valid authentication data found",
 		AUTH_CHECK_FAILED: "Authentication check failed",
+		AUTH_SUCCESSFUL: "User authenticated successfully",
+		LOGOUT_SUCCESSFUL: "User logged out successfully",
 	} as const;
 
 	private async storeAuthData(data: AuthData): Promise<void> {
@@ -38,7 +42,6 @@ export class AuthService extends BaseService {
 		}
 
 		if (user) {
-			await this.storageService.setItem(EStorageKeys.User, user);
 			this.dispatch(setAuthUser(user));
 		}
 	}
@@ -49,32 +52,45 @@ export class AuthService extends BaseService {
 	}
 
 	private async hasValidAuthData(): Promise<boolean> {
-		const [accessToken, refreshToken, user] = await Promise.all([
+		const [accessToken, refreshToken] = await Promise.all([
 			this.storageService.getItem(EStorageKeys.AccessToken),
 			this.storageService.getItem(EStorageKeys.RefreshToken),
-			this.storageService.getItem(EStorageKeys.User),
 		]);
 
-		return !!(accessToken && refreshToken && user);
+		return !!(accessToken && refreshToken);
+	}
+
+	private getAuthRoute(route: RouteKeys<"auth">): string {
+		return getRoute("auth", route);
 	}
 
 	@action()
 	public async authenticate() {
 		try {
 			if (await this.hasValidAuthData()) {
-				const user = await this.storageService.getItem(
-					EStorageKeys.User
+				const authenticateResponse = await this.apiService.post<AuthenticateResponseDto>(
+					this.getAuthRoute("authenticate"),
+					{
+						accessToken: await this.storageService.getItem(
+							EStorageKeys.AccessToken
+						),
+					}
 				);
-				this.dispatch(setAuthUser(user));
-				return ServiceResponse.success("User authenticated");
+
+				if (authenticateResponse.success && authenticateResponse.responseObject) {
+					this.storeAuthData(authenticateResponse.responseObject);
+					return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
+				}
+
+				return ServiceResponse.failure(authenticateResponse.message);
 			}
 
 			await this.clearAuthData();
-			return ServiceResponse.success(AuthService.MESSAGES.NO_AUTH_DATA);
+			return ServiceResponse.success(this.MESSAGES.NO_AUTH_DATA);
 		} catch (error) {
 			await this.clearAuthData();
 			return ServiceResponse.failure(
-				AuthService.MESSAGES.AUTH_CHECK_FAILED
+				this.MESSAGES.AUTH_CHECK_FAILED
 			);
 		}
 	}
@@ -83,7 +99,7 @@ export class AuthService extends BaseService {
 	public async login(dto: LoginRequestDto) {
 		this.dispatch(clearAction({ key: EActionKeys.Register }))
 		const response = await this.apiService.post<LoginResponseDto>(
-			API_ROUTES.login,
+			this.getAuthRoute("login"),
 			dto
 		);
 
@@ -92,28 +108,29 @@ export class AuthService extends BaseService {
 		}
 
 		await this.storeAuthData(response.responseObject);
-		return ServiceResponse.success("User logged in");
+		return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
 	}
 
 	@action()
 	public async register(dto: RegisterRequestDto) {
 		this.dispatch(clearAction({ key: EActionKeys.Login }))
 		const response = await this.apiService.post<RegisterResponseDto>(
-			API_ROUTES.register,
+			this.getAuthRoute("register"),
 			dto
 		);
 
 		if (!response.success) {
+			console.log("Registration failed:", response);
 			return ServiceResponse.failure(response.message);
 		}
 
 		await this.storeAuthData(response.responseObject);
-		return ServiceResponse.success("User registered");
+		return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
 	}
 
 	@action()
 	public async logout() {
 		await this.clearAuthData();
-		return ServiceResponse.success("User logged out");
+		return ServiceResponse.success(this.MESSAGES.LOGOUT_SUCCESSFUL);
 	}
 }

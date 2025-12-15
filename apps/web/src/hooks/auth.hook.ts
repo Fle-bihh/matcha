@@ -12,6 +12,8 @@ const TEST_CREDENTIALS = {
 	email: "test@test.com",
 	username: "testuser",
 	password: "password123-",
+	first_name: "Test",
+	last_name: "User",
 } as const;
 
 const AUTH_ACTION_KEYS = [
@@ -30,9 +32,7 @@ export const useAuthUser = () => {
 	const actions = {
 		register: createAction(() =>
 			AuthActions.register({
-				email: TEST_CREDENTIALS.email,
-				username: TEST_CREDENTIALS.username,
-				password: TEST_CREDENTIALS.password,
+				...TEST_CREDENTIALS,
 			})
 		),
 		authenticate: createAction(() => AuthActions.authenticate()),

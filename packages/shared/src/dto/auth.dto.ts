@@ -10,6 +10,16 @@ export const RegisterRequestSchema = CreateUserDtoSchema.superRefine((data, ctx)
 
 export type RegisterRequestDto = z.infer<typeof RegisterRequestSchema>;
 
+export const AuthenticateRequestSchema = z.object({
+	accessToken: fields.accessToken,
+});
+
+export type AuthenticateRequestDto = z.infer<typeof AuthenticateRequestSchema>;
+
+export interface AuthenticateResponseDto {
+	user: AuthUser;
+}
+
 export const LoginRequestSchema = z.object({
 	email: fields.email,
 	password: fields.passwordLogin, // Less strict for login
@@ -23,10 +33,7 @@ export interface RegisterResponseDto {
 	user: AuthUser;
 }
 
-export interface LoginResponseDto {
-	accessToken: string;
-	refreshToken: string;
-	user: AuthUser;
+export interface LoginResponseDto extends RegisterResponseDto {
 }
 
 export const RefreshTokenRequestSchema = z.object({

@@ -4,7 +4,7 @@ import { UserRepository } from "@/repositories";
 import {
 	User,
 	UserWithPassword,
-	CreateUser,
+	CreateUserDto,
 	AuthUser,
 	logger,
 } from "@matcha/shared";
@@ -97,7 +97,7 @@ export class UserService extends BaseService {
 	}
 
 	public async createUser(
-		userData: CreateUser
+		userData: CreateUserDto
 	): Promise<ServiceResponse<AuthUser | null>> {
 		try {
 			const existingUser = await this.userRepository.findUserByEmail(
