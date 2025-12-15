@@ -1,1 +1,1 @@
-export { AuthProvider } from "./AuthProvider.component";
+export { AuthProvider } from "./auth-provider.component";

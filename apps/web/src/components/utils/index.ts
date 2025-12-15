@@ -1,1 +1,1 @@
-export * from "./WithCondition.component";
+export * from "./with-condition.component";

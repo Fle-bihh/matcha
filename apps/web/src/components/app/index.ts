@@ -1,2 +1,2 @@
-export * from "./Provider.component";
-export * from "./Router.component";
+export * from "./provider.component";
+export * from "./router.component";
