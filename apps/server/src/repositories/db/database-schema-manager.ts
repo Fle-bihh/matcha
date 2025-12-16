@@ -1,20 +1,20 @@
 import { DatabaseConnectionManager } from "./database-connection-manager";
 
 export class DatabaseSchemaManager {
-	private connectionManager: DatabaseConnectionManager;
+  private connectionManager: DatabaseConnectionManager;
 
-	constructor() {
-		this.connectionManager = DatabaseConnectionManager.getInstance();
-	}
+  constructor() {
+    this.connectionManager = DatabaseConnectionManager.getInstance();
+  }
 
-	async createTableWithMetadata(
-		tableName: string,
-		fields: string,
-		additionalConstraints: string = ""
-	): Promise<void> {
-		const pool = this.connectionManager.getPool();
+  async createTableWithMetadata(
+    tableName: string,
+    fields: string,
+    additionalConstraints: string = ""
+  ): Promise<void> {
+    const pool = this.connectionManager.getPool();
 
-		const query = `
+    const query = `
 			CREATE TABLE IF NOT EXISTS ${tableName} (
 				id INT AUTO_INCREMENT PRIMARY KEY,
 				${fields},
@@ -25,58 +25,76 @@ export class DatabaseSchemaManager {
 			)
 		`;
 
-		await pool.execute(query);
+    await pool.execute(query);
 
-		await this.ensureMetadataColumns(tableName);
-	}
+    await this.ensureMetadataColumns(tableName);
+  }
 
-	async ensureMetadataColumns(tableName: string): Promise<void> {
-		const pool = this.connectionManager.getPool();
+  async ensureMetadataColumns(tableName: string): Promise<void> {
+    const pool = this.connectionManager.getPool();
 
-		const [columns] = await pool.execute(`SHOW COLUMNS FROM ${tableName}`);
+    const [columns] = await pool.execute(`SHOW COLUMNS FROM ${tableName}`);
 
-		const existingColumns = (columns as any[]).map((col) => col.Field);
-		let hasChanges = false;
+    const existingColumns = (columns as any[]).map((col) => col.Field);
+    let hasChanges = false;
 
-		if (!existingColumns.includes("created_at")) {
-			await pool.execute(
-				`ALTER TABLE ${tableName} ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`
-			);
-			hasChanges = true;
-		}
+    if (!existingColumns.includes("created_at")) {
+      await pool.execute(
+        `ALTER TABLE ${tableName} ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`
+      );
+      hasChanges = true;
+    }
 
-		if (!existingColumns.includes("updated_at")) {
-			await pool.execute(
-				`ALTER TABLE ${tableName} ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`
-			);
-			hasChanges = true;
-		}
+    if (!existingColumns.includes("updated_at")) {
+      await pool.execute(
+        `ALTER TABLE ${tableName} ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`
+      );
+      hasChanges = true;
+    }
 
-		if (!existingColumns.includes("deleted_at")) {
-			await pool.execute(
-				`ALTER TABLE ${tableName} ADD COLUMN deleted_at TIMESTAMP NULL`
-			);
-			hasChanges = true;
-		}
+    if (!existingColumns.includes("deleted_at")) {
+      await pool.execute(
+        `ALTER TABLE ${tableName} ADD COLUMN deleted_at TIMESTAMP NULL`
+      );
+      hasChanges = true;
+    }
 
-		// Clear cache if we made changes
-		if (hasChanges) {
-			// Note: We would need access to DatabaseOperations instance to clear cache
-			// For now, we'll rely on the cache timeout or manual clearing
-		}
-	}
+    // Clear cache if we made changes
+    if (hasChanges) {
+      // Note: We would need access to DatabaseOperations instance to clear cache
+      // For now, we'll rely on the cache timeout or manual clearing
+    }
+  }
 
-	async hasMetadataColumns(tableName: string): Promise<boolean> {
-		const pool = this.connectionManager.getPool();
+  async hasMetadataColumns(tableName: string): Promise<boolean> {
+    const pool = this.connectionManager.getPool();
 
-		const [columns] = await pool.execute(`SHOW COLUMNS FROM ${tableName}`);
+    const [columns] = await pool.execute(`SHOW COLUMNS FROM ${tableName}`);
 
-		const existingColumns = (columns as any[]).map((col) => col.Field);
+    const existingColumns = (columns as any[]).map((col) => col.Field);
 
-		return (
-			existingColumns.includes("created_at") &&
-			existingColumns.includes("updated_at") &&
-			existingColumns.includes("deleted_at")
-		);
-	}
+    return (
+      existingColumns.includes("created_at") &&
+      existingColumns.includes("updated_at") &&
+      existingColumns.includes("deleted_at")
+    );
+  }
+
+  async ensureColumnsExist(
+    tableName: string,
+    columnDefinitions: { name: string; definition: string }[]
+  ): Promise<void> {
+    const pool = this.connectionManager.getPool();
+
+    const [columns] = await pool.execute(`SHOW COLUMNS FROM ${tableName}`);
+    const existingColumns = (columns as any[]).map((col) => col.Field);
+
+    for (const { name, definition } of columnDefinitions) {
+      if (!existingColumns.includes(name)) {
+        await pool.execute(
+          `ALTER TABLE ${tableName} ADD COLUMN ${name} ${definition}`
+        );
+      }
+    }
+  }
 }

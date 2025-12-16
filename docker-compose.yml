@@ -1,60 +1,60 @@
 services:
-    db:
-        image: mysql:8.0
-        container_name: ${CONTAINER_DB}
-        environment:
-            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-            MYSQL_DATABASE: ${DB_NAME}
-            MYSQL_USER: ${DB_USER}
-            MYSQL_PASSWORD: ${DB_PASSWORD}
-        ports:
-            - "${DB_PORT}:3306"
-        volumes:
-            - mysql_data:/var/lib/mysql
+  db:
+    image: mysql:8.0
+    container_name: ${CONTAINER_DB}
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
 
-    adminer:
-        image: adminer:latest
-        container_name: ${CONTAINER_ADMINER}
-        ports:
-            - "${ADMINER_PORT}:8080"
-        depends_on:
-            - db
+  adminer:
+    image: adminer:latest
+    container_name: ${CONTAINER_ADMINER}
+    ports:
+      - "${ADMINER_PORT}:8080"
+    depends_on:
+      - db
 
-    server:
-        build:
-            context: .
-            dockerfile: ./apps/server/Dockerfile
-        ports:
-            - "${SERVER_PORT}:${SERVER_PORT}"
-        container_name: ${CONTAINER_SERVER}
-        env_file:
-            - .env
-        volumes:
-            - ./apps/server/src:/app/apps/server/src
-            - ./packages/shared:/app/packages/shared
-            - server_node_modules:/app/node_modules
-        depends_on:
-            - db
+  server:
+    build:
+      context: .
+      dockerfile: ./apps/server/Dockerfile
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    container_name: ${CONTAINER_SERVER}
+    env_file:
+      - .env
+    volumes:
+      - ./apps/server/src:/app/apps/server/src
+      - ./packages/shared:/app/packages/shared
+      - server_node_modules:/app/node_modules
+    depends_on:
+      - db
 
-    web:
-        build:
-            context: .
-            dockerfile: ./apps/web/Dockerfile
-            args:
-                VITE_WEB_PORT: ${WEB_PORT}
-                VITE_WEB_URL: ${WEB_URL}
-                VITE_SERVER_URL: ${SERVER_URL}
-        ports:
-            - "${WEB_PORT}:${WEB_PORT}"
-        container_name: ${CONTAINER_WEB}
-        env_file:
-            - .env
-        volumes:
-            - ./apps/web/src:/app/apps/web/src
-            - ./packages/shared:/app/packages/shared
-            - web_node_modules:/app/node_modules
+  web:
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+      args:
+        VITE_WEB_PORT: ${WEB_PORT}
+        VITE_WEB_URL: ${WEB_URL}
+        VITE_SERVER_URL: ${SERVER_URL}
+    ports:
+      - "${WEB_PORT}:${WEB_PORT}"
+    container_name: ${CONTAINER_WEB}
+    env_file:
+      - .env
+    volumes:
+      - ./apps/web/src:/app/apps/web/src
+      - ./packages/shared:/app/packages/shared
+      - web_node_modules:/app/node_modules
 
 volumes:
-    mysql_data:
-    server_node_modules:
-    web_node_modules:
+  mysql_data:
+  server_node_modules:
+  web_node_modules:

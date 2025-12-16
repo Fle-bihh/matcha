@@ -1,14 +1,7 @@
 import { ROUTES } from "@/constants";
-import {
-  Container,
-  Box,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-  Stack,
-} from "@mui/material";
+import { Container, Box, Paper, Typography, Button } from "@mui/material";
 import { Link } from "react-router-dom";
+import { RegisterForm } from "@/forms/register.form";
 
 export function RegisterPage() {
   return (
@@ -31,49 +24,16 @@ export function RegisterPage() {
             >
               Register
             </Typography>
-            <Box component="form">
-              <Stack spacing={2}>
-                <TextField
-                  type="text"
-                  label="Username"
-                  variant="outlined"
-                  fullWidth
-                  required
-                />
-                <TextField
-                  type="email"
-                  label="Email"
-                  variant="outlined"
-                  fullWidth
-                  required
-                />
-                <TextField
-                  type="password"
-                  label="Password"
-                  variant="outlined"
-                  fullWidth
-                  required
-                />
-                <Stack spacing={1}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    fullWidth
-                  >
-                    Register
-                  </Button>
-                  <Button
-                    to={ROUTES.login}
-                    variant="text"
-                    fullWidth
-                    component={Link}
-                  >
-                    Already have an account? Login
-                  </Button>
-                </Stack>
-              </Stack>
+            <RegisterForm />
+            <Box mt={2}>
+              <Button
+                to={ROUTES.login}
+                variant="text"
+                fullWidth
+                component={Link}
+              >
+                Already have an account? Login
+              </Button>
             </Box>
           </Box>
         </Paper>
