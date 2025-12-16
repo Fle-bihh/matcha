@@ -17,7 +17,7 @@ export function LoginPage() {
         display="flex"
         alignItems="center"
         justifyContent="center"
-        minHeight="100vh"
+        minHeight="98vh"
       >
         <Paper elevation={4}>
           <Box p={5}>
@@ -32,7 +32,7 @@ export function LoginPage() {
               Login
             </Typography>
             <Box component="form">
-              <Stack spacing={3}>
+              <Stack spacing={2}>
                 <TextField
                   type="text"
                   label="Username"
@@ -40,13 +40,25 @@ export function LoginPage() {
                   fullWidth
                   required
                 />
-                <TextField
-                  type="password"
-                  label="Password"
-                  variant="outlined"
-                  fullWidth
-                  required
-                />
+                <Stack>
+                  <TextField
+                    type="password"
+                    label="Password"
+                    variant="outlined"
+                    fullWidth
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="text"
+                    size="small"
+                    sx={{ mt: 1 }}
+                    component={Link}
+                    to={ROUTES.forgotPassword}
+                  >
+                    Forgot Password?
+                  </Button>
+                </Stack>
 
                 <Stack spacing={1}>
                   <Button

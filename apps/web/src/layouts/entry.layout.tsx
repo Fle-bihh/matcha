@@ -1,4 +1,3 @@
-import { APP_NAME } from "@matcha/shared";
 import { Container, Typography } from "@mui/material";
 import { Outlet } from "react-router-dom";
 

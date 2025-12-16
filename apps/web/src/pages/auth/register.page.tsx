@@ -17,7 +17,7 @@ export function RegisterPage() {
         display="flex"
         alignItems="center"
         justifyContent="center"
-        minHeight="100vh"
+        minHeight="98vh"
       >
         <Paper elevation={4}>
           <Box p={5}>

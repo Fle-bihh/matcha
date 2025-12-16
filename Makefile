@@ -25,6 +25,8 @@ down:
 
 re:
 	make down
+	docker volume rm matcha_server_node_modules 2>/dev/null || true
+	docker volume rm matcha_web_node_modules 2>/dev/null || true
 	make up
 
 logs:
