@@ -1,48 +1,53 @@
 import { z } from "zod";
 import { AuthUser } from "../models";
-import { fields, validatePasswordSimilarity, validateUsernameUniqueness } from "../validation";
+import {
+  fields,
+  validatePasswordSimilarity,
+  validateUsernameUniqueness,
+} from "../validation";
 import { CreateUserDtoSchema } from "./user.dto";
 
-export const RegisterRequestSchema = CreateUserDtoSchema.superRefine((data, ctx) => {
-	validatePasswordSimilarity(data.email, data.password, ctx);
-	validateUsernameUniqueness(data.username, data.email, ctx);
-});
+export const RegisterRequestSchema = CreateUserDtoSchema.superRefine(
+  (data, ctx) => {
+    validatePasswordSimilarity(data.email, data.password, ctx);
+    validateUsernameUniqueness(data.username, data.email, ctx);
+  }
+);
 
 export type RegisterRequestDto = z.infer<typeof RegisterRequestSchema>;
 
 export const AuthenticateRequestSchema = z.object({
-	accessToken: fields.accessToken,
+  accessToken: fields.accessToken,
 });
 
 export type AuthenticateRequestDto = z.infer<typeof AuthenticateRequestSchema>;
 
 export interface AuthenticateResponseDto {
-	user: AuthUser;
+  user: AuthUser;
 }
 
 export const LoginRequestSchema = z.object({
-	email: fields.email,
-	password: fields.passwordLogin, // Less strict for login
+  username: fields.username,
+  password: fields.passwordLogin, // Less strict for login
 });
 
 export type LoginRequestDto = z.infer<typeof LoginRequestSchema>;
 
 export interface RegisterResponseDto {
-	accessToken: string;
-	refreshToken: string;
-	user: AuthUser;
+  accessToken: string;
+  refreshToken: string;
+  user: AuthUser;
 }
 
-export interface LoginResponseDto extends RegisterResponseDto {
-}
+export interface LoginResponseDto extends RegisterResponseDto {}
 
 export const RefreshTokenRequestSchema = z.object({
-	refreshToken: fields.refreshToken,
+  refreshToken: fields.refreshToken,
 });
 
 export type RefreshTokenRequestDto = z.infer<typeof RefreshTokenRequestSchema>;
 
 export interface RefreshTokenResponseDto {
-	accessToken: string;
-	refreshToken: string;
+  accessToken: string;
+  refreshToken: string;
 }

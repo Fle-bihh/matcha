@@ -1,14 +1,7 @@
 import { ROUTES } from "@/constants";
-import {
-  Container,
-  Box,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-  Stack,
-} from "@mui/material";
+import { Container, Box, Paper, Typography, Button } from "@mui/material";
 import { Link } from "react-router-dom";
+import { LoginForm } from "@/forms/login.form";
 
 export function LoginPage() {
   return (
@@ -31,55 +24,16 @@ export function LoginPage() {
             >
               Login
             </Typography>
-            <Box component="form">
-              <Stack spacing={2}>
-                <TextField
-                  type="text"
-                  label="Username"
-                  variant="outlined"
-                  fullWidth
-                  required
-                />
-                <Stack>
-                  <TextField
-                    type="password"
-                    label="Password"
-                    variant="outlined"
-                    fullWidth
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="text"
-                    size="small"
-                    sx={{ mt: 1 }}
-                    component={Link}
-                    to={ROUTES.forgotPassword}
-                  >
-                    Forgot Password?
-                  </Button>
-                </Stack>
-
-                <Stack spacing={1}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    fullWidth
-                  >
-                    Login
-                  </Button>
-                  <Button
-                    to={ROUTES.register}
-                    variant="text"
-                    fullWidth
-                    component={Link}
-                  >
-                    Don't have an account? Register
-                  </Button>
-                </Stack>
-              </Stack>
+            <LoginForm />
+            <Box mt={2}>
+              <Button
+                to={ROUTES.register}
+                variant="text"
+                fullWidth
+                component={Link}
+              >
+                Don't have an account? Register
+              </Button>
             </Box>
           </Box>
         </Paper>

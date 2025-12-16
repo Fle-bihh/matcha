@@ -1,26 +1,26 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RegisterRequestSchema, RegisterRequestDto } from "@matcha/shared";
+import { LoginRequestSchema, LoginRequestDto } from "@matcha/shared";
 import { TextField, Button, Stack, Typography } from "@mui/material";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActions } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 
-export function RegisterForm() {
-  const { register: registerUser } = useAuthUser();
-  const { isLoading, error } = useActions([EActionKeys.Register]);
+export function LoginForm() {
+  const { login } = useAuthUser();
+  const { isLoading, error } = useActions([EActionKeys.Login]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterRequestDto>({
-    resolver: zodResolver(RegisterRequestSchema),
+  } = useForm<LoginRequestDto>({
+    resolver: zodResolver(LoginRequestSchema),
     mode: "onBlur",
   });
 
-  const onSubmit = async (data: RegisterRequestDto) => {
-    await registerUser(data);
+  const onSubmit = async (data: LoginRequestDto) => {
+    await login(data);
   };
 
   return (
@@ -35,39 +35,6 @@ export function RegisterForm() {
           required
           error={!!errors.username}
           helperText={errors.username?.message}
-          disabled={isLoading}
-        />
-        <TextField
-          {...register("email")}
-          type="email"
-          label="Email"
-          variant="outlined"
-          fullWidth
-          required
-          error={!!errors.email}
-          helperText={errors.email?.message}
-          disabled={isLoading}
-        />
-        <TextField
-          {...register("first_name")}
-          type="text"
-          label="First Name"
-          variant="outlined"
-          fullWidth
-          required
-          error={!!errors.first_name}
-          helperText={errors.first_name?.message}
-          disabled={isLoading}
-        />
-        <TextField
-          {...register("last_name")}
-          type="text"
-          label="Last Name"
-          variant="outlined"
-          fullWidth
-          required
-          error={!!errors.last_name}
-          helperText={errors.last_name?.message}
           disabled={isLoading}
         />
         <TextField
@@ -89,7 +56,7 @@ export function RegisterForm() {
           fullWidth
           disabled={isLoading}
         >
-          {isLoading ? "Registering..." : "Register"}
+          {isLoading ? "Logging in..." : "Login"}
         </Button>
         {error && (
           <Typography color="error" variant="body2" textAlign="center">

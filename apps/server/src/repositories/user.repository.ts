@@ -66,6 +66,21 @@ export class UserRepository extends BaseRepository {
     }
   }
 
+  public async findUserByUsernameWithPassword(
+    username: string
+  ): Promise<UserWithPassword | null> {
+    try {
+      const users = await this.getDocs<UserWithPassword>(this.tableName, {
+        where: "username = ?",
+        values: [username],
+      });
+      return users.length > 0 ? users[0] : null;
+    } catch (error) {
+      logger.error("Error finding user by username with password:", error);
+      return null;
+    }
+  }
+
   public async findUserByUsername(username: string): Promise<AuthUser | null> {
     try {
       const users = await this.getDocs<UserWithPassword>(this.tableName, {
