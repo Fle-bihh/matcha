@@ -1,10 +1,12 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginRequestSchema, LoginRequestDto } from "@matcha/shared";
-import { TextField, Button, Stack, Typography } from "@mui/material";
+import { TextField, Button, Stack, Typography, Box } from "@mui/material";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActions } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
+import { ROUTES } from "@/constants";
+import { Link } from "react-router-dom";
 
 export function LoginForm() {
   const { login } = useAuthUser();
@@ -37,17 +39,27 @@ export function LoginForm() {
           helperText={errors.username?.message}
           disabled={isLoading}
         />
-        <TextField
-          {...register("password")}
-          type="password"
-          label="Password"
-          variant="outlined"
-          fullWidth
-          required
-          error={!!errors.password}
-          helperText={errors.password?.message}
-          disabled={isLoading}
-        />
+        <Box>
+          <TextField
+            {...register("password")}
+            type="password"
+            label="Password"
+            variant="outlined"
+            fullWidth
+            required
+            error={!!errors.password}
+            helperText={errors.password?.message}
+            disabled={isLoading}
+          />
+          <Button
+            to={ROUTES.forgotPassword}
+            variant="text"
+            fullWidth
+            component={Link}
+          >
+            Forgot Password?
+          </Button>
+        </Box>
         <Button
           type="submit"
           variant="contained"

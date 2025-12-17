@@ -1,3 +1,4 @@
+import { PaperBackButton } from "@/components/utils/paper-back-button.component";
 import { ROUTES } from "@/constants";
 import {
   Container,
@@ -9,7 +10,6 @@ import {
   Stack,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export function ForgotPasswordPage() {
   const navigate = useNavigate();
@@ -23,13 +23,7 @@ export function ForgotPasswordPage() {
         minHeight="98vh"
       >
         <Paper elevation={4}>
-          <Button
-            startIcon={<ArrowBackIcon />}
-            variant="text"
-            size="large"
-            sx={{ mt: 2 }}
-            onClick={() => navigate(-1)}
-          />
+          <PaperBackButton />
           <Box p={5}>
             <Typography
               variant="h4"

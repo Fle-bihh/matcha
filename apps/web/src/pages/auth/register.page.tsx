@@ -2,6 +2,7 @@ import { ROUTES } from "@/constants";
 import { Container, Box, Paper, Typography, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { RegisterForm } from "@/forms/register.form";
+import { PaperBackButton } from "@/components/utils/paper-back-button.component";
 
 export function RegisterPage() {
   return (
@@ -13,6 +14,7 @@ export function RegisterPage() {
         minHeight="98vh"
       >
         <Paper elevation={4}>
+          <PaperBackButton />
           <Box p={5}>
             <Typography
               variant="h4"

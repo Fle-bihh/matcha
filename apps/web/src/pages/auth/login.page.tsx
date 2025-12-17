@@ -2,6 +2,7 @@ import { ROUTES } from "@/constants";
 import { Container, Box, Paper, Typography, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { LoginForm } from "@/forms/login.form";
+import { PaperBackButton } from "@/components/utils/paper-back-button.component";
 
 export function LoginPage() {
   return (
@@ -13,6 +14,7 @@ export function LoginPage() {
         minHeight="98vh"
       >
         <Paper elevation={4}>
+          <PaperBackButton />
           <Box p={5}>
             <Typography
               variant="h4"
