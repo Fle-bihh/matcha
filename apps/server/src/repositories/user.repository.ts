@@ -26,14 +26,18 @@ export class UserRepository extends BaseRepository {
 			 email VARCHAR(255) UNIQUE NOT NULL,
 			 first_name VARCHAR(50) NOT NULL,
 			 last_name VARCHAR(50) NOT NULL,
-			 password VARCHAR(255) NOT NULL`
+			 password VARCHAR(255) NOT NULL,
+       is_email_verified BOOLEAN NOT NULL`
     );
   }
 
   public async createUser(data: CreateUserDto): Promise<AuthUser> {
     const userWithPassword = await this.createDocument<UserWithPassword>(
       this.tableName,
-      data
+      {
+        ...data,
+        is_email_verified: false,
+      }
     );
     return this.excludePassword(userWithPassword);
   }
