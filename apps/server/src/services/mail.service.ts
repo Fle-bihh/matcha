@@ -49,8 +49,7 @@ export class MailService extends BaseService {
         text: options.text,
       };
 
-      const info = await this.transporter.sendMail(mailOptions);
-      logger.info(`Email sent successfully: ${info.messageId}`);
+      await this.transporter.sendMail(mailOptions);
     } catch (error) {
       logger.error("Failed to send email:", error);
     }
