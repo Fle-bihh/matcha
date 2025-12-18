@@ -64,11 +64,6 @@ export class AuthService extends BaseService {
 		return getRoute("auth", route);
 	}
 
-	private clearAuthErrorActions() {
-		this.dispatch(clearAction({ key: EActionKeys.Login }));
-		this.dispatch(clearAction({ key: EActionKeys.Register }));
-	}
-
 	@action()
 	public async authenticate() {
 		try {
@@ -108,7 +103,7 @@ export class AuthService extends BaseService {
 
 	@action()
 	public async login(dto: LoginRequestDto) {
-		this.clearAuthErrorActions();
+		this.dispatch(clearAction({ key: EActionKeys.Register }));
 		const response = await this.apiService.post<LoginResponseDto>(
 			this.getAuthRoute("login"),
 			dto
@@ -124,7 +119,7 @@ export class AuthService extends BaseService {
 
 	@action()
 	public async register(dto: RegisterRequestDto) {
-		this.clearAuthErrorActions();
+		this.dispatch(clearAction({ key: EActionKeys.Login }));
 		const response = await this.apiService.post<RegisterResponseDto>(
 			this.getAuthRoute("register"),
 			dto
