@@ -12,8 +12,6 @@ export function LoginForm() {
 	const { login } = useAuthUser();
 	const { isLoading, error } = useActions([EActionKeys.Login]);
 
-	console.log("LoginForm render", isLoading);
-
 	const {
 		register,
 		handleSubmit,
