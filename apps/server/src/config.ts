@@ -16,6 +16,14 @@ class Config {
 	public readonly jwtExpiresIn: string;
 	public readonly jwtRefreshSecret: string;
 	public readonly jwtRefreshExpiresIn: string;
+	public readonly mail: {
+		host: string;
+		port: number;
+		secure: boolean;
+		user: string;
+		password: string;
+		from: string;
+	};
 
 	constructor() {
 		this.port = Number(process.env.SERVER_PORT) || 3000;
@@ -38,6 +46,14 @@ class Config {
 			process.env.JWT_REFRESH_SECRET ||
 			"your-refresh-secret-key-change-this-in-production";
 		this.jwtRefreshExpiresIn = process.env.JWT_REFRESH_EXPIRES_IN || "7d";
+		this.mail = {
+			host: process.env.MAIL_HOST || "smtp.gmail.com",
+			port: Number(process.env.MAIL_PORT) || 587,
+			secure: process.env.MAIL_SECURE === "true" || false,
+			user: process.env.MAIL_USER || "",
+			password: process.env.MAIL_PASSWORD || "",
+			from: process.env.MAIL_FROM || "noreply@matcha.com",
+		};
 	}
 }
 
