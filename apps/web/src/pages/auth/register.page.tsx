@@ -8,23 +8,21 @@ import { CenteredPaper } from "@/components/app/centered-paper.component";
 export function RegisterPage() {
   return (
     <CenteredPaper>
-      <Box p={5}>
-        <Typography
-          variant="h4"
-          component="h2"
-          fontWeight={600}
-          gutterBottom
-          textAlign="center"
-          mb={4}
-        >
-          Register
-        </Typography>
-        <RegisterForm />
-        <Box mt={2}>
-          <Button to={ROUTES.login} variant="text" fullWidth component={Link}>
-            Already have an account? Login
-          </Button>
-        </Box>
+      <Typography
+        variant="h4"
+        component="h2"
+        fontWeight={600}
+        gutterBottom
+        textAlign="center"
+        mb={4}
+      >
+        Register
+      </Typography>
+      <RegisterForm />
+      <Box mt={2}>
+        <Button to={ROUTES.login} variant="text" fullWidth component={Link}>
+          Already have an account? Login
+        </Button>
       </Box>
     </CenteredPaper>
   );

@@ -4,18 +4,16 @@ import { Container, Box, Paper, Typography } from "@mui/material";
 export function ConfirmEmailPage() {
   return (
     <CenteredPaper>
-      <Box p={5}>
-        <Typography
-          variant="h4"
-          component="h2"
-          fontWeight={600}
-          gutterBottom
-          textAlign="center"
-          mb={2}
-        >
-          Confirm Your Email
-        </Typography>
-      </Box>
+      <Typography
+        variant="h4"
+        component="h2"
+        fontWeight={600}
+        gutterBottom
+        textAlign="center"
+        mb={2}
+      >
+        Confirm Your Email
+      </Typography>
     </CenteredPaper>
   );
 }
