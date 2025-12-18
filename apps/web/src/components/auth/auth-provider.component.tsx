@@ -2,6 +2,7 @@ import { useActions } from "@/hooks/actions.hooks";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { EActionKeys } from "@/types/actions.types";
 import { PropsWithChildren, useEffect, useRef } from "react";
+import { AuthenticateLoading } from "../loading/authenticate-loading.component";
 
 export function AuthProvider({ children }: PropsWithChildren<{}>) {
 	const { authenticate, isInitialized } = useAuthUser();
@@ -16,7 +17,7 @@ export function AuthProvider({ children }: PropsWithChildren<{}>) {
 	}, [authenticate, isInitialized]);
 
 	if (!isInitialized || isLoading) {
-		return <div>Loading...</div>;
+		return <AuthenticateLoading />;
 	}
 
 	return <>{children}</>;
