@@ -9,7 +9,7 @@ import {
 } from "@matcha/shared";
 import { BaseService } from "./base.service";
 import { ServiceResponse } from "@/types";
-import { clearAction, setAction, setAuthUser } from "@/store";
+import { clearAction, setAuthUser } from "@/store";
 import { EStorageKeys } from "@/types/storage.constants";
 import { action } from "@/decorators";
 import { EActionKeys } from "@/types/actions.types";
@@ -61,6 +61,11 @@ export class AuthService extends BaseService {
     return getRoute("auth", route);
   }
 
+  private clearAuthErrorActions() {
+    this.dispatch(clearAction({ key: EActionKeys.Login }));
+    this.dispatch(clearAction({ key: EActionKeys.Register }));
+  }
+
   @action()
   public async authenticate() {
     try {
@@ -96,7 +101,7 @@ export class AuthService extends BaseService {
 
   @action()
   public async login(dto: LoginRequestDto) {
-    this.dispatch(clearAction({ key: EActionKeys.Register }));
+    this.clearAuthErrorActions();
     const response = await this.apiService.post<LoginResponseDto>(
       this.getAuthRoute("login"),
       dto
@@ -112,7 +117,7 @@ export class AuthService extends BaseService {
 
   @action()
   public async register(dto: RegisterRequestDto) {
-    this.dispatch(clearAction({ key: EActionKeys.Login }));
+    this.clearAuthErrorActions();
     const response = await this.apiService.post<RegisterResponseDto>(
       this.getAuthRoute("register"),
       dto

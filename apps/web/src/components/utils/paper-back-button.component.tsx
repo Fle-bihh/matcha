@@ -9,7 +9,7 @@ export function PaperBackButton() {
       startIcon={<ArrowBackIcon />}
       variant="text"
       size="large"
-      sx={{ mt: 2 }}
+      sx={{ mt: 2, ml: 2 }}
       onClick={() => navigate(-1)}
     />
   );
