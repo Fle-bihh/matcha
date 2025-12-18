@@ -2,11 +2,11 @@ import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { UserRepository } from "@/repositories";
 import {
-	User,
 	AuthUserWithPassword,
 	CreateUserDto,
 	AuthUser,
 	logger,
+	UserResult,
 } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 
@@ -19,12 +19,32 @@ export class UserService extends BaseService {
 		return this.container.get<UserRepository>(ETokens.UserRepository);
 	}
 
-	public async findByEmail(
-		email: string
-	): Promise<ServiceResponse<AuthUser | null>> {
+	private excludePassword(userWithPassword: AuthUserWithPassword): AuthUser {
+		const { password, ...userWithoutPassword } = userWithPassword;
+		return userWithoutPassword;
+	}
+
+	public async findByEmail<T extends boolean = false>(
+		email: string,
+		withPassword?: T
+	): Promise<ServiceResponse<UserResult<T>>> {
 		try {
-			const user = await this.userRepository.findUserByEmail(email);
-			return ServiceResponse.success("User found", user);
+			const userWithPassword = await this.userRepository.findUserByEmail(
+				email
+			);
+			if (!userWithPassword) {
+				return ServiceResponse.success(
+					"User not found",
+					null
+				) as ServiceResponse<UserResult<T>>;
+			}
+
+			return ServiceResponse.success(
+				"User found",
+				withPassword
+					? userWithPassword
+					: this.excludePassword(userWithPassword)
+			) as ServiceResponse<UserResult<T>>;
 		} catch (error) {
 			return ServiceResponse.failure(
 				"Error finding user",
@@ -34,15 +54,23 @@ export class UserService extends BaseService {
 		}
 	}
 
-	public async findByUsername(
-		username: string
-	): Promise<ServiceResponse<AuthUser | null>> {
+	public async findByUsername<T extends boolean = false>(
+		username: string,
+		withPassword?: T
+	): Promise<ServiceResponse<UserResult<T>>> {
 		try {
 			const user = await this.userRepository.findUserByUsername(username);
 			if (!user) {
-				return ServiceResponse.success("User not found", null);
+				return ServiceResponse.success(
+					"User not found",
+					null
+				) as ServiceResponse<UserResult<T>>;
 			}
-			return ServiceResponse.success("User found", user);
+
+			return ServiceResponse.success(
+				"User found",
+				withPassword ? user : this.excludePassword(user)
+			) as ServiceResponse<UserResult<T>>;
 		} catch (error) {
 			return ServiceResponse.failure(
 				"Error finding user",
@@ -52,63 +80,26 @@ export class UserService extends BaseService {
 		}
 	}
 
-	public async findByEmailWithPassword(
-		email: string
-	): Promise<ServiceResponse<AuthUserWithPassword | null>> {
+	public async findById<T extends boolean = false>(
+		userId: number,
+		withPassword?: T
+	): Promise<ServiceResponse<UserResult<T>>> {
 		try {
-			const user = await this.userRepository.findUserByEmailWithPassword(
-				email
-			);
-			return ServiceResponse.success("User found", user);
-		} catch (error) {
-			return ServiceResponse.failure(
-				"Error finding user with password",
-				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
-			);
-		}
-	}
-
-	public async findByUsernameWithPassword(
-		username: string
-	): Promise<ServiceResponse<AuthUserWithPassword | null>> {
-		try {
-			const user =
-				await this.userRepository.findUserByUsernameWithPassword(
-					username
-				);
-			return ServiceResponse.success("User found", user);
-		} catch (error) {
-			return ServiceResponse.failure(
-				"Error finding user with password",
-				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
-			);
-		}
-	}
-
-	public async findById(
-		userId: string
-	): Promise<ServiceResponse<AuthUser | null>> {
-		try {
-			const users =
-				await this.userRepository.getDocs<AuthUserWithPassword>(
-					"users",
-					{
-						where: "id = ?",
-						values: [userId],
-					}
-				);
-
-			if (!users || users.length === 0) {
-				return ServiceResponse.success("User not found", null);
+			const user = await this.userRepository.findUserById(userId);
+			if (!user) {
+				return ServiceResponse.success(
+					"User not found",
+					null
+				) as ServiceResponse<UserResult<T>>;
 			}
 
-			const { password: _, ...user } = users[0];
-			return ServiceResponse.success("User found", user);
+			return ServiceResponse.success(
+				"User found",
+				withPassword ? user : this.excludePassword(user)
+			) as ServiceResponse<UserResult<T>>;
 		} catch (error) {
 			return ServiceResponse.failure(
-				"Error finding user by ID",
+				"Error finding user",
 				null,
 				StatusCodes.INTERNAL_SERVER_ERROR
 			);

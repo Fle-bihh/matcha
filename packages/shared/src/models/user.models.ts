@@ -15,3 +15,7 @@ export interface AuthUser extends BaseEntity {
 export interface AuthUserWithPassword extends AuthUser {
 	password: string; // hashed password
 }
+
+export type UserResult<T extends boolean> = T extends true
+	? AuthUserWithPassword | null
+	: AuthUser | null;

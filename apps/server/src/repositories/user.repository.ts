@@ -31,40 +31,33 @@ export class UserRepository extends BaseRepository {
 		);
 	}
 
-	private excludePassword(userWithPassword: AuthUserWithPassword): AuthUser {
-		const { password, ...userWithoutPassword } = userWithPassword;
-		return userWithoutPassword;
-	}
-
-	public async createUser(data: CreateUserDto): Promise<AuthUser> {
+	public async createUser(
+		data: CreateUserDto
+	): Promise<AuthUserWithPassword> {
 		const userWithPassword =
 			await this.createDocument<AuthUserWithPassword>(this.tableName, {
 				...data,
 				is_email_verified: false,
 			});
-		return this.excludePassword(userWithPassword);
+		return userWithPassword;
 	}
 
-	public async findUserByEmail(
-		email: string,
-		withPassword?: boolean
-	): Promise<AuthUser | null> {
+	public async findUserById(
+		userId: number
+	): Promise<AuthUserWithPassword | null> {
 		try {
-			const users = await this.getDocs<AuthUserWithPassword>(
+			const user = await this.getDoc<AuthUserWithPassword>(
 				this.tableName,
-				{
-					where: "email = ?",
-					values: [email],
-				}
+				userId
 			);
-			return users.length > 0 ? this.excludePassword(users[0]) : null;
+			return user;
 		} catch (error) {
-			logger.error("Error finding user by email:", error);
+			logger.error("Error finding user by ID:", error);
 			return null;
 		}
 	}
 
-	public async findUserByEmailWithPassword(
+	public async findUserByEmail(
 		email: string
 	): Promise<AuthUserWithPassword | null> {
 		try {
@@ -75,14 +68,17 @@ export class UserRepository extends BaseRepository {
 					values: [email],
 				}
 			);
-			return users.length > 0 ? users[0] : null;
+			if (users.length === 0) {
+				return null;
+			}
+			return users[0];
 		} catch (error) {
-			logger.error("Error finding user by email with password:", error);
+			logger.error("Error finding user by email:", error);
 			return null;
 		}
 	}
 
-	public async findUserByUsernameWithPassword(
+	public async findUserByUsername(
 		username: string
 	): Promise<AuthUserWithPassword | null> {
 		try {
@@ -93,28 +89,10 @@ export class UserRepository extends BaseRepository {
 					values: [username],
 				}
 			);
-			return users.length > 0 ? users[0] : null;
-		} catch (error) {
-			logger.error(
-				"Error finding user by username with password:",
-				error
-			);
-			return null;
-		}
-	}
-
-	public async findUserByUsername(
-		username: string
-	): Promise<AuthUser | null> {
-		try {
-			const users = await this.getDocs<AuthUserWithPassword>(
-				this.tableName,
-				{
-					where: "username = ?",
-					values: [username],
-				}
-			);
-			return users.length > 0 ? this.excludePassword(users[0]) : null;
+			if (users.length === 0) {
+				return null;
+			}
+			return users[0];
 		} catch (error) {
 			logger.error("Error finding user by username:", error);
 			return null;
