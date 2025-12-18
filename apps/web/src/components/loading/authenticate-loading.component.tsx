@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Fade, Typography } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import LockPersonIcon from "@mui/icons-material/LockPerson";
 
 export function AuthenticateLoading() {
