@@ -1,12 +1,12 @@
-import { HomePage } from "@/pages";
-import { APP_NAME } from "@matcha/shared";
-import { Outlet, Route, Routes } from "react-router-dom";
+import { HomeHeader } from "@/components/home/header.component";
+import { Container } from "@mui/material";
+import { Outlet } from "react-router-dom";
 
 export function ProtectedLayout() {
-	return (
-		<div>
-			<h1>Protected Area - {APP_NAME}</h1>
-			<Outlet />
-		</div>
-	);
+  return (
+    <div>
+      <HomeHeader />
+      <Outlet />
+    </div>
+  );
 }

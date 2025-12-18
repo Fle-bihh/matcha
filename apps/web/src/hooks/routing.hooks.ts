@@ -1,19 +1,23 @@
 import { useNavigate } from "react-router-dom";
 
 export const useRouting = () => {
-	const nav = useNavigate();
+  const nav = useNavigate();
 
-	const push = (path: string) => {
-		nav(path);
-	};
+  const push = (path: string) => {
+    nav(path);
+  };
 
-	const replace = (path: string) => {
-		nav(path, { replace: true });
-	};
+  const replace = (path: string) => {
+    nav(path, { replace: true });
+  };
 
-	const toHome = () => {
-		nav("/");
-	};
+  const toHome = () => {
+    nav("/");
+  };
 
-	return { toHome };
+  const goBack = () => {
+    nav(-1);
+  };
+
+  return { toHome, goBack, push, replace };
 };

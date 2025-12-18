@@ -24,5 +24,5 @@ export function withLoggedOut(Component: React.FunctionComponent) {
 
 export function withLoggedIn(Component: React.FunctionComponent) {
   const { authUser } = useAuthUser();
-  return withCondition(Component, !!authUser, ROUTES.login);
+  return withCondition(Component, !!authUser, ROUTES.entry);
 }

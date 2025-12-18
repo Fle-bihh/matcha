@@ -1,10 +1,17 @@
-import { Container, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { Outlet } from "react-router-dom";
 
 export function EntryLayout() {
   return (
-    <Container>
+    <Box
+      sx={{
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <Outlet />
-    </Container>
+    </Box>
   );
 }

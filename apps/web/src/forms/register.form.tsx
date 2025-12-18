@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterRequestSchema, RegisterRequestDto } from "@matcha/shared";
-import { TextField, Button, Stack, Typography } from "@mui/material";
+import { TextField, Button, Stack, Typography, Box } from "@mui/material";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActions } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
@@ -81,6 +81,7 @@ export function RegisterForm() {
           helperText={errors.password?.message}
           disabled={isLoading}
         />
+
         <Button
           type="submit"
           variant="contained"
