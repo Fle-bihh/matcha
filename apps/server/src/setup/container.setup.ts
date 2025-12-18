@@ -1,40 +1,42 @@
 import { Container } from "@/container/container";
 import { BaseRepository } from "@/repositories";
+import { MailService } from "@/services";
 import { ETokens } from "@/types";
 import { logger } from "@matcha/shared";
 
 export class ContainerSetup {
-	private container: Container;
+  private container: Container;
 
-	constructor() {
-		this.container = new Container();
-	}
+  constructor() {
+    this.container = new Container();
+  }
 
-	public async initialize(): Promise<void> {
-		logger.info("Initializing container...");
+  public async initialize(): Promise<void> {
+    logger.info("Initializing container...");
 
-		this.preloadCriticalServices();
+    this.preloadCriticalServices();
 
-		logger.info("Container initialized successfully");
-	}
+    logger.info("Container initialized successfully");
+  }
 
-	private preloadCriticalServices(): void {
-		this.container.get<BaseRepository>(ETokens.BaseRepository);
+  private preloadCriticalServices(): void {
+    this.container.get<BaseRepository>(ETokens.BaseRepository);
+    this.container.get<MailService>(ETokens.MailService);
 
-		logger.debug("Critical services preloaded");
-	}
+    logger.debug("Critical services preloaded");
+  }
 
-	public getContainer(): Container {
-		return this.container;
-	}
+  public getContainer(): Container {
+    return this.container;
+  }
 
-	public getContainerInfo(): {
-		instantiatedServices: ETokens[];
-		totalRegisteredServices: number;
-	} {
-		return {
-			instantiatedServices: this.container.getInstantiatedTokens(),
-			totalRegisteredServices: Object.keys(ETokens).length,
-		};
-	}
+  public getContainerInfo(): {
+    instantiatedServices: ETokens[];
+    totalRegisteredServices: number;
+  } {
+    return {
+      instantiatedServices: this.container.getInstantiatedTokens(),
+      totalRegisteredServices: Object.keys(ETokens).length,
+    };
+  }
 }

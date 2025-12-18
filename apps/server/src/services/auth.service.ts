@@ -165,6 +165,12 @@ export class AuthService extends BaseService {
       const { password: _, ...user } = userWithPassword;
       const { accessToken, refreshToken } = JwtUtils.generateTokens(user);
 
+      await this.mailService.sendEmail({
+        to: user.email,
+        subject: "New Login Notification",
+        text: `Hello ${user.username},\n\nWe noticed a new login to your account. If this was you, you can safely ignore this email. If you did not log in, please reset your password immediately.\n\nBest regards,\nMatcha Team`,
+      });
+
       return ServiceResponse.success("User logged in successfully", {
         accessToken,
         refreshToken,

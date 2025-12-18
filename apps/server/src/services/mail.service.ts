@@ -31,13 +31,13 @@ export class MailService extends BaseService {
       logger.info("Mail service configured successfully");
     } catch (error) {
       logger.error("Failed to setup mail service:", error);
-      throw error;
     }
   }
 
   public async sendEmail(options: SendMailOptions): Promise<void> {
     if (!this.transporter) {
-      throw new Error("Mail service not initialized. Call setup() first.");
+      logger.error("Mail transporter is not configured.");
+      return;
     }
 
     try {
@@ -53,7 +53,6 @@ export class MailService extends BaseService {
       logger.info(`Email sent successfully: ${info.messageId}`);
     } catch (error) {
       logger.error("Failed to send email:", error);
-      throw error;
     }
   }
 }
