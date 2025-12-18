@@ -44,9 +44,9 @@ export const useActions = <T extends EActionKeys>(actions: T[]) => {
 export const useCreateAction = () => {
   const dispatch = useDispatch();
   return useCallback(
-    <T = any>(action: (payload: T) => any) =>
-      (payload: T) =>
-        dispatch(action(payload)),
+    <T extends any[]>(action: (...args: T) => any) =>
+      (...args: T) =>
+        dispatch(action(...args)),
     [dispatch]
   );
 };
