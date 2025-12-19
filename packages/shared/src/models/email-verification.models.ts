@@ -1,8 +1,8 @@
 import { BaseEntity } from "./base.models";
 
 export interface EmailVerification extends BaseEntity {
-  userId: number;
-  verificationToken: string;
-  isUsed: boolean;
-  expiresAt: Date;
+  user_id: number;
+  verification_token: string;
+  is_used: boolean;
+  expires_at: Date;
 }

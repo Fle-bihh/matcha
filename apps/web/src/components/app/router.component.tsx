@@ -14,11 +14,11 @@ export function Router() {
         <Route path={ROUTES.register} element={<RegisterPage />} />
         <Route path={ROUTES.login} element={<LoginPage />} />
         <Route path={ROUTES.forgotPassword} element={<ForgotPasswordPage />} />
-        <Route path={ROUTES.confirmEmail} element={<ConfirmEmailPage />} />
       </Route>
       <Route path={ROUTES.protected} element={withLoggedIn(ProtectedLayout)()}>
         <Route index element={<HomePage />} />
       </Route>
+      <Route path={ROUTES.confirmEmail} element={<ConfirmEmailPage />} />
       <Route path={ROUTES.notFound} element={<NotFoundPage />} />
     </Routes>
   );

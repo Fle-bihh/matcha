@@ -1,6 +1,7 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { UserService } from "./user.service";
+import { EmailVerificationService } from "./email-verification.service";
 import {
   RegisterRequestDto,
   RegisterResponseDto,
@@ -14,6 +15,7 @@ import {
 import { StatusCodes } from "http-status-codes";
 import { JwtUtils } from "@/utils/jwt.utils";
 import { HashUtils } from "@/utils/hash.utils";
+import { config } from "@/config";
 
 export class AuthService extends BaseService {
   constructor(container: IContainer) {
@@ -22,6 +24,12 @@ export class AuthService extends BaseService {
 
   private get userService(): UserService {
     return this.container.get<UserService>(ETokens.UserService);
+  }
+
+  private get emailVerificationService(): EmailVerificationService {
+    return this.container.get<EmailVerificationService>(
+      ETokens.EmailVerificationService
+    );
   }
 
   public async authenticate(
@@ -102,6 +110,21 @@ export class AuthService extends BaseService {
       const { accessToken, refreshToken } = JwtUtils.generateTokens(
         userResponse.responseObject
       );
+
+      const tokenResponse =
+        await this.emailVerificationService.createVerificationToken(
+          userResponse.responseObject.id
+        );
+
+      if (tokenResponse.success && tokenResponse.responseObject) {
+        const verificationLink = `${config.webUrl}/confirm-email?token=${tokenResponse.responseObject}`;
+
+        await this.mailService.sendEmail({
+          to: userResponse.responseObject.email,
+          subject: "Verify Your Email - Matcha",
+          text: `Hello ${userResponse.responseObject.username},\n\nThank you for registering! Please verify your email address by clicking the link below:\n\n${verificationLink}\n\nThis link will expire in 24 hours.\n\nBest regards,\nMatcha Team`,
+        });
+      }
 
       return ServiceResponse.success("User registered successfully", {
         accessToken,

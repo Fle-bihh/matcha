@@ -1,9 +1,14 @@
-import { BaseRepository, UserRepository } from "@/repositories";
+import {
+  BaseRepository,
+  UserRepository,
+  EmailVerificationRepository,
+} from "@/repositories";
 import {
   HealthService,
   UserService,
   AuthService,
   MailService,
+  EmailVerificationService,
 } from "@/services";
 import { ETokens, IContainer } from "@/types";
 import { logger } from "@matcha/shared";
@@ -17,6 +22,8 @@ const serviceRegistry: Record<ETokens, ServiceConstructor> = {
   [ETokens.UserService]: UserService,
   [ETokens.AuthService]: AuthService,
   [ETokens.MailService]: MailService,
+  [ETokens.EmailVerificationRepository]: EmailVerificationRepository,
+  [ETokens.EmailVerificationService]: EmailVerificationService,
 } as const;
 
 export class Container implements IContainer {
