@@ -26,3 +26,12 @@ export function withLoggedIn(Component: React.FunctionComponent) {
   const { authUser } = useAuthUser();
   return withCondition(Component, !!authUser, ROUTES.entry);
 }
+
+export function withEmailVerified(Component: React.FunctionComponent) {
+  const { authUser } = useAuthUser();
+  return withCondition(
+    Component,
+    !!authUser && authUser.is_email_verified,
+    ROUTES.protected
+  );
+}
