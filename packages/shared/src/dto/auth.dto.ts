@@ -45,3 +45,13 @@ export interface RefreshTokenResponseDto {
   accessToken: string;
   refreshToken: string;
 }
+
+export const VerifyEmailRequestSchema = z.object({
+  token: z.string().min(1, "Token is required"),
+});
+
+export type VerifyEmailRequestDto = z.infer<typeof VerifyEmailRequestSchema>;
+
+export interface VerifyEmailResponseDto {
+  success: boolean;
+}

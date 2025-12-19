@@ -11,6 +11,8 @@ import {
   logger,
   AuthenticateResponseDto,
   LoginRequestDto,
+  VerifyEmailRequestDto,
+  VerifyEmailResponseDto,
 } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { JwtUtils } from "@/utils/jwt.utils";
@@ -224,6 +226,29 @@ export class AuthService extends BaseService {
         "Invalid or expired refresh token",
         null,
         StatusCodes.UNAUTHORIZED
+      );
+    }
+  }
+
+  public async verifyEmail(
+    dto: VerifyEmailRequestDto
+  ): Promise<ServiceResponse<VerifyEmailResponseDto | null>> {
+    try {
+      const result = await this.emailVerificationService.verifyEmail(dto.token);
+
+      if (!result.success) {
+        return ServiceResponse.failure(result.message, null, result.statusCode);
+      }
+
+      return ServiceResponse.success("Email verified successfully", {
+        success: true,
+      });
+    } catch (error) {
+      logger.error("Error in verifyEmail:", error);
+      return ServiceResponse.failure(
+        "Error verifying email",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
   }

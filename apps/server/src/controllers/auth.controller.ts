@@ -7,6 +7,7 @@ import {
   RegisterRequestSchema,
   LoginRequestSchema,
   RefreshTokenRequestSchema,
+  VerifyEmailRequestSchema,
 } from "@matcha/shared";
 
 export class AuthController extends BaseController {
@@ -47,5 +48,12 @@ export class AuthController extends BaseController {
   private async logout(req: Request, res: Response): Promise<void> {
     // const result = await this.authService.logout(token);
     // res.status(result.statusCode).send(result);
+  }
+
+  @route("POST", "verify-email")
+  @validate(VerifyEmailRequestSchema, "body")
+  private async verifyEmail(req: Request, res: Response): Promise<void> {
+    const result = await this.authService.verifyEmail(req.validated?.body);
+    res.status(result.statusCode).send(result);
   }
 }

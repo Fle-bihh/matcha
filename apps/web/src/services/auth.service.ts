@@ -6,10 +6,12 @@ import {
   type RegisterRequestDto,
   RegisterResponseDto,
   RouteKeys,
+  type VerifyEmailRequestDto,
+  VerifyEmailResponseDto,
 } from "@matcha/shared";
 import { BaseService } from "./base.service";
 import { ServiceResponse } from "@/types";
-import { clearAction, setAuthUser } from "@/store";
+import { clearAction, setAuthUser, setEmailToVerified } from "@/store";
 import { EStorageKeys } from "@/types/storage.constants";
 import { action } from "@/decorators";
 import { EActionKeys } from "@/types/actions.types";
@@ -22,6 +24,7 @@ export class AuthService extends BaseService {
     AUTH_CHECK_FAILED: "Authentication check failed",
     AUTH_SUCCESSFUL: "User authenticated successfully",
     LOGOUT_SUCCESSFUL: "User logged out successfully",
+    EMAIL_VERIFIED: "Email verified successfully",
   } as const;
 
   private async storeAuthData(data: AuthData): Promise<void> {
@@ -129,5 +132,21 @@ export class AuthService extends BaseService {
   public async logout() {
     await this.clearAuthData();
     return ServiceResponse.success(this.MESSAGES.LOGOUT_SUCCESSFUL);
+  }
+
+  @action()
+  public async verifyEmail(dto: VerifyEmailRequestDto) {
+    const response = await this.apiService.post<VerifyEmailResponseDto>(
+      this.getAuthRoute("verify-email"),
+      dto
+    );
+
+    if (!response.success) {
+      return ServiceResponse.failure(response.message);
+    }
+
+    this.dispatch(setEmailToVerified());
+    this.router.replace("/login");
+    return ServiceResponse.success(this.MESSAGES.EMAIL_VERIFIED);
   }
 }
