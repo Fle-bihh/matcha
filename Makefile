@@ -1,10 +1,8 @@
 .PHONY: deploy setup build clean up down re logs clear-cache
 
 deploy:
-	make clean
-	make clear-cache
 	make setup
-	make re
+	make up
 	make logs
 	
 setup:
