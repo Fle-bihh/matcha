@@ -16,12 +16,6 @@ export const RegisterRequestSchema = CreateUserDtoSchema.superRefine(
 
 export type RegisterRequestDto = z.infer<typeof RegisterRequestSchema>;
 
-export const AuthenticateRequestSchema = z.object({
-  accessToken: fields.accessToken,
-});
-
-export type AuthenticateRequestDto = z.infer<typeof AuthenticateRequestSchema>;
-
 export interface AuthenticateResponseDto {
   user: AuthUser;
 }
