@@ -3,7 +3,7 @@ import { useAuthUser } from "@/hooks/auth.hook";
 import { FunctionComponent } from "react";
 import { Navigate } from "react-router-dom";
 
-export function withCondition(
+function withConditionPage(
   Component: FunctionComponent,
   condition: boolean,
   redirectTo: string
@@ -19,17 +19,17 @@ export function withCondition(
 
 export function withLoggedOut(Component: React.FunctionComponent) {
   const { authUser } = useAuthUser();
-  return withCondition(Component, !authUser, ROUTES.protected);
+  return withConditionPage(Component, !authUser, ROUTES.protected);
 }
 
 export function withLoggedIn(Component: React.FunctionComponent) {
   const { authUser } = useAuthUser();
-  return withCondition(Component, !!authUser, ROUTES.entry);
+  return withConditionPage(Component, !!authUser, ROUTES.entry);
 }
 
 export function withEmailVerified(Component: React.FunctionComponent) {
   const { authUser } = useAuthUser();
-  return withCondition(
+  return withConditionPage(
     Component,
     !!authUser && authUser.is_email_verified,
     ROUTES.protected

@@ -3,26 +3,19 @@ import {
   Container,
   Paper,
   Typography,
-  Alert,
   Box,
   Button,
   Divider,
 } from "@mui/material";
-import {
-  Person as PersonIcon,
-  Warning as WarningIcon,
-} from "@mui/icons-material";
+import { Person as PersonIcon } from "@mui/icons-material";
+import { VerifyEmailBox } from "@/components/home/verify-email-box.component";
 
 export function HomePage() {
-  const { logout, authUser, resendVerificationEmail } = useAuthUser();
+  const { logout, authUser } = useAuthUser();
 
   if (!authUser) {
     return null;
   }
-
-  const handleResendEmail = () => {
-    resendVerificationEmail();
-  };
 
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
@@ -35,25 +28,7 @@ export function HomePage() {
 
         <Divider sx={{ mb: 3 }} />
 
-        {!authUser.is_email_verified && (
-          <Alert severity="warning" icon={<WarningIcon />} sx={{ mb: 3 }}>
-            <Typography variant="body1" fontWeight="bold" gutterBottom>
-              Email Not Verified
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-              You cannot use app features until you verify your email address.
-              Please check your inbox for a verification link.
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={handleResendEmail}
-            >
-              Resend Verification Email
-            </Button>
-          </Alert>
-        )}
+        <VerifyEmailBox />
 
         <Box sx={{ mb: 3 }}>
           <Typography
