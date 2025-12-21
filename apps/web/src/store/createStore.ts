@@ -3,25 +3,28 @@ import { IContainer } from "@/types";
 import entitiesReducer from "./slices/entities.slice";
 import authUserReducer from "./slices/auth-user.slice";
 import actionsReducer from "./slices/actions.slice";
+import snackbarReducer from "./slices/snackbar.slice";
 
 export const createStore = (container: IContainer) => {
-	const store = configureStore({
-		reducer: {
-			entities: entitiesReducer,
+  const store = configureStore({
+    reducer: {
+      entities: entitiesReducer,
 
-			actions: actionsReducer,
+      actions: actionsReducer,
 
-			authUser: authUserReducer,
-		},
-		middleware: (getDefaultMiddleware) =>
-			getDefaultMiddleware({
-				thunk: {
-					extraArgument: { container },
-				},
-				serializableCheck: {},
-			}),
-		devTools: process.env.NODE_ENV !== "production",
-	});
+      authUser: authUserReducer,
 
-	return store;
+      snackbar: snackbarReducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        thunk: {
+          extraArgument: { container },
+        },
+        serializableCheck: {},
+      }),
+    devTools: process.env.NODE_ENV !== "production",
+  });
+
+  return store;
 };

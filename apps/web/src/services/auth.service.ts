@@ -26,6 +26,7 @@ export class AuthService extends BaseService {
     AUTH_SUCCESSFUL: "User authenticated successfully",
     LOGOUT_SUCCESSFUL: "User logged out successfully",
     EMAIL_VERIFIED: "Email verified successfully",
+    EMAIL_VERIFICATION_SENT: "Verification email sent successfully",
   } as const;
 
   private async storeAuthData(data: AuthData): Promise<void> {
@@ -108,6 +109,8 @@ export class AuthService extends BaseService {
       return ServiceResponse.failure(response.message);
     }
 
+    this.snackbar.success(this.MESSAGES.AUTH_SUCCESSFUL);
+
     await this.storeAuthData(response.responseObject);
     return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
   }
@@ -121,9 +124,10 @@ export class AuthService extends BaseService {
     );
 
     if (!response.success) {
-      console.log("Registration failed:", response);
       return ServiceResponse.failure(response.message);
     }
+
+    this.snackbar.success(this.MESSAGES.AUTH_SUCCESSFUL);
 
     await this.storeAuthData(response.responseObject);
     return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
@@ -159,13 +163,12 @@ export class AuthService extends BaseService {
         { auth: true }
       );
 
-    console.log("Resend verification email response:", response);
     if (!response.success) {
+      this.snackbar.error(response.message);
       return ServiceResponse.failure(response.message);
     }
 
-    return ServiceResponse.success(
-      "Verification email sent. Please check your inbox."
-    );
+    this.snackbar.success(response.message);
+    return ServiceResponse.success(this.MESSAGES.EMAIL_VERIFICATION_SENT);
   }
 }

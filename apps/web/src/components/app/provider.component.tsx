@@ -4,6 +4,7 @@ import { Provider as ReduxProvider } from "react-redux";
 import { BrowserRouter, useNavigate } from "react-router-dom";
 import { AuthProvider } from "../auth";
 import { NavigationSetup } from "./navigation.component";
+import { Snackbar } from "../utils";
 
 export function Provider({ children }: React.PropsWithChildren<{}>) {
   const container = useMemo(() => new Container(), []);
@@ -14,6 +15,7 @@ export function Provider({ children }: React.PropsWithChildren<{}>) {
       <ReduxProvider store={store}>
         <NavigationSetup container={container} />
         <AuthProvider>{children}</AuthProvider>
+        <Snackbar />
       </ReduxProvider>
     </BrowserRouter>
   );
