@@ -13,6 +13,7 @@ import {
   LoginRequestDto,
   VerifyEmailRequestDto,
   VerifyEmailResponseDto,
+  ResendVerificationEmailResponseDto,
 } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { JwtUtils } from "@/utils/jwt.utils";
@@ -247,6 +248,62 @@ export class AuthService extends BaseService {
       logger.error("Error in verifyEmail:", error);
       return ServiceResponse.failure(
         "Error verifying email",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  public async resendVerificationEmail(
+    userId: number
+  ): Promise<ServiceResponse<ResendVerificationEmailResponseDto | null>> {
+    try {
+      const userResponse = await this.userService.findById(userId);
+
+      if (!userResponse.success || !userResponse.responseObject) {
+        return ServiceResponse.failure(
+          "User not found",
+          null,
+          StatusCodes.NOT_FOUND
+        );
+      }
+
+      const user = userResponse.responseObject;
+
+      if (user.is_email_verified) {
+        return ServiceResponse.failure(
+          "Email is already verified",
+          null,
+          StatusCodes.BAD_REQUEST
+        );
+      }
+
+      const tokenResponse =
+        await this.emailVerificationService.createVerificationToken(userId);
+
+      if (!tokenResponse.success || !tokenResponse.responseObject) {
+        return ServiceResponse.failure(
+          "Error creating verification token",
+          null,
+          StatusCodes.INTERNAL_SERVER_ERROR
+        );
+      }
+
+      const verificationLink = `${config.webUrl}/confirm-email?token=${tokenResponse.responseObject}`;
+
+      await this.mailService.sendEmail({
+        to: user.email,
+        subject: "Verify Your Email - Matcha",
+        text: `Hello ${user.username},\n\nThank you for registering! Please verify your email address by clicking the link below:\n\n${verificationLink}\n\nThis link will expire in 24 hours.\n\nBest regards,\nMatcha Team`,
+      });
+
+      return ServiceResponse.success("Verification email sent successfully", {
+        success: true,
+      });
+    } catch (error) {
+      logger.error("Error in resendVerificationEmail:", error);
+      return ServiceResponse.failure(
+        "Error sending verification email",
         null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );

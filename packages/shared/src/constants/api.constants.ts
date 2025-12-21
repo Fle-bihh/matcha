@@ -15,6 +15,7 @@ export const API_ROUTES = {
     logout: "/logout",
     authenticate: "/authenticate",
     "verify-email": "/verify-email",
+    "resend-verification-email": "/resend-verification-email",
   },
 } as const;
 

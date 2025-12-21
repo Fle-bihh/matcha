@@ -23,6 +23,10 @@ const authActionsConfig = {
     serviceToken: ETokens.AuthService,
     methodName: "verifyEmail",
   },
+  [EActionKeys.ResendVerificationEmail]: {
+    serviceToken: ETokens.AuthService,
+    methodName: "resendVerificationEmail",
+  },
 } as const;
 
 export const AuthActions = createActions(authActionsConfig);

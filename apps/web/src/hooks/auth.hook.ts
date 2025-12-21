@@ -17,6 +17,7 @@ export const useAuthUser = () => {
     logout: createAction(AuthActions.logout),
     login: createAction(AuthActions.login),
     verifyEmail: createAction(AuthActions.verifyEmail),
+    resendVerificationEmail: createAction(AuthActions.resendVerificationEmail),
   };
 
   return {

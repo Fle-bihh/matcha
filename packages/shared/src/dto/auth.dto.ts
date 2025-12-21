@@ -55,3 +55,7 @@ export type VerifyEmailRequestDto = z.infer<typeof VerifyEmailRequestSchema>;
 export interface VerifyEmailResponseDto {
   success: boolean;
 }
+
+export interface ResendVerificationEmailResponseDto {
+  success: boolean;
+}

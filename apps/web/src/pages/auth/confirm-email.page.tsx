@@ -24,8 +24,7 @@ export function ConfirmEmailPage() {
   const handleVerifyEmail = async () => {
     if (!token) return;
 
-    const result = await verifyEmail({ token });
-    console.log("Verify email result:", result);
+    await verifyEmail({ token });
   };
 
   return (
@@ -49,7 +48,6 @@ export function ConfirmEmailPage() {
           Confirm Your Email
         </Typography>
 
-        {/* {!success && !hasError && ( */}
         <>
           <Typography
             variant="body1"
@@ -72,13 +70,6 @@ export function ConfirmEmailPage() {
             {isLoading ? "Verifying..." : "Confirm Email"}
           </Button>
         </>
-        {/* )} */}
-
-        {/* {!error && (
-          <Alert severity="success" sx={{ mt: 2 }}>
-            Email verified successfully! Redirecting to home...
-          </Alert>
-        )} */}
 
         {error && (
           <Alert severity="error" sx={{ mt: 2 }}>

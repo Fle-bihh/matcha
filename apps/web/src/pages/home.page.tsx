@@ -10,17 +10,19 @@ import {
 } from "@mui/material";
 import {
   Person as PersonIcon,
-  Email as EmailIcon,
-  VerifiedUser as VerifiedIcon,
   Warning as WarningIcon,
 } from "@mui/icons-material";
 
 export function HomePage() {
-  const { logout, authUser } = useAuthUser();
+  const { logout, authUser, resendVerificationEmail } = useAuthUser();
 
   if (!authUser) {
     return null;
   }
+
+  const handleResendEmail = () => {
+    resendVerificationEmail();
+  };
 
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
@@ -38,10 +40,18 @@ export function HomePage() {
             <Typography variant="body1" fontWeight="bold" gutterBottom>
               Email Not Verified
             </Typography>
-            <Typography variant="body2">
+            <Typography variant="body2" sx={{ mb: 2 }}>
               You cannot use app features until you verify your email address.
               Please check your inbox for a verification link.
             </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={handleResendEmail}
+            >
+              Resend Verification Email
+            </Button>
           </Alert>
         )}
 

@@ -48,12 +48,24 @@ export class AuthController extends BaseController {
   private async logout(req: Request, res: Response): Promise<void> {
     // const result = await this.authService.logout(token);
     // res.status(result.statusCode).send(result);
+    res.status(200).send({ success: true });
   }
 
   @route("POST", "verify-email")
   @validate(VerifyEmailRequestSchema, "body")
   private async verifyEmail(req: Request, res: Response): Promise<void> {
     const result = await this.authService.verifyEmail(req.validated?.body);
+    res.status(result.statusCode).send(result);
+  }
+
+  @auth()
+  @route("GET", "resend-verification-email")
+  private async resendVerificationEmail(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    const { id } = req.user!;
+    const result = await this.authService.resendVerificationEmail(id);
     res.status(result.statusCode).send(result);
   }
 }

@@ -8,6 +8,7 @@ import {
   RouteKeys,
   type VerifyEmailRequestDto,
   VerifyEmailResponseDto,
+  ResendVerificationEmailResponseDto,
 } from "@matcha/shared";
 import { BaseService } from "./base.service";
 import { ServiceResponse } from "@/types";
@@ -67,9 +68,9 @@ export class AuthService extends BaseService {
   @action()
   public async authenticate() {
     try {
-      // Make a 1 second delay to show loading state
-      await new Promise((resolve) => setTimeout(resolve, 500));
       if (await this.hasValidAuthData()) {
+        // Make a 1 second delay to show loading state
+        await new Promise((resolve) => setTimeout(resolve, 500));
         const authenticateResponse =
           await this.apiService.get<AuthenticateResponseDto>(
             this.getAuthRoute("authenticate"),
@@ -148,5 +149,25 @@ export class AuthService extends BaseService {
     this.dispatch(setEmailToVerified());
     this.router.replace("/login");
     return ServiceResponse.success(this.MESSAGES.EMAIL_VERIFIED);
+  }
+
+  @action()
+  public async resendVerificationEmail() {
+    console.log("Resending verification email...");
+    const response =
+      await this.apiService.get<ResendVerificationEmailResponseDto>(
+        this.getAuthRoute("resend-verification-email"),
+        { auth: true }
+      );
+
+    console.log("Resend response:", response);
+
+    if (!response.success) {
+      return ServiceResponse.failure(response.message);
+    }
+
+    return ServiceResponse.success(
+      "Verification email sent. Please check your inbox."
+    );
   }
 }

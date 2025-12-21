@@ -10,6 +10,7 @@ export enum EActionKeys {
   Logout = "logout",
   Login = "login",
   VerifyEmail = "verifyEmail",
+  ResendVerificationEmail = "resendVerificationEmail",
 }
 
 export interface IActionDtoMap {
@@ -18,6 +19,7 @@ export interface IActionDtoMap {
   [EActionKeys.Logout]: null;
   [EActionKeys.Login]: LoginRequestDto;
   [EActionKeys.VerifyEmail]: VerifyEmailRequestDto;
+  [EActionKeys.ResendVerificationEmail]: null;
 }
 
 export type ActionDto<K extends EActionKeys> = IActionDtoMap[K];
