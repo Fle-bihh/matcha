@@ -114,20 +114,9 @@ export class AuthService extends BaseService {
         userResponse.responseObject
       );
 
-      const tokenResponse =
-        await this.emailVerificationService.createVerificationToken(
-          userResponse.responseObject.id
-        );
-
-      if (tokenResponse.success && tokenResponse.responseObject) {
-        const verificationLink = `${config.webUrl}/confirm-email?token=${tokenResponse.responseObject}`;
-
-        await this.mailService.sendEmail({
-          to: userResponse.responseObject.email,
-          subject: "Verify Your Email - Matcha",
-          text: `Hello ${userResponse.responseObject.username},\n\nThank you for registering! Please verify your email address by clicking the link below:\n\n${verificationLink}\n\nThis link will expire in 24 hours.\n\nBest regards,\nMatcha Team`,
-        });
-      }
+      await this.emailVerificationService.sendVerificationEmail(
+        userResponse.responseObject.id
+      );
 
       return ServiceResponse.success("User registered successfully", {
         accessToken,
@@ -278,24 +267,13 @@ export class AuthService extends BaseService {
         );
       }
 
-      const tokenResponse =
-        await this.emailVerificationService.createVerificationToken(userId);
+      const result = await this.emailVerificationService.sendVerificationEmail(
+        userId
+      );
 
-      if (!tokenResponse.success || !tokenResponse.responseObject) {
-        return ServiceResponse.failure(
-          "Error creating verification token",
-          null,
-          StatusCodes.INTERNAL_SERVER_ERROR
-        );
+      if (!result.success) {
+        return ServiceResponse.failure(result.message, null, result.statusCode);
       }
-
-      const verificationLink = `${config.webUrl}/confirm-email?token=${tokenResponse.responseObject}`;
-
-      await this.mailService.sendEmail({
-        to: user.email,
-        subject: "Verify Your Email - Matcha",
-        text: `Hello ${user.username},\n\nThank you for registering! Please verify your email address by clicking the link below:\n\n${verificationLink}\n\nThis link will expire in 24 hours.\n\nBest regards,\nMatcha Team`,
-      });
 
       return ServiceResponse.success("Verification email sent successfully", {
         success: true,

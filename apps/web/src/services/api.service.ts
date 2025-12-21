@@ -113,9 +113,8 @@ export class ApiService extends BaseService {
     }
 
     if (!response.ok) {
-      const error = new Error(`HTTP error! status: ${response.status}`);
-      error.name = "HTTPError";
-      throw error;
+      const data = await response.clone().json();
+      throw new Error(`${data.message || response.statusText}`);
     }
 
     return response.json();

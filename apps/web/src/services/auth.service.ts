@@ -153,15 +153,13 @@ export class AuthService extends BaseService {
 
   @action()
   public async resendVerificationEmail() {
-    console.log("Resending verification email...");
     const response =
       await this.apiService.get<ResendVerificationEmailResponseDto>(
         this.getAuthRoute("resend-verification-email"),
         { auth: true }
       );
 
-    console.log("Resend response:", response);
-
+    console.log("Resend verification email response:", response);
     if (!response.success) {
       return ServiceResponse.failure(response.message);
     }

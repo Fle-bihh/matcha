@@ -2,9 +2,14 @@ import { useAuthUser } from "@/hooks/auth.hook";
 import { Alert, Typography, Button } from "@mui/material";
 import { Warning as WarningIcon } from "@mui/icons-material";
 import { withEmailNotVerifiedComponent } from "../utils/with-condition-component.component";
+import { useActions } from "@/hooks/actions.hooks";
+import { EActionKeys } from "@/types/actions.types";
 
 function VerifyEmailBoxComp() {
   const { resendVerificationEmail } = useAuthUser();
+  const { isLoading, error } = useActions([
+    EActionKeys.ResendVerificationEmail,
+  ]);
 
   const handleResendEmail = () => {
     resendVerificationEmail();
@@ -24,9 +29,15 @@ function VerifyEmailBoxComp() {
         color="primary"
         size="small"
         onClick={handleResendEmail}
+        disabled={isLoading}
       >
-        Resend Verification Email
+        {isLoading ? "Resending..." : "Resend Verification Email"}
       </Button>
+      {error && (
+        <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+          {error}
+        </Typography>
+      )}
     </Alert>
   );
 }

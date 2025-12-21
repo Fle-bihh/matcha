@@ -98,4 +98,24 @@ export class EmailVerificationRepository extends BaseRepository {
       return false;
     }
   }
+
+  public async getLatestByUserId(
+    userId: number
+  ): Promise<EmailVerification | null> {
+    try {
+      const verifications = await this.getDocs<EmailVerification>(
+        this.tableName,
+        {
+          where: "user_id = ?",
+          values: [userId],
+          orderBy: "created_at DESC",
+          limit: 1,
+        }
+      );
+      return verifications.length > 0 ? verifications[0] : null;
+    } catch (error) {
+      logger.error("Error getting latest verification by user ID:", error);
+      return null;
+    }
+  }
 }
