@@ -5,6 +5,7 @@ import { EntryPage, NotFoundPage, HomePage } from "@/pages";
 import { EntryLayout, ProtectedLayout } from "@/layouts";
 import { RegisterPage, LoginPage, ForgotPasswordPage } from "@/pages/auth";
 import { ConfirmEmailPage } from "@/pages/auth/confirm-email.page";
+import { ModifyPasswordPage } from "@/pages/auth/modify-password.page";
 
 export function Router() {
   return (
@@ -19,6 +20,7 @@ export function Router() {
         <Route index element={<HomePage />} />
       </Route>
       <Route path={ROUTES.confirmEmail} element={<ConfirmEmailPage />} />
+      <Route path={ROUTES.modifyPassword} element={<ModifyPasswordPage />} />
       <Route path={ROUTES.notFound} element={<NotFoundPage />} />
     </Routes>
   );

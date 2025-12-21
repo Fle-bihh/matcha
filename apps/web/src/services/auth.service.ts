@@ -9,6 +9,10 @@ import {
   type VerifyEmailRequestDto,
   VerifyEmailResponseDto,
   ResendVerificationEmailResponseDto,
+  type ForgotPasswordRequestDto,
+  ForgotPasswordResponseDto,
+  type ResetPasswordRequestDto,
+  ResetPasswordResponseDto,
 } from "@matcha/shared";
 import { BaseService } from "./base.service";
 import { ServiceResponse } from "@/types";
@@ -27,6 +31,8 @@ export class AuthService extends BaseService {
     LOGOUT_SUCCESSFUL: "User logged out successfully",
     EMAIL_VERIFIED: "Email verified successfully",
     EMAIL_VERIFICATION_SENT: "Verification email sent successfully",
+    PASSWORD_RESET_SENT: "Password reset link sent successfully",
+    PASSWORD_RESET_SUCCESS: "Password reset successfully",
   } as const;
 
   private async storeAuthData(data: AuthData): Promise<void> {
@@ -152,6 +158,7 @@ export class AuthService extends BaseService {
 
     this.dispatch(setEmailToVerified());
     this.router.replace("/login");
+    this.snackbar.success(this.MESSAGES.EMAIL_VERIFIED);
     return ServiceResponse.success(this.MESSAGES.EMAIL_VERIFIED);
   }
 
@@ -170,5 +177,36 @@ export class AuthService extends BaseService {
 
     this.snackbar.success(response.message);
     return ServiceResponse.success(this.MESSAGES.EMAIL_VERIFICATION_SENT);
+  }
+
+  @action()
+  public async forgotPassword(dto: ForgotPasswordRequestDto) {
+    const response = await this.apiService.post<ForgotPasswordResponseDto>(
+      this.getAuthRoute("forgot-password"),
+      dto
+    );
+
+    if (!response.success) {
+      return ServiceResponse.failure(response.message);
+    }
+
+    this.snackbar.success(response.message);
+    return ServiceResponse.success(this.MESSAGES.PASSWORD_RESET_SENT);
+  }
+
+  @action()
+  public async resetPassword(dto: ResetPasswordRequestDto) {
+    const response = await this.apiService.post<ResetPasswordResponseDto>(
+      this.getAuthRoute("reset-password"),
+      dto
+    );
+
+    if (!response.success) {
+      return ServiceResponse.failure(response.message);
+    }
+
+    this.snackbar.success(response.message);
+    this.router.replace("/login");
+    return ServiceResponse.success(this.MESSAGES.PASSWORD_RESET_SUCCESS);
   }
 }

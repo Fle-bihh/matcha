@@ -18,6 +18,8 @@ export const useAuthUser = () => {
     login: createAction(AuthActions.login),
     verifyEmail: createAction(AuthActions.verifyEmail),
     resendVerificationEmail: createAction(AuthActions.resendVerificationEmail),
+    forgotPassword: createAction(AuthActions.forgotPassword),
+    resetPassword: createAction(AuthActions.resetPassword),
   };
 
   return {

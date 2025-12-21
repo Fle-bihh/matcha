@@ -10,6 +10,7 @@ import {
   PartialBaseEntity,
 } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
+import { HashUtils } from "@/utils/hash.utils";
 
 export class UserService extends BaseService {
   constructor(container: IContainer) {
@@ -157,6 +158,57 @@ export class UserService extends BaseService {
       logger.error("Error in updateUser:", error);
       return ServiceResponse.failure(
         "Error updating user",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  public async updateUserPassword(
+    userId: number,
+    newPassword: string
+  ): Promise<ServiceResponse<AuthUser | null>> {
+    try {
+      const user = await this.userRepository.findUserById(userId);
+      if (!user) {
+        return ServiceResponse.failure(
+          "User not found",
+          null,
+          StatusCodes.NOT_FOUND
+        );
+      }
+
+      if (await HashUtils.comparePassword(newPassword, user.password)) {
+        return ServiceResponse.failure(
+          "New password cannot be the same as the old password",
+          null,
+          StatusCodes.BAD_REQUEST
+        );
+      }
+
+      const hashedPassword = await HashUtils.hashPassword(newPassword);
+
+      const updatedUser = await this.userRepository.updateUserPassword(
+        userId,
+        hashedPassword
+      );
+
+      if (!updatedUser) {
+        return ServiceResponse.failure(
+          "User not found",
+          null,
+          StatusCodes.NOT_FOUND
+        );
+      }
+
+      return ServiceResponse.success(
+        "Password updated successfully",
+        this.excludePassword(updatedUser)
+      );
+    } catch (error) {
+      logger.error("Error in updateUserPassword:", error);
+      return ServiceResponse.failure(
+        "Error updating password",
         null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );

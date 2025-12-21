@@ -8,6 +8,8 @@ import {
   LoginRequestSchema,
   RefreshTokenRequestSchema,
   VerifyEmailRequestSchema,
+  ForgotPasswordRequestSchema,
+  ResetPasswordRequestSchema,
 } from "@matcha/shared";
 
 export class AuthController extends BaseController {
@@ -66,6 +68,20 @@ export class AuthController extends BaseController {
   ): Promise<void> {
     const { id } = req.user!;
     const result = await this.authService.resendVerificationEmail(id);
+    res.status(result.statusCode).send(result);
+  }
+
+  @route("POST", "forgot-password")
+  @validate(ForgotPasswordRequestSchema, "body")
+  private async forgotPassword(req: Request, res: Response): Promise<void> {
+    const result = await this.authService.forgotPassword(req.validated?.body);
+    res.status(result.statusCode).send(result);
+  }
+
+  @route("POST", "reset-password")
+  @validate(ResetPasswordRequestSchema, "body")
+  private async resetPassword(req: Request, res: Response): Promise<void> {
+    const result = await this.authService.resetPassword(req.validated?.body);
     res.status(result.statusCode).send(result);
   }
 }

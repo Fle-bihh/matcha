@@ -2,6 +2,7 @@ import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { UserService } from "./user.service";
 import { EmailVerificationService } from "./email-verification.service";
+import { PasswordResetService } from "./password-reset.service";
 import {
   RegisterRequestDto,
   RegisterResponseDto,
@@ -14,6 +15,10 @@ import {
   VerifyEmailRequestDto,
   VerifyEmailResponseDto,
   ResendVerificationEmailResponseDto,
+  ForgotPasswordRequestDto,
+  ForgotPasswordResponseDto,
+  ResetPasswordRequestDto,
+  ResetPasswordResponseDto,
 } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { JwtUtils } from "@/utils/jwt.utils";
@@ -32,6 +37,12 @@ export class AuthService extends BaseService {
   private get emailVerificationService(): EmailVerificationService {
     return this.container.get<EmailVerificationService>(
       ETokens.EmailVerificationService
+    );
+  }
+
+  private get passwordResetService(): PasswordResetService {
+    return this.container.get<PasswordResetService>(
+      ETokens.PasswordResetService
     );
   }
 
@@ -282,6 +293,58 @@ export class AuthService extends BaseService {
       logger.error("Error in resendVerificationEmail:", error);
       return ServiceResponse.failure(
         "Error sending verification email",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  public async forgotPassword(
+    dto: ForgotPasswordRequestDto
+  ): Promise<ServiceResponse<ForgotPasswordResponseDto | null>> {
+    try {
+      const result = await this.passwordResetService.sendPasswordResetEmail(
+        dto.email
+      );
+
+      if (!result.success) {
+        return ServiceResponse.failure(result.message, null, result.statusCode);
+      }
+
+      return ServiceResponse.success(
+        "If the email exists, a password reset link has been sent",
+        { success: true }
+      );
+    } catch (error) {
+      logger.error("Error in forgotPassword:", error);
+      return ServiceResponse.failure(
+        "Error processing password reset request",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  public async resetPassword(
+    dto: ResetPasswordRequestDto
+  ): Promise<ServiceResponse<ResetPasswordResponseDto | null>> {
+    try {
+      const result = await this.passwordResetService.resetPassword(
+        dto.token,
+        dto.password
+      );
+
+      if (!result.success) {
+        return ServiceResponse.failure(result.message, null, result.statusCode);
+      }
+
+      return ServiceResponse.success("Password reset successfully", {
+        success: true,
+      });
+    } catch (error) {
+      logger.error("Error in resetPassword:", error);
+      return ServiceResponse.failure(
+        "Error resetting password",
         null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );

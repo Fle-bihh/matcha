@@ -16,6 +16,8 @@ export const API_ROUTES = {
     authenticate: "/authenticate",
     "verify-email": "/verify-email",
     "resend-verification-email": "/resend-verification-email",
+    "forgot-password": "/forgot-password",
+    "reset-password": "/reset-password",
   },
 } as const;
 

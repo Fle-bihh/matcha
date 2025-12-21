@@ -32,11 +32,15 @@ export const useActions = <T extends EActionKeys>(actions: T[]) => {
     const firstError = actionData.find((data) => data?.error)?.error;
     const error = firstError?.message || null;
     const hasError = Boolean(firstError);
+    const isSuccess = actionData.some(
+      (data) => data?.status === EActionStatus.Success
+    );
 
     return {
       isLoading,
       error,
       hasError,
+      isSuccess,
     };
   }, [actionData, actions]);
 };

@@ -59,3 +59,34 @@ export interface VerifyEmailResponseDto {
 export interface ResendVerificationEmailResponseDto {
   success: boolean;
 }
+
+export const ForgotPasswordRequestSchema = z.object({
+  email: fields.email,
+});
+
+export type ForgotPasswordRequestDto = z.infer<
+  typeof ForgotPasswordRequestSchema
+>;
+
+export interface ForgotPasswordResponseDto {
+  success: boolean;
+}
+
+export const ResetPasswordRequestSchema = z
+  .object({
+    token: z.string().min(1, "Token is required"),
+    password: fields.password,
+    confirmPassword: fields.password,
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type ResetPasswordRequestDto = z.infer<
+  typeof ResetPasswordRequestSchema
+>;
+
+export interface ResetPasswordResponseDto {
+  success: boolean;
+}

@@ -110,4 +110,21 @@ export class UserRepository extends BaseRepository {
       return null;
     }
   }
+
+  public async updateUserPassword(
+    userId: number,
+    hashedPassword: string
+  ): Promise<AuthUserWithPassword | null> {
+    try {
+      const updatedUser = await this.updateDoc<AuthUserWithPassword>(
+        this.tableName,
+        userId,
+        { password: hashedPassword }
+      );
+      return updatedUser;
+    } catch (error) {
+      logger.error("Error updating user password:", error);
+      return null;
+    }
+  }
 }
