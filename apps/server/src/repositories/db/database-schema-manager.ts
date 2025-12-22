@@ -14,20 +14,60 @@ export class DatabaseSchemaManager {
   ): Promise<void> {
     const pool = this.connectionManager.getPool();
 
-    const query = `
-			CREATE TABLE IF NOT EXISTS ${tableName} (
-				id INT AUTO_INCREMENT PRIMARY KEY,
-				${fields},
-				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-				deleted_at TIMESTAMP NULL
-				${additionalConstraints ? "," + additionalConstraints : ""}
-			)
-		`;
+    const [tables] = await pool.execute(`SHOW TABLES LIKE '${tableName}'`);
 
-    await pool.execute(query);
+    if ((tables as any[]).length === 0) {
+      // Table doesn't exist, create it
+      const query = `
+				CREATE TABLE ${tableName} (
+					id INT AUTO_INCREMENT PRIMARY KEY,
+					${fields},
+					created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+					deleted_at TIMESTAMP NULL
+					${additionalConstraints ? "," + additionalConstraints : ""}
+				)
+			`;
+      await pool.execute(query);
+    } else {
+      await this.ensureFieldsMatch(tableName, fields);
+      await this.ensureMetadataColumns(tableName);
+    }
+  }
 
-    await this.ensureMetadataColumns(tableName);
+  private parseFieldDefinitions(
+    fields: string
+  ): { name: string; definition: string }[] {
+    return fields
+      .split(",")
+      .map((field) => field.trim())
+      .filter((field) => field.length > 0)
+      .map((field) => {
+        const parts = field.trim().split(/\s+/);
+        const name = parts[0];
+        const definition = parts.slice(1).join(" ");
+        return { name, definition };
+      });
+  }
+
+  private async ensureFieldsMatch(
+    tableName: string,
+    fields: string
+  ): Promise<void> {
+    const pool = this.connectionManager.getPool();
+    const [columns] = await pool.execute(`SHOW COLUMNS FROM ${tableName}`);
+    const existingColumns = (columns as any[]).map((col) => col.Field);
+
+    const requiredFields = this.parseFieldDefinitions(fields);
+
+    for (const { name, definition } of requiredFields) {
+      if (!existingColumns.includes(name)) {
+        await pool.execute(
+          `ALTER TABLE ${tableName} ADD COLUMN ${name} ${definition}`
+        );
+      }
+      // Note: We're not modifying existing columns to avoid data loss
+    }
   }
 
   async ensureMetadataColumns(tableName: string): Promise<void> {
