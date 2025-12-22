@@ -1,7 +1,7 @@
 import { Container } from "@/container/index.container";
 import React, { useMemo, useEffect } from "react";
 import { Provider as ReduxProvider } from "react-redux";
-import { BrowserRouter, useNavigate } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "../auth";
 import { NavigationSetup } from "./navigation.component";
 import { Snackbar } from "../utils";

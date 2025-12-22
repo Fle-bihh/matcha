@@ -2,26 +2,30 @@ import { APP_NAME } from "@matcha/shared";
 import { AppBar, Toolbar, Typography, IconButton, Box } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountIcon from "@mui/icons-material/AccountCircle";
-import { useNavigate } from "react-router-dom";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { ROUTES } from "@/constants";
+import { APP_ROUTES } from "@/constants";
+import { useHeaderRef } from "@/contexts/header-height.context";
+import { useRouting } from "@/hooks/routing.hooks";
 
 export function HomeHeader() {
-  const navigate = useNavigate();
+  const routing = useRouting();
   const { authUser, logout } = useAuthUser();
+  const appBarRef = useHeaderRef<HTMLDivElement>();
 
   const handleLogoClick = () => {
-    navigate(ROUTES.protected);
+    routing.push(APP_ROUTES.protected);
   };
 
-  const handleAccountClick = () => {};
+  const handleAccountClick = () => {
+    routing.push(APP_ROUTES.profile);
+  };
 
   const handleLogout = () => {
     logout();
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" ref={appBarRef}>
       <Toolbar>
         <Typography
           variant="h6"

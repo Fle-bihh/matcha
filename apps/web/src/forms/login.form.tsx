@@ -15,7 +15,7 @@ import { useState } from "react";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActions } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
-import { ROUTES } from "@/constants";
+import { APP_ROUTES } from "@/constants";
 import { Link } from "react-router-dom";
 
 export function LoginForm() {
@@ -77,7 +77,7 @@ export function LoginForm() {
             }}
           />
           <Button
-            to={ROUTES.forgotPassword}
+            to={APP_ROUTES.forgotPassword}
             variant="text"
             fullWidth
             component={Link}

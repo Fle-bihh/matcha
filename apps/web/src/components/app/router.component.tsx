@@ -1,27 +1,42 @@
-import { ROUTES } from "@/constants";
+import { APP_PAGES } from "@/constants";
 import { Route, Routes } from "react-router-dom";
 import { withLoggedIn, withLoggedOut } from "../utils";
 import { EntryPage, NotFoundPage, HomePage } from "@/pages";
-import { EntryLayout, ProtectedLayout } from "@/layouts";
+import { EntryLayout, ProtectedLayout, ProfileLayout } from "@/layouts";
 import { RegisterPage, LoginPage, ForgotPasswordPage } from "@/pages/auth";
 import { ConfirmEmailPage } from "@/pages/auth/confirm-email.page";
 import { ModifyPasswordPage } from "@/pages/auth/modify-password.page";
+import { ProfilePage } from "@/pages/profile/profile.page";
+import { ProfileSettingsPage } from "@/pages/profile/profile-settings.page";
 
 export function Router() {
   return (
     <Routes>
-      <Route path={ROUTES.entry} element={withLoggedOut(EntryLayout)()}>
+      <Route path={APP_PAGES.entry} element={withLoggedOut(EntryLayout)()}>
         <Route index element={<EntryPage />} />
-        <Route path={ROUTES.register} element={<RegisterPage />} />
-        <Route path={ROUTES.login} element={<LoginPage />} />
-        <Route path={ROUTES.forgotPassword} element={<ForgotPasswordPage />} />
+        <Route path={APP_PAGES.register} element={<RegisterPage />} />
+        <Route path={APP_PAGES.login} element={<LoginPage />} />
+        <Route
+          path={APP_PAGES.forgotPassword}
+          element={<ForgotPasswordPage />}
+        />
       </Route>
-      <Route path={ROUTES.protected} element={withLoggedIn(ProtectedLayout)()}>
+      <Route
+        path={APP_PAGES.protected}
+        element={withLoggedIn(ProtectedLayout)()}
+      >
         <Route index element={<HomePage />} />
+        <Route path={APP_PAGES.profile} element={<ProfileLayout />}>
+          <Route index element={<ProfilePage />} />
+          <Route
+            path={APP_PAGES.profileSettings}
+            element={<ProfileSettingsPage />}
+          />
+        </Route>
       </Route>
-      <Route path={ROUTES.confirmEmail} element={<ConfirmEmailPage />} />
-      <Route path={ROUTES.modifyPassword} element={<ModifyPasswordPage />} />
-      <Route path={ROUTES.notFound} element={<NotFoundPage />} />
+      <Route path={APP_PAGES.confirmEmail} element={<ConfirmEmailPage />} />
+      <Route path={APP_PAGES.modifyPassword} element={<ModifyPasswordPage />} />
+      <Route path={APP_PAGES.notFound} element={<NotFoundPage />} />
     </Routes>
   );
 }

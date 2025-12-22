@@ -1,5 +1,5 @@
 import { CenteredPaper } from "@/components/app/centered-paper.component";
-import { ROUTES } from "@/constants";
+import { APP_ROUTES } from "@/constants";
 import { APP_NAME } from "@matcha/shared";
 import {
   Button,
@@ -31,7 +31,7 @@ export function EntryPage() {
       <Stack spacing={1.5}>
         <Button
           component={Link}
-          to={ROUTES.register}
+          to={APP_ROUTES.register}
           variant="contained"
           size="large"
           color="primary"
@@ -41,7 +41,7 @@ export function EntryPage() {
         </Button>
         <Button
           component={Link}
-          to={ROUTES.login}
+          to={APP_ROUTES.login}
           variant="outlined"
           size="large"
           color="primary"

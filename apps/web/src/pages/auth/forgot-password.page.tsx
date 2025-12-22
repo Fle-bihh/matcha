@@ -17,7 +17,7 @@ import { useAuthUser } from "@/hooks/auth.hook";
 import { useActions } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 import { Link } from "react-router-dom";
-import { ROUTES } from "@/constants";
+import { APP_ROUTES } from "@/constants";
 
 export function ForgotPasswordPage() {
   const { forgotPassword } = useAuthUser();
@@ -95,7 +95,7 @@ export function ForgotPasswordPage() {
             <Typography variant="body2" color="text.secondary">
               Remember your password?{" "}
               <Link
-                to={ROUTES.login}
+                to={APP_ROUTES.login}
                 style={{ color: "inherit", fontWeight: 600 }}
               >
                 Back to Login

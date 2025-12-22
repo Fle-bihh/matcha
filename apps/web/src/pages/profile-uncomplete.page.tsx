@@ -4,17 +4,7 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 
 export function ProfileUncomplete() {
   return (
-    <CenteredPaper
-      backButtonDisabled
-      boxSx={{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        height: "80%",
-        alignItems: "center",
-      }}
-      sx={{ textAlign: "center" }}
-    >
+    <CenteredPaper backButtonDisabled sx={{ textAlign: "center" }}>
       <PersonOutlineIcon sx={{ fontSize: 80, color: "primary.main", mb: 2 }} />
       <Typography variant="h4" gutterBottom>
         Profile Incomplete

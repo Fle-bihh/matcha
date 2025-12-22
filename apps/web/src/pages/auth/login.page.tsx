@@ -1,4 +1,4 @@
-import { ROUTES } from "@/constants";
+import { APP_ROUTES } from "@/constants";
 import { Box, Typography, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { LoginForm } from "@/forms/login.form";
@@ -19,7 +19,12 @@ export function LoginPage() {
       </Typography>
       <LoginForm />
       <Box mt={2}>
-        <Button to={ROUTES.register} variant="text" fullWidth component={Link}>
+        <Button
+          to={APP_ROUTES.register}
+          variant="text"
+          fullWidth
+          component={Link}
+        >
           Don't have an account? Register
         </Button>
       </Box>

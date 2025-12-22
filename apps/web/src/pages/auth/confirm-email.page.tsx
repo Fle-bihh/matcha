@@ -1,18 +1,9 @@
 import { CenteredPaper } from "@/components/app/centered-paper.component";
-import {
-  Container,
-  Box,
-  Paper,
-  Typography,
-  Button,
-  Alert,
-} from "@mui/material";
+import { Box, Typography, Button, Alert } from "@mui/material";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActions } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { ROUTES } from "@/constants";
+import { useSearchParams } from "react-router-dom";
 
 export function ConfirmEmailPage() {
   const [searchParams] = useSearchParams();
