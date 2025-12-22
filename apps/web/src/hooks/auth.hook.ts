@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { AuthActions } from "@/store";
+import { AuthActions, UserActions } from "@/store";
 import {
   selectAuthUser,
   selectIsAuthInitialized,
@@ -20,6 +20,7 @@ export const useAuthUser = () => {
     resendVerificationEmail: createAction(AuthActions.resendVerificationEmail),
     forgotPassword: createAction(AuthActions.forgotPassword),
     resetPassword: createAction(AuthActions.resetPassword),
+    updateProfile: createAction(UserActions.updateProfile),
   };
 
   return {

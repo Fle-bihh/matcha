@@ -1,5 +1,6 @@
 import { useAuthUser } from "@/hooks/auth.hook";
 import { Box, Card, CardContent, Typography, Avatar } from "@mui/material";
+import { UpdateProfileForm } from "@/forms/update-profile.form";
 
 export function ProfilePage() {
   const { authUser: user } = useAuthUser();
@@ -25,9 +26,10 @@ export function ProfilePage() {
             </Box>
           </Box>
           <Box sx={{ mt: 2 }}>
-            <Typography variant="body1" color="text.secondary">
-              Welcome to your profile page!
+            <Typography variant="h6" gutterBottom>
+              Update Gender
             </Typography>
+            <UpdateProfileForm />
           </Box>
         </CardContent>
       </Card>

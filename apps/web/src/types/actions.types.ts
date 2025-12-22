@@ -4,6 +4,7 @@ import {
   VerifyEmailRequestDto,
   ForgotPasswordRequestDto,
   ResetPasswordRequestDto,
+  UpdateProfileDto,
 } from "@matcha/shared";
 
 export enum EActionKeys {
@@ -15,6 +16,7 @@ export enum EActionKeys {
   ResendVerificationEmail = "resendVerificationEmail",
   ForgotPassword = "forgotPassword",
   ResetPassword = "resetPassword",
+  UpdateProfile = "updateProfile",
 }
 
 export interface IActionDtoMap {
@@ -26,6 +28,7 @@ export interface IActionDtoMap {
   [EActionKeys.ResendVerificationEmail]: null;
   [EActionKeys.ForgotPassword]: ForgotPasswordRequestDto;
   [EActionKeys.ResetPassword]: ResetPasswordRequestDto;
+  [EActionKeys.UpdateProfile]: UpdateProfileDto;
 }
 
 export type ActionDto<K extends EActionKeys> = IActionDtoMap[K];

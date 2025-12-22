@@ -1,8 +1,8 @@
 import { IContainer } from "@/types";
 import { BaseService } from "./base.service";
-import { API_BASE_URL } from "@/constants";
 import { ApiResponse, logger, getRoute } from "@matcha/shared";
 import { EStorageKeys } from "@/types/storage.constants";
+import { config } from "@/config";
 
 interface RequestOptions {
   auth?: boolean;
@@ -16,7 +16,7 @@ export class ApiService extends BaseService {
 
   constructor(container: IContainer) {
     super(container);
-    this.baseUrl = API_BASE_URL;
+    this.baseUrl = config.apiUrl;
   }
 
   private async getAuthHeaders(options?: RequestOptions): Promise<HeadersInit> {
@@ -136,6 +136,33 @@ export class ApiService extends BaseService {
       const refreshed = await this.refreshAccessToken();
       if (refreshed) {
         return this.post<T>(endpoint, data, { ...options, _isRetry: true });
+      }
+    }
+
+    if (!response.ok) {
+      const data = await response.clone().json();
+      throw new Error(`${data.message || response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  async patch<T>(
+    endpoint: string,
+    data?: any,
+    options?: RequestOptions
+  ): Promise<ApiResponse<T>> {
+    const headers = await this.getAuthHeaders(options);
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: "PATCH",
+      headers,
+      body: data ? JSON.stringify(data) : undefined,
+    });
+
+    if (response.status === 401 && options?.auth && !options._isRetry) {
+      const refreshed = await this.refreshAccessToken();
+      if (refreshed) {
+        return this.patch<T>(endpoint, data, { ...options, _isRetry: true });
       }
     }
 

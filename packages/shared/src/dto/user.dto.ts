@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { fields } from "../validation";
-import { AuthUser } from "../models";
+import { AuthUser, Gender } from "../models";
 
 export const CreateUserDtoSchema = z.object({
   email: fields.email,
@@ -22,5 +22,11 @@ export const UpdateUserDtoSchema = z
   .partial();
 
 export type UpdateUserDto = z.infer<typeof UpdateUserDtoSchema>;
+
+export const UpdateProfileDtoSchema = z.object({
+  gender: z.enum(Gender),
+});
+
+export type UpdateProfileDto = z.infer<typeof UpdateProfileDtoSchema>;
 
 export interface UserResponseDto extends AuthUser {}
