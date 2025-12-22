@@ -2,7 +2,7 @@
 
 deploy:
 	make setup
-	make up
+	make re
 	make logs
 	
 setup:
