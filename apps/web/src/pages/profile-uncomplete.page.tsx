@@ -1,8 +1,15 @@
 import { CenteredPaper } from "@/components/app/centered-paper.component";
 import { Box, Button, Typography } from "@mui/material";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import { useRouting } from "@/hooks/routing.hooks";
+import { APP_ROUTES } from "@/constants";
 
 export function ProfileUncomplete() {
+  const routing = useRouting();
+
+  const handleCompleteProfile = () => {
+    routing.push(APP_ROUTES.profile);
+  };
   return (
     <CenteredPaper backButtonDisabled sx={{ textAlign: "center" }}>
       <PersonOutlineIcon sx={{ fontSize: 80, color: "primary.main", mb: 2 }} />
@@ -17,7 +24,12 @@ export function ProfileUncomplete() {
       >
         Please complete your profile to access all app features.
       </Typography>
-      <Button variant="contained" size="large" fullWidth>
+      <Button
+        variant="contained"
+        size="large"
+        fullWidth
+        onClick={handleCompleteProfile}
+      >
         Complete Profile
       </Button>
     </CenteredPaper>
