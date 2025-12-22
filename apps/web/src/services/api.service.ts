@@ -95,20 +95,26 @@ export class ApiService extends BaseService {
     return this.refreshPromise;
   }
 
-  async get<T>(
+  private async request<T>(
+    method: string,
     endpoint: string,
+    body?: any,
     options?: RequestOptions
   ): Promise<ApiResponse<T>> {
     const headers = await this.getAuthHeaders(options);
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: "GET",
+      method,
       headers,
+      body: body ? JSON.stringify(body) : undefined,
     });
 
     if (response.status === 401 && options?.auth && !options._isRetry) {
       const refreshed = await this.refreshAccessToken();
       if (refreshed) {
-        return this.get<T>(endpoint, { ...options, _isRetry: true });
+        return this.request<T>(method, endpoint, body, {
+          ...options,
+          _isRetry: true,
+        });
       }
     }
 
@@ -118,6 +124,13 @@ export class ApiService extends BaseService {
     }
 
     return response.json();
+  }
+
+  async get<T>(
+    endpoint: string,
+    options?: RequestOptions
+  ): Promise<ApiResponse<T>> {
+    return this.request<T>("GET", endpoint, undefined, options);
   }
 
   async post<T>(
@@ -125,26 +138,7 @@ export class ApiService extends BaseService {
     data?: any,
     options?: RequestOptions
   ): Promise<ApiResponse<T>> {
-    const headers = await this.getAuthHeaders(options);
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: "POST",
-      headers,
-      body: data ? JSON.stringify(data) : undefined,
-    });
-
-    if (response.status === 401 && options?.auth && !options._isRetry) {
-      const refreshed = await this.refreshAccessToken();
-      if (refreshed) {
-        return this.post<T>(endpoint, data, { ...options, _isRetry: true });
-      }
-    }
-
-    if (!response.ok) {
-      const data = await response.clone().json();
-      throw new Error(`${data.message || response.statusText}`);
-    }
-
-    return response.json();
+    return this.request<T>("POST", endpoint, data, options);
   }
 
   async patch<T>(
@@ -152,25 +146,6 @@ export class ApiService extends BaseService {
     data?: any,
     options?: RequestOptions
   ): Promise<ApiResponse<T>> {
-    const headers = await this.getAuthHeaders(options);
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: "PATCH",
-      headers,
-      body: data ? JSON.stringify(data) : undefined,
-    });
-
-    if (response.status === 401 && options?.auth && !options._isRetry) {
-      const refreshed = await this.refreshAccessToken();
-      if (refreshed) {
-        return this.patch<T>(endpoint, data, { ...options, _isRetry: true });
-      }
-    }
-
-    if (!response.ok) {
-      const data = await response.clone().json();
-      throw new Error(`${data.message || response.statusText}`);
-    }
-
-    return response.json();
+    return this.request<T>("PATCH", endpoint, data, options);
   }
 }
