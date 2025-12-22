@@ -14,6 +14,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { useRouting } from "@/hooks/routing.hooks";
 import { useHeaderHeight } from "@/contexts/header-height.context";
+import { useMemo } from "react";
 
 const menuItems = [
   { text: "Profile", icon: <PersonIcon />, path: APP_ROUTES.profile },
@@ -34,8 +35,14 @@ export function ProfileLayout() {
     routing.push(path);
   };
 
-  const contentHeight = `calc(100vh - ${headerHeight}px)`;
-  const contentWidth = `calc(100vw - ${DRAWER_WIDTH}px)`;
+  const contentHeight = useMemo(
+    () => `calc(100vh - ${headerHeight}px)`,
+    [headerHeight]
+  );
+  const contentWidth = useMemo(
+    () => `calc(100vw - ${DRAWER_WIDTH}px)`,
+    [DRAWER_WIDTH]
+  );
 
   return (
     <Box>
