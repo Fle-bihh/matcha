@@ -26,6 +26,8 @@ export class UserService extends BaseService {
       return ServiceResponse.failure(response.message);
     }
 
+    this.snackbar.success(response.message);
+
     return ServiceResponse.success(response.message);
   }
 }

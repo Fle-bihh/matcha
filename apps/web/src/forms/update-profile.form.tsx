@@ -1,11 +1,21 @@
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   UpdateProfileDtoSchema,
   UpdateProfileDto,
   Gender,
 } from "@matcha/shared";
-import { TextField, Button, Stack, Typography, MenuItem } from "@mui/material";
+import {
+  Button,
+  Stack,
+  Typography,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  FormHelperText,
+} from "@mui/material";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActions } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
@@ -17,7 +27,7 @@ export function UpdateProfileForm() {
 
   const defaultValues = useMemo(
     () => ({
-      gender: authUser?.gender || "",
+      gender: authUser?.gender || undefined,
     }),
     []
   );
@@ -25,6 +35,7 @@ export function UpdateProfileForm() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<UpdateProfileDto>({
     resolver: zodResolver(UpdateProfileDtoSchema),
@@ -38,22 +49,36 @@ export function UpdateProfileForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={2}>
-        <TextField
-          {...register("gender")}
-          select
-          label="Gender"
-          variant="outlined"
-          fullWidth
-          required
-          error={!!errors.gender}
-          helperText={errors.gender?.message}
-          disabled={isLoading}
-          defaultValue={defaultValues.gender}
-        >
-          <MenuItem value={Gender.Male}>Male</MenuItem>
-          <MenuItem value={Gender.Female}>Female</MenuItem>
-          <MenuItem value={Gender.Other}>Other</MenuItem>
-        </TextField>
+        <FormControl error={!!errors.gender} disabled={isLoading}>
+          <FormLabel id="gender-label">Gender</FormLabel>
+          <Controller
+            name="gender"
+            control={control}
+            defaultValue={defaultValues.gender}
+            render={({ field }) => (
+              <RadioGroup aria-labelledby="gender-label" {...field}>
+                <FormControlLabel
+                  value={Gender.Male}
+                  control={<Radio />}
+                  label="Male"
+                />
+                <FormControlLabel
+                  value={Gender.Female}
+                  control={<Radio />}
+                  label="Female"
+                />
+                <FormControlLabel
+                  value={Gender.Other}
+                  control={<Radio />}
+                  label="Other"
+                />
+              </RadioGroup>
+            )}
+          />
+          {errors.gender && (
+            <FormHelperText>{errors.gender.message}</FormHelperText>
+          )}
+        </FormControl>
 
         <Button
           type="submit"

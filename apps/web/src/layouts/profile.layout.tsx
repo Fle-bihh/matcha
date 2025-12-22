@@ -1,3 +1,4 @@
+import { useMemo, useCallback } from "react";
 import {
   Box,
   Drawer,
@@ -6,15 +7,16 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Toolbar,
 } from "@mui/material";
 import { Outlet, useLocation } from "react-router-dom";
-import { APP_ROUTES } from "@/constants";
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
+import { APP_ROUTES } from "@/constants";
 import { useRouting } from "@/hooks/routing.hooks";
 import { useHeaderHeight } from "@/contexts/header-height.context";
-import { useMemo } from "react";
+import { useWindow } from "@/hooks/window.hook";
+
+const DRAWER_WIDTH = 240;
 
 const menuItems = [
   { text: "Profile", icon: <PersonIcon />, path: APP_ROUTES.profile },
@@ -23,25 +25,21 @@ const menuItems = [
     icon: <SettingsIcon />,
     path: APP_ROUTES.profileSettings,
   },
-];
-
-const DRAWER_WIDTH = 240;
+] as const;
 
 export function ProfileLayout() {
   const location = useLocation();
-  const routing = useRouting();
+  const { push } = useRouting();
   const { headerHeight } = useHeaderHeight();
-  const navigate = (path: string) => {
-    routing.push(path);
-  };
+  const { isMobile } = useWindow();
 
-  const contentHeight = useMemo(
-    () => `calc(100vh - ${headerHeight}px)`,
-    [headerHeight]
-  );
-  const contentWidth = useMemo(
-    () => `calc(100vw - ${DRAWER_WIDTH}px)`,
-    [DRAWER_WIDTH]
+  const drawerWidth = useMemo(() => (isMobile ? 56 : DRAWER_WIDTH), [isMobile]);
+
+  const navigate = useCallback(
+    (path: string) => {
+      push(path);
+    },
+    [push]
   );
 
   return (
@@ -53,7 +51,7 @@ export function ProfileLayout() {
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
             top: `${headerHeight}px`,
-            width: DRAWER_WIDTH,
+            width: drawerWidth,
           },
         }}
       >
@@ -64,8 +62,10 @@ export function ProfileLayout() {
                 selected={location.pathname === item.path}
                 onClick={() => navigate(item.path)}
               >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
+                <ListItemIcon sx={{ width: 36 }}>{item.icon}</ListItemIcon>
+                {!isMobile && (
+                  <ListItemText sx={{ lineHeight: 36 }} primary={item.text} />
+                )}
               </ListItemButton>
             </ListItem>
           ))}
@@ -74,9 +74,9 @@ export function ProfileLayout() {
       <Box
         component="main"
         sx={{
-          height: contentHeight,
-          width: contentWidth,
-          ml: `${DRAWER_WIDTH}px`,
+          height: `calc(100vh - ${headerHeight}px)`,
+          width: `calc(100vw - ${drawerWidth}px)`,
+          ml: `${drawerWidth}px`,
         }}
       >
         <Outlet />
