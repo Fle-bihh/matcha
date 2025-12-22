@@ -1,12 +1,16 @@
 import { HomeHeader } from "@/components/home/header.component";
-import { Container } from "@mui/material";
+import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
 
 export function ProtectedLayout() {
   return (
-    <div>
+    <Box
+      sx={{
+        height: "100vh",
+      }}
+    >
       <HomeHeader />
       <Outlet />
-    </div>
+    </Box>
   );
 }

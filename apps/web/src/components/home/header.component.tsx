@@ -1,6 +1,7 @@
 import { APP_NAME } from "@matcha/shared";
 import { AppBar, Toolbar, Typography, IconButton, Box } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
+import AccountIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { ROUTES } from "@/constants";
@@ -12,6 +13,8 @@ export function HomeHeader() {
   const handleLogoClick = () => {
     navigate(ROUTES.protected);
   };
+
+  const handleAccountClick = () => {};
 
   const handleLogout = () => {
     logout();
@@ -30,6 +33,13 @@ export function HomeHeader() {
         </Typography>
         <Box display="flex" alignItems="center" gap={1}>
           <Typography variant="body1">{authUser?.username}</Typography>
+          <IconButton
+            color="inherit"
+            onClick={handleAccountClick}
+            aria-label="account"
+          >
+            <AccountIcon />
+          </IconButton>
           <IconButton
             color="inherit"
             onClick={handleLogout}

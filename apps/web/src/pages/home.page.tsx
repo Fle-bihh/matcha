@@ -1,17 +1,10 @@
 import { useAuthUser } from "@/hooks/auth.hook";
-import {
-  Container,
-  Paper,
-  Typography,
-  Box,
-  Button,
-  Divider,
-} from "@mui/material";
-import { Person as PersonIcon } from "@mui/icons-material";
-import { VerifyEmailBox } from "@/components/home/verify-email-box.component";
+import { Container, Typography, Box } from "@mui/material";
+import { withProfileCompleteComponent } from "@/components/utils/with-condition-component.component";
+import { ProfileUncomplete } from "./profile-uncomplete.page";
 
-export function HomePage() {
-  const { logout, authUser } = useAuthUser();
+function HomePageComp() {
+  const { authUser } = useAuthUser();
 
   if (!authUser) {
     return null;
@@ -19,51 +12,16 @@ export function HomePage() {
 
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h4" component="h1">
-            Welcome, {authUser.first_name}!
-          </Typography>
-        </Box>
-
-        <Divider sx={{ mb: 3 }} />
-
-        <VerifyEmailBox />
-
-        <Box sx={{ mb: 3 }}>
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            <PersonIcon sx={{ mr: 1 }} /> User Information
-          </Typography>
-
-          <Box sx={{ ml: 2, mt: 2 }}>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Username:</strong> {authUser.username}
-            </Typography>
-
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Email:</strong> {authUser.email}
-            </Typography>
-
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>First Name:</strong> {authUser.first_name}
-            </Typography>
-
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Last Name:</strong> {authUser.last_name}
-            </Typography>
-          </Box>
-        </Box>
-
-        <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
-          <Button variant="outlined" color="primary" onClick={logout}>
-            Logout
-          </Button>
-        </Box>
-      </Paper>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h4" component="h1">
+          Welcome, {authUser.first_name}!
+        </Typography>
+      </Box>
     </Container>
   );
 }
+
+export const HomePage = withProfileCompleteComponent(
+  HomePageComp,
+  ProfileUncomplete
+);

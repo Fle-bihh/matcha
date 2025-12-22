@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-class Config {
+class EnvConfig {
   public readonly port: number;
   public readonly webUrl: string;
   public readonly database: {
@@ -55,4 +55,4 @@ class Config {
   }
 }
 
-export const config = new Config();
+export const config = new EnvConfig();
