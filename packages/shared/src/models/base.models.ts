@@ -5,6 +5,11 @@ export interface BaseEntity {
   deleted_at?: string | null;
 }
 
+export type OmitBaseEntity<T extends BaseEntity> = Omit<
+  T,
+  "id" | "created_at" | "updated_at" | "deleted_at"
+>;
+
 export type PartialBaseEntity<T extends BaseEntity> = Partial<
-  Omit<T, "id" | "created_at" | "updated_at" | "deleted_at">
+  OmitBaseEntity<T>
 >;

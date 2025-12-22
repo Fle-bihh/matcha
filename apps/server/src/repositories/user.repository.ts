@@ -28,7 +28,17 @@ export class UserRepository extends BaseRepository {
 			 first_name VARCHAR(50) NOT NULL,
 			 last_name VARCHAR(50) NOT NULL,
 			 password VARCHAR(255) NOT NULL,
-       is_email_verified BOOLEAN NOT NULL`
+       is_email_verified BOOLEAN NOT NULL,
+       is_profile_complete BOOLEAN NOT NULL DEFAULT FALSE,
+       gender VARCHAR(20),
+       orientation VARCHAR(20),
+       age INTEGER,
+       bio TEXT,
+       pictures_urls JSON NOT NULL DEFAULT '[]',
+       profile_picture_index INTEGER,
+       interests JSON NOT NULL DEFAULT '[]',
+       location JSON,
+       fame_score INTEGER NOT NULL DEFAULT 0`
     );
   }
 
@@ -38,6 +48,16 @@ export class UserRepository extends BaseRepository {
       {
         ...data,
         is_email_verified: false,
+        is_profile_complete: false,
+        gender: null,
+        orientation: null,
+        age: null,
+        bio: null,
+        pictures_urls: [],
+        profile_picture_index: null,
+        interests: [],
+        location: null,
+        fame_score: 0,
       }
     );
     return userWithPassword;
