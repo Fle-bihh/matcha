@@ -1,65 +1,57 @@
 import { useState, useEffect } from "react";
 import { TextField } from "@mui/material";
-import { validateAge } from "@matcha/shared";
+import { validateFirstName } from "@matcha/shared";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActions } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 import { ProfileFieldCard } from "./profile-field-card.component";
 
-export function AgeCard() {
+export function FirstNameCard() {
   const { authUser, updateProfile } = useAuthUser();
   const { isLoading, error } = useActions([EActionKeys.UpdateProfile]);
 
-  const [age, setAge] = useState<number | "">(authUser?.age || "");
+  const [firstName, setFirstName] = useState<string>(
+    authUser?.first_name || ""
+  );
   const [validationError, setValidationError] = useState<string>("");
 
-  const defaultValue = authUser?.age || "";
-  const hasChanges = age !== defaultValue;
+  const defaultValue = authUser?.first_name || "";
+  const hasChanges = firstName !== defaultValue;
 
   useEffect(() => {
-    if (authUser?.age !== null && authUser?.age !== undefined) {
-      setAge(authUser.age);
+    if (authUser?.first_name !== null && authUser?.first_name !== undefined) {
+      setFirstName(authUser.first_name);
     }
-  }, [authUser?.age]);
+  }, [authUser?.first_name]);
 
   const handleChange = (value: string) => {
-    const error = validateAge(value);
+    const error = validateFirstName(value);
     setValidationError(error || "");
-
-    if (value === "") {
-      setAge("");
-    } else {
-      const numValue = parseInt(value, 10);
-      if (!isNaN(numValue)) {
-        setAge(numValue);
-      }
-    }
+    setFirstName(value);
   };
 
   const handleSave = async () => {
-    if (typeof age === "number" && !validationError) {
-      await updateProfile({ age });
+    if (!validationError && firstName.trim()) {
+      await updateProfile({ first_name: firstName.trim() });
     }
   };
 
   return (
     <ProfileFieldCard
-      title="Age"
+      title="First Name"
       onSave={handleSave}
       isLoading={isLoading}
       hasChanges={hasChanges && !validationError}
       error={error}
     >
       <TextField
-        type="number"
-        label="Your age"
-        value={age}
+        label="Your first name"
+        value={firstName}
         onChange={(e) => handleChange(e.target.value)}
         disabled={isLoading}
         fullWidth
         error={!!validationError}
-        helperText={validationError}
-        inputProps={{ min: 18, max: 120 }}
+        helperText={validationError || `${firstName.length}/50 characters`}
       />
     </ProfileFieldCard>
   );

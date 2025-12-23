@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { TextField } from "@mui/material";
+import { validateBio } from "@matcha/shared";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActions } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
@@ -22,11 +23,8 @@ export function BioCard() {
   }, [authUser?.bio]);
 
   const handleChange = (value: string) => {
-    if (value.length > 500) {
-      setValidationError("Bio must not exceed 500 characters");
-    } else {
-      setValidationError("");
-    }
+    const error = validateBio(value);
+    setValidationError(error || "");
     setBio(value);
   };
 

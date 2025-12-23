@@ -1,4 +1,6 @@
 import { Box, Typography } from "@mui/material";
+import { FirstNameCard } from "@/components/profile/first-name-card.component";
+import { LastNameCard } from "@/components/profile/last-name-card.component";
 import { GenderCard } from "@/components/profile/gender-card.component";
 import { OrientationCard } from "@/components/profile/orientation-card.component";
 import { AgeCard } from "@/components/profile/age-card.component";
@@ -22,6 +24,8 @@ export function ProfilePage() {
           mt: 3,
         }}
       >
+        <FirstNameCard />
+        <LastNameCard />
         <GenderCard />
         <OrientationCard />
         <AgeCard />

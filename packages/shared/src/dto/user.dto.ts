@@ -17,6 +17,8 @@ export const UpdateProfileDtoSchema = z.object({
   orientation: z.enum(Orientation).optional(),
   age: fields.age.optional(),
   bio: fields.bio.optional(),
+  first_name: fields.firstName.optional(),
+  last_name: fields.lastName.optional(),
 });
 
 export type UpdateProfileDto = z.infer<typeof UpdateProfileDtoSchema>;
