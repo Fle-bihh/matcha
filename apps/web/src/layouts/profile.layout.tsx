@@ -1,4 +1,4 @@
-import { Activity } from "react";
+import { Activity, useMemo } from "react";
 import {
   Box,
   Drawer,
@@ -38,6 +38,7 @@ export function ProfileLayout() {
   const { headerHeight, profileDrawerWidth } = useLayoutSizes();
   const drawerRef = useProfileDrawerRef<HTMLUListElement>();
   const { isMobile } = useWindow();
+  const listItemPadding = useMemo(() => (isMobile ? 1 : 4), [isMobile]);
 
   return (
     <Box>
@@ -58,7 +59,11 @@ export function ProfileLayout() {
                 disableGutters
                 selected={location.pathname === item.path}
                 onClick={() => push(item.path)}
-                sx={{ paddingLeft: 1, paddingRight: 1, gap: 2 }}
+                sx={{
+                  paddingLeft: listItemPadding,
+                  paddingRight: listItemPadding,
+                  gap: 2,
+                }}
               >
                 <ListItemIcon
                   sx={{
