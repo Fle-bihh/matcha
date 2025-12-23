@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import {
   FormControl,
   FormLabel,
@@ -10,24 +9,21 @@ import { Orientation } from "@matcha/shared";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActions } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
+import { useValidatedField } from "@/hooks/use-validated-field.hook";
 import { ProfileFieldCard } from "./profile-field-card.component";
 
 export function OrientationCard() {
   const { authUser, updateProfile } = useAuthUser();
   const { isLoading, error } = useActions([EActionKeys.UpdateProfile]);
 
-  const [orientation, setOrientation] = useState<Orientation | undefined>(
-    authUser?.orientation || undefined
-  );
-
-  const defaultValue = authUser?.orientation || undefined;
-  const hasChanges = orientation !== defaultValue;
-
-  useEffect(() => {
-    if (authUser?.orientation) {
-      setOrientation(authUser.orientation);
-    }
-  }, [authUser?.orientation]);
+  const {
+    value: orientation,
+    handleChange,
+    hasChanges,
+  } = useValidatedField<Orientation | undefined>({
+    initialValue: undefined,
+    syncWithAuth: authUser?.orientation,
+  });
 
   const handleSave = async () => {
     if (orientation) {
@@ -48,7 +44,7 @@ export function OrientationCard() {
         <RadioGroup
           aria-labelledby="orientation-label"
           value={orientation || ""}
-          onChange={(e) => setOrientation(e.target.value as Orientation)}
+          onChange={(e) => handleChange(e.target.value as Orientation)}
         >
           <FormControlLabel
             value={Orientation.Heterosexual}

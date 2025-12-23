@@ -1,43 +1,40 @@
-import { useState, useEffect } from "react";
 import { TextField } from "@mui/material";
 import { validateAge } from "@matcha/shared";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActions } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
+import { useValidatedField } from "@/hooks/use-validated-field.hook";
 import { ProfileFieldCard } from "./profile-field-card.component";
 
 export function AgeCard() {
   const { authUser, updateProfile } = useAuthUser();
   const { isLoading, error } = useActions([EActionKeys.UpdateProfile]);
 
-  const [age, setAge] = useState<number | "">(authUser?.age || "");
-  const [validationError, setValidationError] = useState<string>("");
-
-  const defaultValue = authUser?.age || "";
-  const hasChanges = age !== defaultValue;
-
-  useEffect(() => {
-    if (authUser?.age !== null && authUser?.age !== undefined) {
-      setAge(authUser.age);
-    }
-  }, [authUser?.age]);
+  const {
+    value: age,
+    validationError,
+    handleChange: setAgeValue,
+    isValid,
+    hasChanges,
+  } = useValidatedField<number | "">({
+    initialValue: "",
+    validator: (val) => validateAge(String(val)),
+    syncWithAuth: authUser?.age ?? "",
+  });
 
   const handleChange = (value: string) => {
-    const error = validateAge(value);
-    setValidationError(error || "");
-
     if (value === "") {
-      setAge("");
+      setAgeValue("");
     } else {
       const numValue = parseInt(value, 10);
       if (!isNaN(numValue)) {
-        setAge(numValue);
+        setAgeValue(numValue);
       }
     }
   };
 
   const handleSave = async () => {
-    if (typeof age === "number" && !validationError) {
+    if (typeof age === "number" && isValid) {
       await updateProfile({ age });
     }
   };
@@ -47,7 +44,7 @@ export function AgeCard() {
       title="Age"
       onSave={handleSave}
       isLoading={isLoading}
-      hasChanges={hasChanges && !validationError}
+      hasChanges={hasChanges && isValid}
       error={error}
     >
       <TextField

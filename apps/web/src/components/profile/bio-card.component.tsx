@@ -1,35 +1,29 @@
-import { useState, useEffect } from "react";
 import { TextField } from "@mui/material";
 import { validateBio } from "@matcha/shared";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActions } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
+import { useValidatedField } from "@/hooks/use-validated-field.hook";
 import { ProfileFieldCard } from "./profile-field-card.component";
 
 export function BioCard() {
   const { authUser, updateProfile } = useAuthUser();
   const { isLoading, error } = useActions([EActionKeys.UpdateProfile]);
 
-  const [bio, setBio] = useState<string>(authUser?.bio || "");
-  const [validationError, setValidationError] = useState<string>("");
-
-  const defaultValue = authUser?.bio || "";
-  const hasChanges = bio !== defaultValue;
-
-  useEffect(() => {
-    if (authUser?.bio !== null && authUser?.bio !== undefined) {
-      setBio(authUser.bio);
-    }
-  }, [authUser?.bio]);
-
-  const handleChange = (value: string) => {
-    const error = validateBio(value);
-    setValidationError(error || "");
-    setBio(value);
-  };
+  const {
+    value: bio,
+    validationError,
+    handleChange,
+    isValid,
+    hasChanges,
+  } = useValidatedField<string>({
+    initialValue: "",
+    validator: validateBio,
+    syncWithAuth: authUser?.bio ?? "",
+  });
 
   const handleSave = async () => {
-    if (!validationError) {
+    if (isValid) {
       await updateProfile({ bio: bio || undefined });
     }
   };
@@ -39,7 +33,7 @@ export function BioCard() {
       title="Bio"
       onSave={handleSave}
       isLoading={isLoading}
-      hasChanges={hasChanges && !validationError}
+      hasChanges={hasChanges && isValid}
       error={error}
     >
       <TextField
@@ -51,7 +45,9 @@ export function BioCard() {
         multiline
         rows={4}
         error={!!validationError}
-        helperText={validationError || `${bio.length}/500 characters`}
+        helperText={
+          validationError || `${(bio as string).length}/500 characters`
+        }
       />
     </ProfileFieldCard>
   );

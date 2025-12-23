@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import {
   FormControl,
   FormLabel,
@@ -11,24 +10,21 @@ import { Gender } from "@matcha/shared";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActions } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
+import { useValidatedField } from "@/hooks/use-validated-field.hook";
 import { ProfileFieldCard } from "./profile-field-card.component";
 
 export function GenderCard() {
   const { authUser, updateProfile } = useAuthUser();
   const { isLoading, error } = useActions([EActionKeys.UpdateProfile]);
 
-  const [gender, setGender] = useState<Gender | undefined>(
-    authUser?.gender || undefined
-  );
-
-  const defaultValue = authUser?.gender || undefined;
-  const hasChanges = gender !== defaultValue;
-
-  useEffect(() => {
-    if (authUser?.gender) {
-      setGender(authUser.gender);
-    }
-  }, [authUser?.gender]);
+  const {
+    value: gender,
+    handleChange,
+    hasChanges,
+  } = useValidatedField<Gender | undefined>({
+    initialValue: undefined,
+    syncWithAuth: authUser?.gender,
+  });
 
   const handleSave = async () => {
     if (gender) {
@@ -49,7 +45,7 @@ export function GenderCard() {
         <RadioGroup
           aria-labelledby="gender-label"
           value={gender || ""}
-          onChange={(e) => setGender(e.target.value as Gender)}
+          onChange={(e) => handleChange(e.target.value as Gender)}
         >
           <FormControlLabel
             value={Gender.Male}
