@@ -38,13 +38,11 @@ export class UserController extends BaseController {
     const imageFile = req.file!;
     const { index } = req.validated?.body!;
     const { id } = req.user!;
-    res.status(501).send({
-      message: "Not implemented " + imageFile.filename + " index: " + index,
-    });
-    // const result = await this.userService.uploadProfilePicture(
-    //   id,
-    //   imageFile
-    // );
-    // res.status(result.statusCode).send(result);
+    const result = await this.userService.updateProfilePicture(
+      id,
+      imageFile,
+      index
+    );
+    res.status(result.statusCode).send(result);
   }
 }

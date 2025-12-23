@@ -8,6 +8,7 @@ import {
   PartialBaseEntity,
 } from "@matcha/shared";
 import { IContainer } from "@/types";
+import { config } from "@/config";
 
 export class UserRepository extends BaseRepository {
   private readonly tableName = "users";
@@ -41,6 +42,31 @@ export class UserRepository extends BaseRepository {
     );
   }
 
+  private async sanitizeUserData(
+    data: AuthUserWithPassword
+  ): Promise<AuthUserWithPassword> {
+    console.log("Sanitizing user data:", data);
+
+    const picturesUrls: string[] = Array.isArray(data.pictures_urls)
+      ? data.pictures_urls
+      : [];
+    const sanitizedPictures = picturesUrls.map((url: string) => {
+      const baseUrl = config.serverUrl;
+      return `${baseUrl}/${url}`;
+    });
+
+    // console.log("Sanitized pictures URLs:", sanitizedPictures[0]);
+
+    const value = {
+      ...data,
+      pictures_urls: sanitizedPictures,
+    };
+
+    console.log("Sanitized user data:", value);
+
+    return value;
+  }
+
   public async createUser(data: CreateUserDto): Promise<AuthUserWithPassword> {
     const userWithPassword = await this.createDocument<AuthUserWithPassword>(
       this.tableName,
@@ -58,7 +84,7 @@ export class UserRepository extends BaseRepository {
         fame_score: 0,
       }
     );
-    return userWithPassword;
+    return this.sanitizeUserData(userWithPassword);
   }
 
   public async findUserById(
@@ -69,7 +95,7 @@ export class UserRepository extends BaseRepository {
         this.tableName,
         userId
       );
-      return user;
+      return user ? this.sanitizeUserData(user) : null;
     } catch (error) {
       logger.error("Error finding user by ID:", error);
       return null;
@@ -87,7 +113,7 @@ export class UserRepository extends BaseRepository {
       if (users.length === 0) {
         return null;
       }
-      return users[0];
+      return users[0] ? this.sanitizeUserData(users[0]) : null;
     } catch (error) {
       logger.error("Error finding user by email:", error);
       return null;
@@ -105,7 +131,7 @@ export class UserRepository extends BaseRepository {
       if (users.length === 0) {
         return null;
       }
-      return users[0];
+      return users[0] ? this.sanitizeUserData(users[0]) : null;
     } catch (error) {
       logger.error("Error finding user by username:", error);
       return null;
@@ -122,7 +148,7 @@ export class UserRepository extends BaseRepository {
         userId,
         data
       );
-      return updatedUser;
+      return updatedUser ? this.sanitizeUserData(updatedUser) : null;
     } catch (error) {
       logger.error("Error updating user:", error);
       return null;
@@ -139,7 +165,7 @@ export class UserRepository extends BaseRepository {
         userId,
         { password: hashedPassword }
       );
-      return updatedUser;
+      return updatedUser ? this.sanitizeUserData(updatedUser) : null;
     } catch (error) {
       logger.error("Error updating user password:", error);
       return null;

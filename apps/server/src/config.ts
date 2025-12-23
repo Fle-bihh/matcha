@@ -3,6 +3,7 @@ require("dotenv").config();
 class EnvConfig {
   public readonly port: number;
   public readonly webUrl: string;
+  public readonly serverUrl: string;
   public readonly database: {
     host: string;
     user: string;
@@ -28,6 +29,7 @@ class EnvConfig {
   constructor() {
     this.port = Number(process.env.SERVER_PORT) || 3000;
     this.webUrl = process.env.WEB_URL || "http://localhost:3001";
+    this.serverUrl = process.env.SERVER_URL || `http://localhost:${this.port}`;
     this.database = {
       host: process.env.DB_HOST || "localhost",
       user: process.env.DB_USER || "root",

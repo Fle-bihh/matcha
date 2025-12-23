@@ -1,13 +1,6 @@
-import {
-  Box,
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-  Chip,
-  Stack,
-} from "@mui/material";
+import { Box, Card, CardContent, Typography, Chip, Stack } from "@mui/material";
 import { useAuthUser } from "@/hooks/auth.hook";
+import { AuthImage } from "@/components/utils/auth-image.component";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
@@ -30,9 +23,7 @@ export function ProfilePreviewPage() {
     );
   }
 
-  const profilePictureUrl = authUser.pictures_urls
-    ? authUser.pictures_urls[authUser.profile_picture_index ?? 0]
-    : null;
+  const profilePictureUrl = authUser.pictures_urls?.[0];
   const displayName = `${authUser.first_name} ${authUser.last_name}`;
 
   return (
@@ -53,30 +44,28 @@ export function ProfilePreviewPage() {
           borderRadius: 2,
         }}
       >
-        {profilePictureUrl ? (
-          <CardMedia
-            component="img"
-            height="400"
-            image={profilePictureUrl}
-            alt={`${displayName}'s profile picture`}
-            sx={{ objectFit: "cover" }}
-          />
-        ) : (
-          <Box
-            sx={{
-              height: 400,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "grey.300",
-            }}
-          >
-            <Typography variant="h6" color="text.secondary">
-              No photo
-            </Typography>
-          </Box>
-        )}
-
+        <AuthImage
+          src={profilePictureUrl}
+          alt={`${displayName}'s profile picture`}
+          height={400}
+          width="100%"
+          objectFit="cover"
+          fallback={
+            <Box
+              sx={{
+                height: 400,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "grey.300",
+              }}
+            >
+              <Typography variant="h6" color="text.secondary">
+                No photo
+              </Typography>
+            </Box>
+          }
+        />
         <CardContent>
           {/* Name and Age */}
           <Typography variant="h4" component="div" gutterBottom>

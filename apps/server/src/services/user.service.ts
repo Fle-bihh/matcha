@@ -11,7 +11,6 @@ import {
 } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { HashUtils } from "@/utils/hash.utils";
-import { PROFILE_PICTURE_UPLOAD_PATH } from "@/middleware/upload.middleware";
 
 export class UserService extends BaseService {
   constructor(container: IContainer) {
@@ -216,21 +215,49 @@ export class UserService extends BaseService {
     }
   }
 
-  // public async uploadProfilePicture(
-  //   userId: number,
-  //   imageFile: Express.Multer.File
-  // ): Promise<ServiceResponse<AuthUser | null>> {
-  //   try {
-  //     const user = await this.userRepository.findUserById(userId);
-  //     const imagePath = `/${PROFILE_PICTURE_UPLOAD_PATH}${imageFile.filename}`;
+  public async updateProfilePicture(
+    userId: number,
+    imageFile: Express.Multer.File,
+    index: number
+  ): Promise<ServiceResponse<AuthUser | null>> {
+    try {
+      const user = await this.userRepository.findUserById(userId);
+      if (!user) {
+        return ServiceResponse.failure(
+          "User not found",
+          null,
+          StatusCodes.NOT_FOUND
+        );
+      }
 
-  //     if (!user) {
-  //       return ServiceResponse.failure(
-  //         "User not found",
-  //         null,
-  //         StatusCodes.NOT_FOUND
-  //       );
-  //     }
+      const picturesArray = Array.isArray(user.pictures_urls)
+        ? [...user.pictures_urls]
+        : [];
+      picturesArray[index] = imageFile.path;
 
-  //     const updatedPictures
+      const updatedUser = await this.userRepository.updateUser(userId, {
+        pictures_urls: picturesArray,
+      });
+
+      if (!updatedUser) {
+        return ServiceResponse.failure(
+          "Error updating profile picture",
+          null,
+          StatusCodes.NOT_FOUND
+        );
+      }
+
+      return ServiceResponse.success(
+        "Profile picture updated successfully",
+        this.excludePassword(updatedUser)
+      );
+    } catch (error) {
+      logger.error("Error in uploadProfilePicture:", error);
+      return ServiceResponse.failure(
+        "Error uploading profile picture",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
 }
