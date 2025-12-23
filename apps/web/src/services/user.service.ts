@@ -10,7 +10,7 @@ export class UserService extends BaseService {
     return ServiceResponse.failure("Not implemented");
   }
 
-  @action()
+  @action({ showSuccessMessage: true, showErrorMessage: true })
   async updateProfile(data: UpdateProfileDto): Promise<ServiceResponse> {
     const response = await this.apiService.patch<AuthUser>(
       getRoute("user", "update-profile"),
@@ -25,8 +25,6 @@ export class UserService extends BaseService {
     if (!response.success) {
       return ServiceResponse.failure(response.message);
     }
-
-    this.snackbar.success(response.message);
 
     return ServiceResponse.success(response.message);
   }

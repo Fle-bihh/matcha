@@ -3,6 +3,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { setAction } from "../slices";
 import { serializeError } from "@/utils/error.utils";
 import { EActionKeys, EActionStatus, ActionDto } from "@/types/actions.types";
+import { getActionOptions } from "@/decorators";
+import { SnackbarService } from "@/services";
 
 const baseAction = <T extends EActionKeys>(
   actionType: T,
@@ -86,7 +88,21 @@ const createBaseActions = <T extends Partial<ActionConfig>>(
         const method = (service as any)[methodName] as (
           dto: any
         ) => Promise<ServiceResponse>;
-        return method.call(service, actionDto);
+
+        const options = getActionOptions(service, methodName);
+
+        const response = await method.call(service, actionDto);
+
+        const snackbar = container.get<SnackbarService>(
+          ETokens.SnackbarService
+        );
+        if (response.success && options?.showSuccessMessage) {
+          snackbar.success(response.message || "Action completed successfully");
+        } else if (!response.success && options?.showErrorMessage) {
+          snackbar.error(response.message || "Action failed");
+        }
+
+        return response;
       })(dto)) as any;
   }
 

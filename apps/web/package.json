@@ -25,7 +25,8 @@
     "react-hook-form": "^7.68.0",
     "react-is": "^18.2.0",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.9.3"
+    "react-router-dom": "^7.9.3",
+    "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
     "@types/dotenv": "^6.1.1",
