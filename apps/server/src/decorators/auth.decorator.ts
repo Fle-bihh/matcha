@@ -1,47 +1,22 @@
-import { AuthMetadata, ServiceResponse } from "@/types";
-import { StatusCodes } from "http-status-codes";
-import { JwtUtils } from "@/utils/jwt.utils";
+import { authenticateRequest } from "@/middleware/auth.middleware";
 
 export function auth() {
-	return function (
-		target: any,
-		propertyKey: string,
-		descriptor: PropertyDescriptor
-	) {
-		const originalMethod = descriptor.value;
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+  ) {
+    const originalMethod = descriptor.value;
 
-		descriptor.value = function (...args: any[]) {
-			const req = args[0];
-			const res = args[1];
+    descriptor.value = function (...args: any[]) {
+      const req = args[0];
+      const res = args[1];
 
-			try {
-				const authHeader = req.headers["authorization"];
+      authenticateRequest(req, res, () => {
+        return originalMethod.apply(this, args);
+      });
+    };
 
-				if (!authHeader || !authHeader.startsWith("Bearer ")) {
-					const response = ServiceResponse.failure(
-						"Unauthorized: No token provided",
-						null,
-						StatusCodes.UNAUTHORIZED
-					);
-					return res.status(response.statusCode).json(response);
-				}
-
-				const token = authHeader.substring(7);
-				const decoded = JwtUtils.verifyToken(token);
-
-				req.user = decoded;
-
-				return originalMethod.apply(this, args);
-			} catch (error) {
-				const response = ServiceResponse.failure(
-					"Unauthorized: Invalid or expired token",
-					null,
-					StatusCodes.UNAUTHORIZED
-				);
-				return res.status(response.statusCode).json(response);
-			}
-		};
-
-		return descriptor;
-	};
+    return descriptor;
+  };
 }

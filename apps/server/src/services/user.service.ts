@@ -11,6 +11,7 @@ import {
 } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { HashUtils } from "@/utils/hash.utils";
+import { PROFILE_PICTURE_UPLOAD_PATH } from "@/middleware/upload.middleware";
 
 export class UserService extends BaseService {
   constructor(container: IContainer) {
@@ -214,4 +215,22 @@ export class UserService extends BaseService {
       );
     }
   }
+
+  // public async uploadProfilePicture(
+  //   userId: number,
+  //   imageFile: Express.Multer.File
+  // ): Promise<ServiceResponse<AuthUser | null>> {
+  //   try {
+  //     const user = await this.userRepository.findUserById(userId);
+  //     const imagePath = `/${PROFILE_PICTURE_UPLOAD_PATH}${imageFile.filename}`;
+
+  //     if (!user) {
+  //       return ServiceResponse.failure(
+  //         "User not found",
+  //         null,
+  //         StatusCodes.NOT_FOUND
+  //       );
+  //     }
+
+  //     const updatedPictures
 }

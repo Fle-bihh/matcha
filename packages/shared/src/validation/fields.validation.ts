@@ -42,4 +42,12 @@ export const fields = {
     .max(120, "Age must be realistic"),
 
   bio: z.string().max(500, "Bio must not exceed 500 characters").optional(),
+
+  formDataNumber: z
+    .string()
+    .nonempty("Number is required")
+    .refine((val) => {
+      const num = Number(val);
+      return !isNaN(num);
+    }, "Must be a valid number"),
 };

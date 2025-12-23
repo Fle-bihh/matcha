@@ -8,6 +8,7 @@ export const API_ROUTES = {
   user: {
     all: "/users",
     "update-profile": "/profile",
+    "update-profile-picture": "/profile-picture",
   },
   auth: {
     register: "/register",

@@ -23,4 +23,6 @@ export const UpdateProfileDtoSchema = z.object({
 
 export type UpdateProfileDto = z.infer<typeof UpdateProfileDtoSchema>;
 
-export interface UserResponseDto extends AuthUser {}
+export const UpdateProfilePictureDtoSchema = z.object({
+  index: fields.formDataNumber,
+});

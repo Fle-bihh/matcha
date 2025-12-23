@@ -2,8 +2,12 @@ import type { Request, Response } from "express";
 import { BaseController } from "./base.controller";
 import { ETokens } from "@/types";
 import { UserService } from "@/services";
-import { auth, route, validate } from "@/decorators";
-import { UpdateProfileDtoSchema } from "@matcha/shared";
+import { auth, route, validate, upload } from "@/decorators";
+import {
+  UpdateProfileDtoSchema,
+  UpdateProfilePictureDtoSchema,
+} from "@matcha/shared";
+import { uploadProfilePictureMiddleware } from "@/middleware/upload.middleware";
 
 export class UserController extends BaseController {
   private get userService(): UserService {
@@ -17,5 +21,30 @@ export class UserController extends BaseController {
     const { id } = req.user!;
     const result = await this.userService.updateUser(id, req.validated?.body);
     res.status(result.statusCode).send(result);
+  }
+
+  @auth()
+  @route("PATCH", "update-profile-picture")
+  @upload(uploadProfilePictureMiddleware, {
+    validation: {
+      required: true,
+    },
+  })
+  @validate(UpdateProfilePictureDtoSchema, "body")
+  private async updateProfilePicture(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    const imageFile = req.file!;
+    const { index } = req.validated?.body!;
+    const { id } = req.user!;
+    res.status(501).send({
+      message: "Not implemented " + imageFile.filename + " index: " + index,
+    });
+    // const result = await this.userService.uploadProfilePicture(
+    //   id,
+    //   imageFile
+    // );
+    // res.status(result.statusCode).send(result);
   }
 }

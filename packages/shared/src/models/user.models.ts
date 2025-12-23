@@ -22,7 +22,6 @@ export interface User extends BaseEntity {
   age: number | null;
   bio: string | null;
   pictures_urls: string[] | null;
-  profile_picture_index: number | null;
   interests: string[] | null;
   location: UserLocation | null;
   fame_score: number;

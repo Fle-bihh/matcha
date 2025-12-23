@@ -35,7 +35,6 @@ export class UserRepository extends BaseRepository {
        age INTEGER,
        bio TEXT,
        pictures_urls JSON,
-       profile_picture_index INTEGER,
        interests JSON,
        location JSON,
        fame_score INTEGER NOT NULL DEFAULT 0`
@@ -54,7 +53,6 @@ export class UserRepository extends BaseRepository {
         age: null,
         bio: null,
         pictures_urls: [],
-        profile_picture_index: null,
         interests: [],
         location: null,
         fame_score: 0,
