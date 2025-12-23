@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { fields } from "../validation";
-import { AuthUser, Gender } from "../models";
+import { AuthUser, Gender, Orientation } from "../models";
 
 export const CreateUserDtoSchema = z.object({
   email: fields.email,
@@ -12,19 +12,11 @@ export const CreateUserDtoSchema = z.object({
 
 export type CreateUserDto = z.infer<typeof CreateUserDtoSchema>;
 
-export const UpdateUserDtoSchema = z
-  .object({
-    email: fields.email.optional(),
-    username: fields.username.optional(),
-    first_name: fields.firstName.optional(),
-    last_name: fields.lastName.optional(),
-  })
-  .partial();
-
-export type UpdateUserDto = z.infer<typeof UpdateUserDtoSchema>;
-
 export const UpdateProfileDtoSchema = z.object({
-  gender: z.enum(Gender),
+  gender: z.enum(Gender).optional(),
+  orientation: z.enum(Orientation).optional(),
+  age: fields.age.optional(),
+  bio: fields.bio.optional(),
 });
 
 export type UpdateProfileDto = z.infer<typeof UpdateProfileDtoSchema>;

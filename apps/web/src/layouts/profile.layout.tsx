@@ -19,10 +19,14 @@ import { useWindow } from "@/hooks/window.hook";
 const DRAWER_WIDTH = 240;
 
 const menuItems = [
-  { text: "Profile", icon: <PersonIcon />, path: APP_ROUTES.profile },
+  {
+    text: "Profile",
+    Icon: PersonIcon,
+    path: APP_ROUTES.profile,
+  },
   {
     text: "Settings",
-    icon: <SettingsIcon />,
+    Icon: SettingsIcon,
     path: APP_ROUTES.profileSettings,
   },
 ] as const;
@@ -62,9 +66,19 @@ export function ProfileLayout() {
                 selected={location.pathname === item.path}
                 onClick={() => navigate(item.path)}
               >
-                <ListItemIcon sx={{ width: 36 }}>{item.icon}</ListItemIcon>
+                <ListItemIcon sx={{ fontSize: 32 }}>
+                  {<item.Icon fontSize={"inherit"} />}
+                </ListItemIcon>
                 {!isMobile && (
-                  <ListItemText sx={{ lineHeight: 36 }} primary={item.text} />
+                  <ListItemText
+                    slotProps={{
+                      primary: {
+                        lineHeight: 0.8,
+                        fontSize: 22,
+                      },
+                    }}
+                    primary={item.text}
+                  />
                 )}
               </ListItemButton>
             </ListItem>

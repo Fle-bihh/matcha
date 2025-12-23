@@ -34,4 +34,12 @@ export const fields = {
   accessToken: z.string().min(1, "Access token is required"),
 
   refreshToken: z.string().min(1, "Refresh token is required"),
+
+  age: z
+    .number()
+    .int("Age must be a whole number")
+    .min(18, "You must be at least 18 years old")
+    .max(120, "Age must be realistic"),
+
+  bio: z.string().max(500, "Bio must not exceed 500 characters").optional(),
 };
