@@ -45,8 +45,6 @@ export class UserRepository extends BaseRepository {
   private async sanitizeUserData(
     data: AuthUserWithPassword
   ): Promise<AuthUserWithPassword> {
-    console.log("Sanitizing user data:", data);
-
     const picturesUrls: string[] = Array.isArray(data.pictures_urls)
       ? data.pictures_urls
       : [];
@@ -55,14 +53,10 @@ export class UserRepository extends BaseRepository {
       return `${baseUrl}/${url}`;
     });
 
-    // console.log("Sanitized pictures URLs:", sanitizedPictures[0]);
-
     const value = {
       ...data,
       pictures_urls: sanitizedPictures,
     };
-
-    console.log("Sanitized user data:", value);
 
     return value;
   }
