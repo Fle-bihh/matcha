@@ -26,12 +26,7 @@ export default defineConfig(({ mode }) => {
       port,
     },
     optimizeDeps: {
-      include: [
-        "@matcha/shared",
-        "@mui/material",
-        "@emotion/react",
-        "@emotion/styled",
-      ],
+      include: ["@matcha/shared"],
     },
     build: {
       commonjsOptions: {

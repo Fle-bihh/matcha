@@ -34,9 +34,9 @@ export class UserRepository extends BaseRepository {
        orientation VARCHAR(20),
        age INTEGER,
        bio TEXT,
-       pictures_urls JSON NOT NULL DEFAULT '[]',
+       pictures_urls JSON,
        profile_picture_index INTEGER,
-       interests JSON NOT NULL DEFAULT '[]',
+       interests JSON,
        location JSON,
        fame_score INTEGER NOT NULL DEFAULT 0`
     );

@@ -3,7 +3,7 @@ import { ProfileContentWrapper } from "@/components/profile/profile-content-wrap
 
 export function ProfilePage() {
   return (
-    <ProfileContentWrapper title="Your Profile">
+    <ProfileContentWrapper title="Your Profiles">
       <UpdateProfileForm />
     </ProfileContentWrapper>
   );

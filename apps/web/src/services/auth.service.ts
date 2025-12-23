@@ -103,7 +103,7 @@ export class AuthService extends BaseService {
     }
   }
 
-  @action()
+  @action({ showSuccessMessage: true })
   public async login(dto: LoginRequestDto) {
     this.dispatch(clearAction({ key: EActionKeys.Register }));
     const response = await this.apiService.post<LoginResponseDto>(
@@ -115,13 +115,11 @@ export class AuthService extends BaseService {
       return ServiceResponse.failure(response.message);
     }
 
-    this.snackbar.success(this.MESSAGES.AUTH_SUCCESSFUL);
-
     await this.storeAuthData(response.responseObject);
     return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
   }
 
-  @action()
+  @action({ showSuccessMessage: true })
   public async register(dto: RegisterRequestDto) {
     this.dispatch(clearAction({ key: EActionKeys.Login }));
     const response = await this.apiService.post<RegisterResponseDto>(
@@ -133,8 +131,6 @@ export class AuthService extends BaseService {
       return ServiceResponse.failure(response.message);
     }
 
-    this.snackbar.success(this.MESSAGES.AUTH_SUCCESSFUL);
-
     await this.storeAuthData(response.responseObject);
     return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
   }
@@ -145,7 +141,7 @@ export class AuthService extends BaseService {
     return ServiceResponse.success(this.MESSAGES.LOGOUT_SUCCESSFUL);
   }
 
-  @action()
+  @action({ showSuccessMessage: true })
   public async verifyEmail(dto: VerifyEmailRequestDto) {
     const response = await this.apiService.post<VerifyEmailResponseDto>(
       this.getAuthRoute("verify-email"),
@@ -158,11 +154,10 @@ export class AuthService extends BaseService {
 
     this.dispatch(setEmailToVerified());
     this.router.replace("/login");
-    this.snackbar.success(this.MESSAGES.EMAIL_VERIFIED);
     return ServiceResponse.success(this.MESSAGES.EMAIL_VERIFIED);
   }
 
-  @action()
+  @action({ showSuccessMessage: true, showErrorMessage: true })
   public async resendVerificationEmail() {
     const response =
       await this.apiService.get<ResendVerificationEmailResponseDto>(
@@ -171,15 +166,13 @@ export class AuthService extends BaseService {
       );
 
     if (!response.success) {
-      this.snackbar.error(response.message);
       return ServiceResponse.failure(response.message);
     }
 
-    this.snackbar.success(response.message);
     return ServiceResponse.success(this.MESSAGES.EMAIL_VERIFICATION_SENT);
   }
 
-  @action()
+  @action({ showErrorMessage: true })
   public async forgotPassword(dto: ForgotPasswordRequestDto) {
     const response = await this.apiService.post<ForgotPasswordResponseDto>(
       this.getAuthRoute("forgot-password"),
@@ -190,11 +183,10 @@ export class AuthService extends BaseService {
       return ServiceResponse.failure(response.message);
     }
 
-    this.snackbar.success(response.message);
     return ServiceResponse.success(this.MESSAGES.PASSWORD_RESET_SENT);
   }
 
-  @action()
+  @action({ showSuccessMessage: true, showErrorMessage: true })
   public async resetPassword(dto: ResetPasswordRequestDto) {
     const response = await this.apiService.post<ResetPasswordResponseDto>(
       this.getAuthRoute("reset-password"),
@@ -205,7 +197,6 @@ export class AuthService extends BaseService {
       return ServiceResponse.failure(response.message);
     }
 
-    this.snackbar.success(response.message);
     this.router.replace("/login");
     return ServiceResponse.success(this.MESSAGES.PASSWORD_RESET_SUCCESS);
   }

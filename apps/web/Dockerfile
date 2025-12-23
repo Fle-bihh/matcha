@@ -21,3 +21,4 @@ ENV VITE_WEB_URL=${VITE_WEB_URL}
 ENV VITE_SERVER_URL=${VITE_SERVER_URL}
 
 CMD ["sh", "-c", "cd /app/packages/shared && npm run dev & cd /app/apps/web && npm run dev"]
+# CMD ["sh", "-c", "cd /app/packages/shared && npm run dev & cd /app/apps/web && npm run build && npm run start -- --host"]
