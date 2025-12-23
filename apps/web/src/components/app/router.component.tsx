@@ -8,6 +8,7 @@ import { ConfirmEmailPage } from "@/pages/auth/confirm-email.page";
 import { ModifyPasswordPage } from "@/pages/auth/modify-password.page";
 import { ProfilePage } from "@/pages/profile/profile.page";
 import { ProfileSettingsPage } from "@/pages/profile/profile-settings.page";
+import { ProfilePreviewPage } from "@/pages/profile/profile-preview.page";
 
 export function Router() {
   return (
@@ -28,6 +29,10 @@ export function Router() {
         <Route index element={<HomePage />} />
         <Route path={APP_PAGES.profile} element={<ProfileLayout />}>
           <Route index element={<ProfilePage />} />
+          <Route
+            path={APP_PAGES.profilePreview}
+            element={<ProfilePreviewPage />}
+          />
           <Route
             path={APP_PAGES.profileSettings}
             element={<ProfileSettingsPage />}

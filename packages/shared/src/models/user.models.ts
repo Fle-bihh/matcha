@@ -15,22 +15,22 @@ export enum Orientation {
 }
 
 export interface User extends BaseEntity {
-  username: string;
+  first_name: string;
+  last_name: string;
   gender: Gender | null;
   orientation: Orientation | null;
   age: number | null;
   bio: string | null;
-  pictures_urls: string[];
+  pictures_urls: string[] | null;
   profile_picture_index: number | null;
-  interests: string[];
+  interests: string[] | null;
   location: UserLocation | null;
   fame_score: number;
 }
 
 export interface AuthUser extends User {
   email: string;
-  first_name: string;
-  last_name: string;
+  username: string;
   is_email_verified: boolean;
   is_profile_complete: boolean;
 }

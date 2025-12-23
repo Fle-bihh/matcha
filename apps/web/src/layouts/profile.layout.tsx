@@ -11,6 +11,7 @@ import {
 import { Outlet, useLocation } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { APP_ROUTES } from "@/constants";
 import { useRouting } from "@/hooks/routing.hooks";
 import {
@@ -24,6 +25,11 @@ const menuItems = [
     text: "Profile",
     Icon: PersonIcon,
     path: APP_ROUTES.profile,
+  },
+  {
+    text: "Preview",
+    Icon: VisibilityIcon,
+    path: APP_ROUTES.profilePreview,
   },
   {
     text: "Settings",
