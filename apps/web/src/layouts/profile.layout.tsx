@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from "react";
+import { Activity } from "react";
 import {
   Box,
   Drawer,
@@ -13,10 +13,11 @@ import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { APP_ROUTES } from "@/constants";
 import { useRouting } from "@/hooks/routing.hooks";
-import { useHeaderHeight } from "@/contexts/header-height.context";
+import {
+  useLayoutSizes,
+  useProfileDrawerRef,
+} from "@/contexts/layout-sizes.context";
 import { useWindow } from "@/hooks/window.hook";
-
-const DRAWER_WIDTH = 240;
 
 const menuItems = [
   {
@@ -34,17 +35,9 @@ const menuItems = [
 export function ProfileLayout() {
   const location = useLocation();
   const { push } = useRouting();
-  const { headerHeight } = useHeaderHeight();
+  const { headerHeight, profileDrawerWidth } = useLayoutSizes();
+  const drawerRef = useProfileDrawerRef<HTMLUListElement>();
   const { isMobile } = useWindow();
-
-  const drawerWidth = useMemo(() => (isMobile ? 56 : DRAWER_WIDTH), [isMobile]);
-
-  const navigate = useCallback(
-    (path: string) => {
-      push(path);
-    },
-    [push]
-  );
 
   return (
     <Box>
@@ -55,31 +48,36 @@ export function ProfileLayout() {
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
             top: `${headerHeight}px`,
-            width: drawerWidth,
           },
         }}
       >
-        <List>
+        <List ref={drawerRef}>
           {menuItems.map((item) => (
             <ListItem key={item.text} disablePadding>
               <ListItemButton
+                disableGutters
                 selected={location.pathname === item.path}
-                onClick={() => navigate(item.path)}
+                onClick={() => push(item.path)}
+                sx={{ paddingLeft: 1, paddingRight: 1, gap: 2 }}
               >
-                <ListItemIcon sx={{ fontSize: 32 }}>
+                <ListItemIcon
+                  sx={{
+                    fontSize: 32,
+                    minWidth: 0,
+                  }}
+                >
                   {<item.Icon fontSize={"inherit"} />}
                 </ListItemIcon>
-                {!isMobile && (
+                <Activity mode={isMobile ? "hidden" : "visible"}>
                   <ListItemText
                     slotProps={{
                       primary: {
-                        lineHeight: 0.8,
                         fontSize: 22,
                       },
                     }}
                     primary={item.text}
                   />
-                )}
+                </Activity>
               </ListItemButton>
             </ListItem>
           ))}
@@ -89,8 +87,8 @@ export function ProfileLayout() {
         component="main"
         sx={{
           height: `calc(100vh - ${headerHeight}px)`,
-          width: `calc(100vw - ${drawerWidth}px)`,
-          ml: `${drawerWidth}px`,
+          width: `calc(100vw - ${profileDrawerWidth}px)`,
+          ml: `${profileDrawerWidth}px`,
         }}
       >
         <Outlet />

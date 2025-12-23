@@ -4,7 +4,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import AccountIcon from "@mui/icons-material/AccountCircle";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { APP_ROUTES } from "@/constants";
-import { useHeaderRef } from "@/contexts/header-height.context";
+import { useHeaderRef } from "@/contexts/layout-sizes.context";
 import { useRouting } from "@/hooks/routing.hooks";
 
 export function HomeHeader() {

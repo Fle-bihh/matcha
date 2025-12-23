@@ -3,12 +3,12 @@ import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import { useMemo } from "react";
 import {
-  HeaderHeightProvider,
-  useHeaderHeight,
-} from "@/contexts/header-height.context";
+  LayoutSizesProvider,
+  useLayoutSizes,
+} from "@/contexts/layout-sizes.context";
 
 function ProtectedLayoutContent() {
-  const { headerHeight } = useHeaderHeight();
+  const { headerHeight } = useLayoutSizes();
   const boxHeight = useMemo(
     () => `calc(100vh - ${headerHeight}px)`,
     [headerHeight]
@@ -38,8 +38,8 @@ function ProtectedLayoutContent() {
 
 export function ProtectedLayout() {
   return (
-    <HeaderHeightProvider>
+    <LayoutSizesProvider>
       <ProtectedLayoutContent />
-    </HeaderHeightProvider>
+    </LayoutSizesProvider>
   );
 }
