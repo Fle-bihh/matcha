@@ -29,7 +29,7 @@ export class PasswordResetService extends BaseService {
       const token = crypto.randomBytes(32).toString("hex");
 
       const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + 1); // 1 hour expiration
+      expiresAt.setHours(expiresAt.getHours() + 1);
 
       await this.passwordResetRepository.deleteByUserId(userId);
 
@@ -60,7 +60,6 @@ export class PasswordResetService extends BaseService {
       const userResponse = await this.userService.findByEmail(email);
 
       if (!userResponse.success || !userResponse.responseObject) {
-        // Don't reveal if email exists for security reasons
         return ServiceResponse.success(
           "If the email exists, a password reset link has been sent",
           true
@@ -69,7 +68,6 @@ export class PasswordResetService extends BaseService {
 
       const user = userResponse.responseObject;
 
-      // Check rate limiting: 5 minutes between emails
       const latestReset = await this.passwordResetRepository.findLatestByUserId(
         user.id
       );
@@ -90,7 +88,6 @@ export class PasswordResetService extends BaseService {
         }
       }
 
-      // Delete all previous reset tokens for this user
       await this.passwordResetRepository.deleteByUserId(user.id);
 
       const tokenResponse = await this.createResetToken(user.id);
@@ -191,7 +188,6 @@ export class PasswordResetService extends BaseService {
         );
       }
 
-      // Delete all reset tokens for this user
       await this.passwordResetRepository.deleteByUserId(reset.user_id);
 
       return ServiceResponse.success("Password reset successfully", true);

@@ -48,8 +48,6 @@ export class AuthController extends BaseController {
 
   @route("POST", "logout")
   private async logout(req: Request, res: Response): Promise<void> {
-    // const result = await this.authService.logout(token);
-    // res.status(result.statusCode).send(result);
     res.status(200).send({ success: true });
   }
 

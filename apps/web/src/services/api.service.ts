@@ -109,7 +109,6 @@ export class ApiService extends BaseService {
     let requestBody: BodyInit | undefined;
     if (body) {
       if (options?.formData) {
-        // Convert object to FormData
         const formData = new FormData();
         Object.entries(body).forEach(([key, value]) => {
           if (value instanceof File) {

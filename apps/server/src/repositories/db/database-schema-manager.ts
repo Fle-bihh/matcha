@@ -17,7 +17,6 @@ export class DatabaseSchemaManager {
     const [tables] = await pool.execute(`SHOW TABLES LIKE '${tableName}'`);
 
     if ((tables as any[]).length === 0) {
-      // Table doesn't exist, create it
       const query = `
 				CREATE TABLE ${tableName} (
 					id INT AUTO_INCREMENT PRIMARY KEY,
@@ -66,7 +65,6 @@ export class DatabaseSchemaManager {
           `ALTER TABLE ${tableName} ADD COLUMN ${name} ${definition}`
         );
       }
-      // Note: We're not modifying existing columns to avoid data loss
     }
   }
 
@@ -102,7 +100,6 @@ export class DatabaseSchemaManager {
     // Clear cache if we made changes
     if (hasChanges) {
       // Note: We would need access to DatabaseOperations instance to clear cache
-      // For now, we'll rely on the cache timeout or manual clearing
     }
   }
 

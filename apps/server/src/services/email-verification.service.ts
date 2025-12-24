@@ -69,7 +69,6 @@ export class EmailVerificationService extends BaseService {
 
       const user = userResponse.responseObject;
 
-      // Check rate limiting: 5 minutes between emails
       const latestVerification =
         await this.emailVerificationRepository.getLatestByUserId(userId);
 
@@ -89,7 +88,6 @@ export class EmailVerificationService extends BaseService {
         }
       }
 
-      // Delete all previous verification tokens for this user
       await this.emailVerificationRepository.deleteByUserId(userId);
 
       const tokenResponse = await this.createVerificationToken(userId);
