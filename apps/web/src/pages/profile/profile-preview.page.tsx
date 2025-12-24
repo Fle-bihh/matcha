@@ -1,6 +1,6 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { ProfileSectionHeader } from "@/components/profile/profile-section-header.component";
+import { ProfilePageWrapper } from "@/components/profile/profile-page-wrapper.component";
 import { ProfilePreviewImage } from "@/components/profile/profile-preview-image.component";
 import { ProfilePreviewInfo } from "@/components/profile/profile-preview-info.component";
 import { ProfilePreviewLocation } from "@/components/profile/profile-preview-location.component";
@@ -31,18 +31,10 @@ export function ProfilePreviewPage() {
   const displayName = `${authUser.first_name} ${authUser.last_name}`;
 
   return (
-    <Box
-      sx={{
-        p: 3,
-        maxWidth: 1200,
-        mx: "auto",
-      }}
+    <ProfilePageWrapper
+      title="Profile Preview"
+      description="This is how other users will see your profile. Make sure your information is accurate and appealing."
     >
-      <ProfileSectionHeader
-        title="Profile Preview"
-        description="This is how other users will see your profile. Make sure your information is accurate and appealing."
-      />
-
       <Box
         sx={{
           display: "flex",
@@ -81,6 +73,6 @@ export function ProfilePreviewPage() {
           </CardContent>
         </Card>
       </Box>
-    </Box>
+    </ProfilePageWrapper>
   );
 }
