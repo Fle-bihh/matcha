@@ -3,8 +3,10 @@ import { Box, Button, Typography } from "@mui/material";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { useRouting } from "@/hooks/routing.hooks";
 import { APP_ROUTES } from "@/constants";
+import { withEmailVerifiedComponent } from "@/components/utils/with-condition-component.component";
+import { VerifyEmailBox } from "@/components/home/verify-email-box.component";
 
-export function ProfileUncomplete() {
+function ProfileUncompleteComp() {
   const routing = useRouting();
 
   const handleCompleteProfile = () => {
@@ -35,3 +37,8 @@ export function ProfileUncomplete() {
     </CenteredPaper>
   );
 }
+
+export const ProfileUncomplete = withEmailVerifiedComponent(
+  ProfileUncompleteComp,
+  VerifyEmailBox
+);

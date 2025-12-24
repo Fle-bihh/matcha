@@ -31,6 +31,23 @@ export function withEmailNotVerifiedComponent(
   };
 }
 
+export function withEmailVerifiedComponent(
+  Component: React.ComponentType,
+  FallbackComponent: React.ComponentType = () => null
+) {
+  return function WrappedComponent(props: any) {
+    const { authUser } = useAuthUser();
+
+    const ConditionedComponent = withConditionComponent(
+      Component,
+      authUser?.is_email_verified ?? false,
+      FallbackComponent
+    );
+
+    return <ConditionedComponent {...props} />;
+  };
+}
+
 export function withProfileCompleteComponent(
   Component: React.ComponentType,
   FallbackComponent: React.ComponentType = () => null

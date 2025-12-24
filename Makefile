@@ -55,20 +55,23 @@ logs-adminer:
 # Full clean including database and uploads (DANGER: data loss)
 clean-all:
 	@echo "⚠️  WARNING: This will delete ALL data including database and uploads!"
-	@read -p "Are you sure? [y/N] " -n 1 -r; \
-	echo; \
-	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		make down; \
-		docker volume rm matcha_mysql_data 2>/dev/null || true; \
-		docker volume rm matcha_server_uploads 2>/dev/null || true; \
-		docker volume rm matcha_server_node_modules 2>/dev/null || true; \
-		docker volume rm matcha_web_node_modules 2>/dev/null || true; \
-		docker volume rm matcha_shared_node_modules 2>/dev/null || true; \
-		docker volume rm matcha_shared_dist 2>/dev/null || true; \
-		echo "✅ All data cleaned!"; \
-	else \
-		echo "❌ Cancelled"; \
-	fi
+	@printf "Are you sure? [y/N] "; \
+	read REPLY; \
+	case "$$REPLY" in \
+		[Yy]*) \
+			make down; \
+			docker volume rm matcha_mysql_data 2>/dev/null || true; \
+			docker volume rm matcha_server_uploads 2>/dev/null || true; \
+			docker volume rm matcha_server_node_modules 2>/dev/null || true; \
+			docker volume rm matcha_web_node_modules 2>/dev/null || true; \
+			docker volume rm matcha_shared_node_modules 2>/dev/null || true; \
+			docker volume rm matcha_shared_dist 2>/dev/null || true; \
+			echo "✅ All data cleaned!" \
+			;; \
+		*) \
+			echo "❌ Cancelled" \
+			;; \
+	esac
 
 # Clean local node_modules and build artifacts
 clean:
