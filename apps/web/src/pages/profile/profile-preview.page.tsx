@@ -1,8 +1,12 @@
-import { Box, Card, CardContent, Typography, Chip, Stack } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { AuthImage } from "@/components/utils/auth-image.component";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { ProfilePreviewHeader } from "@/components/profile/profile-preview-header.component";
+import { ProfilePreviewImage } from "@/components/profile/profile-preview-image.component";
+import { ProfilePreviewInfo } from "@/components/profile/profile-preview-info.component";
+import { ProfilePreviewLocation } from "@/components/profile/profile-preview-location.component";
+import { ProfilePreviewBio } from "@/components/profile/profile-preview-bio.component";
+import { ProfilePreviewInterests } from "@/components/profile/profile-preview-interests.component";
+import { ProfilePreviewFame } from "@/components/profile/profile-preview-fame.component";
 
 export function ProfilePreviewPage() {
   const { authUser } = useAuthUser();
@@ -30,131 +34,50 @@ export function ProfilePreviewPage() {
     <Box
       sx={{
         p: 3,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        maxWidth: 1200,
+        mx: "auto",
       }}
     >
-      <Card
+      <ProfilePreviewHeader />
+
+      <Box
         sx={{
-          maxWidth: 500,
-          width: "100%",
-          boxShadow: 3,
-          borderRadius: 2,
+          display: "flex",
+          justifyContent: "center",
         }}
       >
-        <AuthImage
-          src={profilePictureUrl}
-          alt={`${displayName}'s profile picture`}
-          height={400}
-          width="100%"
-          objectFit="contain"
-          fallback={
-            <Box
-              sx={{
-                height: 400,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "grey.300",
-              }}
-            >
-              <Typography variant="h6" color="text.secondary">
-                No photo
-              </Typography>
-            </Box>
-          }
-        />
-        <CardContent>
-          {/* Name and Age */}
-          <Typography variant="h4" component="div" gutterBottom>
-            {displayName}
-            {authUser.age && (
-              <Typography component="span" variant="h4" color="text.secondary">
-                , {authUser.age}
-              </Typography>
-            )}
-          </Typography>
+        <Card
+          sx={{
+            maxWidth: 500,
+            width: "100%",
+            boxShadow: 3,
+            borderRadius: 2,
+            padding: 1,
+          }}
+        >
+          <ProfilePreviewImage
+            pictureUrl={profilePictureUrl}
+            displayName={displayName}
+          />
 
-          {/* Gender and Orientation */}
-          <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-            {authUser.gender && (
-              <Chip
-                label={
-                  authUser.gender.charAt(0).toUpperCase() +
-                  authUser.gender.slice(1)
-                }
-                size="small"
-                variant="outlined"
-              />
-            )}
-            {authUser.orientation && (
-              <Chip
-                label={
-                  authUser.orientation.charAt(0).toUpperCase() +
-                  authUser.orientation.slice(1)
-                }
-                size="small"
-                variant="outlined"
-              />
-            )}
-          </Stack>
+          <CardContent>
+            <ProfilePreviewInfo
+              displayName={displayName}
+              age={authUser.age}
+              gender={authUser.gender}
+              orientation={authUser.orientation}
+            />
 
-          {/* Location (placeholder for now) */}
-          {authUser.location && (
-            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-              <LocationOnIcon
-                sx={{ mr: 0.5, fontSize: 20, color: "text.secondary" }}
-              />
-              <Typography variant="body2" color="text.secondary">
-                Location available
-              </Typography>
-            </Box>
-          )}
+            <ProfilePreviewLocation location={authUser.location} />
 
-          {/* Bio */}
-          {authUser.bio && (
-            <Typography
-              variant="body1"
-              color="text.primary"
-              sx={{ mb: 2, mt: 2 }}
-            >
-              {authUser.bio}
-            </Typography>
-          )}
+            <ProfilePreviewBio bio={authUser.bio} />
 
-          {/* Interests */}
-          {(authUser.interests?.length ?? 0) > 0 && (
-            <Box sx={{ mb: 2 }}>
-              <Typography
-                variant="subtitle2"
-                color="text.secondary"
-                gutterBottom
-              >
-                Interests
-              </Typography>
-              <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
-                {authUser.interests?.map((interest, index) => (
-                  <Chip
-                    key={index}
-                    label={interest}
-                    size="small"
-                    color="primary"
-                  />
-                ))}
-              </Stack>
-            </Box>
-          )}
+            <ProfilePreviewInterests interests={authUser.interests} />
 
-          {/* Fame Score */}
-          <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-            <FavoriteIcon sx={{ mr: 0.5, fontSize: 20, color: "error.main" }} />
-            <Typography variant="body2" color="text.secondary">
-              Fame Score: {authUser.fame_score}
-            </Typography>
-          </Box>
-        </CardContent>
-      </Card>
+            <ProfilePreviewFame fameScore={authUser.fame_score} />
+          </CardContent>
+        </Card>
+      </Box>
     </Box>
   );
 }
