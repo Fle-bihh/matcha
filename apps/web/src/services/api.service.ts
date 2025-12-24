@@ -6,6 +6,7 @@ import { config } from "@/config";
 
 interface RequestOptions {
   auth?: boolean;
+  formData?: boolean;
   _isRetry?: boolean;
 }
 
@@ -20,9 +21,11 @@ export class ApiService extends BaseService {
   }
 
   private async getAuthHeaders(options?: RequestOptions): Promise<HeadersInit> {
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-    };
+    const headers: HeadersInit = {};
+
+    if (!options?.formData) {
+      headers["Content-Type"] = "application/json";
+    }
 
     if (options?.auth) {
       const accessToken = await this.storageService.getItem(
@@ -102,10 +105,29 @@ export class ApiService extends BaseService {
     options?: RequestOptions
   ): Promise<ApiResponse<T>> {
     const headers = await this.getAuthHeaders(options);
+
+    let requestBody: BodyInit | undefined;
+    if (body) {
+      if (options?.formData) {
+        // Convert object to FormData
+        const formData = new FormData();
+        Object.entries(body).forEach(([key, value]) => {
+          if (value instanceof File) {
+            formData.append(key, value);
+          } else if (value !== undefined && value !== null) {
+            formData.append(key, String(value));
+          }
+        });
+        requestBody = formData;
+      } else {
+        requestBody = JSON.stringify(body);
+      }
+    }
+
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method,
       headers,
-      body: body ? JSON.stringify(body) : undefined,
+      body: requestBody,
     });
 
     if (response.status === 401 && options?.auth && !options._isRetry) {
@@ -149,43 +171,18 @@ export class ApiService extends BaseService {
     return this.request<T>("PATCH", endpoint, data, options);
   }
 
-  async postFormData<T>(
+  async delete<T>(
     endpoint: string,
-    formData: FormData,
     options?: RequestOptions
   ): Promise<ApiResponse<T>> {
-    const headers: HeadersInit = {};
+    return this.request<T>("DELETE", endpoint, undefined, options);
+  }
 
-    if (options?.auth) {
-      const accessToken = await this.storageService.getItem(
-        EStorageKeys.AccessToken
-      );
-      if (accessToken) {
-        headers["Authorization"] = `Bearer ${accessToken}`;
-      }
-    }
-
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: "PATCH",
-      headers,
-      body: formData,
-    });
-
-    if (response.status === 401 && options?.auth && !options._isRetry) {
-      const refreshed = await this.refreshAccessToken();
-      if (refreshed) {
-        return this.postFormData<T>(endpoint, formData, {
-          ...options,
-          _isRetry: true,
-        });
-      }
-    }
-
-    if (!response.ok) {
-      const data = await response.clone().json();
-      throw new Error(`${data.message || response.statusText}`);
-    }
-
-    return response.json();
+  async put<T>(
+    endpoint: string,
+    data?: any,
+    options?: RequestOptions
+  ): Promise<ApiResponse<T>> {
+    return this.request<T>("PUT", endpoint, data, options);
   }
 }

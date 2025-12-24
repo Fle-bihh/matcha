@@ -33,15 +33,13 @@ export class UserService extends BaseService {
   async updateProfilePicture(
     dto: UpdateProfilePictureDto
   ): Promise<ServiceResponse> {
-    const { file, index } = dto;
-    const formData = new FormData();
-    formData.append("picture", file);
-    formData.append("index", index.toString());
-
-    const response = await this.apiService.postFormData<AuthUser>(
+    const response = await this.apiService.patch<AuthUser>(
       getRoute("user", "update-profile-picture"),
-      formData,
-      { auth: true }
+      {
+        picture: dto.file,
+        index: dto.index,
+      },
+      { auth: true, formData: true }
     );
 
     if (response.success && response.responseObject) {
