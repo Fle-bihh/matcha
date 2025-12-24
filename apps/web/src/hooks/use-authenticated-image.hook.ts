@@ -1,72 +1,48 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { EStorageKeys } from "@/types/storage.constants";
 import { config } from "@/config";
 
+async function fetchAuthenticatedImage(
+  imageUrl: string
+): Promise<string | null> {
+  const token = localStorage.getItem(EStorageKeys.AccessToken);
+
+  const fullUrl = imageUrl.startsWith("http")
+    ? imageUrl
+    : `${config.apiUrl}/${imageUrl.replace(/^\//, "")}`;
+
+  const response = await fetch(fullUrl, {
+    headers: token
+      ? {
+          Authorization: `Bearer ${token}`,
+        }
+      : {},
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to load image: ${response.statusText}`);
+  }
+
+  const blob = await response.blob();
+  return URL.createObjectURL(blob);
+}
+
 export function useAuthenticatedImage(imageUrl: string | null | undefined) {
-  const [blobUrl, setBlobUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const {
+    data: blobUrl,
+    isLoading: loading,
+    error,
+  } = useQuery({
+    queryKey: ["authenticated-image", imageUrl],
+    queryFn: () => fetchAuthenticatedImage(imageUrl!),
+    enabled: !!imageUrl,
+    staleTime: Infinity,
+    gcTime: 30 * 60 * 1000,
+  });
 
-  useEffect(() => {
-    if (!imageUrl) {
-      setLoading(false);
-      return;
-    }
-
-    let cancelled = false;
-    let objectUrl: string | null = null;
-
-    const fetchImage = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const token = localStorage.getItem(EStorageKeys.AccessToken);
-
-        const fullUrl = imageUrl.startsWith("http")
-          ? imageUrl
-          : `${config.apiUrl}/${imageUrl.replace(/^\//, "")}`;
-
-        const response = await fetch(fullUrl, {
-          headers: token
-            ? {
-                Authorization: `Bearer ${token}`,
-              }
-            : {},
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to load image: ${response.statusText}`);
-        }
-
-        const blob = await response.blob();
-
-        if (!cancelled) {
-          objectUrl = URL.createObjectURL(blob);
-          setBlobUrl(objectUrl);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(
-            err instanceof Error ? err : new Error("Failed to load image")
-          );
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchImage();
-
-    return () => {
-      cancelled = true;
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl);
-      }
-    };
-  }, [imageUrl]);
-
-  return { blobUrl, loading, error };
+  return {
+    blobUrl: blobUrl ?? null,
+    loading,
+    error: error as Error | null,
+  };
 }
