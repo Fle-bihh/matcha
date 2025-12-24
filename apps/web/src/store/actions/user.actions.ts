@@ -7,6 +7,10 @@ const userActionsConfig = {
     serviceToken: ETokens.UserService,
     methodName: "updateProfile",
   },
+  [EActionKeys.UpdateProfilePicture]: {
+    serviceToken: ETokens.UserService,
+    methodName: "updateProfilePicture",
+  },
 } as const;
 
 export const UserActions = createActions(userActionsConfig);

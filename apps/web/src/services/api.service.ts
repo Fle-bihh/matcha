@@ -148,4 +148,44 @@ export class ApiService extends BaseService {
   ): Promise<ApiResponse<T>> {
     return this.request<T>("PATCH", endpoint, data, options);
   }
+
+  async postFormData<T>(
+    endpoint: string,
+    formData: FormData,
+    options?: RequestOptions
+  ): Promise<ApiResponse<T>> {
+    const headers: HeadersInit = {};
+
+    if (options?.auth) {
+      const accessToken = await this.storageService.getItem(
+        EStorageKeys.AccessToken
+      );
+      if (accessToken) {
+        headers["Authorization"] = `Bearer ${accessToken}`;
+      }
+    }
+
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: "PATCH",
+      headers,
+      body: formData,
+    });
+
+    if (response.status === 401 && options?.auth && !options._isRetry) {
+      const refreshed = await this.refreshAccessToken();
+      if (refreshed) {
+        return this.postFormData<T>(endpoint, formData, {
+          ...options,
+          _isRetry: true,
+        });
+      }
+    }
+
+    if (!response.ok) {
+      const data = await response.clone().json();
+      throw new Error(`${data.message || response.statusText}`);
+    }
+
+    return response.json();
+  }
 }

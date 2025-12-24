@@ -45,20 +45,7 @@ export class UserRepository extends BaseRepository {
   private async sanitizeUserData(
     data: AuthUserWithPassword
   ): Promise<AuthUserWithPassword> {
-    const picturesUrls: string[] = Array.isArray(data.pictures_urls)
-      ? data.pictures_urls
-      : [];
-    const sanitizedPictures = picturesUrls.map((url: string) => {
-      const baseUrl = config.serverUrl;
-      return `${baseUrl}/${url}`;
-    });
-
-    const value = {
-      ...data,
-      pictures_urls: sanitizedPictures,
-    };
-
-    return value;
+    return data;
   }
 
   public async createUser(data: CreateUserDto): Promise<AuthUserWithPassword> {

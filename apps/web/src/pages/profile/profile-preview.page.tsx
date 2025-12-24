@@ -33,7 +33,6 @@ export function ProfilePreviewPage() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "80%",
       }}
     >
       <Card
@@ -49,7 +48,7 @@ export function ProfilePreviewPage() {
           alt={`${displayName}'s profile picture`}
           height={400}
           width="100%"
-          objectFit="cover"
+          objectFit="contain"
           fallback={
             <Box
               sx={{

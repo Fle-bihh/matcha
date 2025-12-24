@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { fields } from "../validation";
 import { AuthUser, Gender, Orientation } from "../models";
+import { FileDto } from "./file.dto";
 
 export const CreateUserDtoSchema = z.object({
   email: fields.email,
@@ -26,3 +27,8 @@ export type UpdateProfileDto = z.infer<typeof UpdateProfileDtoSchema>;
 export const UpdateProfilePictureDtoSchema = z.object({
   index: fields.formDataNumber,
 });
+
+export type UpdateProfilePictureDto = z.infer<
+  typeof UpdateProfilePictureDtoSchema
+> &
+  FileDto;

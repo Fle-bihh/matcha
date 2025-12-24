@@ -11,7 +11,7 @@ export const useAuthUser = () => {
   const authUser = useSelector(selectAuthUser);
   const isInitialized = useSelector(selectIsAuthInitialized);
 
-  const actions = {
+  const authActions = {
     register: createAction(AuthActions.register),
     authenticate: createAction(AuthActions.authenticate),
     logout: createAction(AuthActions.logout),
@@ -20,13 +20,18 @@ export const useAuthUser = () => {
     resendVerificationEmail: createAction(AuthActions.resendVerificationEmail),
     forgotPassword: createAction(AuthActions.forgotPassword),
     resetPassword: createAction(AuthActions.resetPassword),
+  };
+
+  const userActions = {
     updateProfile: createAction(UserActions.updateProfile),
+    updateProfilePicture: createAction(UserActions.updateProfilePicture),
   };
 
   return {
     authUser,
     isInitialized,
 
-    ...actions,
+    ...authActions,
+    ...userActions,
   };
 };

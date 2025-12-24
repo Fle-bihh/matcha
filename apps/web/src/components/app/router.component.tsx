@@ -9,6 +9,7 @@ import { ModifyPasswordPage } from "@/pages/auth/modify-password.page";
 import { ProfilePage } from "@/pages/profile/profile.page";
 import { ProfileSettingsPage } from "@/pages/profile/profile-settings.page";
 import { ProfilePreviewPage } from "@/pages/profile/profile-preview.page";
+import { ProfilePicturesPage } from "@/pages/profile/profile-pictures.page";
 
 export function Router() {
   return (
@@ -36,6 +37,10 @@ export function Router() {
           <Route
             path={APP_PAGES.profileSettings}
             element={<ProfileSettingsPage />}
+          />
+          <Route
+            path={APP_PAGES.profilePictures}
+            element={<ProfilePicturesPage />}
           />
         </Route>
       </Route>

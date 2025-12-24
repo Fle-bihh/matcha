@@ -76,7 +76,11 @@ export class ServerSetup {
     this.app.use(sqlSanitize);
     this.app.use(xssSanitize);
 
-    this.app.use("/uploads", authenticateRequest, express.static("uploads"));
+    this.app.use(
+      "/api/v1/uploads",
+      authenticateRequest,
+      express.static("uploads")
+    );
   }
 
   private setupRoutes(): void {
