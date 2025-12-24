@@ -1,9 +1,57 @@
+# Dependencies
+
 node_modules
+\*\*/node_modules
+
+# Build outputs
+
 dist
+**/dist
+\*.tsbuildinfo
+**/\*.tsbuildinfo
+
+# Runtime generated directories
+
+uploads
+\*\*/uploads
+
+# Git
+
 .git
+.gitignore
+
+# Environment and secrets
+
 .env
-*.log
+.env.\*
+!.env.example
+
+# Logs
+
+_.log
+\*\*/_.log
+
+# OS files
+
 .DS_Store
-coverage
+\*\*/.DS_Store
+
+# IDE
+
 .vscode
 .idea
+
+# Testing
+
+coverage
+\*\*/coverage
+
+# Documentation
+
+README.md
+docs
+
+# Docker
+
+.dockerignore \*_/Dockerfile
+docker-compose_.yml

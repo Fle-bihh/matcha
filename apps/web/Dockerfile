@@ -2,23 +2,33 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# Copy root package.json for workspace setup
 COPY package*.json ./
 COPY tsconfig*.json ./
+
+# Copy package.json files for all workspaces
 COPY packages/shared/package.json ./packages/shared/
 COPY apps/web/package.json ./apps/web/
 
-RUN npm install
+# Install all dependencies
+RUN npm ci
 
-COPY packages/shared ./packages/shared
-COPY apps/web ./apps/web
+# Copy shared package TypeScript config and source
+COPY packages/shared/tsconfig.json ./packages/shared/
+COPY packages/shared/src ./packages/shared/src
 
-ARG VITE_WEB_PORT
-ARG VITE_WEB_URL
-ARG VITE_SERVER_URL
+# Copy web TypeScript config and source
+COPY apps/web/tsconfig.json ./apps/web/
+COPY apps/web/vite.config.ts ./apps/web/
+COPY apps/web/index.html ./apps/web/
+COPY apps/web/public ./apps/web/public
+COPY apps/web/src ./apps/web/src
 
-ENV VITE_WEB_PORT=${VITE_WEB_PORT}
-ENV VITE_WEB_URL=${VITE_WEB_URL}
-ENV VITE_SERVER_URL=${VITE_SERVER_URL}
+# Set working directory to web
+WORKDIR /app/apps/web
 
-CMD ["sh", "-c", "cd /app/packages/shared && npm run dev & cd /app/apps/web && npm run dev"]
-# CMD ["sh", "-c", "cd /app/packages/shared && npm run dev & cd /app/apps/web && npm run build && npm run start -- --host"]
+# Expose the Vite dev server port
+EXPOSE ${VITE_WEB_PORT:-3001}
+
+# Development command
+CMD ["npm", "run", "dev", "--", "--host"]
