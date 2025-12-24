@@ -6,9 +6,11 @@ import { AuthProvider } from "../auth";
 import { NavigationSetup } from "./navigation.component";
 import { Snackbar } from "../utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useCrossTabSync } from "@/hooks/cross-tab.hook";
 
 import { ThemeProvider } from "@mui/material/styles";
 import { appTheme } from "@/config";
+import { CrossTabSyncProvider } from "@/contexts/cross-tab.context";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,7 +33,9 @@ export function Provider({ children }: React.PropsWithChildren<{}>) {
         <ReduxProvider store={store}>
           <QueryClientProvider client={queryClient}>
             <NavigationSetup container={container} />
-            <AuthProvider>{children}</AuthProvider>
+            <CrossTabSyncProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </CrossTabSyncProvider>
             <Snackbar />
           </QueryClientProvider>
         </ReduxProvider>
