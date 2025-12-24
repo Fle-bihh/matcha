@@ -7,13 +7,21 @@ import {
   FormControlLabel,
   Divider,
 } from "@mui/material";
+import { ProfileSectionHeader } from "@/components/profile/profile-section-header.component";
 
 export function ProfileSettingsPage() {
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        General Settings
-      </Typography>
+    <Box
+      sx={{
+        p: 3,
+        maxWidth: 1200,
+        mx: "auto",
+      }}
+    >
+      <ProfileSectionHeader
+        title="Settings"
+        description="Manage your account preferences and privacy settings."
+      />
 
       <Box
         sx={{
@@ -23,7 +31,6 @@ export function ProfileSettingsPage() {
             md: "repeat(2, 1fr)",
           },
           gap: 3,
-          mt: 3,
         }}
       >
         <Card sx={{}}>

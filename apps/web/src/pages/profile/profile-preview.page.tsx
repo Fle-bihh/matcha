@@ -1,6 +1,6 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { ProfilePreviewHeader } from "@/components/profile/profile-preview-header.component";
+import { ProfileSectionHeader } from "@/components/profile/profile-section-header.component";
 import { ProfilePreviewImage } from "@/components/profile/profile-preview-image.component";
 import { ProfilePreviewInfo } from "@/components/profile/profile-preview-info.component";
 import { ProfilePreviewLocation } from "@/components/profile/profile-preview-location.component";
@@ -38,7 +38,10 @@ export function ProfilePreviewPage() {
         mx: "auto",
       }}
     >
-      <ProfilePreviewHeader />
+      <ProfileSectionHeader
+        title="Profile Preview"
+        description="This is how other users will see your profile. Make sure your information is accurate and appealing."
+      />
 
       <Box
         sx={{

@@ -68,7 +68,6 @@ export class ServerSetup {
 
   private setupMiddleware(): void {
     this.app.use(helmetConfig);
-    this.app.use(limiter);
     this.app.use(express.json({ limit: "10mb" }));
     this.app.use(express.urlencoded({ extended: true, limit: "10mb" }));
     this.app.use(cors(corsOptions));
@@ -81,6 +80,8 @@ export class ServerSetup {
       authenticateRequest,
       express.static("uploads")
     );
+
+    this.app.use(limiter);
   }
 
   private setupRoutes(): void {

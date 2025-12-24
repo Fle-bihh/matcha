@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { EActionKeys } from "@/types/actions.types";
 import { useActions } from "@/hooks/actions.hooks";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { ProfilePicturesHeader } from "@/components/profile/profile-pictures-header.component";
+import { ProfileSectionHeader } from "@/components/profile/profile-section-header.component";
 import { MainPictureSection } from "@/components/profile/main-picture-section.component";
 import { AdditionalPicturesSection } from "@/components/profile/additional-pictures-section.component";
 
@@ -54,7 +54,10 @@ export const ProfilePicturesPage = () => {
         mx: "auto",
       }}
     >
-      <ProfilePicturesHeader />
+      <ProfileSectionHeader
+        title="Profile Pictures"
+        description="You can upload up to 5 pictures. The first one will be your main profile picture and will be displayed more prominently."
+      />
 
       <MainPictureSection
         pictureUrl={pictures[0]}

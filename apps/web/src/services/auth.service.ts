@@ -65,7 +65,7 @@ export class AuthService extends BaseService {
       this.storageService.getItem(EStorageKeys.RefreshToken),
     ]);
 
-    console.log("Access Token:", accessToken);
+    // console.log("Access Token:", accessToken);
 
     return !!(accessToken && refreshToken);
   }
