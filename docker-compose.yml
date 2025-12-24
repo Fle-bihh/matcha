@@ -150,6 +150,6 @@ volumes:
   web_node_modules:
     name: matcha_web_node_modules
 
-  # User uploads - CRITICAL, must persist across rebuilds
+  # User uploads - persist across rebuilds
   server_uploads:
     name: matcha_server_uploads

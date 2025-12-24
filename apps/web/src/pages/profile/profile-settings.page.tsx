@@ -3,13 +3,19 @@ import {
   Card,
   CardContent,
   Typography,
-  Switch,
-  FormControlLabel,
-  Divider,
+  Button,
+  TextField,
 } from "@mui/material";
 import { ProfilePageWrapper } from "@/components/profile/profile-page-wrapper.component";
+import { useAuthUser } from "@/hooks/auth.hook";
 
 export function ProfileSettingsPage() {
+  const { authUser } = useAuthUser();
+
+  const handleChangeEmail = () => {
+    console.log("Change email clicked");
+  };
+
   return (
     <ProfilePageWrapper
       title="Settings"
@@ -25,25 +31,44 @@ export function ProfileSettingsPage() {
           gap: 3,
         }}
       >
-        <Card sx={{}}>
+        <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Preferences
+              Account Information
             </Typography>
-            <FormControlLabel
-              control={<Switch defaultChecked />}
-              label="Email notifications"
-            />
-            <Divider sx={{ my: 2 }} />
-            <FormControlLabel
-              control={<Switch />}
-              label="Show profile to others"
-            />
-            <Divider sx={{ my: 2 }} />
-            <FormControlLabel
-              control={<Switch defaultChecked />}
-              label="Enable sound effects"
-            />
+
+            <Box sx={{ mb: 3 }}>
+              <TextField
+                label="Username"
+                value={authUser?.username || ""}
+                disabled
+                fullWidth
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+                helperText="Username cannot be changed"
+              />
+            </Box>
+
+            <Box sx={{ mb: 2 }}>
+              <TextField
+                label="Email"
+                value={authUser?.email || ""}
+                disabled
+                fullWidth
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                  },
+                }}
+              />
+            </Box>
+
+            <Button variant="outlined" onClick={handleChangeEmail} fullWidth>
+              Change Email
+            </Button>
           </CardContent>
         </Card>
       </Box>
