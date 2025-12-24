@@ -27,6 +27,9 @@ export default defineConfig(({ mode }) => {
     },
     optimizeDeps: {
       include: ["@matcha/shared"],
+      esbuildOptions: {
+        sourcemap: false,
+      },
     },
     build: {
       commonjsOptions: {

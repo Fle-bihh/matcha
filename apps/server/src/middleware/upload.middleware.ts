@@ -1,6 +1,13 @@
 import multer from "multer";
 
 export const PROFILE_PICTURE_UPLOAD_PATH = "uploads/profile-pictures/";
-const profileUpload = multer({ dest: PROFILE_PICTURE_UPLOAD_PATH });
+
+const profileUpload = multer({
+  dest: PROFILE_PICTURE_UPLOAD_PATH,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB max file size
+    files: 1, // Only 1 file per request
+  },
+});
 
 export const uploadProfilePictureMiddleware = profileUpload.single("picture");
