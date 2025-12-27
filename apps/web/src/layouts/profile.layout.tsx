@@ -13,6 +13,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import PicturesIcon from "@mui/icons-material/PhotoLibrary";
+import InterestsIcon from "@mui/icons-material/LocalOffer";
 import { APP_ROUTES } from "@/constants";
 import { useRouting } from "@/hooks/routing.hooks";
 import {
@@ -31,6 +32,11 @@ const menuItems = [
     text: "Pictures",
     Icon: PicturesIcon,
     path: APP_ROUTES.profilePictures,
+  },
+  {
+    text: "Interests",
+    Icon: InterestsIcon,
+    path: APP_ROUTES.profileInterests,
   },
   {
     text: "Preview",

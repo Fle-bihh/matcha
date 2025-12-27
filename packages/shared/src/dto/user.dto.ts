@@ -20,6 +20,7 @@ export const UpdateProfileDtoSchema = z.object({
   bio: fields.bio.optional(),
   first_name: fields.firstName.optional(),
   last_name: fields.lastName.optional(),
+  interests: fields.interests.optional(),
 });
 
 export type UpdateProfileDto = z.infer<typeof UpdateProfileDtoSchema>;

@@ -1,3 +1,4 @@
+import { UserInterest } from "../constants";
 import { BaseEntity } from "./base.models";
 
 export type UserLocation = any;
@@ -22,7 +23,7 @@ export interface User extends BaseEntity {
   age: number | null;
   bio: string | null;
   pictures_urls: string[] | null;
-  interests: string[] | null;
+  interests: UserInterest[] | null;
   location: UserLocation | null;
   fame_score: number;
 }

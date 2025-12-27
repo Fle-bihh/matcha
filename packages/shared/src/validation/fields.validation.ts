@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MAX_USER_INTERESTS } from "../constants";
 
 export const fields = {
   email: z.email("Invalid email address"),
@@ -42,6 +43,15 @@ export const fields = {
     .max(120, "Age must be realistic"),
 
   bio: z.string().max(500, "Bio must not exceed 500 characters").optional(),
+
+  interests: z
+    .array(z.string())
+    .max(MAX_USER_INTERESTS, "Too many interests selected")
+    .refine((arr) => {
+      const uniqueInterests = new Set(arr);
+      return uniqueInterests.size === arr.length;
+    }, "Interests must be unique")
+    .optional(),
 
   formDataNumber: z
     .string()

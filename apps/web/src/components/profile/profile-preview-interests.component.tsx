@@ -11,12 +11,15 @@ export const ProfilePreviewInterests = ({
 
   return (
     <Box sx={{ mb: 2 }}>
-      <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-        Interests
-      </Typography>
       <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
         {interests.map((interest, index) => (
-          <Chip key={index} label={interest} size="small" color="primary" />
+          <Chip
+            key={index}
+            label={`#${interest}`}
+            size="small"
+            color="primary"
+            variant="outlined"
+          />
         ))}
       </Stack>
     </Box>
