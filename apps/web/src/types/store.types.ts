@@ -2,13 +2,16 @@ import { Store } from "@reduxjs/toolkit";
 import { createStore } from "@/store";
 
 export enum EEntityTypes {
-	Users = "users",
+  Users = "users",
 }
 
 export enum EStoreSlices {
-	Entities = "entities",
-	Actions = "actions",
-	AuthUser = "auth-user",
+  Entities = "entities",
+  Actions = "actions",
+  AuthUser = "auth-user",
+  Location = "location",
+  Flaggers = "flaggers",
+  Snackbar = "snackbar",
 }
 
 export type TRootState = ReturnType<ReturnType<typeof createStore>["getState"]>;

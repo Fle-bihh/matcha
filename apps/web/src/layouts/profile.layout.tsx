@@ -14,6 +14,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import PicturesIcon from "@mui/icons-material/PhotoLibrary";
 import InterestsIcon from "@mui/icons-material/LocalOffer";
+import LocationIcon from "@mui/icons-material/LocationOn";
 import { APP_ROUTES } from "@/constants";
 import { useRouting } from "@/hooks/routing.hooks";
 import {
@@ -37,6 +38,11 @@ const menuItems = [
     text: "Interests",
     Icon: InterestsIcon,
     path: APP_ROUTES.profileInterests,
+  },
+  {
+    text: "Location",
+    Icon: LocationIcon,
+    path: APP_ROUTES.profileLocation,
   },
   {
     text: "Preview",

@@ -12,6 +12,7 @@ import { ProfileSettingsPage } from "@/pages/profile/profile-settings.page";
 import { ProfilePreviewPage } from "@/pages/profile/profile-preview.page";
 import { ProfilePicturesPage } from "@/pages/profile/profile-pictures.page";
 import { ProfileInterestsPage } from "@/pages/profile/profile-interests.page";
+import { ProfileLocationPage } from "@/pages/profile/profile-location.page";
 
 export function Router() {
   return (
@@ -47,6 +48,10 @@ export function Router() {
           <Route
             path={APP_PAGES.profileInterests}
             element={<ProfileInterestsPage />}
+          />
+          <Route
+            path={APP_PAGES.profileLocation}
+            element={<ProfileLocationPage />}
           />
         </Route>
       </Route>

@@ -1,4 +1,5 @@
 import { EFlaggers } from "@/constants/flaggers.constants";
+import { EStoreSlices } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type FlaggersState = {
@@ -10,7 +11,7 @@ const initialState: FlaggersState = {
 };
 
 const flaggersSlice = createSlice({
-  name: "flaggers",
+  name: EStoreSlices.Flaggers,
   initialState,
   reducers: {
     setFlagger: (

@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { AuthActions, UserActions } from "@/store";
+import { AuthActions, UserActions, LocationActions } from "@/store";
 import {
   selectAuthUser,
   selectIsAuthInitialized,
@@ -13,6 +13,7 @@ export const useAuthUser = () => {
   const actions = useDispatchActions({
     ...AuthActions,
     ...UserActions,
+    ...LocationActions,
   });
 
   return {

@@ -1,3 +1,4 @@
+import { EStoreSlices } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type SnackbarSeverity = "success" | "error" | "warning" | "info";
@@ -20,7 +21,7 @@ export interface ShowSnackbarPayload {
 }
 
 const snackbarSlice = createSlice({
-  name: "snackbar",
+  name: EStoreSlices.Snackbar,
   initialState,
   reducers: {
     showSnackbar: (state, action: PayloadAction<ShowSnackbarPayload>) => {

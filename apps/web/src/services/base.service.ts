@@ -4,6 +4,7 @@ import { StorageService } from "./storage.service";
 import { AuthService } from "./auth.service";
 import { RouterService } from "./router.service";
 import { SnackbarService } from "./snackbar.service";
+import { LocationService } from "./location.service";
 
 export abstract class BaseService {
   protected container: IContainer;
@@ -34,5 +35,9 @@ export abstract class BaseService {
 
   protected get snackbar(): SnackbarService {
     return this.container.get<SnackbarService>(ETokens.SnackbarService);
+  }
+
+  protected get locationService(): LocationService {
+    return this.container.get<LocationService>(ETokens.LocationService);
   }
 }

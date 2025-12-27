@@ -8,6 +8,7 @@ import {
   UpdateProfilePictureDto,
   SendChangeEmailVerificationRequestDto,
   ChangeEmailRequestDto,
+  GeocodingResult,
 } from "@matcha/shared";
 
 export enum EActionKeys {
@@ -23,6 +24,9 @@ export enum EActionKeys {
   UpdateProfilePicture = "updateProfilePicture",
   SendChangeEmailVerification = "sendChangeEmailVerification",
   ChangeEmail = "changeEmail",
+  GetCurrentPosition = "getCurrentPosition",
+  SearchLocation = "searchLocation",
+  CreateManualLocation = "createManualLocation",
 }
 
 export interface IActionDtoMap {
@@ -38,6 +42,9 @@ export interface IActionDtoMap {
   [EActionKeys.UpdateProfilePicture]: UpdateProfilePictureDto;
   [EActionKeys.SendChangeEmailVerification]: SendChangeEmailVerificationRequestDto;
   [EActionKeys.ChangeEmail]: ChangeEmailRequestDto;
+  [EActionKeys.GetCurrentPosition]: null;
+  [EActionKeys.SearchLocation]: string;
+  [EActionKeys.CreateManualLocation]: GeocodingResult;
 }
 
 export type ActionDto<K extends EActionKeys> = IActionDtoMap[K];

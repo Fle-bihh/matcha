@@ -1,7 +1,6 @@
 import { UserInterest } from "../constants";
 import { BaseEntity } from "./base.models";
-
-export type UserLocation = any;
+import { UserLocation } from "./location.models";
 
 export enum Gender {
   Male = "male",

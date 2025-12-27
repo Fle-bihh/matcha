@@ -63,7 +63,9 @@ export function ProfilePreviewPage() {
               orientation={authUser.orientation}
             />
 
-            <ProfilePreviewLocation location={authUser.location} />
+            <ProfilePreviewLocation
+              location={authUser.location?.display_name}
+            />
 
             <ProfilePreviewBio bio={authUser.bio} />
 

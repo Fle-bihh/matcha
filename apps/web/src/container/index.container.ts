@@ -6,6 +6,7 @@ import {
   UserService,
   SnackbarService,
 } from "@/services";
+import { LocationService } from "@/services/location.service";
 import { Store } from "@reduxjs/toolkit";
 import { TAppDispatch, TReduxStore, TRootState } from "@/types";
 import { createStore } from "@/store";
@@ -21,6 +22,7 @@ const serviceConstructors: Record<ETokens, ServiceConstructor> = {
   [ETokens.StorageService]: StorageService,
   [ETokens.RouterService]: RouterService,
   [ETokens.SnackbarService]: SnackbarService,
+  [ETokens.LocationService]: LocationService,
 } as const;
 
 export class Container implements IContainer {

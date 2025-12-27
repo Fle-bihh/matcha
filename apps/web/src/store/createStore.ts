@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { IContainer } from "@/types";
 import entitiesReducer from "./slices/entities.slice";
 import authUserReducer from "./slices/auth-user.slice";
+import locationReducer from "./slices/location.slice";
 import actionsReducer from "./slices/actions.slice";
 import snackbarReducer from "./slices/snackbar.slice";
 import flaggersReducer from "./slices/flaggers.slice";
@@ -14,6 +15,8 @@ export const createStore = (container: IContainer) => {
       actions: actionsReducer,
 
       authUser: authUserReducer,
+
+      location: locationReducer,
 
       snackbar: snackbarReducer,
 

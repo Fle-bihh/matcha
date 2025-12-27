@@ -7,6 +7,7 @@ export enum ETokens {
   StorageService = "StorageService",
   RouterService = "RouterService",
   SnackbarService = "SnackbarService",
+  LocationService = "LocationService",
 }
 
 export interface IContainer {
