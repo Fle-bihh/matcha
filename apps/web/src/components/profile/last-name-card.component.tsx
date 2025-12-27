@@ -1,14 +1,14 @@
 import { TextField } from "@mui/material";
 import { validateLastName } from "@matcha/shared";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { useActions } from "@/hooks/actions.hooks";
+import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 import { useValidatedField } from "@/hooks/use-validated-field.hook";
 import { ProfileFieldCard } from "./profile-field-card.component";
 
 export function LastNameCard() {
   const { authUser, updateProfile } = useAuthUser();
-  const { isLoading, error } = useActions([EActionKeys.UpdateProfile]);
+  const { isLoading, error } = useActionsData([EActionKeys.UpdateProfile]);
 
   const {
     value: lastName,

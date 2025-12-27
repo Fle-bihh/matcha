@@ -1,7 +1,7 @@
 import { CenteredPaper } from "@/components/app/centered-paper.component";
 import { Box, Typography, Button, Alert } from "@mui/material";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { useActions } from "@/hooks/actions.hooks";
+import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -13,7 +13,9 @@ export function ConfirmEmailPage() {
   const [searchParams] = useSearchParams();
   const router = useRouting();
   const { verifyEmail } = useAuthUser();
-  const { isLoading, error, isSuccess } = useActions([EActionKeys.VerifyEmail]);
+  const { isLoading, error, isSuccess } = useActionsData([
+    EActionKeys.VerifyEmail,
+  ]);
 
   const token = searchParams.get("token");
 

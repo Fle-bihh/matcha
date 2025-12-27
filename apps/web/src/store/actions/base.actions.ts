@@ -59,37 +59,29 @@ const baseAction = <T extends EActionKeys>(
   );
 };
 
-type ServiceMethodRef = {
-  serviceToken: ETokens;
-  methodName: string;
-};
+type ActionConfig = EActionKeys[];
 
-type ActionConfig<K extends EActionKeys = EActionKeys> = {
-  [P in K]: ServiceMethodRef;
-};
-
-type CreatedActions<T extends Partial<ActionConfig>> = {
-  [K in keyof T]: ActionDto<K & EActionKeys> extends null
+type CreatedActions<T extends ActionConfig> = {
+  [K in T[number]]: ActionDto<K> extends null
     ? () => ReturnType<typeof baseAction>
-    : (dto: ActionDto<K & EActionKeys>) => ReturnType<typeof baseAction>;
+    : (dto: ActionDto<K>) => ReturnType<typeof baseAction>;
 };
 
-const createBaseActions = <T extends Partial<ActionConfig>>(
+const createBaseActions = <T extends ActionConfig>(
+  serviceToken: ETokens,
   config: T
 ): CreatedActions<T> => {
   const actions = {} as CreatedActions<T>;
 
-  for (const [actionKey, { serviceToken, methodName }] of Object.entries(
-    config
-  )) {
-    actions[actionKey as keyof T] = ((dto?: any) =>
+  for (const actionKey of config) {
+    actions[actionKey as T[number]] = ((dto?: any) =>
       baseAction(actionKey as EActionKeys, async (container, actionDto) => {
         const service = container.get(serviceToken);
-        const method = (service as any)[methodName] as (
+        const method = (service as any)[actionKey] as (
           dto: any
         ) => Promise<ServiceResponse>;
 
-        const options = getActionOptions(service, methodName);
+        const options = getActionOptions(service, actionKey);
 
         const response = await method.call(service, actionDto);
 
@@ -109,18 +101,22 @@ const createBaseActions = <T extends Partial<ActionConfig>>(
   return actions;
 };
 
-export const createActions = <T extends Partial<ActionConfig>>(config: T) => {
-  const actions = createBaseActions(config);
+export const createActions = <T extends ActionConfig>(
+  serviceToken: ETokens,
+  config: T
+) => {
+  const actions = createBaseActions(serviceToken, config);
 
   const typedActions = {} as {
-    [K in keyof T]: ActionDto<K & EActionKeys> extends null
+    [K in T[number]]: ActionDto<K> extends null
       ? () => ReturnType<CreatedActions<T>[K]>
-      : (dto: ActionDto<K & EActionKeys>) => ReturnType<CreatedActions<T>[K]>;
+      : (dto: ActionDto<K>) => ReturnType<CreatedActions<T>[K]>;
   };
 
-  for (const actionKey of Object.keys(config)) {
-    const key = actionKey as keyof T;
-    typedActions[key] = actions[key] as any;
+  for (const actionKey of config) {
+    typedActions[actionKey as T[number]] = actions[
+      actionKey as T[number]
+    ] as any;
   }
 
   return typedActions;

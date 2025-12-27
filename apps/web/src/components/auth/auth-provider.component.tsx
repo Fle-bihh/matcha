@@ -1,24 +1,24 @@
-import { useActions } from "@/hooks/actions.hooks";
+import { useActionsData } from "@/hooks/actions.hooks";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { EActionKeys } from "@/types/actions.types";
 import { PropsWithChildren, useEffect, useRef } from "react";
 import { AuthenticateLoading } from "../loading/authenticate-loading.component";
 
 export function AuthProvider({ children }: PropsWithChildren<{}>) {
-	const { authenticate, isInitialized } = useAuthUser();
-	const { isLoading } = useActions([EActionKeys.Authenticate]);
-	const hasAttemptedAuth = useRef(false);
+  const { authenticate, isInitialized } = useAuthUser();
+  const { isLoading } = useActionsData([EActionKeys.Authenticate]);
+  const hasAttemptedAuth = useRef(false);
 
-	useEffect(() => {
-		if (!hasAttemptedAuth.current && !isInitialized) {
-			hasAttemptedAuth.current = true;
-			authenticate();
-		}
-	}, [authenticate, isInitialized]);
+  useEffect(() => {
+    if (!hasAttemptedAuth.current && !isInitialized) {
+      hasAttemptedAuth.current = true;
+      authenticate();
+    }
+  }, [authenticate, isInitialized]);
 
-	if (!isInitialized || isLoading) {
-		return <AuthenticateLoading />;
-	}
+  if (!isInitialized || isLoading) {
+    return <AuthenticateLoading />;
+  }
 
-	return <>{children}</>;
+  return <>{children}</>;
 }

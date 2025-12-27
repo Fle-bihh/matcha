@@ -3,12 +3,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterRequestSchema, RegisterRequestDto } from "@matcha/shared";
 import { TextField, Button, Stack, Typography, Box } from "@mui/material";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { useActions } from "@/hooks/actions.hooks";
+import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 
 export function RegisterForm() {
   const { register: registerUser } = useAuthUser();
-  const { isLoading, error } = useActions([EActionKeys.Register]);
+  const { isLoading, error } = useActionsData([EActionKeys.Register]);
 
   const {
     register,

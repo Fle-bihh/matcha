@@ -14,7 +14,7 @@ import {
   ResetPasswordRequestDto,
 } from "@matcha/shared";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { useActions } from "@/hooks/actions.hooks";
+import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
@@ -22,7 +22,7 @@ import { useEffect } from "react";
 export function ModifyPasswordPage() {
   const [searchParams] = useSearchParams();
   const { resetPassword } = useAuthUser();
-  const { isLoading, error, isSuccess } = useActions([
+  const { isLoading, error, isSuccess } = useActionsData([
     EActionKeys.ResetPassword,
   ]);
 

@@ -1,7 +1,7 @@
 import { CenteredPaper } from "@/components/app/centered-paper.component";
 import { Box, Typography, Button, Alert } from "@mui/material";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { useActions } from "@/hooks/actions.hooks";
+import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 import { useSearchParams } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -12,7 +12,9 @@ export function ConfirmEmailChangePage() {
   const [searchParams] = useSearchParams();
   const router = useRouting();
   const { changeEmail } = useAuthUser();
-  const { isLoading, error, isSuccess } = useActions([EActionKeys.ChangeEmail]);
+  const { isLoading, error, isSuccess } = useActionsData([
+    EActionKeys.ChangeEmail,
+  ]);
 
   const token = searchParams.get("token");
 

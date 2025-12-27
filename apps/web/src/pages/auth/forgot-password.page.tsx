@@ -14,14 +14,14 @@ import {
   ForgotPasswordRequestDto,
 } from "@matcha/shared";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { useActions } from "@/hooks/actions.hooks";
+import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 import { Link } from "react-router-dom";
 import { APP_ROUTES } from "@/constants";
 
 export function ForgotPasswordPage() {
   const { forgotPassword } = useAuthUser();
-  const { isLoading, error, isSuccess } = useActions([
+  const { isLoading, error, isSuccess } = useActionsData([
     EActionKeys.ForgotPassword,
   ]);
 

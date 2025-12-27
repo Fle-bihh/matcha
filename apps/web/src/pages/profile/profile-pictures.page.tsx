@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { useRef } from "react";
 import { EActionKeys } from "@/types/actions.types";
-import { useActions } from "@/hooks/actions.hooks";
+import { useActionsData } from "@/hooks/actions.hooks";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { MainPictureSection } from "@/components/profile/main-picture-section.component";
 import { AdditionalPicturesSection } from "@/components/profile/additional-pictures-section.component";
@@ -10,7 +10,7 @@ import { ProfilePageWrapper } from "@/components/profile/profile-page-wrapper.co
 export const ProfilePicturesPage = () => {
   const { authUser, updateProfilePicture } = useAuthUser();
   const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const { isLoading } = useActions([EActionKeys.UpdateProfilePicture]);
+  const { isLoading } = useActionsData([EActionKeys.UpdateProfilePicture]);
 
   const pictures = authUser?.pictures_urls || [];
 

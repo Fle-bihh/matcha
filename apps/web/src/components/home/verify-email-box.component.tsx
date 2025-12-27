@@ -2,12 +2,12 @@ import { useAuthUser } from "@/hooks/auth.hook";
 import { Alert, Typography, Button } from "@mui/material";
 import { Warning as WarningIcon } from "@mui/icons-material";
 import { withEmailNotVerifiedComponent } from "../utils/with-condition-component.component";
-import { useActions } from "@/hooks/actions.hooks";
+import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 
 function VerifyEmailBoxComp() {
   const { resendVerificationEmail } = useAuthUser();
-  const { isLoading, error } = useActions([
+  const { isLoading, error } = useActionsData([
     EActionKeys.ResendVerificationEmail,
   ]);
 

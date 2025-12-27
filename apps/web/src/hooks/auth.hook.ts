@@ -4,38 +4,20 @@ import {
   selectAuthUser,
   selectIsAuthInitialized,
 } from "@/store/selectors/auth.selectors";
-import { useCreateAction } from "./actions.hooks";
+import { useDispatchActions } from "./actions.hooks";
 
 export const useAuthUser = () => {
-  const createAction = useCreateAction();
   const authUser = useSelector(selectAuthUser);
   const isInitialized = useSelector(selectIsAuthInitialized);
 
-  const authActions = {
-    register: createAction(AuthActions.register),
-    authenticate: createAction(AuthActions.authenticate),
-    logout: createAction(AuthActions.logout),
-    login: createAction(AuthActions.login),
-    verifyEmail: createAction(AuthActions.verifyEmail),
-    resendVerificationEmail: createAction(AuthActions.resendVerificationEmail),
-    forgotPassword: createAction(AuthActions.forgotPassword),
-    resetPassword: createAction(AuthActions.resetPassword),
-    sendChangeEmailVerification: createAction(
-      AuthActions.sendChangeEmailVerification
-    ),
-    changeEmail: createAction(AuthActions.changeEmail),
-  };
-
-  const userActions = {
-    updateProfile: createAction(UserActions.updateProfile),
-    updateProfilePicture: createAction(UserActions.updateProfilePicture),
-  };
+  const actions = useDispatchActions({
+    ...AuthActions,
+    ...UserActions,
+  });
 
   return {
     authUser,
     isInitialized,
-
-    ...authActions,
-    ...userActions,
+    ...actions,
   };
 };

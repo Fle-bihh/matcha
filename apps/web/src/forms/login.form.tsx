@@ -13,14 +13,14 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useState } from "react";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { useActions } from "@/hooks/actions.hooks";
+import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 import { APP_ROUTES } from "@/constants";
 import { Link } from "react-router-dom";
 
 export function LoginForm() {
   const { login } = useAuthUser();
-  const { isLoading, error } = useActions([EActionKeys.Login]);
+  const { isLoading, error } = useActionsData([EActionKeys.Login]);
   const [showPassword, setShowPassword] = useState(false);
 
   const {

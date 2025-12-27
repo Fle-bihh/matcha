@@ -12,7 +12,7 @@ import {
 import { useFlagger } from "@/hooks/flaggers.hook";
 import { EFlaggers } from "@/constants/flaggers.constants";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { useActions } from "@/hooks/actions.hooks";
+import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 import { useForm } from "react-hook-form";
 import {
@@ -24,7 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 export function ChangeEmailDialog() {
   const { isOpen, closeFlagger } = useFlagger(EFlaggers.ChangeEmailDialog);
   const { sendChangeEmailVerification } = useAuthUser();
-  const { isLoading, isSuccess } = useActions([
+  const { isLoading, isSuccess } = useActionsData([
     EActionKeys.SendChangeEmailVerification,
   ]);
 

@@ -17,13 +17,13 @@ import {
   FormHelperText,
 } from "@mui/material";
 import { useAuthUser } from "@/hooks/auth.hook";
-import { useActions } from "@/hooks/actions.hooks";
+import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 import { useMemo } from "react";
 
 export function UpdateProfileForm() {
   const { authUser, updateProfile } = useAuthUser();
-  const { isLoading, error } = useActions([EActionKeys.UpdateProfile]);
+  const { isLoading, error } = useActionsData([EActionKeys.UpdateProfile]);
 
   const defaultValues = useMemo(
     () => ({
