@@ -5,6 +5,7 @@ import { EntryPage, NotFoundPage, HomePage } from "@/pages";
 import { EntryLayout, ProtectedLayout, ProfileLayout } from "@/layouts";
 import { RegisterPage, LoginPage, ForgotPasswordPage } from "@/pages/auth";
 import { ConfirmEmailPage } from "@/pages/auth/confirm-email.page";
+import { ConfirmEmailChangePage } from "@/pages/auth/confirm-email-change.page";
 import { ModifyPasswordPage } from "@/pages/auth/modify-password.page";
 import { ProfilePage } from "@/pages/profile/profile.page";
 import { ProfileSettingsPage } from "@/pages/profile/profile-settings.page";
@@ -45,6 +46,10 @@ export function Router() {
         </Route>
       </Route>
       <Route path={APP_PAGES.confirmEmail} element={<ConfirmEmailPage />} />
+      <Route
+        path={APP_PAGES.confirmEmailChange}
+        element={<ConfirmEmailChangePage />}
+      />
       <Route path={APP_PAGES.modifyPassword} element={<ModifyPasswordPage />} />
       <Route path={APP_PAGES.notFound} element={<NotFoundPage />} />
     </Routes>

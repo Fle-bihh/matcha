@@ -10,6 +10,8 @@ import {
   VerifyEmailRequestSchema,
   ForgotPasswordRequestSchema,
   ResetPasswordRequestSchema,
+  SendChangeEmailVerificationRequestSchema,
+  ChangeEmailRequestSchema,
 } from "@matcha/shared";
 
 export class AuthController extends BaseController {
@@ -80,6 +82,29 @@ export class AuthController extends BaseController {
   @validate(ResetPasswordRequestSchema, "body")
   private async resetPassword(req: Request, res: Response): Promise<void> {
     const result = await this.authService.resetPassword(req.validated?.body);
+    res.status(result.statusCode).send(result);
+  }
+
+  @auth()
+  @route("POST", "send-change-email-verification")
+  @validate(SendChangeEmailVerificationRequestSchema, "body")
+  private async sendChangeEmailVerification(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    const { id } = req.user!;
+    const result = await this.authService.sendChangeEmailVerification(
+      id,
+      req.validated?.body
+    );
+    res.status(result.statusCode).send(result);
+  }
+
+  @auth()
+  @route("POST", "change-email")
+  @validate(ChangeEmailRequestSchema, "body")
+  private async changeEmail(req: Request, res: Response): Promise<void> {
+    const result = await this.authService.changeEmail(req.validated?.body);
     res.status(result.statusCode).send(result);
   }
 }

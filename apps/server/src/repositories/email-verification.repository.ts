@@ -22,6 +22,8 @@ export class EmailVerificationRepository extends BaseRepository {
       `user_id INT NOT NULL,
 			 verification_token VARCHAR(255) NOT NULL UNIQUE,
 			 is_used BOOLEAN NOT NULL DEFAULT FALSE,
+       is_new_email BOOLEAN NOT NULL DEFAULT FALSE,
+       new_email VARCHAR(255) DEFAULT NULL,
 			 expires_at DATETIME NOT NULL`,
       `FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE`
     );
@@ -38,6 +40,28 @@ export class EmailVerificationRepository extends BaseRepository {
         user_id: userId,
         verification_token: verificationToken,
         is_used: false,
+        is_new_email: false,
+        new_email: null,
+        expires_at: expiresAt,
+      }
+    );
+    return verification;
+  }
+
+  public async createVerificationForEmailChange(
+    userId: number,
+    newEmail: string,
+    verificationToken: string,
+    expiresAt: Date
+  ): Promise<EmailVerification> {
+    const verification = await this.createDocument<EmailVerification>(
+      this.tableName,
+      {
+        user_id: userId,
+        verification_token: verificationToken,
+        is_used: false,
+        is_new_email: true,
+        new_email: newEmail,
         expires_at: expiresAt,
       }
     );

@@ -35,6 +35,14 @@ const authActionsConfig = {
     serviceToken: ETokens.AuthService,
     methodName: "resetPassword",
   },
+  [EActionKeys.SendChangeEmailVerification]: {
+    serviceToken: ETokens.AuthService,
+    methodName: "sendChangeEmailVerification",
+  },
+  [EActionKeys.ChangeEmail]: {
+    serviceToken: ETokens.AuthService,
+    methodName: "changeEmail",
+  },
 } as const;
 
 export const AuthActions = createActions(authActionsConfig);

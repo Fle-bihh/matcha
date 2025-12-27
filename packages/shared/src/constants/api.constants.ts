@@ -20,6 +20,8 @@ export const API_ROUTES = {
     "resend-verification-email": "/resend-verification-email",
     "forgot-password": "/forgot-password",
     "reset-password": "/reset-password",
+    "send-change-email-verification": "/send-change-email-verification",
+    "change-email": "/change-email",
   },
 } as const;
 

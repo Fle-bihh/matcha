@@ -60,6 +60,28 @@ export interface ResendVerificationEmailResponseDto {
   success: boolean;
 }
 
+export const SendChangeEmailVerificationRequestSchema = z.object({
+  newEmail: fields.email,
+});
+
+export type SendChangeEmailVerificationRequestDto = z.infer<
+  typeof SendChangeEmailVerificationRequestSchema
+>;
+
+export const ChangeEmailRequestSchema = z.object({
+  token: z.string().min(1, "Token is required"),
+});
+
+export type ChangeEmailRequestDto = z.infer<typeof ChangeEmailRequestSchema>;
+
+export interface ChangeEmailResponseDto {
+  success: boolean;
+}
+
+export interface SendChangeEmailVerificationResponseDto {
+  success: boolean;
+}
+
 export const ForgotPasswordRequestSchema = z.object({
   email: fields.email,
 });

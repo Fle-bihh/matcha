@@ -139,11 +139,6 @@ export class ApiService extends BaseService {
       }
     }
 
-    if (!response.ok) {
-      const data = await response.clone().json();
-      throw new Error(`${data.message || response.statusText}`);
-    }
-
     return response.json();
   }
 

@@ -10,6 +10,7 @@ export const APP_PAGES = {
   login: "login",
   forgotPassword: "forgot-password",
   confirmEmail: "confirm-email",
+  confirmEmailChange: "confirm-email-change",
   modifyPassword: "modify-password",
 };
 
@@ -25,5 +26,6 @@ export const APP_ROUTES = {
   login: `/${APP_PAGES.login}`,
   forgotPassword: `/${APP_PAGES.forgotPassword}`,
   confirmEmail: `/${APP_PAGES.confirmEmail}`,
+  confirmEmailChange: `/${APP_PAGES.confirmEmailChange}`,
   modifyPassword: `/${APP_PAGES.modifyPassword}`,
 };

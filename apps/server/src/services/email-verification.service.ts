@@ -173,4 +173,116 @@ export class EmailVerificationService extends BaseService {
       );
     }
   }
+
+  public async sendChangeEmailVerification(
+    userId: number,
+    newEmail: string
+  ): Promise<ServiceResponse<boolean>> {
+    try {
+      const userResponse = await this.userService.findById(userId);
+
+      if (!userResponse.success || !userResponse.responseObject) {
+        return ServiceResponse.failure(
+          "User not found",
+          false,
+          StatusCodes.NOT_FOUND
+        );
+      }
+
+      const user = userResponse.responseObject;
+
+      const token = crypto.randomBytes(32).toString("hex");
+
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 24);
+
+      await this.emailVerificationRepository.deleteByUserId(userId);
+
+      await this.emailVerificationRepository.createVerificationForEmailChange(
+        userId,
+        newEmail,
+        token,
+        expiresAt
+      );
+
+      const verificationLink = `${config.webUrl}/confirm-email-change?token=${token}`;
+
+      await this.mailService.sendEmail({
+        to: newEmail,
+        subject: "Verify Your New Email Address - Matcha",
+        text: `Hello ${user.username},\n\nYou requested to change your email address. Please verify your new email address by clicking the link below:\n\n${verificationLink}\n\nThis link will expire in 24 hours.\n\nIf you did not request this change, please contact our support team immediately.\n\nBest regards,\nMatcha Team`,
+      });
+
+      return ServiceResponse.success(
+        "Change email verification sent successfully",
+        true
+      );
+    } catch (error) {
+      logger.error("Error sending change email verification:", error);
+      return ServiceResponse.failure(
+        "Error sending change email verification",
+        false,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  public async verifyEmailChange(
+    token: string
+  ): Promise<ServiceResponse<boolean>> {
+    try {
+      const verification = await this.emailVerificationRepository.findByToken(
+        token
+      );
+
+      if (
+        !verification ||
+        !verification.is_new_email ||
+        !verification.new_email
+      ) {
+        return ServiceResponse.failure(
+          "Invalid or expired verification token",
+          false,
+          StatusCodes.BAD_REQUEST
+        );
+      }
+
+      const marked = await this.emailVerificationRepository.markAsUsed(
+        verification.id
+      );
+
+      if (!marked) {
+        return ServiceResponse.failure(
+          "Error marking verification as used",
+          false,
+          StatusCodes.INTERNAL_SERVER_ERROR
+        );
+      }
+
+      const userResponse = await this.userService.updateUser(
+        verification.user_id,
+        {
+          email: verification.new_email,
+          is_email_verified: true,
+        }
+      );
+
+      if (!userResponse.success) {
+        return ServiceResponse.failure(
+          "Error updating user email",
+          false,
+          StatusCodes.INTERNAL_SERVER_ERROR
+        );
+      }
+
+      return ServiceResponse.success("Email changed successfully", true);
+    } catch (error) {
+      logger.error("Error verifying email change:", error);
+      return ServiceResponse.failure(
+        "Error verifying email change",
+        false,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
 }

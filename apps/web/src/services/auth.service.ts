@@ -13,6 +13,10 @@ import {
   ForgotPasswordResponseDto,
   type ResetPasswordRequestDto,
   ResetPasswordResponseDto,
+  type SendChangeEmailVerificationRequestDto,
+  SendChangeEmailVerificationResponseDto,
+  type ChangeEmailRequestDto,
+  ChangeEmailResponseDto,
 } from "@matcha/shared";
 import { BaseService } from "./base.service";
 import { ServiceResponse } from "@/types";
@@ -35,6 +39,8 @@ export class AuthService extends BaseService {
     EMAIL_VERIFICATION_SENT: "Verification email sent successfully",
     PASSWORD_RESET_SENT: "Password reset link sent successfully",
     PASSWORD_RESET_SUCCESS: "Password reset successfully",
+    EMAIL_CHANGE_VERIFICATION_SENT: "Verification link sent to your new email",
+    EMAIL_CHANGED: "Email changed successfully",
   } as const;
 
   private async storeAuthData(data: AuthData): Promise<void> {
@@ -211,5 +217,45 @@ export class AuthService extends BaseService {
 
     this.router.replace("/login");
     return ServiceResponse.success(this.MESSAGES.PASSWORD_RESET_SUCCESS);
+  }
+
+  @action({ showSuccessMessage: true, showErrorMessage: true })
+  public async sendChangeEmailVerification(
+    dto: SendChangeEmailVerificationRequestDto
+  ) {
+    const response =
+      await this.apiService.post<SendChangeEmailVerificationResponseDto>(
+        this.getAuthRoute("send-change-email-verification"),
+        dto,
+        { auth: true }
+      );
+
+    if (!response.success) {
+      return ServiceResponse.failure(response.message);
+    }
+
+    return ServiceResponse.success(
+      this.MESSAGES.EMAIL_CHANGE_VERIFICATION_SENT
+    );
+  }
+
+  @action({ showSuccessMessage: true })
+  public async changeEmail(dto: ChangeEmailRequestDto) {
+    const response = await this.apiService.post<ChangeEmailResponseDto>(
+      this.getAuthRoute("change-email"),
+      dto,
+      { auth: true }
+    );
+
+    if (!response.success) {
+      return ServiceResponse.failure(response.message);
+    }
+
+    // Update the auth user email in the store
+    await this.authenticate();
+
+    crossTab.broadcast(CrossTabEvent.EmailVerified);
+
+    return ServiceResponse.success(this.MESSAGES.EMAIL_CHANGED);
   }
 }

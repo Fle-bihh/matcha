@@ -20,6 +20,10 @@ export const useAuthUser = () => {
     resendVerificationEmail: createAction(AuthActions.resendVerificationEmail),
     forgotPassword: createAction(AuthActions.forgotPassword),
     resetPassword: createAction(AuthActions.resetPassword),
+    sendChangeEmailVerification: createAction(
+      AuthActions.sendChangeEmailVerification
+    ),
+    changeEmail: createAction(AuthActions.changeEmail),
   };
 
   const userActions = {

@@ -19,11 +19,14 @@ import {
   ForgotPasswordResponseDto,
   ResetPasswordRequestDto,
   ResetPasswordResponseDto,
+  SendChangeEmailVerificationRequestDto,
+  SendChangeEmailVerificationResponseDto,
+  ChangeEmailRequestDto,
+  ChangeEmailResponseDto,
 } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { JwtUtils } from "@/utils/jwt.utils";
 import { HashUtils } from "@/utils/hash.utils";
-import { config } from "@/config";
 
 export class AuthService extends BaseService {
   constructor(container: IContainer) {
@@ -293,6 +296,86 @@ export class AuthService extends BaseService {
       logger.error("Error in resendVerificationEmail:", error);
       return ServiceResponse.failure(
         "Error sending verification email",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  public async sendChangeEmailVerification(
+    userId: number,
+    dto: SendChangeEmailVerificationRequestDto
+  ): Promise<ServiceResponse<SendChangeEmailVerificationResponseDto | null>> {
+    try {
+      const userResponse = await this.userService.findById(userId);
+
+      if (!userResponse.success || !userResponse.responseObject) {
+        return ServiceResponse.failure(
+          "User not found",
+          null,
+          StatusCodes.NOT_FOUND
+        );
+      }
+
+      const emailInUse = await this.userService.findByEmail(dto.newEmail);
+
+      if (emailInUse.success && emailInUse.responseObject) {
+        return ServiceResponse.failure(
+          "Email is already in use",
+          null,
+          StatusCodes.CONFLICT
+        );
+      }
+
+      const result =
+        await this.emailVerificationService.sendChangeEmailVerification(
+          userId,
+          dto.newEmail
+        );
+
+      if (!result.success) {
+        return ServiceResponse.failure(result.message, null, result.statusCode);
+      }
+
+      return ServiceResponse.success(
+        "Change email verification sent successfully",
+        { success: true }
+      );
+    } catch (error) {
+      logger.error("Error in sendChangeEmailVerification:", error);
+      return ServiceResponse.failure(
+        "Error sending change email verification",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  public async changeEmail(
+    dto: ChangeEmailRequestDto
+  ): Promise<ServiceResponse<ChangeEmailResponseDto | null>> {
+    try {
+      const verificationResponse =
+        await this.emailVerificationService.verifyEmailChange(dto.token);
+
+      if (
+        !verificationResponse.success ||
+        !verificationResponse.responseObject
+      ) {
+        return ServiceResponse.failure(
+          verificationResponse.message,
+          null,
+          verificationResponse.statusCode
+        );
+      }
+
+      return ServiceResponse.success("Email changed successfully", {
+        success: true,
+      });
+    } catch (error) {
+      logger.error("Error in changeEmail:", error);
+      return ServiceResponse.failure(
+        "Error changing email",
         null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );
