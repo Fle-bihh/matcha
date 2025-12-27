@@ -76,6 +76,7 @@ export type ChangeEmailRequestDto = z.infer<typeof ChangeEmailRequestSchema>;
 
 export interface ChangeEmailResponseDto {
   success: boolean;
+  newEmail: string;
 }
 
 export interface SendChangeEmailVerificationResponseDto {

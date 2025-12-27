@@ -19,13 +19,17 @@ import {
   ChangeEmailResponseDto,
 } from "@matcha/shared";
 import { BaseService } from "./base.service";
-import { ServiceResponse } from "@/types";
-import { clearAction, setAuthUser, setEmailToVerified } from "@/store";
+import { CrossTabEvent, ServiceResponse } from "@/types";
+import {
+  changeEmail,
+  clearAction,
+  setAuthUser,
+  setEmailToVerified,
+} from "@/store";
 import { EStorageKeys } from "@/types/storage.constants";
 import { action } from "@/decorators";
 import { EActionKeys } from "@/types/actions.types";
-import { crossTab, CrossTabEvent } from "@/utils/cross-tab.utils";
-import { APP_ROUTES } from "@/constants/routing.constants";
+import { crossTab } from "@/utils/cross-tab.utils";
 
 type AuthData = Partial<RegisterResponseDto>;
 
@@ -166,12 +170,6 @@ export class AuthService extends BaseService {
 
     crossTab.broadcast(CrossTabEvent.EmailVerified);
 
-    // window.close();
-
-    // setTimeout(() => {
-    //   this.router.replace(APP_ROUTES.login);
-    // }, 500);
-
     return ServiceResponse.success(this.MESSAGES.EMAIL_VERIFIED);
   }
 
@@ -251,10 +249,12 @@ export class AuthService extends BaseService {
       return ServiceResponse.failure(response.message);
     }
 
-    // Update the auth user email in the store
-    await this.authenticate();
+    this.dispatch(changeEmail(response.responseObject.newEmail));
 
-    crossTab.broadcast(CrossTabEvent.EmailVerified);
+    crossTab.broadcast(
+      CrossTabEvent.EmailChanged,
+      response.responseObject.newEmail
+    );
 
     return ServiceResponse.success(this.MESSAGES.EMAIL_CHANGED);
   }

@@ -1,20 +1,30 @@
 import { useEffect } from "react";
-import { crossTab, CrossTabEvent } from "@/utils/cross-tab.utils";
+import { crossTab } from "@/utils/cross-tab.utils";
 import { useAuthUser } from "./auth.hook";
 import { useDispatch } from "react-redux";
-import { setEmailToVerified } from "@/store";
+import { changeEmail, setEmailToVerified } from "@/store";
+import { CrossTabEvent } from "@/types";
 
 export function useCrossTabSync() {
   const dispatch = useDispatch();
   const { authUser } = useAuthUser();
 
   useEffect(() => {
-    const unsubscribe = crossTab.on(CrossTabEvent.EmailVerified, () => {
-      if (authUser && !authUser.is_email_verified) {
-        dispatch(setEmailToVerified());
-      }
-    });
+    const unsubscribers = [
+      crossTab.on(CrossTabEvent.EmailVerified, () => {
+        if (authUser && !authUser.is_email_verified) {
+          dispatch(setEmailToVerified());
+        }
+      }),
+      crossTab.on(CrossTabEvent.EmailChanged, (newEmail) => {
+        if (authUser) {
+          dispatch(changeEmail(newEmail));
+        }
+      }),
+    ];
 
-    return unsubscribe;
+    return () => {
+      unsubscribers.forEach((unsubscribe) => unsubscribe());
+    };
   }, [authUser, dispatch]);
 }

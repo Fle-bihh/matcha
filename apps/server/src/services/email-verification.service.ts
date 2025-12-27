@@ -2,7 +2,7 @@ import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { EmailVerificationRepository } from "@/repositories/email-verification.repository";
 import { UserService } from "./user.service";
-import { logger } from "@matcha/shared";
+import { ChangeEmailResponseDto, logger } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import crypto from "crypto";
 import { config } from "@/config";
@@ -229,7 +229,7 @@ export class EmailVerificationService extends BaseService {
 
   public async verifyEmailChange(
     token: string
-  ): Promise<ServiceResponse<boolean>> {
+  ): Promise<ServiceResponse<ChangeEmailResponseDto | null>> {
     try {
       const verification = await this.emailVerificationRepository.findByToken(
         token
@@ -242,7 +242,7 @@ export class EmailVerificationService extends BaseService {
       ) {
         return ServiceResponse.failure(
           "Invalid or expired verification token",
-          false,
+          null,
           StatusCodes.BAD_REQUEST
         );
       }
@@ -254,7 +254,7 @@ export class EmailVerificationService extends BaseService {
       if (!marked) {
         return ServiceResponse.failure(
           "Error marking verification as used",
-          false,
+          null,
           StatusCodes.INTERNAL_SERVER_ERROR
         );
       }
@@ -270,17 +270,20 @@ export class EmailVerificationService extends BaseService {
       if (!userResponse.success) {
         return ServiceResponse.failure(
           "Error updating user email",
-          false,
+          null,
           StatusCodes.INTERNAL_SERVER_ERROR
         );
       }
 
-      return ServiceResponse.success("Email changed successfully", true);
+      return ServiceResponse.success("Email changed successfully", {
+        newEmail: verification.new_email,
+        success: true,
+      });
     } catch (error) {
       logger.error("Error verifying email change:", error);
       return ServiceResponse.failure(
         "Error verifying email change",
-        false,
+        null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );
     }

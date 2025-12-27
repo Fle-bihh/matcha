@@ -369,9 +369,10 @@ export class AuthService extends BaseService {
         );
       }
 
-      return ServiceResponse.success("Email changed successfully", {
-        success: true,
-      });
+      return ServiceResponse.success(
+        "Email changed successfully",
+        verificationResponse.responseObject
+      );
     } catch (error) {
       logger.error("Error in changeEmail:", error);
       return ServiceResponse.failure(

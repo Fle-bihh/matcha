@@ -28,9 +28,18 @@ const authUserSlice = createSlice({
     setAuthInitialized: (state, action: PayloadAction<boolean>) => {
       state.isInitialized = action.payload;
     },
+    changeEmail: (state, action: PayloadAction<string>) => {
+      if (state.user) {
+        state.user.email = action.payload;
+      }
+    },
   },
 });
 
-export const { setAuthUser, setAuthInitialized, setEmailToVerified } =
-  authUserSlice.actions;
+export const {
+  setAuthUser,
+  setAuthInitialized,
+  setEmailToVerified,
+  changeEmail,
+} = authUserSlice.actions;
 export default authUserSlice.reducer;
