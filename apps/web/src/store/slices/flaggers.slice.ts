@@ -8,6 +8,7 @@ export type FlaggersState = {
 
 const initialState: FlaggersState = {
   [EFlaggers.ChangeEmailDialog]: false,
+  [EFlaggers.ChangeLocationDialog]: false,
 };
 
 const flaggersSlice = createSlice({

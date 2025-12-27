@@ -9,7 +9,7 @@ import {
   setIsGettingGPS,
   setIsSearching,
   setError,
-  clearError,
+  clearLocationError,
 } from "@/store";
 import { ServiceResponse } from "@/types";
 
@@ -34,7 +34,7 @@ export class LocationService extends BaseService {
   @action({ showSuccessMessage: false, showErrorMessage: true })
   async getCurrentPosition(): Promise<ServiceResponse> {
     this.dispatch(setIsGettingGPS(true));
-    this.dispatch(clearError());
+    this.dispatch(clearLocationError());
 
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
@@ -116,7 +116,7 @@ export class LocationService extends BaseService {
     }
 
     this.dispatch(setIsSearching(true));
-    this.dispatch(clearError());
+    this.dispatch(clearLocationError());
 
     try {
       const params = new URLSearchParams({
@@ -211,21 +211,16 @@ export class LocationService extends BaseService {
 
     this.dispatch(setSelectedLocation(location));
     this.dispatch(clearSearchResults());
-    this.dispatch(clearError());
+    this.dispatch(clearLocationError());
 
     return ServiceResponse.success("Location selected");
   }
 
-  /**
-   * Parse Nominatim API response into our GeocodingResult format
-   */
   private parseNominatimResponse(response: NominatimResponse): GeocodingResult {
     const address = response.address || {};
 
-    // Extract city (could be in different fields depending on location)
     const city = address.city || address.town || address.village || null;
 
-    // Extract neighborhood/suburb
     const neighborhood = address.neighbourhood || address.suburb || null;
 
     return {
