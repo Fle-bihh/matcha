@@ -21,6 +21,7 @@ import { EStorageKeys } from "@/types/storage.constants";
 import { action } from "@/decorators";
 import { EActionKeys } from "@/types/actions.types";
 import { crossTab, CrossTabEvent } from "@/utils/cross-tab.utils";
+import { APP_ROUTES } from "@/constants/routing.constants";
 
 type AuthData = Partial<RegisterResponseDto>;
 
@@ -157,8 +158,13 @@ export class AuthService extends BaseService {
 
     this.dispatch(setEmailToVerified());
 
-    // Notify other tabs about email verification
     crossTab.broadcast(CrossTabEvent.EmailVerified);
+
+    // window.close();
+
+    // setTimeout(() => {
+    //   this.router.replace(APP_ROUTES.login);
+    // }, 500);
 
     return ServiceResponse.success(this.MESSAGES.EMAIL_VERIFIED);
   }

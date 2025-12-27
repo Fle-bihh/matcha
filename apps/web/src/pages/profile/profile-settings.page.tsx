@@ -8,12 +8,16 @@ import {
 } from "@mui/material";
 import { ProfilePageWrapper } from "@/components/profile/profile-page-wrapper.component";
 import { useAuthUser } from "@/hooks/auth.hook";
+import { ChangeEmailDialog } from "@/components/auth/change-email-dialog.component";
+import { useFlagger } from "@/hooks/flaggers.hook";
+import { EFlaggers } from "@/constants/flaggers.constants";
 
 export function ProfileSettingsPage() {
   const { authUser } = useAuthUser();
+  const { openFlagger } = useFlagger(EFlaggers.ChangeEmailDialog);
 
   const handleChangeEmail = () => {
-    console.log("Change email clicked");
+    openFlagger();
   };
 
   return (
@@ -72,6 +76,8 @@ export function ProfileSettingsPage() {
           </CardContent>
         </Card>
       </Box>
+
+      <ChangeEmailDialog />
     </ProfilePageWrapper>
   );
 }

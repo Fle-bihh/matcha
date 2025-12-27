@@ -1,33 +1,21 @@
 import { CenteredPaper } from "@/components/app/centered-paper.component";
-import {
-  Box,
-  Typography,
-  Button,
-  Alert,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Typography, Button, Alert } from "@mui/material";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActions } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { useRouting } from "@/hooks/routing.hooks";
+import { APP_ROUTES } from "@/constants";
 
 export function ConfirmEmailPage() {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const router = useRouting();
   const { verifyEmail } = useAuthUser();
   const { isLoading, error, isSuccess } = useActions([EActionKeys.VerifyEmail]);
-  const [autoVerifying, setAutoVerifying] = useState(false);
 
   const token = searchParams.get("token");
-
-  useEffect(() => {
-    if (token && window.opener && !window.opener.closed) {
-      setAutoVerifying(true);
-      handleVerifyEmail();
-    }
-  }, [token]);
 
   const handleVerifyEmail = async () => {
     if (!token) return;
@@ -38,7 +26,7 @@ export function ConfirmEmailPage() {
   const handleManualClose = () => {
     window.close();
     setTimeout(() => {
-      navigate("/login");
+      router.replace(APP_ROUTES.login);
     }, 500);
   };
 
@@ -77,13 +65,6 @@ export function ConfirmEmailPage() {
             >
               Close Window
             </Button>
-          </Box>
-        ) : autoVerifying ? (
-          <Box sx={{ textAlign: "center", py: 3 }}>
-            <CircularProgress size={48} sx={{ mb: 2 }} />
-            <Typography variant="body1" color="text.secondary">
-              Verifying your email...
-            </Typography>
           </Box>
         ) : (
           <>

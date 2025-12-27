@@ -4,6 +4,7 @@ import entitiesReducer from "./slices/entities.slice";
 import authUserReducer from "./slices/auth-user.slice";
 import actionsReducer from "./slices/actions.slice";
 import snackbarReducer from "./slices/snackbar.slice";
+import flaggersReducer from "./slices/flaggers.slice";
 
 export const createStore = (container: IContainer) => {
   const store = configureStore({
@@ -15,6 +16,8 @@ export const createStore = (container: IContainer) => {
       authUser: authUserReducer,
 
       snackbar: snackbarReducer,
+
+      flaggers: flaggersReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
