@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { BaseController } from "./base.controller";
 import { ETokens } from "@/types";
 import { UserService } from "@/services";
-import { auth, route, validate, upload } from "@/decorators";
+import { auth, route, validate, upload, paginate } from "@/decorators";
 import {
   UpdateProfileDtoSchema,
   UpdateProfilePictureDtoSchema,
@@ -16,8 +16,8 @@ export class UserController extends BaseController {
   }
 
   @auth()
-  @route("PATCH", "update-profile")
   @validate(UpdateProfileDtoSchema, "body")
+  @route("PATCH", "update-profile")
   private async updateProfile(req: Request, res: Response): Promise<void> {
     const { id } = req.user!;
     const result = await this.userService.updateUser(id, req.validated?.body);
@@ -25,13 +25,13 @@ export class UserController extends BaseController {
   }
 
   @auth()
-  @route("PATCH", "update-profile-picture")
   @upload(uploadProfilePictureMiddleware, {
     validation: {
       required: true,
     },
   })
   @validate(UpdateProfilePictureDtoSchema, "body")
+  @route("PATCH", "update-profile-picture")
   private async updateProfilePicture(
     req: Request,
     res: Response
@@ -48,14 +48,22 @@ export class UserController extends BaseController {
   }
 
   @auth()
-  @route("PATCH", "update-location")
   @validate(UpdateLocationDtoSchema, "body")
+  @route("PATCH", "update-location")
   private async updateLocation(req: Request, res: Response): Promise<void> {
     const { id } = req.user!;
     const result = await this.userService.updateLocation(
       id,
       req.validated?.body
     );
+    res.status(result.statusCode).send(result);
+  }
+
+  @auth()
+  @paginate()
+  @route("GET", "get-users")
+  private async getUsers(req: Request, res: Response): Promise<void> {
+    const result = await this.userService.getUsers(req.pagination!);
     res.status(result.statusCode).send(result);
   }
 }

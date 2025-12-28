@@ -1,4 +1,10 @@
-import { IContainer, ETokens, ServiceResponse } from "@/types";
+import {
+  IContainer,
+  ETokens,
+  ServiceResponse,
+  PaginationParams,
+  PaginatedResponse,
+} from "@/types";
 import { BaseService } from "./base.service";
 import { UserRepository } from "@/repositories";
 import {
@@ -379,6 +385,57 @@ export class UserService extends BaseService {
       return ServiceResponse.failure(
         "Error updating location",
         null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  public async getUsers(
+    paginationParams: PaginationParams
+  ): Promise<ServiceResponse<PaginatedResponse<AuthUser>>> {
+    try {
+      const { users, total } = await this.userRepository.getUsers({
+        limit: paginationParams.limit,
+        offset: paginationParams.offset,
+      });
+
+      const usersWithoutPassword = users.map((user) =>
+        this.excludePassword(user)
+      );
+
+      const totalPages = Math.ceil(total / paginationParams.limit);
+
+      const paginatedResponse: PaginatedResponse<AuthUser> = {
+        data: usersWithoutPassword,
+        meta: {
+          page: paginationParams.page,
+          limit: paginationParams.limit,
+          total,
+          totalPages,
+          hasNextPage: paginationParams.page < totalPages,
+          hasPreviousPage: paginationParams.page > 1,
+        },
+      };
+
+      return ServiceResponse.success(
+        "Users retrieved successfully",
+        paginatedResponse
+      );
+    } catch (error) {
+      logger.error("Error in getUsers:", error);
+      return ServiceResponse.failure(
+        "Error retrieving users",
+        {
+          data: [],
+          meta: {
+            page: 1,
+            limit: 20,
+            total: 0,
+            totalPages: 0,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+        },
         StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
