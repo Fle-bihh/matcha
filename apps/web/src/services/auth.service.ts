@@ -23,6 +23,7 @@ import { CrossTabEvent, ServiceResponse } from "@/types";
 import {
   changeEmail,
   clearAction,
+  closeFlagger,
   setAuthUser,
   setEmailToVerified,
 } from "@/store";
@@ -30,6 +31,7 @@ import { EStorageKeys } from "@/types/storage.constants";
 import { action } from "@/decorators";
 import { EActionKeys } from "@/types/actions.types";
 import { crossTab } from "@/utils/cross-tab.utils";
+import { EFlaggers } from "@/constants/flaggers.constants";
 
 type AuthData = Partial<RegisterResponseDto>;
 
@@ -231,6 +233,8 @@ export class AuthService extends BaseService {
     if (!response.success) {
       return ServiceResponse.failure(response.message);
     }
+
+    this.dispatch(closeFlagger(EFlaggers.ChangeEmailDialog));
 
     return ServiceResponse.success(
       this.MESSAGES.EMAIL_CHANGE_VERIFICATION_SENT

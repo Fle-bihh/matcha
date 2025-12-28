@@ -133,6 +133,47 @@ export class UserService extends BaseService {
     }
   }
 
+  private async mayberCompleteUserProfile(
+    user: AuthUserWithPassword
+  ): Promise<AuthUserWithPassword> {
+    const requiredFields: (keyof AuthUser)[] = [
+      "first_name",
+      "last_name",
+      "gender",
+      "bio",
+      "age",
+      "orientation",
+    ];
+
+    for (const field of requiredFields) {
+      const value = user[field];
+      if (
+        value === null ||
+        value === undefined ||
+        (typeof value === "string" && value.trim() === "")
+      ) {
+        return user;
+      }
+    }
+
+    if (!user.pictures_urls || user.pictures_urls.length === 0) {
+      return user;
+    }
+
+    if (!user.interests || user.interests.length === 0) {
+      return user;
+    }
+
+    if (!user.location) {
+      return user;
+    }
+    const updatedUser = await this.userRepository.updateUser(user.id, {
+      is_profile_complete: true,
+    });
+
+    return updatedUser || user;
+  }
+
   public async updateUser(
     userId: number,
     userData: PartialBaseEntity<AuthUser>
@@ -151,9 +192,11 @@ export class UserService extends BaseService {
         );
       }
 
+      const completedUser = await this.mayberCompleteUserProfile(updatedUser);
+
       return ServiceResponse.success(
         "User updated successfully",
-        this.excludePassword(updatedUser)
+        this.excludePassword(completedUser)
       );
     } catch (error) {
       logger.error("Error in updateUser:", error);
@@ -202,9 +245,11 @@ export class UserService extends BaseService {
         );
       }
 
+      const completedUser = await this.mayberCompleteUserProfile(updatedUser);
+
       return ServiceResponse.success(
         "Password updated successfully",
-        this.excludePassword(updatedUser)
+        this.excludePassword(completedUser)
       );
     } catch (error) {
       logger.error("Error in updateUserPassword:", error);
@@ -279,9 +324,11 @@ export class UserService extends BaseService {
         );
       }
 
+      const completedUser = await this.mayberCompleteUserProfile(updatedUser);
+
       return ServiceResponse.success(
         "Profile picture updated successfully",
-        this.excludePassword(updatedUser)
+        this.excludePassword(completedUser)
       );
     } catch (error) {
       logger.error("Error in uploadProfilePicture:", error);
@@ -321,9 +368,11 @@ export class UserService extends BaseService {
         );
       }
 
+      const completedUser = await this.mayberCompleteUserProfile(updatedUser);
+
       return ServiceResponse.success(
         "Location updated successfully",
-        this.excludePassword(updatedUser)
+        this.excludePassword(completedUser)
       );
     } catch (error) {
       logger.error("Error in updateLocation:", error);

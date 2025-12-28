@@ -39,7 +39,7 @@ export function ChangeEmailDialog() {
   });
 
   const onSubmit = async (data: SendChangeEmailVerificationRequestDto) => {
-    await sendChangeEmailVerification(data);
+    sendChangeEmailVerification(data);
   };
 
   const handleClose = () => {

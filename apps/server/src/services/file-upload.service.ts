@@ -2,7 +2,7 @@ import { IContainer } from "@/types";
 import { BaseService } from "./base.service";
 import { logger } from "@matcha/shared";
 import { promises as fs } from "fs";
-import path from "path";
+import { PROFILE_PICTURE_UPLOAD_PATH } from "@/middleware/upload.middleware";
 
 export class FileUploadService extends BaseService {
   constructor(container: IContainer) {
@@ -18,9 +18,9 @@ export class FileUploadService extends BaseService {
       const fileExtension = imageFile.originalname.split(".").pop() || "jpg";
       const timestamp = Date.now();
       const newFileName = `user-${userId}-pic-${index}-${timestamp}.${fileExtension}`;
-      const targetPath = `uploads/profile-pictures/${newFileName}`;
+      const targetPath = `${PROFILE_PICTURE_UPLOAD_PATH}${newFileName}`;
 
-      await fs.mkdir("uploads/profile-pictures", { recursive: true });
+      await fs.mkdir(PROFILE_PICTURE_UPLOAD_PATH, { recursive: true });
       await fs.rename(imageFile.path, targetPath);
 
       logger.info(`Saved profile picture: ${targetPath}`);
