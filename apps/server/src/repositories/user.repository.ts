@@ -9,6 +9,8 @@ import {
 } from "@matcha/shared";
 import { IContainer } from "@/types";
 import { config } from "@/config";
+import { HashUtils } from "@/utils/hash.utils";
+import { generateRandomUsers } from "@/utils/seed-users.utils";
 
 export class UserRepository extends BaseRepository {
   private readonly tableName = "users";
@@ -20,6 +22,19 @@ export class UserRepository extends BaseRepository {
       logger.error("Error initializing UserRepository table:", err);
     });
   }
+
+  private readonly userInitialData = {
+    is_email_verified: false,
+    is_profile_complete: false,
+    gender: null,
+    orientation: null,
+    age: null,
+    bio: null,
+    pictures_urls: [],
+    interests: [],
+    location: null,
+    fame_score: 0,
+  };
 
   private async initializeTable(): Promise<void> {
     await this.createTableWithMetadata(
@@ -40,6 +55,35 @@ export class UserRepository extends BaseRepository {
        location JSON,
        fame_score INTEGER NOT NULL DEFAULT 0`
     );
+
+    await this.seedDatabaseIfEmpty();
+  }
+
+  private async seedDatabaseIfEmpty(): Promise<void> {
+    try {
+      const count = await this.countDocs(this.tableName);
+
+      if (count === 0) {
+        logger.info("Database is empty. Seeding with 50 random users...");
+        const randomUsers = generateRandomUsers(50);
+
+        for (const userData of randomUsers) {
+          const hashedPassword = await HashUtils.hashPassword(
+            userData.password
+          );
+          await this.createDocument<AuthUserWithPassword>(this.tableName, {
+            ...userData,
+            password: hashedPassword,
+          });
+        }
+
+        logger.info("Successfully seeded database with 50 users");
+      } else {
+        logger.info(`Database already has ${count} users. Skipping seed.`);
+      }
+    } catch (error) {
+      logger.error("Error seeding database:", error);
+    }
   }
 
   private async sanitizeUserData(
@@ -53,16 +97,7 @@ export class UserRepository extends BaseRepository {
       this.tableName,
       {
         ...data,
-        is_email_verified: false,
-        is_profile_complete: false,
-        gender: null,
-        orientation: null,
-        age: null,
-        bio: null,
-        pictures_urls: [],
-        interests: [],
-        location: null,
-        fame_score: 0,
+        ...this.userInitialData,
       }
     );
     return this.sanitizeUserData(userWithPassword);
