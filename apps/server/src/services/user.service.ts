@@ -216,7 +216,6 @@ export class UserService extends BaseService {
     }
   }
 
-  // this method ensures that profile pictures are organized without gaps, e.g., [pic1, null, pic3] -> [pic1, pic3]
   private reorganizeProfilePictures(pictures: (string | null)[]): string[] {
     const organizedPictures: string[] = [];
     for (const pic of pictures) {
@@ -235,7 +234,7 @@ export class UserService extends BaseService {
     try {
       const user = await this.userRepository.findUserById(userId);
       if (!user) {
-        await this.cleanupUploadedFile(imageFile.path);
+        await this.fileUploadService.cleanupFile(imageFile.path);
         return ServiceResponse.failure(
           "User not found",
           null,
@@ -243,18 +242,13 @@ export class UserService extends BaseService {
         );
       }
 
-      const fileExtension = imageFile.originalname.split(".").pop() || "jpg";
-      const timestamp = Date.now();
-      const newFileName = `user-${userId}-pic-${index}-${timestamp}.${fileExtension}`;
-      const path = `uploads/profile-pictures/${newFileName}`;
+      const path = await this.fileUploadService.saveProfilePicture(
+        userId,
+        imageFile,
+        index
+      );
 
-      const fs = await import("fs/promises");
-      try {
-        await fs.mkdir("uploads/profile-pictures", { recursive: true });
-        await fs.rename(imageFile.path, path);
-      } catch (moveError) {
-        logger.error("Error moving file:", moveError);
-        await this.cleanupUploadedFile(imageFile.path);
+      if (!path) {
         return ServiceResponse.failure(
           "Error saving profile picture",
           null,
@@ -267,7 +261,7 @@ export class UserService extends BaseService {
         : [];
 
       if (picturesArray[index]) {
-        await this.deleteOldPictureFile(picturesArray[index]);
+        await this.fileUploadService.deleteFile(picturesArray[index]);
       }
 
       picturesArray[index] = path;
@@ -277,7 +271,7 @@ export class UserService extends BaseService {
       });
 
       if (!updatedUser) {
-        await this.cleanupUploadedFile(path);
+        await this.fileUploadService.deleteFile(path);
         return ServiceResponse.failure(
           "Error updating profile picture",
           null,
@@ -291,33 +285,12 @@ export class UserService extends BaseService {
       );
     } catch (error) {
       logger.error("Error in uploadProfilePicture:", error);
-      await this.cleanupUploadedFile(imageFile.path);
+      await this.fileUploadService.cleanupFile(imageFile.path);
       return ServiceResponse.failure(
         "Error uploading profile picture",
         null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );
-    }
-  }
-
-  private async deleteOldPictureFile(urlPath: string): Promise<void> {
-    try {
-      const filePath = urlPath;
-      const fs = await import("fs/promises");
-      await fs.unlink(filePath);
-      logger.info(`Deleted old picture file: ${filePath}`);
-    } catch (error) {
-      logger.warn(`Failed to delete old picture file ${urlPath}:`, error);
-    }
-  }
-
-  private async cleanupUploadedFile(filePath: string): Promise<void> {
-    try {
-      const fs = await import("fs/promises");
-      await fs.unlink(filePath);
-      logger.info(`Cleaned up temporary file: ${filePath}`);
-    } catch (error) {
-      logger.error(`Failed to cleanup file ${filePath}:`, error);
     }
   }
 

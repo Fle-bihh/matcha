@@ -11,6 +11,7 @@ import {
   MailService,
   EmailVerificationService,
   PasswordResetService,
+  FileUploadService,
 } from "@/services";
 import { ETokens, IContainer } from "@/types";
 import { logger } from "@matcha/shared";
@@ -28,6 +29,7 @@ const serviceRegistry: Record<ETokens, ServiceConstructor> = {
   [ETokens.EmailVerificationService]: EmailVerificationService,
   [ETokens.PasswordResetRepository]: PasswordResetRepository,
   [ETokens.PasswordResetService]: PasswordResetService,
+  [ETokens.FileUploadService]: FileUploadService,
 } as const;
 
 export class Container implements IContainer {

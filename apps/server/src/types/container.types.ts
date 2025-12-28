@@ -9,6 +9,7 @@ export enum ETokens {
   EmailVerificationService = "EmailVerificationService",
   PasswordResetRepository = "PasswordResetRepository",
   PasswordResetService = "PasswordResetService",
+  FileUploadService = "FileUploadService",
 }
 
 export interface IContainer {
