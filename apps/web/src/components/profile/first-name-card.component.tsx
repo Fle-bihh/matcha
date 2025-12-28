@@ -1,5 +1,5 @@
 import { TextField } from "@mui/material";
-import { validateFirstName } from "@matcha/shared";
+import { fields } from "@matcha/shared";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
@@ -18,13 +18,13 @@ export function FirstNameCard() {
     hasChanges,
   } = useValidatedField({
     initialValue: "",
-    validator: validateFirstName,
+    schema: fields.firstName,
     syncWithAuth: authUser?.first_name,
   });
 
   const handleSave = async () => {
     if (isValid && firstName.trim()) {
-      await updateProfile({ first_name: firstName.trim() });
+      updateProfile({ first_name: firstName.trim() });
     }
   };
 

@@ -1,15 +1,20 @@
 import { useState, useEffect } from "react";
+import { z } from "zod";
 
 interface UseValidatedFieldOptions<T> {
   initialValue: T;
   validator?: (value: T) => string | null | undefined;
+  schema?: z.ZodType<T>;
   syncWithAuth?: T | null;
+  additionalValidation?: (value: T) => string | null | undefined;
 }
 
 export function useValidatedField<T>({
   initialValue,
   validator,
+  schema,
   syncWithAuth,
+  additionalValidation,
 }: UseValidatedFieldOptions<T>) {
   const [value, setValue] = useState<T>(initialValue);
   const [validationError, setValidationError] = useState<string>("");
@@ -21,10 +26,25 @@ export function useValidatedField<T>({
   }, [syncWithAuth]);
 
   const handleChange = (newValue: T) => {
-    if (validator) {
-      const error = validator(newValue);
-      setValidationError(error || "");
+    let error = "";
+
+    if (schema) {
+      const result = schema.safeParse(newValue);
+      if (!result.success) {
+        const firstError = result.error.issues[0];
+        error = firstError.message;
+      }
+    } else if (validator) {
+      const validatorError = validator(newValue);
+      error = validatorError || "";
     }
+
+    if (!error && additionalValidation) {
+      const additionalError = additionalValidation(newValue);
+      error = additionalError || "";
+    }
+
+    setValidationError(error);
     setValue(newValue);
   };
 

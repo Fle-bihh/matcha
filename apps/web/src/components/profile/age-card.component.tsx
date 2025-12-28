@@ -1,5 +1,6 @@
 import { TextField } from "@mui/material";
-import { validateAge } from "@matcha/shared";
+import { fields } from "@matcha/shared";
+import { literal, z } from "zod";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
@@ -17,9 +18,15 @@ export function AgeCard() {
     isValid,
     hasChanges,
   } = useValidatedField<number | "">({
-    initialValue: "",
-    validator: (val) => validateAge(String(val)),
+    initialValue: 18,
+    schema: fields.age.or(literal("")),
     syncWithAuth: authUser?.age ?? "",
+    additionalValidation: (val) => {
+      if (val === "") {
+        return "Age is required";
+      }
+      return null;
+    },
   });
 
   const handleChange = (value: string) => {

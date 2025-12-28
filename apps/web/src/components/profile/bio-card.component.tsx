@@ -1,5 +1,5 @@
 import { TextField } from "@mui/material";
-import { validateBio } from "@matcha/shared";
+import { z } from "zod";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
@@ -18,13 +18,13 @@ export function BioCard() {
     hasChanges,
   } = useValidatedField<string>({
     initialValue: "",
-    validator: validateBio,
+    schema: z.string().max(500, "Bio must not exceed 500 characters"),
     syncWithAuth: authUser?.bio ?? "",
   });
 
   const handleSave = async () => {
     if (isValid) {
-      await updateProfile({ bio: bio || undefined });
+      updateProfile({ bio: bio || undefined });
     }
   };
 

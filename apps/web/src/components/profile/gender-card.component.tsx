@@ -28,7 +28,7 @@ export function GenderCard() {
 
   const handleSave = async () => {
     if (gender) {
-      await updateProfile({ gender });
+      updateProfile({ gender });
     }
   };
 

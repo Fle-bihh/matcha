@@ -27,7 +27,7 @@ export function OrientationCard() {
 
   const handleSave = async () => {
     if (orientation) {
-      await updateProfile({ orientation });
+      updateProfile({ orientation });
     }
   };
 
