@@ -5,6 +5,7 @@ import { AuthService } from "./auth.service";
 import { RouterService } from "./router.service";
 import { SnackbarService } from "./snackbar.service";
 import { LocationService } from "./location.service";
+import { setFlagger, SetFlaggerPayload } from "@/store";
 
 export abstract class BaseService {
   protected container: IContainer;
@@ -39,5 +40,9 @@ export abstract class BaseService {
 
   protected get locationService(): LocationService {
     return this.container.get<LocationService>(ETokens.LocationService);
+  }
+
+  protected setFlagger(payload: SetFlaggerPayload) {
+    this.dispatch(setFlagger(payload));
   }
 }

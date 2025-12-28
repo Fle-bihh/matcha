@@ -1,41 +1,31 @@
 import { useDispatch, useSelector } from "react-redux";
-import { setFlagger, toggleFlagger, openFlagger, closeFlagger } from "@/store";
+import { setFlagger, resetFlagger } from "@/store";
 import { TRootState } from "@/types";
-import { EFlaggers } from "@/constants/flaggers.constants";
+import { EFlaggers, FlaggerData } from "@/constants/flaggers.constants";
 
-interface UseFlaggerReturn {
-  isOpen: boolean;
-  setFlagger: (value: boolean) => void;
-  toggleFlagger: () => void;
-  openFlagger: () => void;
-  closeFlagger: () => void;
+interface UseFlaggerReturn<T extends EFlaggers> {
+  data: FlaggerData<T>;
+  setFlagger: (value: FlaggerData<T>) => void;
+  resetFlagger: () => void;
 }
 
-export function useFlagger(flagger: EFlaggers): UseFlaggerReturn {
+export function useFlagger<T extends EFlaggers>(
+  flagger: T
+): UseFlaggerReturn<T> {
   const dispatch = useDispatch();
-  const isOpen = useSelector((state: TRootState) => state.flaggers[flagger]);
+  const data = useSelector((state: TRootState) => state.flaggers[flagger]);
 
-  const setFlaggerValue = (value: boolean) => {
+  const setFlaggerValue = (value: FlaggerData<T>) => {
     dispatch(setFlagger({ key: flagger, value }));
   };
 
-  const toggleFlaggerValue = () => {
-    dispatch(toggleFlagger(flagger));
-  };
-
-  const openFlaggerValue = () => {
-    dispatch(openFlagger(flagger));
-  };
-
-  const closeFlaggerValue = () => {
-    dispatch(closeFlagger(flagger));
+  const resetFlaggerValue = () => {
+    dispatch(resetFlagger(flagger));
   };
 
   return {
-    isOpen,
+    data,
     setFlagger: setFlaggerValue,
-    toggleFlagger: toggleFlaggerValue,
-    openFlagger: openFlaggerValue,
-    closeFlagger: closeFlaggerValue,
+    resetFlagger: resetFlaggerValue,
   };
 }

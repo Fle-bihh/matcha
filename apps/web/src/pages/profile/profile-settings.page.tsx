@@ -14,10 +14,10 @@ import { EFlaggers } from "@/constants/flaggers.constants";
 
 export function ProfileSettingsPage() {
   const { authUser } = useAuthUser();
-  const { openFlagger } = useFlagger(EFlaggers.ChangeEmailDialog);
+  const { setFlagger } = useFlagger(EFlaggers.ChangeEmailDialog);
 
   const handleChangeEmail = () => {
-    openFlagger();
+    setFlagger({ isOpen: true });
   };
 
   return (

@@ -43,7 +43,7 @@ export function ChangeLocationDialog() {
     updateLocation,
   } = useAuthUser();
   const dispatch = useDispatch();
-  const { isOpen, closeFlagger } = useFlagger(EFlaggers.ChangeLocationDialog);
+  const { data, setFlagger } = useFlagger(EFlaggers.ChangeLocationDialog);
 
   const selectedLocation = useSelector(selectSelectedLocation);
   const searchResults = useSelector(selectSearchResults);
@@ -78,7 +78,7 @@ export function ChangeLocationDialog() {
   };
 
   const handleClose = () => {
-    closeFlagger();
+    setFlagger({ isOpen: false });
     setSearchQuery("");
     dispatch(resetLocationState());
   };
@@ -90,7 +90,7 @@ export function ChangeLocationDialog() {
   };
 
   return (
-    <Dialog open={isOpen} onClose={handleClose} maxWidth="sm" fullWidth>
+    <Dialog open={data.isOpen} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>Change Location</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 1 }}>

@@ -9,9 +9,13 @@ import { ChangeLocationDialog } from "@/components/profile/change-location-dialo
 
 export function ProfileLocationPage() {
   const { authUser } = useAuthUser();
-  const { openFlagger } = useFlagger(EFlaggers.ChangeLocationDialog);
+  const { setFlagger } = useFlagger(EFlaggers.ChangeLocationDialog);
 
   const currentLocation = authUser?.location;
+
+  const openFlagger = () => {
+    setFlagger({ isOpen: true });
+  };
 
   return (
     <ProfilePageWrapper

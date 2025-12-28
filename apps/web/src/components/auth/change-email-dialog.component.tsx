@@ -22,7 +22,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export function ChangeEmailDialog() {
-  const { isOpen, closeFlagger } = useFlagger(EFlaggers.ChangeEmailDialog);
+  const { data, setFlagger } = useFlagger(EFlaggers.ChangeEmailDialog);
   const { sendChangeEmailVerification } = useAuthUser();
   const { isLoading, isSuccess } = useActionsData([
     EActionKeys.SendChangeEmailVerification,
@@ -44,11 +44,11 @@ export function ChangeEmailDialog() {
 
   const handleClose = () => {
     reset();
-    closeFlagger();
+    setFlagger({ isOpen: false });
   };
 
   return (
-    <Dialog open={isOpen} onClose={handleClose} maxWidth="sm" fullWidth>
+    <Dialog open={data.isOpen} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>Change Email Address</DialogTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>

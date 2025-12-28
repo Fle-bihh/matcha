@@ -23,7 +23,6 @@ import { CrossTabEvent, ServiceResponse } from "@/types";
 import {
   changeEmail,
   clearAction,
-  closeFlagger,
   setAuthUser,
   setEmailToVerified,
 } from "@/store";
@@ -234,7 +233,10 @@ export class AuthService extends BaseService {
       return ServiceResponse.failure(response.message);
     }
 
-    this.dispatch(closeFlagger(EFlaggers.ChangeEmailDialog));
+    this.setFlagger({
+      key: EFlaggers.ChangeEmailDialog,
+      value: { isOpen: false },
+    });
 
     return ServiceResponse.success(
       this.MESSAGES.EMAIL_CHANGE_VERIFICATION_SENT
