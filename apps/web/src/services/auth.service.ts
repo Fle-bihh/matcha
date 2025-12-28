@@ -107,6 +107,7 @@ export class AuthService extends BaseService {
           return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
         }
 
+        this.clearAuthData();
         return ServiceResponse.failure(authenticateResponse.message);
       }
 
