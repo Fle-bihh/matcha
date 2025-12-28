@@ -216,6 +216,17 @@ export class UserService extends BaseService {
     }
   }
 
+  // this method ensures that profile pictures are organized without gaps, e.g., [pic1, null, pic3] -> [pic1, pic3]
+  private reorganizeProfilePictures(pictures: (string | null)[]): string[] {
+    const organizedPictures: string[] = [];
+    for (const pic of pictures) {
+      if (pic) {
+        organizedPictures.push(pic);
+      }
+    }
+    return organizedPictures;
+  }
+
   public async updateProfilePicture(
     userId: number,
     imageFile: Express.Multer.File,
@@ -262,7 +273,7 @@ export class UserService extends BaseService {
       picturesArray[index] = path;
 
       const updatedUser = await this.userRepository.updateUser(userId, {
-        pictures_urls: picturesArray,
+        pictures_urls: this.reorganizeProfilePictures(picturesArray),
       });
 
       if (!updatedUser) {
