@@ -3,18 +3,21 @@ import type {
   UpdateProfileDto,
   UpdateProfilePictureDto,
   UpdateLocationDto,
+  PaginatedResponse,
 } from "@matcha/shared";
 import { ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
-import { resetLocationState, setAuthUser, setFlagger } from "@/store";
-import { EFlaggers } from "@/constants/flaggers.constants";
+import {
+  resetLocationState,
+  setAuthUser,
+  setEntities,
+  setPager,
+} from "@/store";
+import { EFlaggers, EPagerKeys } from "@/constants";
+import { EEntityTypes } from "@/types";
 
 export class UserService extends BaseService {
-  async getUsers(): Promise<ServiceResponse> {
-    return ServiceResponse.failure("Not implemented");
-  }
-
   private setAuthUser(user: AuthUser) {
     this.dispatch(setAuthUser(user));
   }
@@ -82,6 +85,38 @@ export class UserService extends BaseService {
     if (!response.success) {
       return ServiceResponse.failure(response.message);
     }
+
+    return ServiceResponse.success(response.message);
+  }
+
+  @action({ showErrorMessage: true, showSuccessMessage: true })
+  async getUsers(): Promise<ServiceResponse> {
+    const response = await this.apiService.get<PaginatedResponse<AuthUser>>(
+      getRoute("user", "get-users"),
+      { auth: true }
+    );
+
+    if (!response.success || !response.responseObject) {
+      return ServiceResponse.failure(response.message);
+    }
+
+    const { data, meta } = response.responseObject;
+
+    this.dispatch(
+      setEntities({
+        entityType: EEntityTypes.Users,
+        entities: data,
+      })
+    );
+
+    const entityKeys = data.map((user) => String(user.id));
+    this.dispatch(
+      setPager({
+        pagerKey: EPagerKeys.Users,
+        meta,
+        entityKeys,
+      })
+    );
 
     return ServiceResponse.success(response.message);
   }

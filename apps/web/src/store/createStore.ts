@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { IContainer } from "@/types";
 import entitiesReducer from "./slices/entities.slice";
+import pagersReducer from "./slices/pagers.slice";
 import authUserReducer from "./slices/auth-user.slice";
 import locationReducer from "./slices/location.slice";
 import actionsReducer from "./slices/actions.slice";
@@ -11,6 +12,8 @@ export const createStore = (container: IContainer) => {
   const store = configureStore({
     reducer: {
       entities: entitiesReducer,
+
+      pagers: pagersReducer,
 
       actions: actionsReducer,
 

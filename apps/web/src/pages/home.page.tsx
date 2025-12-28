@@ -1,22 +1,75 @@
-import { useAuthUser } from "@/hooks/auth.hook";
-import { Container, Typography, Box } from "@mui/material";
+import { useEffect } from "react";
+import { Container, Typography, Box, Card, CardContent } from "@mui/material";
 import { withProfileCompleteComponent } from "@/components/utils/with-condition-component.component";
 import { ProfileUncomplete } from "./profile-uncomplete.page";
+import { usePager } from "@/hooks/pagination.hook";
+import { EPagerKeys } from "@/constants";
+import { AuthUser } from "@matcha/shared";
+import { useAuthUser } from "@/hooks/auth.hook";
+import { EEntityTypes } from "@/types";
 
 function HomePageComp() {
-  const { authUser } = useAuthUser();
+  const { data: users, meta } = usePager({
+    pagerKey: EPagerKeys.Users,
+    entityType: EEntityTypes.Users,
+  });
+  const { getUsers } = useAuthUser();
 
-  if (!authUser) {
-    return null;
-  }
+  useEffect(() => {
+    getUsers();
+  }, []);
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ mb: 3 }}>
         <Typography variant="h4" component="h1">
-          Welcome, {authUser.first_name}!
+          Users
         </Typography>
+        {meta && (
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            Page {meta.page} of {meta.totalPages} | Total: {meta.total} users
+          </Typography>
+        )}
       </Box>
+
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+          },
+          gap: 2,
+        }}
+      >
+        {users.map((user: AuthUser) => (
+          <Card key={user.id}>
+            <CardContent>
+              <Typography variant="h6">
+                {user.first_name} {user.last_name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                @{user.username}
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                {user.email}
+              </Typography>
+              {user.bio && (
+                <Typography variant="body2" sx={{ mt: 1 }}>
+                  {user.bio}
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
+
+      {!users.length && (
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
+          No users found.
+        </Typography>
+      )}
     </Container>
   );
 }

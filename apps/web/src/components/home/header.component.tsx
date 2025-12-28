@@ -25,7 +25,7 @@ export function HomeHeader() {
   };
 
   return (
-    <AppBar position="static" ref={appBarRef}>
+    <AppBar position="fixed" ref={appBarRef}>
       <Toolbar>
         <Typography
           variant="h6"

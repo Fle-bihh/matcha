@@ -6,4 +6,5 @@ export const UserActions = createActions(ETokens.UserService, [
   EActionKeys.UpdateProfile,
   EActionKeys.UpdateProfilePicture,
   EActionKeys.UpdateLocation,
+  EActionKeys.GetUsers,
 ] as const);

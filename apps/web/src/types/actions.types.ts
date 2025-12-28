@@ -29,6 +29,7 @@ export enum EActionKeys {
   GetCurrentPosition = "getCurrentPosition",
   SearchLocation = "searchLocation",
   CreateManualLocation = "createManualLocation",
+  GetUsers = "getUsers",
 }
 
 export interface IActionDtoMap {
@@ -48,6 +49,7 @@ export interface IActionDtoMap {
   [EActionKeys.GetCurrentPosition]: null;
   [EActionKeys.SearchLocation]: string;
   [EActionKeys.CreateManualLocation]: GeocodingResult;
+  [EActionKeys.GetUsers]: null;
 }
 
 export type ActionDto<K extends EActionKeys> = IActionDtoMap[K];

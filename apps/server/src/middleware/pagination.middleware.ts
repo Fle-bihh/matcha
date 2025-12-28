@@ -1,5 +1,5 @@
+import { PaginationParams } from "@matcha/shared";
 import { Request, Response, NextFunction } from "express";
-import { PaginationParams } from "@/types";
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 20;

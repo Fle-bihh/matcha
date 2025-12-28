@@ -1,5 +1,5 @@
 import { HomeHeader } from "@/components/home/header.component";
-import { Box } from "@mui/material";
+import { Box, Toolbar } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import { useMemo } from "react";
 import {
@@ -21,13 +21,10 @@ function ProtectedLayoutContent() {
       }}
     >
       <HomeHeader />
+      <Toolbar />
       <Box
         sx={{
           height: boxHeight,
-          overflow: "auto",
-          justifyContent: "center",
-          display: "flex",
-          alignItems: "center",
         }}
       >
         <Outlet />

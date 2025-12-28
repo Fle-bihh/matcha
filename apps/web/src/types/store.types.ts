@@ -7,6 +7,7 @@ export enum EEntityTypes {
 
 export enum EStoreSlices {
   Entities = "entities",
+  Pagers = "pagers",
   Actions = "actions",
   AuthUser = "auth-user",
   Location = "location",

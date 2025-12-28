@@ -1,10 +1,4 @@
-import {
-  IContainer,
-  ETokens,
-  ServiceResponse,
-  PaginationParams,
-  PaginatedResponse,
-} from "@/types";
+import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { UserRepository } from "@/repositories";
 import {
@@ -15,6 +9,8 @@ import {
   UserResult,
   PartialBaseEntity,
   UpdateLocationDto,
+  PaginationParams,
+  PaginatedResponse,
 } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { HashUtils } from "@/utils/hash.utils";

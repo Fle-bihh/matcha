@@ -1,4 +1,5 @@
 export * from "./entities.slice";
+export * from "./pagers.slice";
 export * from "./actions.slice";
 export * from "./auth-user.slice";
 export * from "./location.slice";
