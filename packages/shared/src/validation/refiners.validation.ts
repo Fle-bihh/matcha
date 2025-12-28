@@ -91,7 +91,7 @@ export function validateLastName(lastName: string): string | null {
 
 export function validateAge(value: string): string | null {
   if (value === "") {
-    return null;
+    return "Age is required";
   }
 
   const numValue = parseInt(value, 10);

@@ -33,7 +33,7 @@ export function LoginForm() {
   });
 
   const onSubmit = async (data: LoginRequestDto) => {
-    await login(data);
+    login(data);
   };
 
   return (

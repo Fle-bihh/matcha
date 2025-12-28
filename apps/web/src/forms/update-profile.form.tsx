@@ -44,7 +44,7 @@ export function UpdateProfileForm() {
   });
 
   const onSubmit = async (data: UpdateProfileDto) => {
-    await updateProfile(data);
+    updateProfile(data);
   };
 
   return (

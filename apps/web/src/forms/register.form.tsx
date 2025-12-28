@@ -20,7 +20,7 @@ export function RegisterForm() {
   });
 
   const onSubmit = async (data: RegisterRequestDto) => {
-    await registerUser(data);
+    registerUser(data);
   };
 
   return (

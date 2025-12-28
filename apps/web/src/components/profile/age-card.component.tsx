@@ -35,7 +35,7 @@ export function AgeCard() {
 
   const handleSave = async () => {
     if (typeof age === "number" && isValid) {
-      await updateProfile({ age });
+      updateProfile({ age });
     }
   };
 
