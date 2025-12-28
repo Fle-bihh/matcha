@@ -8,6 +8,7 @@ import {
   logger,
   UserResult,
   PartialBaseEntity,
+  UpdateLocationDto,
 } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { HashUtils } from "@/utils/hash.utils";
@@ -306,6 +307,47 @@ export class UserService extends BaseService {
       logger.info(`Cleaned up temporary file: ${filePath}`);
     } catch (error) {
       logger.error(`Failed to cleanup file ${filePath}:`, error);
+    }
+  }
+
+  public async updateLocation(
+    userId: number,
+    dto: UpdateLocationDto
+  ): Promise<ServiceResponse<AuthUser | null>> {
+    try {
+      const locationData = dto;
+      const user = await this.userRepository.findUserById(userId);
+      if (!user) {
+        return ServiceResponse.failure(
+          "User not found",
+          null,
+          StatusCodes.NOT_FOUND
+        );
+      }
+
+      const updatedUser = await this.userRepository.updateUser(userId, {
+        location: locationData,
+      });
+
+      if (!updatedUser) {
+        return ServiceResponse.failure(
+          "Failed to update location",
+          null,
+          StatusCodes.INTERNAL_SERVER_ERROR
+        );
+      }
+
+      return ServiceResponse.success(
+        "Location updated successfully",
+        this.excludePassword(updatedUser)
+      );
+    } catch (error) {
+      logger.error("Error in updateLocation:", error);
+      return ServiceResponse.failure(
+        "Error updating location",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   }
 }

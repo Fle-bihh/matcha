@@ -6,6 +6,7 @@ import {
   ResetPasswordRequestDto,
   UpdateProfileDto,
   UpdateProfilePictureDto,
+  UpdateLocationDto,
   SendChangeEmailVerificationRequestDto,
   ChangeEmailRequestDto,
   GeocodingResult,
@@ -22,6 +23,7 @@ export enum EActionKeys {
   ResetPassword = "resetPassword",
   UpdateProfile = "updateProfile",
   UpdateProfilePicture = "updateProfilePicture",
+  UpdateLocation = "updateLocation",
   SendChangeEmailVerification = "sendChangeEmailVerification",
   ChangeEmail = "changeEmail",
   GetCurrentPosition = "getCurrentPosition",
@@ -40,6 +42,7 @@ export interface IActionDtoMap {
   [EActionKeys.ResetPassword]: ResetPasswordRequestDto;
   [EActionKeys.UpdateProfile]: UpdateProfileDto;
   [EActionKeys.UpdateProfilePicture]: UpdateProfilePictureDto;
+  [EActionKeys.UpdateLocation]: UpdateLocationDto;
   [EActionKeys.SendChangeEmailVerification]: SendChangeEmailVerificationRequestDto;
   [EActionKeys.ChangeEmail]: ChangeEmailRequestDto;
   [EActionKeys.GetCurrentPosition]: null;

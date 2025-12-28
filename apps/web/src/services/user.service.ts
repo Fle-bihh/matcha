@@ -1,9 +1,14 @@
 import { AuthUser, getRoute } from "@matcha/shared";
-import type { UpdateProfileDto, UpdateProfilePictureDto } from "@matcha/shared";
+import type {
+  UpdateProfileDto,
+  UpdateProfilePictureDto,
+  UpdateLocationDto,
+} from "@matcha/shared";
 import { ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
-import { setAuthUser } from "@/store";
+import { closeFlagger, resetLocationState, setAuthUser } from "@/store";
+import { EFlaggers } from "@/constants/flaggers.constants";
 
 export class UserService extends BaseService {
   async getUsers(): Promise<ServiceResponse> {
@@ -44,6 +49,27 @@ export class UserService extends BaseService {
 
     if (response.success && response.responseObject) {
       this.dispatch(setAuthUser(response.responseObject));
+    }
+
+    if (!response.success) {
+      return ServiceResponse.failure(response.message);
+    }
+
+    return ServiceResponse.success(response.message);
+  }
+
+  @action({ showSuccessMessage: true, showErrorMessage: true })
+  async updateLocation(dto: UpdateLocationDto): Promise<ServiceResponse> {
+    const response = await this.apiService.patch<AuthUser>(
+      getRoute("user", "update-location"),
+      dto,
+      { auth: true }
+    );
+
+    if (response.success && response.responseObject) {
+      this.dispatch(setAuthUser(response.responseObject));
+      this.dispatch(resetLocationState());
+      this.dispatch(closeFlagger(EFlaggers.ChangeLocationDialog));
     }
 
     if (!response.success) {

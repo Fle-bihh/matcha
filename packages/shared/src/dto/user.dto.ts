@@ -33,3 +33,15 @@ export type UpdateProfilePictureDto = z.infer<
   typeof UpdateProfilePictureDtoSchema
 > &
   FileDto;
+
+export const UpdateLocationDtoSchema = z.object({
+  latitude: z.number(),
+  longitude: z.number(),
+  city: z.string().nullable(),
+  neighborhood: z.string().nullable(),
+  country: z.string().nullable(),
+  display_name: z.string(),
+  manually_set: z.boolean(),
+});
+
+export type UpdateLocationDto = z.infer<typeof UpdateLocationDtoSchema>;

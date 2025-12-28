@@ -6,6 +6,7 @@ import { auth, route, validate, upload } from "@/decorators";
 import {
   UpdateProfileDtoSchema,
   UpdateProfilePictureDtoSchema,
+  UpdateLocationDtoSchema,
 } from "@matcha/shared";
 import { uploadProfilePictureMiddleware } from "@/middleware/upload.middleware";
 
@@ -42,6 +43,18 @@ export class UserController extends BaseController {
       id,
       imageFile,
       index
+    );
+    res.status(result.statusCode).send(result);
+  }
+
+  @auth()
+  @route("PATCH", "update-location")
+  @validate(UpdateLocationDtoSchema, "body")
+  private async updateLocation(req: Request, res: Response): Promise<void> {
+    const { id } = req.user!;
+    const result = await this.userService.updateLocation(
+      id,
+      req.validated?.body
     );
     res.status(result.statusCode).send(result);
   }

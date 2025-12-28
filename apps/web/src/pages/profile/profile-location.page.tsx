@@ -36,30 +36,15 @@ export function ProfileLocationPage() {
                   Current Location
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  {currentLocation.display_name}
+                  {[
+                    currentLocation.neighborhood,
+                    currentLocation.city,
+                    currentLocation.country,
+                  ]
+                    .filter(Boolean)
+                    .join(", ") || "Location set"}
                 </Typography>
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    <strong>City:</strong> {currentLocation.city || "N/A"}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    <strong>Neighborhood:</strong>{" "}
-                    {currentLocation.neighborhood || "N/A"}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    <strong>Country:</strong> {currentLocation.country || "N/A"}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 1 }}
-                  >
-                    <strong>Type:</strong>{" "}
-                    {currentLocation.manually_set
-                      ? "Manually set"
-                      : "GPS location"}
-                  </Typography>
-                </Box>
+
                 <Button
                   variant="outlined"
                   startIcon={<EditLocationIcon />}

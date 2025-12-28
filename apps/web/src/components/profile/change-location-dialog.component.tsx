@@ -36,8 +36,12 @@ import { useFlagger } from "@/hooks/flaggers.hook";
 import { EFlaggers } from "@/constants/flaggers.constants";
 
 export function ChangeLocationDialog() {
-  const { getCurrentPosition, searchLocation, createManualLocation } =
-    useAuthUser();
+  const {
+    getCurrentPosition,
+    searchLocation,
+    createManualLocation,
+    updateLocation,
+  } = useAuthUser();
   const dispatch = useDispatch();
   const { isOpen, closeFlagger } = useFlagger(EFlaggers.ChangeLocationDialog);
 
@@ -79,10 +83,10 @@ export function ChangeLocationDialog() {
     dispatch(resetLocationState());
   };
 
-  const handleSave = () => {
-    // TODO: Save location to backend
-    dispatch(resetLocationState());
-    closeFlagger();
+  const handleSave = async () => {
+    if (!selectedLocation) return;
+
+    updateLocation(selectedLocation);
   };
 
   return (
