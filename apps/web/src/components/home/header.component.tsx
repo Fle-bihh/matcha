@@ -6,53 +6,70 @@ import { useAuthUser } from "@/hooks/auth.hook";
 import { APP_ROUTES } from "@/constants";
 import { useHeaderRef } from "@/contexts/layout-sizes.context";
 import { useRouting } from "@/hooks/routing.hooks";
+import { withEmailVerifiedComponent } from "../utils/with-condition-component.component";
+
+const ProtectedButtons = () => {
+	const routing = useRouting();
+	const handleAccountClick = () => {
+		routing.push(APP_ROUTES.profile);
+	};
+
+	return (
+		<IconButton
+			color="inherit"
+			onClick={handleAccountClick}
+			aria-label="account"
+		>
+			<AccountIcon />
+		</IconButton>
+	);
+};
+
+const ProtectedButtonsComp = withEmailVerifiedComponent(ProtectedButtons);
 
 export function HomeHeader() {
-  const routing = useRouting();
-  const { authUser, logout } = useAuthUser();
-  const appBarRef = useHeaderRef<HTMLDivElement>();
+	const routing = useRouting();
+	const { authUser, logout } = useAuthUser();
+	const appBarRef = useHeaderRef<HTMLDivElement>();
 
-  const handleLogoClick = () => {
-    routing.push(APP_ROUTES.protected);
-  };
+	const handleLogoClick = () => {
+		routing.push(APP_ROUTES.protected);
+	};
 
-  const handleAccountClick = () => {
-    routing.push(APP_ROUTES.profile);
-  };
+	const handleAccountClick = () => {
+		routing.push(APP_ROUTES.profile);
+	};
 
-  const handleLogout = () => {
-    logout();
-  };
+	const handleLogout = () => {
+		logout();
+	};
 
-  return (
-    <AppBar position="fixed" ref={appBarRef}>
-      <Toolbar>
-        <Typography
-          variant="h6"
-          component="div"
-          onClick={handleLogoClick}
-          sx={{ cursor: "pointer", flexGrow: 1 }}
-        >
-          {APP_NAME}
-        </Typography>
-        <Box display="flex" alignItems="center" gap={1}>
-          <Typography variant="body1">{authUser?.username}</Typography>
-          <IconButton
-            color="inherit"
-            onClick={handleAccountClick}
-            aria-label="account"
-          >
-            <AccountIcon />
-          </IconButton>
-          <IconButton
-            color="inherit"
-            onClick={handleLogout}
-            aria-label="logout"
-          >
-            <LogoutIcon />
-          </IconButton>
-        </Box>
-      </Toolbar>
-    </AppBar>
-  );
+	return (
+		<AppBar position="fixed" ref={appBarRef}>
+			<Toolbar>
+				<Typography
+					variant="h6"
+					component="div"
+					onClick={handleLogoClick}
+					sx={{ cursor: "pointer", flexGrow: 1 }}
+				>
+					{APP_NAME}
+				</Typography>
+				<Box display="flex" alignItems="center" gap={1}>
+					<Typography variant="body1">
+						{authUser?.username}
+					</Typography>
+
+					<ProtectedButtonsComp />
+					<IconButton
+						color="inherit"
+						onClick={handleLogout}
+						aria-label="logout"
+					>
+						<LogoutIcon />
+					</IconButton>
+				</Box>
+			</Toolbar>
+		</AppBar>
+	);
 }
