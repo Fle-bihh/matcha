@@ -10,6 +10,7 @@ import {
   SendChangeEmailVerificationRequestDto,
   ChangeEmailRequestDto,
   GeocodingResult,
+  PaginationParams,
 } from "@matcha/shared";
 
 export enum EActionKeys {
@@ -49,7 +50,7 @@ export interface IActionDtoMap {
   [EActionKeys.GetCurrentPosition]: null;
   [EActionKeys.SearchLocation]: string;
   [EActionKeys.CreateManualLocation]: GeocodingResult;
-  [EActionKeys.GetUsers]: null;
+  [EActionKeys.GetUsers]: PaginationParams | null;
 }
 
 export type ActionDto<K extends EActionKeys> = IActionDtoMap[K];

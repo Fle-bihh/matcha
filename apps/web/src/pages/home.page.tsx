@@ -1,23 +1,19 @@
-import { useEffect } from "react";
 import { Container, Typography, Box, Card, CardContent } from "@mui/material";
 import { withProfileCompleteComponent } from "@/components/utils/with-condition-component.component";
 import { ProfileUncomplete } from "./profile-uncomplete.page";
 import { usePager } from "@/hooks/pagination.hook";
 import { EPagerKeys } from "@/constants";
-import { AuthUser } from "@matcha/shared";
+import { User } from "@matcha/shared";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { EEntityTypes } from "@/types";
 
 function HomePageComp() {
-  const { data: users, meta } = usePager({
+  const { getUsers } = useAuthUser();
+  const { data: users, meta } = usePager<User>({
     pagerKey: EPagerKeys.Users,
     entityType: EEntityTypes.Users,
+    fn: getUsers,
   });
-  const { getUsers } = useAuthUser();
-
-  useEffect(() => {
-    getUsers();
-  }, []);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -43,17 +39,11 @@ function HomePageComp() {
           gap: 2,
         }}
       >
-        {users.map((user: AuthUser) => (
+        {users.map((user: User) => (
           <Card key={user.id}>
             <CardContent>
               <Typography variant="h6">
                 {user.first_name} {user.last_name}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                @{user.username}
-              </Typography>
-              <Typography variant="body2" sx={{ mt: 1 }}>
-                {user.email}
               </Typography>
               {user.bio && (
                 <Typography variant="body2" sx={{ mt: 1 }}>

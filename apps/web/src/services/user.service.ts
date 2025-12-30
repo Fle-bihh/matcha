@@ -4,6 +4,8 @@ import type {
   UpdateProfilePictureDto,
   UpdateLocationDto,
   PaginatedResponse,
+  User,
+  PaginationParams,
 } from "@matcha/shared";
 import { ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
@@ -84,8 +86,8 @@ export class UserService extends BaseService {
   }
 
   @action({ showErrorMessage: true, showSuccessMessage: true })
-  async getUsers(): Promise<ServiceResponse> {
-    const response = await this.apiService.get<PaginatedResponse<AuthUser>>(
+  async getUsers(params: PaginationParams | null): Promise<ServiceResponse> {
+    const response = await this.apiService.get<PaginatedResponse<User>>(
       getRoute("user", "get-users"),
       { auth: true }
     );
@@ -94,22 +96,10 @@ export class UserService extends BaseService {
       return ServiceResponse.failure(response.message);
     }
 
-    const { data, meta } = response.data;
-
-    this.dispatch(
-      setEntities({
-        entityType: EEntityTypes.Users,
-        entities: data,
-      })
-    );
-
-    const entityKeys = data.map((user) => String(user.id));
-    this.dispatch(
-      setPager({
-        pagerKey: EPagerKeys.Users,
-        meta,
-        entityKeys,
-      })
+    this.handlePaginatedResponse<User>(
+      response.data,
+      EPagerKeys.Users,
+      EEntityTypes.Users
     );
 
     return ServiceResponse.success(response.message);

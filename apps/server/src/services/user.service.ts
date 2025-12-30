@@ -11,6 +11,7 @@ import {
   UpdateLocationDto,
   PaginationParams,
   PaginatedResponse,
+  User,
 } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { HashUtils } from "@/utils/hash.utils";
@@ -27,6 +28,17 @@ export class UserService extends BaseService {
   private excludePassword(userWithPassword: AuthUserWithPassword): AuthUser {
     const { password, ...userWithoutPassword } = userWithPassword;
     return userWithoutPassword;
+  }
+
+  private excludePrivateFields(user: AuthUserWithPassword): User {
+    const {
+      password,
+      email,
+      is_email_verified,
+      is_profile_complete,
+      ...publicUser
+    } = user;
+    return publicUser;
   }
 
   public async findByEmail<T extends boolean = false>(
@@ -391,21 +403,19 @@ export class UserService extends BaseService {
 
   public async getUsers(
     paginationParams: PaginationParams
-  ): Promise<ServiceResponse<PaginatedResponse<AuthUser>>> {
+  ): Promise<ServiceResponse<PaginatedResponse<User>>> {
     try {
       const { users, total } = await this.userRepository.getUsers({
         limit: paginationParams.limit,
         offset: paginationParams.offset,
       });
 
-      const usersWithoutPassword = users.map((user) =>
-        this.excludePassword(user)
-      );
+      const publicUsers = users.map((user) => this.excludePrivateFields(user));
 
       const totalPages = Math.ceil(total / paginationParams.limit);
 
-      const paginatedResponse: PaginatedResponse<AuthUser> = {
-        data: usersWithoutPassword,
+      const paginatedResponse: PaginatedResponse<User> = {
+        data: publicUsers,
         meta: {
           page: paginationParams.page,
           limit: paginationParams.limit,
