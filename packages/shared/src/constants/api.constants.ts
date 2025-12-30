@@ -5,8 +5,7 @@ export const API_ROUTES = {
   health: {
     "get-health": "/",
   },
-  user: {
-    all: "/users",
+  users: {
     "get-users": "/",
     "update-profile": "/",
     "update-profile-picture": "/picture",

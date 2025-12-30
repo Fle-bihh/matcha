@@ -27,7 +27,7 @@ export class UserService extends BaseService {
   @action({ showSuccessMessage: true, showErrorMessage: true })
   async updateProfile(dto: UpdateProfileDto): Promise<ServiceResponse> {
     const response = await this.apiService.patch<AuthUser>(
-      getRoute("user", "update-profile"),
+      getRoute("users", "update-profile"),
       dto,
       { auth: true }
     );
@@ -46,7 +46,7 @@ export class UserService extends BaseService {
     dto: UpdateProfilePictureDto
   ): Promise<ServiceResponse> {
     const response = await this.apiService.patch<AuthUser>(
-      getRoute("user", "update-profile-picture"),
+      getRoute("users", "update-profile-picture"),
       {
         picture: dto.file,
         index: dto.index,
@@ -66,7 +66,7 @@ export class UserService extends BaseService {
   @action({ showSuccessMessage: true, showErrorMessage: true })
   async updateLocation(dto: UpdateLocationDto): Promise<ServiceResponse> {
     const response = await this.apiService.patch<AuthUser>(
-      getRoute("user", "update-location"),
+      getRoute("users", "update-location"),
       dto,
       { auth: true }
     );
@@ -85,10 +85,10 @@ export class UserService extends BaseService {
     return ServiceResponse.success(response.message);
   }
 
-  @action({ showErrorMessage: true, showSuccessMessage: true })
+  @action({ showErrorMessage: false, showSuccessMessage: false })
   async getUsers(params: PaginationParams | null): Promise<ServiceResponse> {
     const response = await this.apiService.get<PaginatedResponse<User>>(
-      getRoute("user", "get-users"),
+      getRoute("users", "get-users"),
       { auth: true, params: params || undefined }
     );
 

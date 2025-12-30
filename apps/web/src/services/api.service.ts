@@ -1,9 +1,15 @@
-import { IContainer } from "@/types";
+import { ETokens, IContainer } from "@/types";
 import { BaseService } from "./base.service";
-import { ApiResponse, logger, getRoute } from "@matcha/shared";
+import {
+  ApiResponse,
+  logger,
+  getRoute,
+  RefreshTokenResponseDto,
+} from "@matcha/shared";
 import { EStorageKeys } from "@/types/storage.constants";
 import { config } from "@/config";
 import { ApiRequestResponse } from "@/types/api.types";
+import { AuthService } from "./auth.service";
 
 interface RequestOptions {
   auth?: boolean;
@@ -57,6 +63,13 @@ export class ApiService extends BaseService {
     return headers;
   }
 
+  private async handleAuthFailure(): Promise<void> {
+    await this.storageService.clear();
+    const authService = this.container.get<AuthService>(ETokens.AuthService);
+    await authService.logout();
+    this.snackbar.warning("Your session has expired. Please log in again.");
+  }
+
   private async refreshAccessToken(): Promise<boolean> {
     if (this.isRefreshing && this.refreshPromise) {
       return this.refreshPromise;
@@ -70,6 +83,7 @@ export class ApiService extends BaseService {
         );
 
         if (!refreshToken) {
+          await this.handleAuthFailure();
           return false;
         }
 
@@ -85,27 +99,34 @@ export class ApiService extends BaseService {
         );
 
         if (!response.ok) {
-          await this.storageService.clear();
+          await this.handleAuthFailure();
           return false;
         }
 
-        const data = await response.json();
+        const responseContent: ApiResponse<RefreshTokenResponseDto> =
+          await response.json();
+        const wholeResponse: ApiRequestResponse<RefreshTokenResponseDto> = {
+          ...responseContent,
+          status: response.status || 200,
+        };
 
-        if (data.success && data.responseObject) {
+        if (this.isSuccess(wholeResponse)) {
           await this.storageService.setItem(
             EStorageKeys.AccessToken,
-            data.responseObject.accessToken
+            responseContent.data.accessToken
           );
           await this.storageService.setItem(
             EStorageKeys.RefreshToken,
-            data.responseObject.refreshToken
+            responseContent.data.refreshToken
           );
           return true;
         }
 
+        await this.handleAuthFailure();
         return false;
       } catch (error) {
         logger.error("Error refreshing token:", error);
+        await this.handleAuthFailure();
         return false;
       } finally {
         this.isRefreshing = false;

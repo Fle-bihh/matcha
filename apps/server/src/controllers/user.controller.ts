@@ -11,7 +11,7 @@ import {
 } from "@matcha/shared";
 import { uploadProfilePictureMiddleware } from "@/middleware/upload.middleware";
 
-export class UserController extends BaseController {
+export class UsersController extends BaseController {
   private get userService(): UserService {
     return this.container.get<UserService>(ETokens.UserService);
   }

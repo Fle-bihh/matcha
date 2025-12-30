@@ -97,14 +97,13 @@ export class AuthService extends BaseService {
           return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
         }
 
-        this.clearAuthData();
         return ServiceResponse.failure(authenticateResponse.message);
       }
 
-      await this.clearAuthData();
+      this.clearAuthData();
       return ServiceResponse.success(this.MESSAGES.NO_AUTH_DATA);
     } catch (error) {
-      await this.clearAuthData();
+      this.clearAuthData();
       return ServiceResponse.failure(this.MESSAGES.AUTH_CHECK_FAILED);
     }
   }
