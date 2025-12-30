@@ -1,12 +1,13 @@
 import type { Request, Response } from "express";
 import { BaseController } from "./base.controller";
-import { ETokens } from "@/types";
+import { ETokens, ServiceResponse } from "@/types";
 import { UserService } from "@/services";
 import { auth, route, validate, upload, paginate } from "@/decorators";
 import {
   UpdateProfileDtoSchema,
   UpdateProfilePictureDtoSchema,
   UpdateLocationDtoSchema,
+  ApiResponse,
 } from "@matcha/shared";
 import { uploadProfilePictureMiddleware } from "@/middleware/upload.middleware";
 
@@ -21,7 +22,7 @@ export class UserController extends BaseController {
   private async updateProfile(req: Request, res: Response): Promise<void> {
     const { id } = req.user!;
     const result = await this.userService.updateUser(id, req.validated?.body);
-    res.status(result.statusCode).send(result);
+    this.sendResult(res, result);
   }
 
   @auth()
@@ -44,7 +45,7 @@ export class UserController extends BaseController {
       imageFile,
       index
     );
-    res.status(result.statusCode).send(result);
+    this.sendResult(res, result);
   }
 
   @auth()
@@ -56,7 +57,7 @@ export class UserController extends BaseController {
       id,
       req.validated?.body
     );
-    res.status(result.statusCode).send(result);
+    this.sendResult(res, result);
   }
 
   @auth()
@@ -64,6 +65,6 @@ export class UserController extends BaseController {
   @route("GET", "get-users")
   private async getUsers(req: Request, res: Response): Promise<void> {
     const result = await this.userService.getUsers(req.pagination!);
-    res.status(result.statusCode).send(result);
+    this.sendResult(res, result);
   }
 }

@@ -6,6 +6,8 @@ import { RouterService } from "./router.service";
 import { SnackbarService } from "./snackbar.service";
 import { LocationService } from "./location.service";
 import { setFlagger, SetFlaggerPayload } from "@/store";
+import { ApiResponse } from "@matcha/shared";
+import { ApiRequestResponse } from "@/types/api.types";
 
 export abstract class BaseService {
   protected container: IContainer;
@@ -44,5 +46,9 @@ export abstract class BaseService {
 
   protected setFlagger(payload: SetFlaggerPayload) {
     this.dispatch(setFlagger(payload));
+  }
+
+  protected isSuccess<T>(response: ApiRequestResponse<T>): boolean {
+    return response.status >= 200 && response.status < 300;
   }
 }

@@ -13,14 +13,9 @@ import {
   AuthenticateResponseDto,
   LoginRequestDto,
   VerifyEmailRequestDto,
-  VerifyEmailResponseDto,
-  ResendVerificationEmailResponseDto,
   ForgotPasswordRequestDto,
-  ForgotPasswordResponseDto,
   ResetPasswordRequestDto,
-  ResetPasswordResponseDto,
   SendChangeEmailVerificationRequestDto,
-  SendChangeEmailVerificationResponseDto,
   ChangeEmailRequestDto,
   ChangeEmailResponseDto,
 } from "@matcha/shared";
@@ -55,7 +50,7 @@ export class AuthService extends BaseService {
     try {
       const userResponse = await this.userService.findById(userId);
 
-      if (!userResponse.success || !userResponse.responseObject) {
+      if (!this.isSuccess(userResponse) || !userResponse.data) {
         return ServiceResponse.failure(
           "User not found",
           null,
@@ -64,7 +59,7 @@ export class AuthService extends BaseService {
       }
 
       return ServiceResponse.success("User authenticated successfully", {
-        user: userResponse.responseObject,
+        user: userResponse.data,
       });
     } catch (error) {
       return ServiceResponse.failure(
@@ -81,10 +76,7 @@ export class AuthService extends BaseService {
     try {
       let existingUserResponse = await this.userService.findByEmail(dto.email);
 
-      if (
-        !existingUserResponse.success ||
-        existingUserResponse.responseObject
-      ) {
+      if (this.isSuccess(existingUserResponse)) {
         return ServiceResponse.failure(
           "Email already in use",
           null,
@@ -96,10 +88,7 @@ export class AuthService extends BaseService {
         dto.username
       );
 
-      if (
-        !existingUserResponse.success ||
-        existingUserResponse.responseObject
-      ) {
+      if (this.isSuccess(existingUserResponse)) {
         return ServiceResponse.failure(
           "Username already in use",
           null,
@@ -116,7 +105,7 @@ export class AuthService extends BaseService {
 
       const userResponse = await this.userService.createUser(userData);
 
-      if (!userResponse.success || !userResponse.responseObject) {
+      if (!this.isSuccess(userResponse) || !userResponse.data) {
         return ServiceResponse.failure(
           userResponse.message,
           null,
@@ -125,18 +114,22 @@ export class AuthService extends BaseService {
       }
 
       const { accessToken, refreshToken } = JwtUtils.generateTokens(
-        userResponse.responseObject
+        userResponse.data
       );
 
       await this.emailVerificationService.sendVerificationEmail(
-        userResponse.responseObject.id
+        userResponse.data.id
       );
 
-      return ServiceResponse.success("User registered successfully", {
-        accessToken,
-        refreshToken,
-        user: userResponse.responseObject,
-      });
+      return ServiceResponse.success(
+        "User registered successfully",
+        {
+          accessToken,
+          refreshToken,
+          user: userResponse.data,
+        },
+        StatusCodes.CREATED
+      );
     } catch (error) {
       logger.error("Error in register:", error);
       return ServiceResponse.failure(
@@ -157,7 +150,7 @@ export class AuthService extends BaseService {
         true
       );
 
-      if (!userResponse.success || !userResponse.responseObject) {
+      if (!this.isSuccess(userResponse) || !userResponse.data) {
         return ServiceResponse.failure(
           "Invalid credentials",
           null,
@@ -165,7 +158,7 @@ export class AuthService extends BaseService {
         );
       }
 
-      const userWithPassword = userResponse.responseObject;
+      const userWithPassword = userResponse.data;
       const isPasswordValid = await HashUtils.comparePassword(
         password,
         userWithPassword.password
@@ -210,7 +203,7 @@ export class AuthService extends BaseService {
 
       const userResponse = await this.userService.findById(userId);
 
-      if (!userResponse.success || !userResponse.responseObject) {
+      if (!this.isSuccess(userResponse) || !userResponse.data) {
         return ServiceResponse.failure(
           "Invalid refresh token",
           null,
@@ -218,7 +211,7 @@ export class AuthService extends BaseService {
         );
       }
 
-      const user = userResponse.responseObject;
+      const user = userResponse.data;
       const { accessToken, refreshToken } = JwtUtils.generateTokens(user);
 
       return ServiceResponse.success("Token refreshed successfully", {
@@ -236,17 +229,19 @@ export class AuthService extends BaseService {
 
   public async verifyEmail(
     dto: VerifyEmailRequestDto
-  ): Promise<ServiceResponse<VerifyEmailResponseDto | null>> {
+  ): Promise<ServiceResponse<null>> {
     try {
       const result = await this.emailVerificationService.verifyEmail(dto.token);
 
-      if (!result.success) {
+      if (!this.isSuccess(result)) {
         return ServiceResponse.failure(result.message, null, result.statusCode);
       }
 
-      return ServiceResponse.success("Email verified successfully", {
-        success: true,
-      });
+      return ServiceResponse.success(
+        "Email verified successfully",
+        null,
+        StatusCodes.NO_CONTENT
+      );
     } catch (error) {
       logger.error("Error in verifyEmail:", error);
       return ServiceResponse.failure(
@@ -259,11 +254,11 @@ export class AuthService extends BaseService {
 
   public async resendVerificationEmail(
     userId: number
-  ): Promise<ServiceResponse<ResendVerificationEmailResponseDto | null>> {
+  ): Promise<ServiceResponse<null>> {
     try {
       const userResponse = await this.userService.findById(userId);
 
-      if (!userResponse.success || !userResponse.responseObject) {
+      if (!this.isSuccess(userResponse) || !userResponse.data) {
         return ServiceResponse.failure(
           "User not found",
           null,
@@ -271,7 +266,7 @@ export class AuthService extends BaseService {
         );
       }
 
-      const user = userResponse.responseObject;
+      const user = userResponse.data;
 
       if (user.is_email_verified) {
         return ServiceResponse.failure(
@@ -285,13 +280,15 @@ export class AuthService extends BaseService {
         userId
       );
 
-      if (!result.success) {
+      if (!this.isSuccess(result)) {
         return ServiceResponse.failure(result.message, null, result.statusCode);
       }
 
-      return ServiceResponse.success("Verification email sent successfully", {
-        success: true,
-      });
+      return ServiceResponse.success(
+        "Verification email sent successfully",
+        null,
+        StatusCodes.NO_CONTENT
+      );
     } catch (error) {
       logger.error("Error in resendVerificationEmail:", error);
       return ServiceResponse.failure(
@@ -305,11 +302,11 @@ export class AuthService extends BaseService {
   public async sendChangeEmailVerification(
     userId: number,
     dto: SendChangeEmailVerificationRequestDto
-  ): Promise<ServiceResponse<SendChangeEmailVerificationResponseDto | null>> {
+  ): Promise<ServiceResponse<null>> {
     try {
       const userResponse = await this.userService.findById(userId);
 
-      if (!userResponse.success || !userResponse.responseObject) {
+      if (!this.isSuccess(userResponse) || !userResponse.data) {
         return ServiceResponse.failure(
           "User not found",
           null,
@@ -319,7 +316,7 @@ export class AuthService extends BaseService {
 
       const emailInUse = await this.userService.findByEmail(dto.newEmail);
 
-      if (emailInUse.success && emailInUse.responseObject) {
+      if (this.isSuccess(emailInUse)) {
         return ServiceResponse.failure(
           "Email is already in use",
           null,
@@ -333,13 +330,14 @@ export class AuthService extends BaseService {
           dto.newEmail
         );
 
-      if (!result.success) {
+      if (!this.isSuccess(result)) {
         return ServiceResponse.failure(result.message, null, result.statusCode);
       }
 
       return ServiceResponse.success(
         "Change email verification sent successfully",
-        { success: true }
+        null,
+        StatusCodes.NO_CONTENT
       );
     } catch (error) {
       logger.error("Error in sendChangeEmailVerification:", error);
@@ -358,10 +356,7 @@ export class AuthService extends BaseService {
       const verificationResponse =
         await this.emailVerificationService.verifyEmailChange(dto.token);
 
-      if (
-        !verificationResponse.success ||
-        !verificationResponse.responseObject
-      ) {
+      if (!this.isSuccess(verificationResponse) || !verificationResponse.data) {
         return ServiceResponse.failure(
           verificationResponse.message,
           null,
@@ -371,7 +366,7 @@ export class AuthService extends BaseService {
 
       return ServiceResponse.success(
         "Email changed successfully",
-        verificationResponse.responseObject
+        verificationResponse.data
       );
     } catch (error) {
       logger.error("Error in changeEmail:", error);
@@ -385,19 +380,20 @@ export class AuthService extends BaseService {
 
   public async forgotPassword(
     dto: ForgotPasswordRequestDto
-  ): Promise<ServiceResponse<ForgotPasswordResponseDto | null>> {
+  ): Promise<ServiceResponse<null>> {
     try {
       const result = await this.passwordResetService.sendPasswordResetEmail(
         dto.email
       );
 
-      if (!result.success) {
+      if (!this.isSuccess(result)) {
         return ServiceResponse.failure(result.message, null, result.statusCode);
       }
 
       return ServiceResponse.success(
         "If the email exists, a password reset link has been sent",
-        { success: true }
+        null,
+        StatusCodes.NO_CONTENT
       );
     } catch (error) {
       logger.error("Error in forgotPassword:", error);
@@ -411,20 +407,22 @@ export class AuthService extends BaseService {
 
   public async resetPassword(
     dto: ResetPasswordRequestDto
-  ): Promise<ServiceResponse<ResetPasswordResponseDto | null>> {
+  ): Promise<ServiceResponse<null>> {
     try {
       const result = await this.passwordResetService.resetPassword(
         dto.token,
         dto.password
       );
 
-      if (!result.success) {
+      if (!this.isSuccess(result)) {
         return ServiceResponse.failure(result.message, null, result.statusCode);
       }
 
-      return ServiceResponse.success("Password reset successfully", {
-        success: true,
-      });
+      return ServiceResponse.success(
+        "Password reset successfully",
+        null,
+        StatusCodes.NO_CONTENT
+      );
     } catch (error) {
       logger.error("Error in resetPassword:", error);
       return ServiceResponse.failure(

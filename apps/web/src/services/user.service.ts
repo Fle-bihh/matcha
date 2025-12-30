@@ -30,11 +30,9 @@ export class UserService extends BaseService {
       { auth: true }
     );
 
-    if (response.success && response.responseObject) {
-      this.setAuthUser(response.responseObject);
-    }
-
-    if (!response.success) {
+    if (this.isSuccess(response)) {
+      this.setAuthUser(response.data);
+    } else {
       return ServiceResponse.failure(response.message);
     }
 
@@ -54,11 +52,9 @@ export class UserService extends BaseService {
       { auth: true, formData: true }
     );
 
-    if (response.success && response.responseObject) {
-      this.setAuthUser(response.responseObject);
-    }
-
-    if (!response.success) {
+    if (this.isSuccess(response)) {
+      this.setAuthUser(response.data);
+    } else {
       return ServiceResponse.failure(response.message);
     }
 
@@ -73,16 +69,14 @@ export class UserService extends BaseService {
       { auth: true }
     );
 
-    if (response.success && response.responseObject) {
-      this.setAuthUser(response.responseObject);
+    if (this.isSuccess(response)) {
+      this.setAuthUser(response.data);
       this.dispatch(resetLocationState());
       this.setFlagger({
         key: EFlaggers.ChangeLocationDialog,
         value: { isOpen: false },
       });
-    }
-
-    if (!response.success) {
+    } else {
       return ServiceResponse.failure(response.message);
     }
 
@@ -96,11 +90,11 @@ export class UserService extends BaseService {
       { auth: true }
     );
 
-    if (!response.success || !response.responseObject) {
+    if (!this.isSuccess(response)) {
       return ServiceResponse.failure(response.message);
     }
 
-    const { data, meta } = response.responseObject;
+    const { data, meta } = response.data;
 
     this.dispatch(
       setEntities({

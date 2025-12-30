@@ -3,6 +3,7 @@ import { BaseService } from "./base.service";
 import { ApiResponse, logger, getRoute } from "@matcha/shared";
 import { EStorageKeys } from "@/types/storage.constants";
 import { config } from "@/config";
+import { ApiRequestResponse } from "@/types/api.types";
 
 interface RequestOptions {
   auth?: boolean;
@@ -103,7 +104,7 @@ export class ApiService extends BaseService {
     endpoint: string,
     body?: any,
     options?: RequestOptions
-  ): Promise<ApiResponse<T>> {
+  ): Promise<ApiRequestResponse<T>> {
     const headers = await this.getAuthHeaders(options);
 
     let requestBody: BodyInit | undefined;
@@ -123,7 +124,7 @@ export class ApiService extends BaseService {
       }
     }
 
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+    const response: Response = await fetch(`${this.baseUrl}${endpoint}`, {
       method,
       headers,
       body: requestBody,
@@ -139,13 +140,13 @@ export class ApiService extends BaseService {
       }
     }
 
-    return response.json();
+    return { ...(await response.json()), status: response.status };
   }
 
   async get<T>(
     endpoint: string,
     options?: RequestOptions
-  ): Promise<ApiResponse<T>> {
+  ): Promise<ApiRequestResponse<T>> {
     return this.request<T>("GET", endpoint, undefined, options);
   }
 
@@ -153,7 +154,7 @@ export class ApiService extends BaseService {
     endpoint: string,
     data?: any,
     options?: RequestOptions
-  ): Promise<ApiResponse<T>> {
+  ): Promise<ApiRequestResponse<T>> {
     return this.request<T>("POST", endpoint, data, options);
   }
 
@@ -161,14 +162,14 @@ export class ApiService extends BaseService {
     endpoint: string,
     data?: any,
     options?: RequestOptions
-  ): Promise<ApiResponse<T>> {
+  ): Promise<ApiRequestResponse<T>> {
     return this.request<T>("PATCH", endpoint, data, options);
   }
 
   async delete<T>(
     endpoint: string,
     options?: RequestOptions
-  ): Promise<ApiResponse<T>> {
+  ): Promise<ApiRequestResponse<T>> {
     return this.request<T>("DELETE", endpoint, undefined, options);
   }
 
@@ -176,7 +177,7 @@ export class ApiService extends BaseService {
     endpoint: string,
     data?: any,
     options?: RequestOptions
-  ): Promise<ApiResponse<T>> {
+  ): Promise<ApiRequestResponse<T>> {
     return this.request<T>("PUT", endpoint, data, options);
   }
 }

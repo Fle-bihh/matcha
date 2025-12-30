@@ -7,14 +7,9 @@ import {
   RegisterResponseDto,
   RouteKeys,
   type VerifyEmailRequestDto,
-  VerifyEmailResponseDto,
-  ResendVerificationEmailResponseDto,
   type ForgotPasswordRequestDto,
-  ForgotPasswordResponseDto,
   type ResetPasswordRequestDto,
-  ResetPasswordResponseDto,
   type SendChangeEmailVerificationRequestDto,
-  SendChangeEmailVerificationResponseDto,
   type ChangeEmailRequestDto,
   ChangeEmailResponseDto,
 } from "@matcha/shared";
@@ -78,8 +73,6 @@ export class AuthService extends BaseService {
       this.storageService.getItem(EStorageKeys.RefreshToken),
     ]);
 
-    // console.log("Access Token:", accessToken);
-
     return !!(accessToken && refreshToken);
   }
 
@@ -99,11 +92,8 @@ export class AuthService extends BaseService {
             { auth: true }
           );
 
-        if (
-          authenticateResponse.success &&
-          authenticateResponse.responseObject
-        ) {
-          this.storeAuthData(authenticateResponse.responseObject);
+        if (this.isSuccess(authenticateResponse)) {
+          this.storeAuthData(authenticateResponse.data);
           return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
         }
 
@@ -127,11 +117,11 @@ export class AuthService extends BaseService {
       dto
     );
 
-    if (!response.success) {
+    if (!this.isSuccess(response)) {
       return ServiceResponse.failure(response.message);
     }
 
-    await this.storeAuthData(response.responseObject);
+    await this.storeAuthData(response.data);
     return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
   }
 
@@ -143,11 +133,11 @@ export class AuthService extends BaseService {
       dto
     );
 
-    if (!response.success) {
+    if (!this.isSuccess(response)) {
       return ServiceResponse.failure(response.message);
     }
 
-    await this.storeAuthData(response.responseObject);
+    await this.storeAuthData(response.data);
     return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
   }
 
@@ -159,12 +149,12 @@ export class AuthService extends BaseService {
 
   @action({ showSuccessMessage: true })
   public async verifyEmail(dto: VerifyEmailRequestDto) {
-    const response = await this.apiService.post<VerifyEmailResponseDto>(
+    const response = await this.apiService.post<null>(
       this.getAuthRoute("verify-email"),
       dto
     );
 
-    if (!response.success) {
+    if (!this.isSuccess(response)) {
       return ServiceResponse.failure(response.message);
     }
 
@@ -177,13 +167,12 @@ export class AuthService extends BaseService {
 
   @action({ showSuccessMessage: true, showErrorMessage: true })
   public async resendVerificationEmail() {
-    const response =
-      await this.apiService.get<ResendVerificationEmailResponseDto>(
-        this.getAuthRoute("resend-verification-email"),
-        { auth: true }
-      );
+    const response = await this.apiService.get<null>(
+      this.getAuthRoute("resend-verification-email"),
+      { auth: true }
+    );
 
-    if (!response.success) {
+    if (!this.isSuccess(response)) {
       return ServiceResponse.failure(response.message);
     }
 
@@ -192,12 +181,12 @@ export class AuthService extends BaseService {
 
   @action({ showErrorMessage: true })
   public async forgotPassword(dto: ForgotPasswordRequestDto) {
-    const response = await this.apiService.post<ForgotPasswordResponseDto>(
+    const response = await this.apiService.post<null>(
       this.getAuthRoute("forgot-password"),
       dto
     );
 
-    if (!response.success) {
+    if (!this.isSuccess(response)) {
       return ServiceResponse.failure(response.message);
     }
 
@@ -206,12 +195,12 @@ export class AuthService extends BaseService {
 
   @action({ showSuccessMessage: true, showErrorMessage: true })
   public async resetPassword(dto: ResetPasswordRequestDto) {
-    const response = await this.apiService.post<ResetPasswordResponseDto>(
+    const response = await this.apiService.post<null>(
       this.getAuthRoute("reset-password"),
       dto
     );
 
-    if (!response.success) {
+    if (!this.isSuccess(response)) {
       return ServiceResponse.failure(response.message);
     }
 
@@ -223,14 +212,13 @@ export class AuthService extends BaseService {
   public async sendChangeEmailVerification(
     dto: SendChangeEmailVerificationRequestDto
   ) {
-    const response =
-      await this.apiService.post<SendChangeEmailVerificationResponseDto>(
-        this.getAuthRoute("send-change-email-verification"),
-        dto,
-        { auth: true }
-      );
+    const response = await this.apiService.post<null>(
+      this.getAuthRoute("send-change-email-verification"),
+      dto,
+      { auth: true }
+    );
 
-    if (!response.success) {
+    if (!this.isSuccess(response)) {
       return ServiceResponse.failure(response.message);
     }
 
@@ -252,16 +240,13 @@ export class AuthService extends BaseService {
       { auth: true }
     );
 
-    if (!response.success) {
+    if (!this.isSuccess(response)) {
       return ServiceResponse.failure(response.message);
     }
 
-    this.dispatch(changeEmail(response.responseObject.newEmail));
+    this.dispatch(changeEmail(response.data.newEmail));
 
-    crossTab.broadcast(
-      CrossTabEvent.EmailChanged,
-      response.responseObject.newEmail
-    );
+    crossTab.broadcast(CrossTabEvent.EmailChanged, response.data.newEmail);
 
     return ServiceResponse.success(this.MESSAGES.EMAIL_CHANGED);
   }

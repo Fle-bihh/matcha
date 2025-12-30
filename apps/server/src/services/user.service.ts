@@ -36,9 +36,10 @@ export class UserService extends BaseService {
     try {
       const userWithPassword = await this.userRepository.findUserByEmail(email);
       if (!userWithPassword) {
-        return ServiceResponse.success(
+        return ServiceResponse.failure(
           "User not found",
-          null
+          null,
+          StatusCodes.NOT_FOUND
         ) as ServiceResponse<UserResult<T>>;
       }
 
@@ -62,9 +63,10 @@ export class UserService extends BaseService {
     try {
       const user = await this.userRepository.findUserByUsername(username);
       if (!user) {
-        return ServiceResponse.success(
+        return ServiceResponse.failure(
           "User not found",
-          null
+          null,
+          StatusCodes.NOT_FOUND
         ) as ServiceResponse<UserResult<T>>;
       }
 
@@ -88,10 +90,11 @@ export class UserService extends BaseService {
     try {
       const user = await this.userRepository.findUserById(userId);
       if (!user) {
-        return ServiceResponse.success(
+        return ServiceResponse.failure(
           "User not found",
-          null
-        ) as ServiceResponse<UserResult<T>>;
+          null,
+          StatusCodes.NOT_FOUND
+        );
       }
 
       return ServiceResponse.success(

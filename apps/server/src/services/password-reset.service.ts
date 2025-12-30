@@ -55,18 +55,18 @@ export class PasswordResetService extends BaseService {
 
   public async sendPasswordResetEmail(
     email: string
-  ): Promise<ServiceResponse<boolean>> {
+  ): Promise<ServiceResponse<null>> {
     try {
       const userResponse = await this.userService.findByEmail(email);
 
-      if (!userResponse.success || !userResponse.responseObject) {
+      if (!this.isSuccess(userResponse) || !userResponse.data) {
         return ServiceResponse.success(
           "If the email exists, a password reset link has been sent",
-          true
+          null
         );
       }
 
-      const user = userResponse.responseObject;
+      const user = userResponse.data;
 
       const latestReset = await this.passwordResetRepository.findLatestByUserId(
         user.id
@@ -82,7 +82,7 @@ export class PasswordResetService extends BaseService {
           );
           return ServiceResponse.failure(
             `Please wait ${timeRemaining} minute(s) before requesting another password reset email.`,
-            false,
+            null,
             StatusCodes.TOO_MANY_REQUESTS
           );
         }
@@ -92,15 +92,15 @@ export class PasswordResetService extends BaseService {
 
       const tokenResponse = await this.createResetToken(user.id);
 
-      if (!tokenResponse.success || !tokenResponse.responseObject) {
+      if (!this.isSuccess(tokenResponse) || !tokenResponse.data) {
         return ServiceResponse.failure(
           "Error creating password reset token",
-          false,
+          null,
           StatusCodes.INTERNAL_SERVER_ERROR
         );
       }
 
-      const resetLink = `${config.webUrl}/modify-password?token=${tokenResponse.responseObject}`;
+      const resetLink = `${config.webUrl}/modify-password?token=${tokenResponse.data}`;
 
       await this.mailService.sendEmail({
         to: user.email,
@@ -110,13 +110,13 @@ export class PasswordResetService extends BaseService {
 
       return ServiceResponse.success(
         "If the email exists, a password reset link has been sent",
-        true
+        null
       );
     } catch (error) {
       logger.error("Error sending password reset email:", error);
       return ServiceResponse.failure(
         "Error sending password reset email",
-        false,
+        null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
@@ -153,14 +153,14 @@ export class PasswordResetService extends BaseService {
   public async resetPassword(
     token: string,
     newPassword: string
-  ): Promise<ServiceResponse<boolean>> {
+  ): Promise<ServiceResponse<null>> {
     try {
       const reset = await this.passwordResetRepository.findByToken(token);
 
       if (!reset) {
         return ServiceResponse.failure(
           "Invalid or expired password reset token",
-          false,
+          null,
           StatusCodes.BAD_REQUEST
         );
       }
@@ -170,10 +170,10 @@ export class PasswordResetService extends BaseService {
         newPassword
       );
 
-      if (!userResponse.success) {
+      if (!this.isSuccess(userResponse)) {
         return ServiceResponse.failure(
           userResponse.message,
-          false,
+          null,
           StatusCodes.INTERNAL_SERVER_ERROR
         );
       }
@@ -183,19 +183,19 @@ export class PasswordResetService extends BaseService {
       if (!marked) {
         return ServiceResponse.failure(
           "Error marking reset token as used",
-          false,
+          null,
           StatusCodes.INTERNAL_SERVER_ERROR
         );
       }
 
       await this.passwordResetRepository.deleteByUserId(reset.user_id);
 
-      return ServiceResponse.success("Password reset successfully", true);
+      return ServiceResponse.success("Password reset successfully", null);
     } catch (error) {
       logger.error("Error resetting password:", error);
       return ServiceResponse.failure(
         "Error resetting password",
-        false,
+        null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
