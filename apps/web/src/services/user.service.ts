@@ -89,7 +89,7 @@ export class UserService extends BaseService {
   async getUsers(params: PaginationParams | null): Promise<ServiceResponse> {
     const response = await this.apiService.get<PaginatedResponse<User>>(
       getRoute("user", "get-users"),
-      { auth: true }
+      { auth: true, params: params || undefined }
     );
 
     if (!this.isSuccess(response)) {

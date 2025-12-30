@@ -27,7 +27,7 @@ export function usePager<T>({
   useEffect(() => {
     if (loadData && !hasLoaded.current) {
       hasLoaded.current = true;
-      fn(null);
+      fn({ page: 1, limit: 10 });
     }
   }, [fn, loadData]);
 

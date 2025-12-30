@@ -6,7 +6,6 @@ export type ApiResponse<T> = {
 export interface PaginationParams {
   page: number;
   limit: number;
-  offset: number;
 }
 
 export interface PaginationMeta {

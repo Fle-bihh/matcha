@@ -405,9 +405,12 @@ export class UserService extends BaseService {
     paginationParams: PaginationParams
   ): Promise<ServiceResponse<PaginatedResponse<User>>> {
     try {
+      const { page, limit } = paginationParams;
+      const offset = (page - 1) * limit;
+
       const { users, total } = await this.userRepository.getUsers({
         limit: paginationParams.limit,
-        offset: paginationParams.offset,
+        offset,
       });
 
       const publicUsers = users.map((user) => this.excludePrivateFields(user));

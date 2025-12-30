@@ -9,6 +9,7 @@ interface RequestOptions {
   auth?: boolean;
   formData?: boolean;
   _isRetry?: boolean;
+  params?: Record<string, any>;
 }
 
 export class ApiService extends BaseService {
@@ -19,6 +20,22 @@ export class ApiService extends BaseService {
   constructor(container: IContainer) {
     super(container);
     this.baseUrl = config.apiUrl;
+  }
+
+  private buildUrl(endpoint: string, params?: Record<string, any>): string {
+    if (!params) {
+      return endpoint;
+    }
+
+    const queryParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        queryParams.append(key, String(value));
+      }
+    });
+
+    const queryString = queryParams.toString();
+    return queryString ? `${endpoint}?${queryString}` : endpoint;
   }
 
   private async getAuthHeaders(options?: RequestOptions): Promise<HeadersInit> {
@@ -106,6 +123,7 @@ export class ApiService extends BaseService {
     options?: RequestOptions
   ): Promise<ApiRequestResponse<T>> {
     const headers = await this.getAuthHeaders(options);
+    const url = this.buildUrl(endpoint, options?.params);
 
     let requestBody: BodyInit | undefined;
     if (body) {
@@ -124,7 +142,7 @@ export class ApiService extends BaseService {
       }
     }
 
-    const response: Response = await fetch(`${this.baseUrl}${endpoint}`, {
+    const response: Response = await fetch(`${this.baseUrl}${url}`, {
       method,
       headers,
       body: requestBody,
