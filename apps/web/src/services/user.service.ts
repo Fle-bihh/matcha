@@ -18,6 +18,7 @@ import {
 } from "@/store";
 import { EFlaggers, EPagerKeys } from "@/constants";
 import { EEntityTypes } from "@/types";
+import { PaginationDto } from "@/types/api.types";
 
 export class UserService extends BaseService {
 	private setAuthUser(user: AuthUser) {
@@ -86,7 +87,7 @@ export class UserService extends BaseService {
 	}
 
 	@action({ showErrorMessage: false, showSuccessMessage: false })
-	async getUsers(params: PaginationParams | null): Promise<ServiceResponse> {
+	async getUsers(params: PaginationDto | null): Promise<ServiceResponse> {
 		const response = await this.apiService.get<PaginatedResponse<User>>(
 			getRoute("users", "get-users"),
 			{ auth: true, params: params || undefined }
@@ -100,7 +101,7 @@ export class UserService extends BaseService {
 			response.data,
 			EPagerKeys.Users,
 			EEntityTypes.Users,
-			true
+			params?.refresh !== true
 		);
 
 		return ServiceResponse.success(response.message);

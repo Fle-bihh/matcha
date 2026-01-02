@@ -58,9 +58,13 @@ const pagersSlice = createSlice({
 			const { pagerKey, meta, entityKeys } = action.payload;
 			if (state[pagerKey]) {
 				state[pagerKey].meta = meta;
+				const existingKeys = new Set(state[pagerKey].entityKeys);
+				const newUniqueKeys = entityKeys.filter(
+					(key) => !existingKeys.has(key)
+				);
 				state[pagerKey].entityKeys = [
 					...state[pagerKey].entityKeys,
-					...entityKeys,
+					...newUniqueKeys,
 				];
 			} else {
 				state[pagerKey] = {
