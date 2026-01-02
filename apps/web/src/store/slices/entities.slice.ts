@@ -60,8 +60,14 @@ const entitiesSlice = createSlice({
 				}
 			});
 		},
+		clearEntities: (state) => {
+			Object.keys(state).forEach((key) => {
+				state[key] = {};
+			});
+		},
 	},
 });
 
-export const { setEntity, setEntities, addEntities } = entitiesSlice.actions;
+export const { setEntity, setEntities, addEntities, clearEntities } =
+	entitiesSlice.actions;
 export default entitiesSlice.reducer;

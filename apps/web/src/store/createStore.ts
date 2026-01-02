@@ -9,31 +9,31 @@ import snackbarReducer from "./slices/snackbar.slice";
 import flaggersReducer from "./slices/flaggers.slice";
 
 export const createStore = (container: IContainer) => {
-  const store = configureStore({
-    reducer: {
-      entities: entitiesReducer,
+	const store = configureStore({
+		reducer: {
+			entities: entitiesReducer,
 
-      pagers: pagersReducer,
+			pagers: pagersReducer,
 
-      actions: actionsReducer,
+			actions: actionsReducer,
 
-      authUser: authUserReducer,
+			authUser: authUserReducer,
 
-      location: locationReducer,
+			location: locationReducer,
 
-      snackbar: snackbarReducer,
+			snackbar: snackbarReducer,
 
-      flaggers: flaggersReducer,
-    },
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({
-        thunk: {
-          extraArgument: { container },
-        },
-        serializableCheck: {},
-      }),
-    devTools: process.env.NODE_ENV !== "production",
-  });
+			flaggers: flaggersReducer,
+		},
+		middleware: (getDefaultMiddleware) =>
+			getDefaultMiddleware({
+				thunk: {
+					extraArgument: { container },
+				},
+				serializableCheck: {},
+			}),
+		devTools: process.env.NODE_ENV !== "production",
+	});
 
-  return store;
+	return store;
 };
