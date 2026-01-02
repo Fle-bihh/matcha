@@ -2,16 +2,11 @@ import {
 	Container,
 	Typography,
 	Box,
-	Card,
-	CardContent,
 	Button,
-	Stack,
-	TextField,
-	MenuItem,
-	Select,
-	FormControl,
-	InputLabel,
+	IconButton,
+	CircularProgress,
 } from "@mui/material";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import { withProfileCompleteComponent } from "@/components/utils/with-condition-component.component";
 import { ProfileUncomplete } from "./profile-uncomplete.page";
 import { usePager } from "@/hooks/pagination.hook";
@@ -19,177 +14,102 @@ import { EPagerKeys } from "@/constants";
 import { User } from "@matcha/shared";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { EEntityTypes } from "@/types";
-import { useState } from "react";
+import { ProfileCard } from "@/components/home/profile-card.component";
+import { useActionsData } from "@/hooks/actions.hooks";
+import { EActionKeys } from "@/types/actions.types";
 
 function HomePageComp() {
 	const { getUsers } = useAuthUser();
 	const {
 		data: users,
-		meta,
 		fetchNextPage,
-		fetchPreviousPage,
-		fetchPage,
 		refresh,
-		setLimit,
 		hasNextPage,
-		hasPreviousPage,
 	} = usePager<User>({
 		pagerKey: EPagerKeys.Users,
 		entityType: EEntityTypes.Users,
 		fn: getUsers,
 	});
-
-	const [pageInput, setPageInput] = useState("");
-	const [limitValue, setLimitValue] = useState(10);
-
-	const handleGoToPage = () => {
-		const page = parseInt(pageInput);
-		if (!isNaN(page) && page > 0 && meta && page <= meta.totalPages) {
-			fetchPage(page);
-			setPageInput("");
-		}
-	};
-
-	const handleLimitChange = (newLimit: number) => {
-		setLimitValue(newLimit);
-		setLimit(newLimit);
-	};
+	const { isLoading } = useActionsData([EActionKeys.GetUsers]);
 
 	return (
-		<Container maxWidth="lg" sx={{ py: 4 }}>
-			<Box sx={{ mb: 3 }}>
-				<Typography variant="h4" component="h1">
-					Users - Pagination Test
+		<Container maxWidth="xl" sx={{ py: 4 }}>
+			<Box
+				sx={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+					mb: 4,
+				}}
+			>
+				<Typography variant="h4" component="h1" fontWeight={600}>
+					Discover
 				</Typography>
-				{meta && (
+				<IconButton onClick={refresh} color="primary">
+					<RefreshIcon />
+				</IconButton>
+			</Box>
+
+			{users.length > 0 ? (
+				<>
+					<Box
+						sx={{
+							display: "grid",
+							gridTemplateColumns: {
+								xs: "1fr",
+								sm: "repeat(2, 1fr)",
+								md: "repeat(3, 1fr)",
+								lg: "repeat(4, 1fr)",
+							},
+							gap: 3,
+						}}
+					>
+						{users.map((user: User) => (
+							<ProfileCard key={user.id} user={user} />
+						))}
+					</Box>
+
+					{hasNextPage && (
+						<Box
+							sx={{
+								display: "flex",
+								justifyContent: "center",
+								mt: 4,
+							}}
+						>
+							{isLoading ? (
+								<CircularProgress size={40} />
+							) : (
+								<Button
+									variant="contained"
+									size="large"
+									onClick={fetchNextPage}
+									sx={{ minWidth: 200 }}
+								>
+									Load More
+								</Button>
+							)}
+						</Box>
+					)}
+				</>
+			) : (
+				<Box
+					sx={{
+						textAlign: "center",
+						py: 8,
+					}}
+				>
+					<Typography variant="h6" color="text.secondary">
+						No profiles found
+					</Typography>
 					<Typography
 						variant="body2"
 						color="text.secondary"
 						sx={{ mt: 1 }}
 					>
-						Page {meta.page} of {meta.totalPages} | Total:{" "}
-						{meta.total} users | Showing {users.length} users
+						Try refreshing or check back later
 					</Typography>
-				)}
-			</Box>
-
-			{/* Pagination Controls */}
-			<Card sx={{ mb: 3, p: 2 }}>
-				<Typography variant="h6" sx={{ mb: 2 }}>
-					Pagination Controls
-				</Typography>
-				<Stack spacing={2}>
-					{/* Navigation Buttons */}
-					<Stack direction="row" spacing={2} flexWrap="wrap">
-						<Button
-							variant="contained"
-							onClick={fetchPreviousPage}
-							disabled={!hasPreviousPage}
-						>
-							Previous Page
-						</Button>
-						<Button
-							variant="contained"
-							onClick={fetchNextPage}
-							disabled={!hasNextPage}
-						>
-							Next Page
-						</Button>
-						<Button variant="outlined" onClick={refresh}>
-							Refresh
-						</Button>
-					</Stack>
-
-					{/* Go to Page */}
-					<Stack direction="row" spacing={2} alignItems="center">
-						<TextField
-							label="Go to page"
-							type="number"
-							size="small"
-							value={pageInput}
-							onChange={(e) => setPageInput(e.target.value)}
-							sx={{ width: 150 }}
-							slotProps={{
-								htmlInput: { max: meta?.totalPages, min: 1 },
-							}}
-						/>
-						<Button variant="contained" onClick={handleGoToPage}>
-							Go
-						</Button>
-					</Stack>
-
-					{/* Items per page */}
-					<Stack direction="row" spacing={2} alignItems="center">
-						<FormControl size="small" sx={{ width: 150 }}>
-							<InputLabel>Items per page</InputLabel>
-							<Select
-								value={limitValue}
-								label="Items per page"
-								onChange={(e) =>
-									handleLimitChange(Number(e.target.value))
-								}
-							>
-								<MenuItem value={5}>5</MenuItem>
-								<MenuItem value={10}>10</MenuItem>
-								<MenuItem value={20}>20</MenuItem>
-								<MenuItem value={50}>50</MenuItem>
-							</Select>
-						</FormControl>
-					</Stack>
-				</Stack>
-			</Card>
-
-			<Box
-				sx={{
-					display: "grid",
-					gridTemplateColumns: {
-						xs: "1fr",
-						sm: "repeat(2, 1fr)",
-						md: "repeat(3, 1fr)",
-					},
-					gap: 2,
-				}}
-			>
-				{users.map((user: User) => (
-					<Card key={user.id}>
-						<CardContent>
-							<Typography variant="h6">
-								{user.first_name} {user.last_name}
-							</Typography>
-							{user.bio && (
-								<Typography variant="body2" sx={{ mt: 1 }}>
-									{user.bio}
-								</Typography>
-							)}
-							{user.location && (
-								<Typography variant="body2" sx={{ mt: 1 }}>
-									Location: {user.location.city},{" "}
-									{user.location.country}
-								</Typography>
-							)}
-							{user.gender && (
-								<Typography variant="body2" sx={{ mt: 1 }}>
-									{`Gender: ${user.gender}`}
-								</Typography>
-							)}
-							{user.orientation && (
-								<Typography variant="body2" sx={{ mt: 1 }}>
-									{`Orientation: ${user.orientation}`}
-								</Typography>
-							)}
-						</CardContent>
-					</Card>
-				))}
-			</Box>
-
-			{!users.length && (
-				<Typography
-					variant="body1"
-					color="text.secondary"
-					sx={{ mt: 2 }}
-				>
-					No users found.
-				</Typography>
+				</Box>
 			)}
 		</Container>
 	);

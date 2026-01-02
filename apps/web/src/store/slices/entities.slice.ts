@@ -42,8 +42,26 @@ const entitiesSlice = createSlice({
 				}
 			});
 		},
+		addEntities: (
+			state,
+			action: PayloadAction<{
+				entityType: EEntityTypes;
+				entities: any[];
+			}>
+		) => {
+			const { entityType, entities } = action.payload;
+			if (!state[entityType]) {
+				state[entityType] = {};
+			}
+			const sanitizedEntities = sanitizeEntities(entities);
+			sanitizedEntities.forEach((entity) => {
+				if (entity && typeof entity === "object" && "id" in entity) {
+					state[entityType][entity.id] = entity;
+				}
+			});
+		},
 	},
 });
 
-export const { setEntity, setEntities } = entitiesSlice.actions;
+export const { setEntity, setEntities, addEntities } = entitiesSlice.actions;
 export default entitiesSlice.reducer;
