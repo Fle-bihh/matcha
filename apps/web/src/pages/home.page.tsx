@@ -20,6 +20,7 @@ import { EActionKeys } from "@/types/actions.types";
 
 function HomePageComp() {
 	const { getUsers } = useAuthUser();
+	const { isLoading, isSuccess } = useActionsData([EActionKeys.GetUsers]);
 	const {
 		data: users,
 		fetchNextPage,
@@ -29,8 +30,8 @@ function HomePageComp() {
 		pagerKey: EPagerKeys.Users,
 		entityType: EEntityTypes.Users,
 		fn: getUsers,
+		loadData: isSuccess !== true,
 	});
-	const { isLoading } = useActionsData([EActionKeys.GetUsers]);
 
 	return (
 		<Container maxWidth="xl" sx={{ py: 4 }}>
