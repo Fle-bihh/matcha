@@ -5,40 +5,52 @@ import {
 } from "@/store/selectors/pagination.selectors";
 import { EPagerKeys } from "@/constants";
 import { EEntityTypes } from "@/types";
-import { PaginationParams } from "@matcha/shared";
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useMemo } from "react";
 import { PaginationDto } from "@/types/api.types";
 
-interface IPagerHookProps {
+interface IPagerHookProps<TParams = PaginationDto> {
 	pagerKey: EPagerKeys;
 	entityType: EEntityTypes;
-	fn: (params: PaginationDto | null) => void;
+	fn: (params: TParams) => void;
 	loadData?: boolean;
 	defaultLimit?: number;
+	buildParams?: (pagination: PaginationDto) => TParams;
 }
-export function usePager<T>({
+
+export function usePager<T, TParams = PaginationDto>({
 	pagerKey,
 	entityType,
 	fn,
 	loadData = true,
 	defaultLimit = 10,
-}: IPagerHookProps) {
+	buildParams,
+}: IPagerHookProps<TParams>) {
 	const hasLoaded = useRef(false);
 	const data = useSelector(selectPaginatedEntities<T>(pagerKey, entityType));
 	const meta = useSelector(selectPagerMeta(pagerKey));
 
+	const paramBuilder = useMemo(
+		() => buildParams || ((params: PaginationDto) => params as TParams),
+		[buildParams]
+	);
+
 	useEffect(() => {
 		if (loadData && !hasLoaded.current) {
 			hasLoaded.current = true;
-			fn({ page: 1, limit: defaultLimit });
+			fn(paramBuilder({ page: 1, limit: defaultLimit }));
 		}
-	}, [fn, loadData, defaultLimit]);
+	}, [fn, loadData, defaultLimit, paramBuilder]);
 
 	const fetchPage = useCallback(
 		(page: number, limit?: number) => {
-			fn({ page, limit: limit ?? meta?.limit ?? defaultLimit });
+			fn(
+				paramBuilder({
+					page,
+					limit: limit ?? meta?.limit ?? defaultLimit,
+				})
+			);
 		},
-		[fn, meta?.limit, defaultLimit]
+		[fn, meta?.limit, defaultLimit, paramBuilder]
 	);
 
 	const fetchNextPage = useCallback(() => {
@@ -55,14 +67,14 @@ export function usePager<T>({
 
 	const refresh = useCallback(() => {
 		const currentLimit = meta?.limit ?? defaultLimit;
-		fn({ page: 1, limit: currentLimit, refresh: true });
-	}, [fn, meta?.limit, defaultLimit]);
+		fn(paramBuilder({ page: 1, limit: currentLimit, refresh: true }));
+	}, [fn, meta?.limit, defaultLimit, paramBuilder]);
 
 	const setLimit = useCallback(
 		(newLimit: number) => {
-			fn({ page: 1, limit: newLimit });
+			fn(paramBuilder({ page: 1, limit: newLimit }));
 		},
-		[fn]
+		[fn, paramBuilder]
 	);
 
 	return {

@@ -10,9 +10,8 @@ import {
 	SendChangeEmailVerificationRequestDto,
 	ChangeEmailRequestDto,
 	GeocodingResult,
-	PaginationParams,
+	BrowsingParams,
 } from "@matcha/shared";
-import { PaginationDto } from "./api.types";
 
 export enum EActionKeys {
 	Authenticate = "authenticate",
@@ -51,7 +50,7 @@ export interface IActionDtoMap {
 	[EActionKeys.GetCurrentPosition]: null;
 	[EActionKeys.SearchLocation]: string;
 	[EActionKeys.CreateManualLocation]: GeocodingResult;
-	[EActionKeys.GetUsers]: PaginationDto | null;
+	[EActionKeys.GetUsers]: BrowsingParams;
 }
 
 export type ActionDto<K extends EActionKeys> = IActionDtoMap[K];

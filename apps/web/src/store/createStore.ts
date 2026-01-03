@@ -7,6 +7,7 @@ import locationReducer from "./slices/location.slice";
 import actionsReducer from "./slices/actions.slice";
 import snackbarReducer from "./slices/snackbar.slice";
 import flaggersReducer from "./slices/flaggers.slice";
+import filtersReducer from "./slices/filters.slice";
 
 export const createStore = (container: IContainer) => {
 	const store = configureStore({
@@ -24,6 +25,8 @@ export const createStore = (container: IContainer) => {
 			snackbar: snackbarReducer,
 
 			flaggers: flaggersReducer,
+
+			filters: filtersReducer,
 		},
 		middleware: (getDefaultMiddleware) =>
 			getDefaultMiddleware({

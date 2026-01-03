@@ -9,29 +9,15 @@ import {
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { withProfileCompleteComponent } from "@/components/utils/with-condition-component.component";
 import { ProfileUncomplete } from "./profile-uncomplete.page";
-import { usePager } from "@/hooks/pagination.hook";
-import { EPagerKeys } from "@/constants";
-import { User } from "@matcha/shared";
-import { useAuthUser } from "@/hooks/auth.hook";
-import { EEntityTypes } from "@/types";
 import { ProfileCard } from "@/components/home/profile-card.component";
 import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
+import { useBrowsing } from "@/hooks/browsing.hook";
+import { BrowsingFiltersComponent } from "@/components/home/browsing-filters.component";
 
 function HomePageComp() {
-	const { getUsers } = useAuthUser();
-	const { isLoading, isSuccess } = useActionsData([EActionKeys.GetUsers]);
-	const {
-		data: users,
-		fetchNextPage,
-		refresh,
-		hasNextPage,
-	} = usePager<User>({
-		pagerKey: EPagerKeys.Users,
-		entityType: EEntityTypes.Users,
-		fn: getUsers,
-		loadData: isSuccess !== true,
-	});
+	const { isLoading } = useActionsData([EActionKeys.GetUsers]);
+	const { data: users, fetchNextPage, refresh, hasNextPage } = useBrowsing();
 
 	return (
 		<Container maxWidth="xl" sx={{ py: 4 }}>
@@ -51,6 +37,8 @@ function HomePageComp() {
 				</IconButton>
 			</Box>
 
+			<BrowsingFiltersComponent />
+
 			{users.length > 0 ? (
 				<>
 					<Box
@@ -65,7 +53,7 @@ function HomePageComp() {
 							gap: 3,
 						}}
 					>
-						{users.map((user: User) => (
+						{users.map((user) => (
 							<ProfileCard key={user.id} user={user} />
 						))}
 					</Box>
@@ -108,7 +96,7 @@ function HomePageComp() {
 						color="text.secondary"
 						sx={{ mt: 1 }}
 					>
-						Try refreshing or check back later
+						Try adjusting your filters or check back later
 					</Typography>
 				</Box>
 			)}

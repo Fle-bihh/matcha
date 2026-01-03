@@ -5,7 +5,7 @@ import type {
 	UpdateLocationDto,
 	PaginatedResponse,
 	User,
-	PaginationParams,
+	BrowsingParams,
 } from "@matcha/shared";
 import { ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
@@ -18,7 +18,6 @@ import {
 } from "@/store";
 import { EFlaggers, EPagerKeys } from "@/constants";
 import { EEntityTypes } from "@/types";
-import { PaginationDto } from "@/types/api.types";
 
 export class UserService extends BaseService {
 	private setAuthUser(user: AuthUser) {
@@ -87,10 +86,10 @@ export class UserService extends BaseService {
 	}
 
 	@action({ showErrorMessage: false, showSuccessMessage: false })
-	async getUsers(params: PaginationDto | null): Promise<ServiceResponse> {
+	async getUsers(params: BrowsingParams): Promise<ServiceResponse> {
 		const response = await this.apiService.get<PaginatedResponse<User>>(
 			getRoute("users", "get-users"),
-			{ auth: true, params: params || undefined }
+			{ auth: true, params }
 		);
 
 		if (!this.isSuccess(response)) {
