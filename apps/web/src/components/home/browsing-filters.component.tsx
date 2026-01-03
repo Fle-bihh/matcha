@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
 	Box,
 	TextField,
@@ -26,9 +26,18 @@ import {
 import { useBrowsingContext } from "@/contexts/browsing.context";
 
 export function BrowsingFiltersComponent() {
-	const { filters, applyFilters, clearFilters, refresh } =
-		useBrowsingContext();
+	const {
+		filters,
+		applyFilters,
+		clearFilters,
+		refresh,
+		hasChanges: hasChangesCb,
+	} = useBrowsingContext();
 	const [localFilters, setLocalFilters] = useState<BrowsingFilters>(filters);
+	const hasChanges = useMemo(
+		() => hasChangesCb(localFilters),
+		[hasChangesCb, localFilters]
+	);
 
 	const handleChange = (key: keyof BrowsingFilters, value: any) => {
 		setLocalFilters((prev) => ({ ...prev, [key]: value }));
@@ -296,7 +305,7 @@ export function BrowsingFiltersComponent() {
 								variant="contained"
 								onClick={handleApply}
 								fullWidth
-								disabled={!hasActiveFilters}
+								disabled={!hasActiveFilters || !hasChanges}
 							>
 								Apply Filters
 							</Button>

@@ -10,8 +10,6 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import { withProfileCompleteComponent } from "@/components/utils/with-condition-component.component";
 import { ProfileUncomplete } from "./profile-uncomplete.page";
 import { ProfileCard } from "@/components/home/profile-card.component";
-import { useActionsData } from "@/hooks/actions.hooks";
-import { EActionKeys } from "@/types/actions.types";
 import { BrowsingFiltersComponent } from "@/components/home/browsing-filters.component";
 import { useBrowsingContext } from "@/contexts/browsing.context";
 
@@ -25,7 +23,7 @@ function HomePageComp() {
 	} = useBrowsingContext();
 
 	return (
-		<Container maxWidth="xl" sx={{ py: 4 }}>
+		<Container maxWidth="xl" sx={{ py: 4, pb: 12 }}>
 			<Box
 				sx={{
 					display: "flex",

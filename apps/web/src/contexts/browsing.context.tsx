@@ -74,12 +74,30 @@ function useBrowsingState() {
 		[dispatch, filters, pager.meta?.limit, getUsers]
 	);
 
+	const hasChanges = useCallback(
+		(filtersToCompare: BrowsingFilters) => {
+			if (!filters) return Object.keys(filtersToCompare).length > 0;
+
+			for (const key in filtersToCompare) {
+				if (
+					filtersToCompare[key as keyof BrowsingFilters] !==
+					filters[key as keyof BrowsingFilters]
+				) {
+					return true;
+				}
+			}
+			return false;
+		},
+		[filters]
+	);
+
 	return {
 		...pager,
 		filters: filters || {},
 		updateFilters,
 		clearFilters: clearBrowsingFilters,
 		applyFilters,
+		hasChanges,
 		isLoading,
 	};
 }
