@@ -1,4 +1,4 @@
-.PHONY: all setup up down re logs logs-db logs-server logs-web logs-shared logs-adminer clean clean-all clear-cache shell-server shell-web shell-shared
+.PHONY: all setup up down re re-web re-server re-shared logs logs-db logs-server logs-web logs-shared logs-adminer clean clean-all clear-cache shell-server shell-web shell-shared
 
 # Default target: initial setup without showing logs
 all:
@@ -31,6 +31,33 @@ re:
 	@docker volume rm matcha_shared_dist 2>/dev/null || true
 	@make up
 	@echo "✅ Rebuild complete!"
+
+# Rebuild web only
+re-web:
+	@echo "🔄 Rebuilding web..."
+	@docker compose stop web
+	@docker volume rm matcha_web_node_modules 2>/dev/null || true
+	@docker compose up -d --build web
+	@echo "✅ Web rebuilt!"
+
+# Rebuild server (triggers web rebuild)
+re-server:
+	@echo "🔄 Rebuilding server..."
+	@docker compose stop server
+	@docker volume rm matcha_server_node_modules 2>/dev/null || true
+	@docker compose up -d --build server
+	@echo "✅ Server rebuilt!"
+	@make re-web
+
+# Rebuild shared (triggers server and web rebuilds)
+re-shared:
+	@echo "🔄 Rebuilding shared package..."
+	@docker compose stop shared
+	@docker volume rm matcha_shared_node_modules 2>/dev/null || true
+	@docker volume rm matcha_shared_dist 2>/dev/null || true
+	@docker compose up -d --build shared
+	@echo "✅ Shared package rebuilt!"
+	@make re-server
 
 # Logs - all services
 logs:
