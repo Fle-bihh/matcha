@@ -12,12 +12,17 @@ import { ProfileUncomplete } from "./profile-uncomplete.page";
 import { ProfileCard } from "@/components/home/profile-card.component";
 import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
-import { useBrowsing } from "@/hooks/browsing.hook";
 import { BrowsingFiltersComponent } from "@/components/home/browsing-filters.component";
+import { useBrowsingContext } from "@/contexts/browsing.context";
 
 function HomePageComp() {
-	const { isLoading } = useActionsData([EActionKeys.GetUsers]);
-	const { data: users, fetchNextPage, refresh, hasNextPage } = useBrowsing();
+	const {
+		data: users,
+		fetchNextPage,
+		refresh,
+		hasNextPage,
+		isLoading,
+	} = useBrowsingContext();
 
 	return (
 		<Container maxWidth="xl" sx={{ py: 4 }}>

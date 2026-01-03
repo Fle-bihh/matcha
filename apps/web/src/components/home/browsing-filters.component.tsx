@@ -23,10 +23,11 @@ import {
 	SortBy,
 	SortOrder,
 } from "@matcha/shared";
-import { useBrowsing } from "@/hooks/browsing.hook";
+import { useBrowsingContext } from "@/contexts/browsing.context";
 
 export function BrowsingFiltersComponent() {
-	const { filters, applyFilters, clearFilters, refresh } = useBrowsing();
+	const { filters, applyFilters, clearFilters, refresh } =
+		useBrowsingContext();
 	const [localFilters, setLocalFilters] = useState<BrowsingFilters>(filters);
 
 	const handleChange = (key: keyof BrowsingFilters, value: any) => {

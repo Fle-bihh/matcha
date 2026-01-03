@@ -18,10 +18,26 @@ import {
 } from "@/store";
 import { EFlaggers, EPagerKeys } from "@/constants";
 import { EEntityTypes } from "@/types";
+import { EFilterKeys } from "@/types/filters.types";
 
 export class UserService extends BaseService {
 	private setAuthUser(user: AuthUser) {
 		this.dispatch(setAuthUser(user));
+	}
+
+	private resetBrowsing(user?: AuthUser) {
+		if (!user?.is_profile_complete) return;
+		const filters =
+			this.container.store.getState().filters[EFilterKeys.Browsing];
+		const pager = this.container.store.getState().pagers[EPagerKeys.Users];
+		const currentLimit = pager.meta?.limit ?? 10;
+
+		this.getUsers({
+			page: 1,
+			limit: currentLimit,
+			refresh: true,
+			...filters,
+		});
 	}
 
 	@action({ showSuccessMessage: true, showErrorMessage: true })
@@ -34,11 +50,11 @@ export class UserService extends BaseService {
 
 		if (this.isSuccess(response)) {
 			this.setAuthUser(response.data);
+			this.resetBrowsing(response.data);
+			return ServiceResponse.success(response.message);
 		} else {
 			return ServiceResponse.failure(response.message);
 		}
-
-		return ServiceResponse.success(response.message);
 	}
 
 	@action({ showSuccessMessage: true, showErrorMessage: true })
@@ -56,11 +72,10 @@ export class UserService extends BaseService {
 
 		if (this.isSuccess(response)) {
 			this.setAuthUser(response.data);
+			return ServiceResponse.success(response.message);
 		} else {
 			return ServiceResponse.failure(response.message);
 		}
-
-		return ServiceResponse.success(response.message);
 	}
 
 	@action({ showSuccessMessage: true, showErrorMessage: true })
@@ -78,11 +93,11 @@ export class UserService extends BaseService {
 				key: EFlaggers.ChangeLocationDialog,
 				value: { isOpen: false },
 			});
+			this.resetBrowsing(response.data);
+			return ServiceResponse.success(response.message);
 		} else {
 			return ServiceResponse.failure(response.message);
 		}
-
-		return ServiceResponse.success(response.message);
 	}
 
 	@action({ showErrorMessage: false, showSuccessMessage: false })
