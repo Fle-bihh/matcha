@@ -11,6 +11,7 @@ import {
 	ChangeEmailRequestDto,
 	GeocodingResult,
 	BrowsingParams,
+	BrowsingFilters,
 } from "@matcha/shared";
 
 export enum EActionKeys {
@@ -31,6 +32,9 @@ export enum EActionKeys {
 	SearchLocation = "searchLocation",
 	CreateManualLocation = "createManualLocation",
 	GetUsers = "getUsers",
+	ApplyBrowsingFilters = "applyBrowsingFilters",
+	ClearBrowsingFilters = "clearBrowsingFilters",
+	LoadBrowsingFilters = "loadBrowsingFilters",
 }
 
 export interface IActionDtoMap {
@@ -51,6 +55,11 @@ export interface IActionDtoMap {
 	[EActionKeys.SearchLocation]: string;
 	[EActionKeys.CreateManualLocation]: GeocodingResult;
 	[EActionKeys.GetUsers]: BrowsingParams;
+	[EActionKeys.ApplyBrowsingFilters]: BrowsingFilters & {
+		currentLimit: number;
+	};
+	[EActionKeys.ClearBrowsingFilters]: null;
+	[EActionKeys.LoadBrowsingFilters]: null;
 }
 
 export type ActionDto<K extends EActionKeys> = IActionDtoMap[K];

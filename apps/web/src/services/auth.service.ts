@@ -19,7 +19,6 @@ import {
 	changeEmail,
 	clearAction,
 	clearEntities,
-	resetFlagger,
 	resetPagers,
 	setAuthUser,
 	setEmailToVerified,

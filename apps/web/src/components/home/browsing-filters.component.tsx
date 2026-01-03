@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
 	Box,
 	TextField,
@@ -69,9 +69,13 @@ export function BrowsingFiltersComponent() {
 			(Array.isArray(value) ? value.length > 0 : true)
 	);
 
+	useEffect(() => {
+		setLocalFilters(filters);
+	}, [filters]);
+
 	return (
 		<Box sx={{ mb: 3 }}>
-			<Accordion defaultExpanded>
+			<Accordion>
 				<AccordionSummary
 					expandIcon={<ExpandMoreIcon />}
 					sx={{

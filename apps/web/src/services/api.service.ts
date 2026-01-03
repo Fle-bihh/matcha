@@ -34,12 +34,33 @@ export class ApiService extends BaseService {
 	): Promise<ApiRequestResponse<T>> {
 		logger.debug("Request started:", { method: options.method, url });
 		const response: Response = await fetch(url, options);
-		const data = await response.json();
+
 		const status = response.status || 200;
+		const contentLength = response.headers.get("Content-Length");
+		const contentType = response.headers.get("Content-Type");
+
+		let data: any = null;
+
+		if (
+			contentLength !== "0" &&
+			contentType?.includes("application/json")
+		) {
+			const text = await response.text();
+			if (text && text.length > 0) {
+				try {
+					data = JSON.parse(text);
+				} catch (error) {
+					logger.error("Failed to parse JSON response:", error);
+					data = null;
+				}
+			}
+		}
+
 		logger.debug("Request completed:", {
 			status,
 			method: options.method,
 			url,
+			data,
 		});
 		return { ...data, status };
 	}

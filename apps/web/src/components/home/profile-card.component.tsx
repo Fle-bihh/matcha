@@ -13,7 +13,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { User } from "@matcha/shared";
 import { AuthImage } from "@/components/utils/auth-image.component";
-import MockImage from "@/../public/imperial-stormtrooper-picture.png";
+import MockImage from "@/assets/imperial-stormtrooper-picture.png";
 
 interface ProfileCardProps {
 	user: User;
