@@ -12,6 +12,8 @@ import {
 	PaginationParams,
 	PaginatedResponse,
 	User,
+	BrowsingFilters,
+	BrowsingFiltersDto,
 } from "@matcha/shared";
 import { StatusCodes } from "http-status-codes";
 import { HashUtils } from "@/utils/hash.utils";
@@ -399,7 +401,8 @@ export class UserService extends BaseService {
 
 	public async getUsers(
 		userId: number,
-		paginationParams: PaginationParams
+		paginationParams: PaginationParams,
+		browsingFilters: BrowsingFiltersDto
 	): Promise<ServiceResponse<PaginatedResponse<User>>> {
 		try {
 			const { page, limit } = paginationParams;
@@ -409,7 +412,8 @@ export class UserService extends BaseService {
 				await this.userRepository.getUsersForBrowsing(
 					userId,
 					paginationParams.limit,
-					offset
+					offset,
+					browsingFilters
 				);
 
 			const totalPages = Math.ceil(total / paginationParams.limit);

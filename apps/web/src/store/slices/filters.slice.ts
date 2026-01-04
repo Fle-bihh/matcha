@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { EStoreSlices } from "@/types";
 import { BrowsingFilters } from "@matcha/shared";
+import { EFilterKeys } from "@/types/filters.types";
 
 export interface FiltersState {
 	[key: string]: BrowsingFilters;
@@ -14,7 +15,10 @@ const filtersSlice = createSlice({
 	reducers: {
 		setFilters: (
 			state,
-			action: PayloadAction<{ key: string; filters: BrowsingFilters }>
+			action: PayloadAction<{
+				key: EFilterKeys;
+				filters: BrowsingFilters;
+			}>
 		) => {
 			const { key, filters } = action.payload;
 			state[key] = filters;
@@ -22,7 +26,7 @@ const filtersSlice = createSlice({
 		updateFilters: (
 			state,
 			action: PayloadAction<{
-				key: string;
+				key: EFilterKeys;
 				filters: Partial<BrowsingFilters>;
 			}>
 		) => {

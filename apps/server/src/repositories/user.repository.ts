@@ -6,6 +6,7 @@ import {
 	User,
 	AuthUserWithPassword,
 	PartialBaseEntity,
+	BrowsingFiltersDto,
 } from "@matcha/shared";
 import { ETokens, IContainer } from "@/types";
 import { config } from "@/config";
@@ -245,14 +246,16 @@ export class UserRepository extends BaseRepository {
 	public async getUsersForBrowsing(
 		userId: number,
 		limit: number,
-		offset: number
+		offset: number,
+		filters: BrowsingFiltersDto
 	): Promise<{ users: User[]; total: number }> {
 		try {
 			const queryOptions =
 				await this.browsingService.getBrowsingQueryOptions(
 					userId,
 					limit,
-					offset
+					offset,
+					filters
 				);
 			const [users, total] = await Promise.all([
 				this.getDocs<User>(this.tableName, queryOptions),

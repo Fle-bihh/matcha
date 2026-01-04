@@ -54,6 +54,8 @@ export class BrowsingService extends BaseService {
 
 		await this.storageService.removeItem(EStorageKeys.BrowsingFilters);
 
+		await this.resetBrowsing({});
+
 		return ServiceResponse.success("Filters cleared");
 	}
 

@@ -1,13 +1,15 @@
-import { AuthUser, Gender, Orientation } from "@matcha/shared";
+import {
+	AuthUser,
+	BrowsingFiltersDto,
+	Gender,
+	Orientation,
+} from "@matcha/shared";
 import { BaseService } from "./base.service";
 import { QueryOptions } from "@/types/db.types";
 import { ETokens } from "@/types";
 import { UserRepository } from "@/repositories";
 
 export class BrowsingService extends BaseService {
-	private readonly DISTANCE_WEIGHT = 50;
-	private readonly SHARED_INTERESTS_WEIGHT = 30;
-	private readonly FAME_WEIGHT = 20;
 	private readonly MAX_DISTANCE_KM = 999999;
 
 	private get userRepository(): UserRepository {
@@ -46,25 +48,6 @@ export class BrowsingService extends BaseService {
 		}
 	}
 
-	private calculateDistance(
-		lat1: number,
-		lon1: number,
-		lat2: number,
-		lon2: number
-	): number {
-		const R = 6371;
-		const dLat = ((lat2 - lat1) * Math.PI) / 180;
-		const dLon = ((lon2 - lon1) * Math.PI) / 180;
-		const a =
-			Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-			Math.cos((lat1 * Math.PI) / 180) *
-				Math.cos((lat2 * Math.PI) / 180) *
-				Math.sin(dLon / 2) *
-				Math.sin(dLon / 2);
-		const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-		return R * c;
-	}
-
 	private buildSharedInterestsQuery(userInterests: string[] | null): string {
 		if (!userInterests || userInterests.length === 0) {
 			return "0";
@@ -87,7 +70,7 @@ export class BrowsingService extends BaseService {
 		}
 
 		return `
-			CASE 
+			CASE
 				WHEN location IS NOT NULL AND JSON_TYPE(location) = 'OBJECT' THEN
 					(6371 * 2 * ASIN(SQRT(
 						POWER(SIN((CAST(JSON_EXTRACT(location, '$.latitude') AS DECIMAL(10,7)) - ${userLat}) * 3.14159265359 / 360), 2) +
@@ -103,7 +86,8 @@ export class BrowsingService extends BaseService {
 	public async getBrowsingQueryOptions(
 		userId: number,
 		limit: number,
-		offset: number
+		offset: number,
+		filters: BrowsingFiltersDto
 	): Promise<QueryOptions> {
 		const currentUser = await this.userRepository.findUserById(userId);
 		if (!currentUser) {
@@ -159,24 +143,90 @@ export class BrowsingService extends BaseService {
 		whereConditions.push("is_profile_complete = ?");
 		values.push(true);
 
-		const where = whereConditions.join(" AND ");
+		// Apply age filters
+		if (filters.ageMin !== undefined) {
+			whereConditions.push("age >= ?");
+			values.push(filters.ageMin);
+		}
+		if (filters.ageMax !== undefined) {
+			whereConditions.push("age <= ?");
+			values.push(filters.ageMax);
+		}
+
+		// Apply fame filters
+		if (filters.fameMin !== undefined) {
+			whereConditions.push("fame_score >= ?");
+			values.push(filters.fameMin);
+		}
+		if (filters.fameMax !== undefined) {
+			whereConditions.push("fame_score <= ?");
+			values.push(filters.fameMax);
+		}
+
+		// Apply interests filter
+		if (filters.interests && filters.interests.length > 0) {
+			const interestConditions = filters.interests.map(() => {
+				return "JSON_CONTAINS(interests, ?)";
+			});
+			whereConditions.push(`(${interestConditions.join(" OR ")})`);
+			filters.interests.forEach((interest) => {
+				values.push(JSON.stringify(interest));
+			});
+		}
 
 		const userLat = currentUser.location?.latitude ?? null;
 		const userLon = currentUser.location?.longitude ?? null;
+
+		// Apply distance filter
+		if (filters.distanceMax !== undefined && userLat !== null && userLon !== null) {
+			const distanceCalc = this.buildDistanceQuery(userLat, userLon);
+			whereConditions.push(`(${distanceCalc}) <= ?`);
+			values.push(filters.distanceMax);
+		}
+
+		const where = whereConditions.join(" AND ");
+
 		const userInterests = currentUser.interests ?? null;
 
 		const distanceQuery = this.buildDistanceQuery(userLat, userLon);
 		const sharedInterestsQuery =
 			this.buildSharedInterestsQuery(userInterests);
 
-		const orderBy = `
-			${distanceQuery} ASC,
-			${sharedInterestsQuery} DESC,
-			fame_score DESC,
-			id ASC
-		`
-			.replace(/\s+/g, " ")
-			.trim();
+		// Apply custom sorting if provided, otherwise use default
+		let orderBy: string;
+		if (filters.sortBy) {
+			const sortOrder = filters.sortOrder === "desc" ? "DESC" : "ASC";
+			switch (filters.sortBy) {
+				case "age":
+					orderBy = `age ${sortOrder}, id ASC`;
+					break;
+				case "distance":
+					orderBy = `${distanceQuery} ${sortOrder}, id ASC`;
+					break;
+				case "fame_rating":
+					orderBy = `fame_score ${sortOrder}, id ASC`;
+					break;
+				case "common_tags":
+					orderBy = `${sharedInterestsQuery} ${sortOrder}, id ASC`;
+					break;
+				default:
+					orderBy = `
+						${distanceQuery} ASC,
+						${sharedInterestsQuery} DESC,
+						fame_score DESC,
+						id ASC
+					`;
+			}
+		} else {
+			orderBy = `
+				${distanceQuery} ASC,
+				${sharedInterestsQuery} DESC,
+				fame_score DESC,
+				id ASC
+			`;
+		}
+
+		orderBy = orderBy.replace(/\s+/g, " ").trim();
 
 		return {
 			where,

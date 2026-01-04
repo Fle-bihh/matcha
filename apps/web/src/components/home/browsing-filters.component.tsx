@@ -30,7 +30,6 @@ export function BrowsingFiltersComponent() {
 		filters,
 		applyFilters,
 		clearFilters,
-		refresh,
 		hasChanges: hasChangesCb,
 	} = useBrowsingContext();
 	const [localFilters, setLocalFilters] = useState<BrowsingFilters>(filters);
@@ -58,7 +57,6 @@ export function BrowsingFiltersComponent() {
 	const handleClear = () => {
 		setLocalFilters({});
 		clearFilters();
-		refresh();
 	};
 
 	const hasActiveFilters = Object.values(localFilters).some(
@@ -150,10 +148,10 @@ export function BrowsingFiltersComponent() {
 										}
 										valueLabelDisplay="auto"
 										min={1}
-										max={500}
+										max={5000}
 										marks={[
 											{ value: 1, label: "1 km" },
-											{ value: 500, label: "500 km" },
+											{ value: 5000, label: "5000 km" },
 										]}
 									/>
 								</Box>

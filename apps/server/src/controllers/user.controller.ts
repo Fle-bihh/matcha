@@ -71,7 +71,8 @@ export class UsersController extends BaseController {
 	private async getUsers(req: Request, res: Response): Promise<void> {
 		const result = await this.userService.getUsers(
 			req.user?.id!,
-			req.pagination!
+			req.pagination!,
+			req.validated?.query!
 		);
 		this.sendResult(res, result);
 	}
