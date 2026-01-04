@@ -5,4 +5,3 @@ export { MailService } from "./mail.service";
 export { EmailVerificationService } from "./email-verification.service";
 export { PasswordResetService } from "./password-reset.service";
 export { FileUploadService } from "./file-upload.service";
-export { BrowsingService } from "./browsing.service";

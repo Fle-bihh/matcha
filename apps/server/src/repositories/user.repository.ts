@@ -12,7 +12,7 @@ import { ETokens, IContainer } from "@/types";
 import { config } from "@/config";
 import { HashUtils } from "@/utils/hash.utils";
 import { generateRandomUsers } from "@/utils/seed-users.utils";
-import { BrowsingService } from "@/services";
+import { BrowsingRepository } from "./browsing.repository";
 
 export class UserRepository extends BaseRepository {
 	private readonly tableName = "users";
@@ -25,8 +25,10 @@ export class UserRepository extends BaseRepository {
 		});
 	}
 
-	private get browsingService(): BrowsingService {
-		return this.container.get<BrowsingService>(ETokens.BrowsingService);
+	private get browsingRepository(): BrowsingRepository {
+		return this.container.get<BrowsingRepository>(
+			ETokens.BrowsingRepository
+		);
 	}
 
 	public excludePassword(userWithPassword: AuthUserWithPassword): AuthUser {
@@ -251,7 +253,7 @@ export class UserRepository extends BaseRepository {
 	): Promise<{ users: User[]; total: number }> {
 		try {
 			const queryOptions =
-				await this.browsingService.getBrowsingQueryOptions(
+				await this.browsingRepository.getBrowsingQueryOptions(
 					userId,
 					limit,
 					offset,
