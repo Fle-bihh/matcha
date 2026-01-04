@@ -33,19 +33,3 @@ export enum SortOrder {
 	Asc = "asc",
 	Desc = "desc",
 }
-
-export interface BrowsingFilters {
-	search?: string;
-	ageMin?: number;
-	ageMax?: number;
-	distanceMax?: number;
-	fameMin?: number;
-	fameMax?: number;
-	interests?: string[];
-	sortBy?: SortBy;
-	sortOrder?: SortOrder;
-}
-
-export interface BrowsingParams extends PaginationParams, BrowsingFilters {
-	refresh?: boolean;
-}

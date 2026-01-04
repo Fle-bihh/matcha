@@ -7,6 +7,7 @@ import {
 	UpdateProfileDtoSchema,
 	UpdateProfilePictureDtoSchema,
 	UpdateLocationDtoSchema,
+	BrowsingFiltersDtoSchema,
 	ApiResponse,
 } from "@matcha/shared";
 import { uploadProfilePictureMiddleware } from "@/middleware/upload.middleware";
@@ -65,6 +66,7 @@ export class UsersController extends BaseController {
 
 	@auth()
 	@paginate()
+	@validate(BrowsingFiltersDtoSchema, "query")
 	@route("GET", "get-users")
 	private async getUsers(req: Request, res: Response): Promise<void> {
 		const result = await this.userService.getUsers(

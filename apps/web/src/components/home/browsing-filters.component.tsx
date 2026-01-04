@@ -84,9 +84,7 @@ export function BrowsingFiltersComponent() {
 				>
 					<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 						<FilterListIcon />
-						<Typography fontWeight={600}>
-							Filters & Search
-						</Typography>
+						<Typography fontWeight={600}>Filters</Typography>
 						{hasActiveFilters && (
 							<Chip
 								label="Active"
@@ -99,18 +97,6 @@ export function BrowsingFiltersComponent() {
 				</AccordionSummary>
 				<AccordionDetails>
 					<Stack spacing={3}>
-						{/* Search */}
-						<TextField
-							label="Search"
-							placeholder="Search by username, name, or bio..."
-							value={localFilters.search || ""}
-							onChange={(e) =>
-								handleChange("search", e.target.value)
-							}
-							fullWidth
-							size="small"
-						/>
-
 						<Box
 							sx={{
 								display: "grid",
