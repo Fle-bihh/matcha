@@ -1,10 +1,11 @@
 import {
-	createContext,
-	useContext,
-	ReactNode,
-	useCallback,
-	useEffect,
-	useRef,
+  createContext,
+  useContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
 } from "react";
 import { useSelector } from "react-redux";
 import { usePager } from "@/hooks/pagination.hook";
@@ -24,114 +25,104 @@ const FILTER_KEY = EFilterKeys.Browsing;
 type BrowsingContextType = ReturnType<typeof useBrowsingState>;
 
 const BrowsingContext = createContext<BrowsingContextType | undefined>(
-	undefined
+  undefined
 );
 
 function useBrowsingState() {
-	const {
-		getUsers,
-		applyBrowsingFilters,
-		clearBrowsingFilters,
-		loadBrowsingFilters,
-	} = useBrowsing();
-	const filters = useSelector(selectFilters(FILTER_KEY));
-	const { isLoading } = useActionsData([EActionKeys.GetUsers]);
-	const hasLoadedFiltersRef = useRef(false);
+  const {
+    getUsers,
+    applyBrowsingFilters,
+    clearBrowsingFilters,
+    loadBrowsingFilters,
+  } = useBrowsing();
+  const filters = useSelector(selectFilters(FILTER_KEY));
+  const { isLoading } = useActionsData([EActionKeys.GetUsers]);
 
-	const buildParams = useCallback(
-		(pagination: PaginationDto): BrowsingParams => ({
-			...pagination,
-			...(filters || {}),
-		}),
-		[filters]
-	);
+  const buildParams = useCallback(
+    (pagination: PaginationDto): BrowsingParams => ({
+      ...pagination,
+      ...(filters || {}),
+    }),
+    [filters]
+  );
 
-	useEffect(() => {
-		loadBrowsingFilters();
-		if (!hasLoadedFiltersRef.current) {
-			hasLoadedFiltersRef.current = true;
-		}
-	}, []);
+  const pager = usePager<User, BrowsingParams>({
+    pagerKey: EPagerKeys.Users,
+    entityType: EEntityTypes.Users,
+    fn: getUsers,
+    buildParams,
+    loadData: false,
+  });
 
-	const pager = usePager<User, BrowsingParams>({
-		pagerKey: EPagerKeys.Users,
-		entityType: EEntityTypes.Users,
-		fn: getUsers,
-		buildParams,
-		loadData: hasLoadedFiltersRef.current,
-	});
+  const applyFilters = useCallback(
+    (newFilters?: BrowsingFilters) => {
+      const filtersToApply = newFilters || filters || {};
+      const currentLimit = pager.meta?.limit ?? 10;
 
-	const applyFilters = useCallback(
-		(newFilters?: BrowsingFilters) => {
-			const filtersToApply = newFilters || filters || {};
-			const currentLimit = pager.meta?.limit ?? 10;
+      applyBrowsingFilters({
+        ...filtersToApply,
+        currentLimit,
+      });
+    },
+    [filters, pager.meta?.limit, applyBrowsingFilters]
+  );
 
-			applyBrowsingFilters({
-				...filtersToApply,
-				currentLimit,
-			});
-		},
-		[filters, pager.meta?.limit, applyBrowsingFilters]
-	);
+  const clearFiltersHandler = useCallback(() => {
+    clearBrowsingFilters();
+  }, [clearBrowsingFilters]);
 
-	const clearFiltersHandler = useCallback(() => {
-		clearBrowsingFilters();
-	}, [clearBrowsingFilters]);
+  const refresh = useCallback(() => {
+    const currentLimit = pager.meta?.limit ?? 10;
 
-	const refresh = useCallback(() => {
-		const currentLimit = pager.meta?.limit ?? 10;
+    applyBrowsingFilters({
+      ...(filters || {}),
+      currentLimit,
+    });
+  }, [applyBrowsingFilters, pager.meta?.limit, filters]);
 
-		applyBrowsingFilters({
-			...(filters || {}),
-			currentLimit,
-		});
-	}, [applyBrowsingFilters, pager.meta?.limit, filters]);
+  const hasChanges = useCallback(
+    (filtersToCompare: BrowsingFilters) => {
+      if (!filters) return Object.keys(filtersToCompare).length > 0;
 
-	const hasChanges = useCallback(
-		(filtersToCompare: BrowsingFilters) => {
-			if (!filters) return Object.keys(filtersToCompare).length > 0;
+      for (const key in filtersToCompare) {
+        if (
+          filtersToCompare[key as keyof BrowsingFilters] !==
+          filters[key as keyof BrowsingFilters]
+        ) {
+          return true;
+        }
+      }
+      return false;
+    },
+    [filters]
+  );
 
-			for (const key in filtersToCompare) {
-				if (
-					filtersToCompare[key as keyof BrowsingFilters] !==
-					filters[key as keyof BrowsingFilters]
-				) {
-					return true;
-				}
-			}
-			return false;
-		},
-		[filters]
-	);
-
-	return {
-		...pager,
-		refresh,
-		filters: filters || {},
-		clearFilters: clearFiltersHandler,
-		applyFilters,
-		loadBrowsingFilters,
-		hasChanges,
-		isLoading,
-	};
+  return {
+    ...pager,
+    refresh,
+    filters: filters || {},
+    clearFilters: clearFiltersHandler,
+    applyFilters,
+    loadBrowsingFilters,
+    hasChanges,
+    isLoading,
+  };
 }
 
 export function BrowsingProvider({ children }: { children: ReactNode }) {
-	const browsing = useBrowsingState();
+  const browsing = useBrowsingState();
 
-	return (
-		<BrowsingContext.Provider value={browsing}>
-			{children}
-		</BrowsingContext.Provider>
-	);
+  return (
+    <BrowsingContext.Provider value={browsing}>
+      {children}
+    </BrowsingContext.Provider>
+  );
 }
 
 export function useBrowsingContext() {
-	const context = useContext(BrowsingContext);
-	if (!context) {
-		throw new Error(
-			"useBrowsingContext must be used within BrowsingProvider"
-		);
-	}
-	return context;
+  const context = useContext(BrowsingContext);
+  if (!context) {
+    throw new Error("useBrowsingContext must be used within BrowsingProvider");
+  }
+  return context;
 }

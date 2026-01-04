@@ -4,6 +4,7 @@ import type {
 	User,
 	BrowsingParams,
 	BrowsingFilters,
+	AuthUser,
 } from "@matcha/shared";
 import { ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
@@ -18,22 +19,6 @@ import { StorageService } from "./storage.service";
 const FILTER_KEY = EFilterKeys.Browsing;
 
 export class BrowsingService extends BaseService {
-	@action({ showErrorMessage: false, showSuccessMessage: false })
-	async loadBrowsingFilters(): Promise<ServiceResponse> {
-		const savedFilters = await this.storageService.getItem(
-			EStorageKeys.BrowsingFilters
-		);
-
-		if (savedFilters) {
-			this.dispatch(
-				setFilters({ key: FILTER_KEY, filters: savedFilters })
-			);
-			return ServiceResponse.success("Filters loaded");
-		}
-
-		return ServiceResponse.success("No saved filters");
-	}
-
 	private async updateBrowsingFilters(
 		filters: BrowsingFilters
 	): Promise<ServiceResponse> {
@@ -44,6 +29,23 @@ export class BrowsingService extends BaseService {
 		);
 
 		return ServiceResponse.success("Filters updated");
+	}
+
+	async loadBrowsingFilters(): Promise<ServiceResponse> {
+		const savedFilters = await this.storageService.getItem(
+			EStorageKeys.BrowsingFilters
+		);
+
+		if (savedFilters) {
+			this.dispatch(
+				setFilters({ key: FILTER_KEY, filters: savedFilters })
+			);
+			this.resetBrowsing(savedFilters);
+			return ServiceResponse.success("Filters loaded");
+		}
+
+		this.resetBrowsing();
+		return ServiceResponse.success("No saved filters");
 	}
 
 	@action({ showErrorMessage: false, showSuccessMessage: false })
@@ -92,5 +94,18 @@ export class BrowsingService extends BaseService {
 		});
 
 		return ServiceResponse.success("Filters applied");
+	}
+
+	public async resetBrowsing(filters?: BrowsingFilters) {
+		const filtersToApply =
+			filters || this.container.store.getState().filters?.browsing || {};
+		const pager = this.container.store.getState().pagers?.users;
+		const currentLimit = pager?.meta?.limit ?? 10;
+		await this.getUsers({
+			page: 1,
+			limit: currentLimit,
+			refresh: true,
+			...filtersToApply,
+		});
 	}
 }

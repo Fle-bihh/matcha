@@ -14,7 +14,7 @@ import {
 	ChangeEmailResponseDto,
 } from "@matcha/shared";
 import { BaseService } from "./base.service";
-import { CrossTabEvent, ServiceResponse } from "@/types";
+import { CrossTabEvent, ETokens, ServiceResponse } from "@/types";
 import {
 	changeEmail,
 	clearAction,
@@ -28,6 +28,7 @@ import { action } from "@/decorators";
 import { EActionKeys } from "@/types/actions.types";
 import { crossTab } from "@/utils/cross-tab.utils";
 import { EFlaggers } from "@/constants/flaggers.constants";
+import { BrowsingService } from "./browsing.service";
 
 type AuthData = Partial<RegisterResponseDto>;
 
@@ -45,6 +46,10 @@ export class AuthService extends BaseService {
 			"Verification link sent to your new email",
 		EMAIL_CHANGED: "Email changed successfully",
 	} as const;
+
+	private get browsingService(): BrowsingService {
+		return this.container.get<BrowsingService>(ETokens.BrowsingService);
+	}
 
 	private async storeAuthData(data: AuthData): Promise<void> {
 		const { accessToken, refreshToken, user } = data;
@@ -65,6 +70,9 @@ export class AuthService extends BaseService {
 
 		if (user) {
 			this.dispatch(setAuthUser(user));
+			if (user.is_profile_complete) {
+				this.browsingService.loadBrowsingFilters();
+			}
 		}
 	}
 

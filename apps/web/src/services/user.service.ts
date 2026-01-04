@@ -21,18 +21,10 @@ export class UserService extends BaseService {
 		return this.container.get<BrowsingService>(ETokens.BrowsingService);
 	}
 
-	public async resetBrowsing(user?: AuthUser) {
-		if (!user?.is_profile_complete) return;
-
-		const filters = this.container.store.getState().filters?.browsing || {};
-		const pager = this.container.store.getState().pagers?.users;
-		const currentLimit = pager?.meta?.limit ?? 10;
-		await this.browsingService.getUsers({
-			page: 1,
-			limit: currentLimit,
-			refresh: true,
-			...filters,
-		});
+	private maybeResetBrowsing(user: AuthUser) {
+		if (user.is_profile_complete) {
+			this.browsingService.resetBrowsing();
+		}
 	}
 
 	@action({ showSuccessMessage: true, showErrorMessage: true })
@@ -45,7 +37,7 @@ export class UserService extends BaseService {
 
 		if (this.isSuccess(response)) {
 			this.setAuthUser(response.data);
-			this.resetBrowsing(response.data);
+			this.maybeResetBrowsing(response.data);
 			return ServiceResponse.success(response.message);
 		} else {
 			return ServiceResponse.failure(response.message);
@@ -88,7 +80,7 @@ export class UserService extends BaseService {
 				key: EFlaggers.ChangeLocationDialog,
 				value: { isOpen: false },
 			});
-			this.resetBrowsing(response.data);
+			this.maybeResetBrowsing(response.data);
 			return ServiceResponse.success(response.message);
 		} else {
 			return ServiceResponse.failure(response.message);
