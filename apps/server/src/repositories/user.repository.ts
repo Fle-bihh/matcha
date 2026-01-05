@@ -225,26 +225,6 @@ export class UserRepository extends BaseRepository {
 		}
 	}
 
-	public async getUsers(options: {
-		limit: number;
-		offset: number;
-	}): Promise<{ users: AuthUserWithPassword[]; total: number }> {
-		try {
-			const [users, total] = await Promise.all([
-				this.getDocs<AuthUserWithPassword>(this.tableName, {
-					limit: options.limit,
-					offset: options.offset,
-					orderBy: "id DESC",
-				}),
-				this.countDocs(this.tableName),
-			]);
-			return { users, total };
-		} catch (error) {
-			logger.error("Error getting users:", error);
-			return { users: [], total: 0 };
-		}
-	}
-
 	public async getUsersForBrowsing(
 		userId: number,
 		limit: number,
