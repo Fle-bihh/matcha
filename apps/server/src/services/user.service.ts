@@ -1,6 +1,7 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { UserRepository } from "@/repositories";
+import { UserDeletionService } from "./user-deletion.service";
 import {
 	AuthUserWithPassword,
 	CreateUserDto,
@@ -25,6 +26,12 @@ export class UserService extends BaseService {
 
 	private get userRepository(): UserRepository {
 		return this.container.get<UserRepository>(ETokens.UserRepository);
+	}
+
+	private get userDeletionService(): UserDeletionService {
+		return this.container.get<UserDeletionService>(
+			ETokens.UserDeletionService
+		);
 	}
 
 	public async findByEmail<T extends boolean = false>(
@@ -449,6 +456,56 @@ export class UserService extends BaseService {
 						hasPreviousPage: false,
 					},
 				},
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
+	public async deleteUser(userId: number): Promise<ServiceResponse<null>> {
+		try {
+			const success =
+				await this.userDeletionService.deleteUserAndRelatedData(userId);
+
+			if (!success) {
+				return ServiceResponse.failure(
+					"Failed to delete user",
+					null,
+					StatusCodes.INTERNAL_SERVER_ERROR
+				);
+			}
+
+			return ServiceResponse.success("User deleted successfully", null);
+		} catch (error) {
+			logger.error("Error deleting user:", error);
+			return ServiceResponse.failure(
+				"Error deleting user",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
+	public async restoreUser(userId: number): Promise<ServiceResponse<null>> {
+		try {
+			const success =
+				await this.userDeletionService.restoreUserAndRelatedData(
+					userId
+				);
+
+			if (!success) {
+				return ServiceResponse.failure(
+					"Failed to restore user",
+					null,
+					StatusCodes.INTERNAL_SERVER_ERROR
+				);
+			}
+
+			return ServiceResponse.success("User restored successfully", null);
+		} catch (error) {
+			logger.error("Error restoring user:", error);
+			return ServiceResponse.failure(
+				"Error restoring user",
+				null,
 				StatusCodes.INTERNAL_SERVER_ERROR
 			);
 		}

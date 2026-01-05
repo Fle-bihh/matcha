@@ -255,4 +255,22 @@ export class UserRepository extends BaseRepository {
 			return { users: [], total: 0 };
 		}
 	}
+
+	public async deleteUser(userId: number): Promise<boolean> {
+		try {
+			return await this.deleteDoc(this.tableName, userId);
+		} catch (error) {
+			logger.error("Error soft-deleting user:", error);
+			return false;
+		}
+	}
+
+	public async restoreUser(userId: number): Promise<boolean> {
+		try {
+			return await this.restoreDoc(this.tableName, userId);
+		} catch (error) {
+			logger.error("Error restoring user:", error);
+			return false;
+		}
+	}
 }

@@ -1,83 +1,122 @@
 import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  TextField,
+	Box,
+	Card,
+	CardContent,
+	Typography,
+	Button,
+	TextField,
 } from "@mui/material";
 import { ProfilePageWrapper } from "@/components/profile/profile-page-wrapper.component";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { ChangeEmailDialog } from "@/components/auth/change-email-dialog.component";
 import { useFlagger } from "@/hooks/flaggers.hook";
 import { EFlaggers } from "@/constants/flaggers.constants";
+import { ResetPasswordForm } from "@/forms/reset-password.form";
+import { useActionsData } from "@/hooks/actions.hooks";
+import { EActionKeys } from "@/types/actions.types";
 
 export function ProfileSettingsPage() {
-  const { authUser } = useAuthUser();
-  const { setFlagger } = useFlagger(EFlaggers.ChangeEmailDialog);
+	const { authUser, forgotPassword } = useAuthUser();
+	const { setFlagger } = useFlagger(EFlaggers.ChangeEmailDialog);
+	const { isLoading } = useActionsData([EActionKeys.ForgotPassword]);
 
-  const handleChangeEmail = () => {
-    setFlagger({ isOpen: true });
-  };
+	const handleChangeEmail = () => {
+		setFlagger({ isOpen: true });
+	};
 
-  return (
-    <ProfilePageWrapper
-      title="Settings"
-      description="Manage your account preferences and privacy settings."
-    >
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            md: "repeat(2, 1fr)",
-          },
-          gap: 3,
-        }}
-      >
-        <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Account Information
-            </Typography>
+	const handleResetPassword = () => {
+		forgotPassword({ email: authUser?.email || "" });
+	};
 
-            <Box sx={{ mb: 3 }}>
-              <TextField
-                label="Username"
-                value={authUser?.username || ""}
-                disabled
-                fullWidth
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-                helperText="Username cannot be changed"
-              />
-            </Box>
+	return (
+		<ProfilePageWrapper
+			title="Settings"
+			description="Manage your account preferences and privacy settings."
+		>
+			<Box
+				sx={{
+					display: "grid",
+					gridTemplateColumns: {
+						xs: "1fr",
+						md: "repeat(2, 1fr)",
+					},
+					gap: 3,
+				}}
+			>
+				<Card>
+					<CardContent>
+						<Typography variant="h6" gutterBottom>
+							Account Information
+						</Typography>
 
-            <Box sx={{ mb: 2 }}>
-              <TextField
-                label="Email"
-                value={authUser?.email || ""}
-                disabled
-                fullWidth
-                slotProps={{
-                  input: {
-                    readOnly: true,
-                  },
-                }}
-              />
-            </Box>
+						<Box sx={{ mb: 3 }}>
+							<TextField
+								label="Username"
+								value={authUser?.username || ""}
+								disabled
+								fullWidth
+								slotProps={{
+									input: {
+										readOnly: true,
+									},
+								}}
+								helperText="Username cannot be changed"
+							/>
+						</Box>
 
-            <Button variant="outlined" onClick={handleChangeEmail} fullWidth>
-              Change Email
-            </Button>
-          </CardContent>
-        </Card>
-      </Box>
+						<Box sx={{ mb: 2 }}>
+							<TextField
+								label="Email"
+								value={authUser?.email || ""}
+								disabled
+								fullWidth
+								slotProps={{
+									input: {
+										readOnly: true,
+									},
+								}}
+							/>
+						</Box>
 
-      <ChangeEmailDialog />
-    </ProfilePageWrapper>
-  );
+						<Button
+							variant="outlined"
+							onClick={handleChangeEmail}
+							fullWidth
+						>
+							Change Email
+						</Button>
+					</CardContent>
+				</Card>
+
+				<Card>
+					<CardContent>
+						<Typography variant="h6" gutterBottom>
+							Password Reset
+						</Typography>
+						<Typography
+							variant="body2"
+							color="text.secondary"
+							sx={{ mb: 3 }}
+						>
+							Request a password reset link to be sent to your
+							email.
+						</Typography>
+
+						<Button
+							variant="contained"
+							color="primary"
+							size="large"
+							fullWidth
+							disabled={isLoading}
+							onClick={handleResetPassword}
+						>
+							{isLoading ? "Sending..." : "Send Reset Link"}
+						</Button>
+					</CardContent>
+				</Card>
+			</Box>
+
+			<ChangeEmailDialog />
+		</ProfilePageWrapper>
+	);
 }
