@@ -33,35 +33,6 @@ export const helmetConfig = helmet({
 	},
 });
 
-export const sqlSanitize = (
-	req: Request,
-	res: Response,
-	next: NextFunction
-): void => {
-	const sanitizeValue = (value: any): any => {
-		if (typeof value === "string") {
-			return value.replace(/['";\\]/g, "");
-		}
-		return value;
-	};
-
-	const sanitizeObject = (obj: any): void => {
-		for (let key in obj) {
-			if (obj[key] && typeof obj[key] === "object") {
-				sanitizeObject(obj[key]);
-			} else {
-				obj[key] = sanitizeValue(obj[key]);
-			}
-		}
-	};
-
-	if (req.body) sanitizeObject(req.body);
-	if (req.query) sanitizeObject(req.query);
-	if (req.params) sanitizeObject(req.params);
-
-	next();
-};
-
 export const xssSanitize = (
 	req: Request,
 	res: Response,
