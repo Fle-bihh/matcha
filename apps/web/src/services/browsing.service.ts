@@ -86,13 +86,16 @@ export class BrowsingService extends BaseService {
 			currentLimit: number;
 		}
 	): Promise<ServiceResponse> {
-		await this.updateBrowsingFilters(filters);
+		const { currentLimit, ...rest } = filters;
+		await this.updateBrowsingFilters({
+			...rest,
+		});
 
 		await this.getUsers({
 			page: 1,
-			limit: filters.currentLimit,
+			limit: currentLimit,
 			refresh: true,
-			...filters,
+			...rest,
 		});
 
 		return ServiceResponse.success("Filters applied");
