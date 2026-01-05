@@ -1,36 +1,42 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { IContainer } from "@/types";
 import entitiesReducer from "./slices/entities.slice";
+import pagersReducer from "./slices/pagers.slice";
 import authUserReducer from "./slices/auth-user.slice";
 import locationReducer from "./slices/location.slice";
 import actionsReducer from "./slices/actions.slice";
 import snackbarReducer from "./slices/snackbar.slice";
 import flaggersReducer from "./slices/flaggers.slice";
+import filtersReducer from "./slices/filters.slice";
 
 export const createStore = (container: IContainer) => {
-  const store = configureStore({
-    reducer: {
-      entities: entitiesReducer,
+	const store = configureStore({
+		reducer: {
+			entities: entitiesReducer,
 
-      actions: actionsReducer,
+			pagers: pagersReducer,
 
-      authUser: authUserReducer,
+			actions: actionsReducer,
 
-      location: locationReducer,
+			authUser: authUserReducer,
 
-      snackbar: snackbarReducer,
+			location: locationReducer,
 
-      flaggers: flaggersReducer,
-    },
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({
-        thunk: {
-          extraArgument: { container },
-        },
-        serializableCheck: {},
-      }),
-    devTools: process.env.NODE_ENV !== "production",
-  });
+			snackbar: snackbarReducer,
 
-  return store;
+			flaggers: flaggersReducer,
+
+			filters: filtersReducer,
+		},
+		middleware: (getDefaultMiddleware) =>
+			getDefaultMiddleware({
+				thunk: {
+					extraArgument: { container },
+				},
+				serializableCheck: {},
+			}),
+		devTools: process.env.NODE_ENV !== "production",
+	});
+
+	return store;
 };

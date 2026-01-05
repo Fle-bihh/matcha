@@ -1,4 +1,4 @@
-import { ETokens, IContainer } from "@/types";
+import { ETokens, IContainer, ServiceResponse } from "@/types";
 import { MailService } from "./mail.service";
 import { FileUploadService } from "./file-upload.service";
 
@@ -7,6 +7,10 @@ export abstract class BaseService {
 
   constructor(container: IContainer) {
     this.container = container;
+  }
+
+  protected isSuccess<T>(response: ServiceResponse<T>): boolean {
+    return response.statusCode >= 200 && response.statusCode < 300;
   }
 
   protected get mailService() {

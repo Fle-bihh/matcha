@@ -52,14 +52,6 @@ export const VerifyEmailRequestSchema = z.object({
 
 export type VerifyEmailRequestDto = z.infer<typeof VerifyEmailRequestSchema>;
 
-export interface VerifyEmailResponseDto {
-  success: boolean;
-}
-
-export interface ResendVerificationEmailResponseDto {
-  success: boolean;
-}
-
 export const SendChangeEmailVerificationRequestSchema = z.object({
   newEmail: fields.email,
 });
@@ -75,12 +67,7 @@ export const ChangeEmailRequestSchema = z.object({
 export type ChangeEmailRequestDto = z.infer<typeof ChangeEmailRequestSchema>;
 
 export interface ChangeEmailResponseDto {
-  success: boolean;
   newEmail: string;
-}
-
-export interface SendChangeEmailVerificationResponseDto {
-  success: boolean;
 }
 
 export const ForgotPasswordRequestSchema = z.object({
@@ -90,10 +77,6 @@ export const ForgotPasswordRequestSchema = z.object({
 export type ForgotPasswordRequestDto = z.infer<
   typeof ForgotPasswordRequestSchema
 >;
-
-export interface ForgotPasswordResponseDto {
-  success: boolean;
-}
 
 export const ResetPasswordRequestSchema = z
   .object({
@@ -109,7 +92,3 @@ export const ResetPasswordRequestSchema = z
 export type ResetPasswordRequestDto = z.infer<
   typeof ResetPasswordRequestSchema
 >;
-
-export interface ResetPasswordResponseDto {
-  success: boolean;
-}

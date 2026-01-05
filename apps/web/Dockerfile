@@ -32,3 +32,6 @@ EXPOSE ${VITE_WEB_PORT:-3001}
 
 # Development command
 CMD ["npm", "run", "dev", "--", "--host"]
+
+# Production build command
+# CMD ["sh", "-c", "npm run build && npm run start -- --host"]

@@ -1,267 +1,270 @@
 import {
-  AuthenticateResponseDto,
-  getRoute,
-  type LoginRequestDto,
-  LoginResponseDto,
-  type RegisterRequestDto,
-  RegisterResponseDto,
-  RouteKeys,
-  type VerifyEmailRequestDto,
-  VerifyEmailResponseDto,
-  ResendVerificationEmailResponseDto,
-  type ForgotPasswordRequestDto,
-  ForgotPasswordResponseDto,
-  type ResetPasswordRequestDto,
-  ResetPasswordResponseDto,
-  type SendChangeEmailVerificationRequestDto,
-  SendChangeEmailVerificationResponseDto,
-  type ChangeEmailRequestDto,
-  ChangeEmailResponseDto,
+	AuthenticateResponseDto,
+	getRoute,
+	type LoginRequestDto,
+	LoginResponseDto,
+	type RegisterRequestDto,
+	RegisterResponseDto,
+	RouteKeys,
+	type VerifyEmailRequestDto,
+	type ForgotPasswordRequestDto,
+	type ResetPasswordRequestDto,
+	type SendChangeEmailVerificationRequestDto,
+	type ChangeEmailRequestDto,
+	ChangeEmailResponseDto,
 } from "@matcha/shared";
 import { BaseService } from "./base.service";
-import { CrossTabEvent, ServiceResponse } from "@/types";
+import { CrossTabEvent, ETokens, ServiceResponse } from "@/types";
 import {
-  changeEmail,
-  clearAction,
-  setAuthUser,
-  setEmailToVerified,
+	changeEmail,
+	clearAction,
+	clearEntities,
+	resetPagers,
+	setAuthUser,
+	setEmailToVerified,
 } from "@/store";
 import { EStorageKeys } from "@/types/storage.constants";
 import { action } from "@/decorators";
 import { EActionKeys } from "@/types/actions.types";
 import { crossTab } from "@/utils/cross-tab.utils";
 import { EFlaggers } from "@/constants/flaggers.constants";
+import { BrowsingService } from "./browsing.service";
 
 type AuthData = Partial<RegisterResponseDto>;
 
 export class AuthService extends BaseService {
-  private readonly MESSAGES = {
-    NO_AUTH_DATA: "No valid authentication data found",
-    AUTH_CHECK_FAILED: "Authentication check failed",
-    AUTH_SUCCESSFUL: "User authenticated successfully",
-    LOGOUT_SUCCESSFUL: "User logged out successfully",
-    EMAIL_VERIFIED: "Email verified successfully",
-    EMAIL_VERIFICATION_SENT: "Verification email sent successfully",
-    PASSWORD_RESET_SENT: "Password reset link sent successfully",
-    PASSWORD_RESET_SUCCESS: "Password reset successfully",
-    EMAIL_CHANGE_VERIFICATION_SENT: "Verification link sent to your new email",
-    EMAIL_CHANGED: "Email changed successfully",
-  } as const;
+	private readonly MESSAGES = {
+		NO_AUTH_DATA: "No valid authentication data found",
+		AUTH_CHECK_FAILED: "Authentication check failed",
+		AUTH_SUCCESSFUL: "User authenticated successfully",
+		LOGOUT_SUCCESSFUL: "User logged out successfully",
+		EMAIL_VERIFIED: "Email verified successfully",
+		EMAIL_VERIFICATION_SENT: "Verification email sent successfully",
+		PASSWORD_RESET_SENT: "Password reset link sent successfully",
+		PASSWORD_RESET_SUCCESS: "Password reset successfully",
+		EMAIL_CHANGE_VERIFICATION_SENT:
+			"Verification link sent to your new email",
+		EMAIL_CHANGED: "Email changed successfully",
+	} as const;
 
-  private async storeAuthData(data: AuthData): Promise<void> {
-    const { accessToken, refreshToken, user } = data;
+	private get browsingService(): BrowsingService {
+		return this.container.get<BrowsingService>(ETokens.BrowsingService);
+	}
 
-    if (accessToken) {
-      await this.storageService.setItem(EStorageKeys.AccessToken, accessToken);
-    }
+	private async storeAuthData(data: AuthData): Promise<void> {
+		const { accessToken, refreshToken, user } = data;
 
-    if (refreshToken) {
-      await this.storageService.setItem(
-        EStorageKeys.RefreshToken,
-        refreshToken
-      );
-    }
+		if (accessToken) {
+			await this.storageService.setItem(
+				EStorageKeys.AccessToken,
+				accessToken
+			);
+		}
 
-    if (user) {
-      this.dispatch(setAuthUser(user));
-    }
-  }
+		if (refreshToken) {
+			await this.storageService.setItem(
+				EStorageKeys.RefreshToken,
+				refreshToken
+			);
+		}
 
-  private async clearAuthData(): Promise<void> {
-    await this.storageService.clear();
-    this.dispatch(setAuthUser(null));
-  }
+		if (user) {
+			this.dispatch(setAuthUser(user));
+			if (user.is_profile_complete) {
+				this.browsingService.loadBrowsingFilters();
+			}
+		}
+	}
 
-  private async hasValidAuthData(): Promise<boolean> {
-    const [accessToken, refreshToken] = await Promise.all([
-      this.storageService.getItem(EStorageKeys.AccessToken),
-      this.storageService.getItem(EStorageKeys.RefreshToken),
-    ]);
+	private async clearAuthData(): Promise<void> {
+		await this.storageService.clear();
+		this.dispatch(setAuthUser(null));
+		this.dispatch(clearEntities());
+		this.dispatch(resetPagers());
+	}
 
-    // console.log("Access Token:", accessToken);
+	private async hasValidAuthData(): Promise<boolean> {
+		const [accessToken, refreshToken] = await Promise.all([
+			this.storageService.getItem(EStorageKeys.AccessToken),
+			this.storageService.getItem(EStorageKeys.RefreshToken),
+		]);
 
-    return !!(accessToken && refreshToken);
-  }
+		return !!(accessToken && refreshToken);
+	}
 
-  private getAuthRoute(route: RouteKeys<"auth">): string {
-    return getRoute("auth", route);
-  }
+	private getAuthRoute(route: RouteKeys<"auth">): string {
+		return getRoute("auth", route);
+	}
 
-  @action()
-  public async authenticate() {
-    try {
-      if (await this.hasValidAuthData()) {
-        // Make a 1 second delay to show loading state
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        const authenticateResponse =
-          await this.apiService.get<AuthenticateResponseDto>(
-            this.getAuthRoute("authenticate"),
-            { auth: true }
-          );
+	@action()
+	public async authenticate() {
+		try {
+			if (await this.hasValidAuthData()) {
+				// Make a 1 second delay to show loading state
+				await new Promise((resolve) => setTimeout(resolve, 500));
+				const authenticateResponse =
+					await this.apiService.get<AuthenticateResponseDto>(
+						this.getAuthRoute("authenticate"),
+						{ auth: true }
+					);
 
-        if (
-          authenticateResponse.success &&
-          authenticateResponse.responseObject
-        ) {
-          this.storeAuthData(authenticateResponse.responseObject);
-          return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
-        }
+				if (this.isSuccess(authenticateResponse)) {
+					this.storeAuthData(authenticateResponse.data);
+					return ServiceResponse.success(
+						this.MESSAGES.AUTH_SUCCESSFUL
+					);
+				}
 
-        return ServiceResponse.failure(authenticateResponse.message);
-      }
+				return ServiceResponse.failure(authenticateResponse.message);
+			}
 
-      await this.clearAuthData();
-      return ServiceResponse.success(this.MESSAGES.NO_AUTH_DATA);
-    } catch (error) {
-      await this.clearAuthData();
-      return ServiceResponse.failure(this.MESSAGES.AUTH_CHECK_FAILED);
-    }
-  }
+			this.clearAuthData();
+			return ServiceResponse.success(this.MESSAGES.NO_AUTH_DATA);
+		} catch (error) {
+			this.clearAuthData();
+			return ServiceResponse.failure(this.MESSAGES.AUTH_CHECK_FAILED);
+		}
+	}
 
-  @action({ showSuccessMessage: true })
-  public async login(dto: LoginRequestDto) {
-    this.dispatch(clearAction({ key: EActionKeys.Register }));
-    const response = await this.apiService.post<LoginResponseDto>(
-      this.getAuthRoute("login"),
-      dto
-    );
+	@action({ showSuccessMessage: true })
+	public async login(dto: LoginRequestDto) {
+		this.dispatch(clearAction({ key: EActionKeys.Register }));
+		const response = await this.apiService.post<LoginResponseDto>(
+			this.getAuthRoute("login"),
+			dto
+		);
 
-    if (!response.success) {
-      return ServiceResponse.failure(response.message);
-    }
+		if (!this.isSuccess(response)) {
+			return ServiceResponse.failure(response.message);
+		}
 
-    await this.storeAuthData(response.responseObject);
-    return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
-  }
+		await this.storeAuthData(response.data);
+		return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
+	}
 
-  @action({ showSuccessMessage: true })
-  public async register(dto: RegisterRequestDto) {
-    this.dispatch(clearAction({ key: EActionKeys.Login }));
-    const response = await this.apiService.post<RegisterResponseDto>(
-      this.getAuthRoute("register"),
-      dto
-    );
+	@action({ showSuccessMessage: true })
+	public async register(dto: RegisterRequestDto) {
+		this.dispatch(clearAction({ key: EActionKeys.Login }));
+		const response = await this.apiService.post<RegisterResponseDto>(
+			this.getAuthRoute("register"),
+			dto
+		);
 
-    if (!response.success) {
-      return ServiceResponse.failure(response.message);
-    }
+		if (!this.isSuccess(response)) {
+			return ServiceResponse.failure(response.message);
+		}
 
-    await this.storeAuthData(response.responseObject);
-    return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
-  }
+		await this.storeAuthData(response.data);
+		return ServiceResponse.success(this.MESSAGES.AUTH_SUCCESSFUL);
+	}
 
-  @action()
-  public async logout() {
-    await this.clearAuthData();
-    return ServiceResponse.success(this.MESSAGES.LOGOUT_SUCCESSFUL);
-  }
+	@action()
+	public async logout() {
+		await this.clearAuthData();
+		return ServiceResponse.success(this.MESSAGES.LOGOUT_SUCCESSFUL);
+	}
 
-  @action({ showSuccessMessage: true })
-  public async verifyEmail(dto: VerifyEmailRequestDto) {
-    const response = await this.apiService.post<VerifyEmailResponseDto>(
-      this.getAuthRoute("verify-email"),
-      dto
-    );
+	@action({ showSuccessMessage: true })
+	public async verifyEmail(dto: VerifyEmailRequestDto) {
+		const response = await this.apiService.post<null>(
+			this.getAuthRoute("verify-email"),
+			dto
+		);
 
-    if (!response.success) {
-      return ServiceResponse.failure(response.message);
-    }
+		if (!this.isSuccess(response)) {
+			return ServiceResponse.failure(response.message);
+		}
 
-    this.dispatch(setEmailToVerified());
+		this.dispatch(setEmailToVerified());
 
-    crossTab.broadcast(CrossTabEvent.EmailVerified);
+		crossTab.broadcast(CrossTabEvent.EmailVerified);
 
-    return ServiceResponse.success(this.MESSAGES.EMAIL_VERIFIED);
-  }
+		return ServiceResponse.success(this.MESSAGES.EMAIL_VERIFIED);
+	}
 
-  @action({ showSuccessMessage: true, showErrorMessage: true })
-  public async resendVerificationEmail() {
-    const response =
-      await this.apiService.get<ResendVerificationEmailResponseDto>(
-        this.getAuthRoute("resend-verification-email"),
-        { auth: true }
-      );
+	@action({ showSuccessMessage: true, showErrorMessage: true })
+	public async resendVerificationEmail() {
+		const response = await this.apiService.get<null>(
+			this.getAuthRoute("resend-verification-email"),
+			{ auth: true }
+		);
 
-    if (!response.success) {
-      return ServiceResponse.failure(response.message);
-    }
+		if (!this.isSuccess(response)) {
+			return ServiceResponse.failure(response.message);
+		}
 
-    return ServiceResponse.success(this.MESSAGES.EMAIL_VERIFICATION_SENT);
-  }
+		return ServiceResponse.success(this.MESSAGES.EMAIL_VERIFICATION_SENT);
+	}
 
-  @action({ showErrorMessage: true })
-  public async forgotPassword(dto: ForgotPasswordRequestDto) {
-    const response = await this.apiService.post<ForgotPasswordResponseDto>(
-      this.getAuthRoute("forgot-password"),
-      dto
-    );
+	@action({ showErrorMessage: true })
+	public async forgotPassword(dto: ForgotPasswordRequestDto) {
+		const response = await this.apiService.post<null>(
+			this.getAuthRoute("forgot-password"),
+			dto
+		);
 
-    if (!response.success) {
-      return ServiceResponse.failure(response.message);
-    }
+		if (!this.isSuccess(response)) {
+			return ServiceResponse.failure(response.message);
+		}
 
-    return ServiceResponse.success(this.MESSAGES.PASSWORD_RESET_SENT);
-  }
+		return ServiceResponse.success(this.MESSAGES.PASSWORD_RESET_SENT);
+	}
 
-  @action({ showSuccessMessage: true, showErrorMessage: true })
-  public async resetPassword(dto: ResetPasswordRequestDto) {
-    const response = await this.apiService.post<ResetPasswordResponseDto>(
-      this.getAuthRoute("reset-password"),
-      dto
-    );
+	@action({ showSuccessMessage: true, showErrorMessage: true })
+	public async resetPassword(dto: ResetPasswordRequestDto) {
+		const response = await this.apiService.post<null>(
+			this.getAuthRoute("reset-password"),
+			dto
+		);
 
-    if (!response.success) {
-      return ServiceResponse.failure(response.message);
-    }
+		if (!this.isSuccess(response)) {
+			return ServiceResponse.failure(response.message);
+		}
 
-    this.router.replace("/login");
-    return ServiceResponse.success(this.MESSAGES.PASSWORD_RESET_SUCCESS);
-  }
+		this.router.replace("/login");
+		return ServiceResponse.success(this.MESSAGES.PASSWORD_RESET_SUCCESS);
+	}
 
-  @action({ showSuccessMessage: true, showErrorMessage: true })
-  public async sendChangeEmailVerification(
-    dto: SendChangeEmailVerificationRequestDto
-  ) {
-    const response =
-      await this.apiService.post<SendChangeEmailVerificationResponseDto>(
-        this.getAuthRoute("send-change-email-verification"),
-        dto,
-        { auth: true }
-      );
+	@action({ showSuccessMessage: true, showErrorMessage: true })
+	public async sendChangeEmailVerification(
+		dto: SendChangeEmailVerificationRequestDto
+	) {
+		const response = await this.apiService.post<null>(
+			this.getAuthRoute("send-change-email-verification"),
+			dto,
+			{ auth: true }
+		);
 
-    if (!response.success) {
-      return ServiceResponse.failure(response.message);
-    }
+		if (!this.isSuccess(response)) {
+			return ServiceResponse.failure(response.message);
+		}
 
-    this.setFlagger({
-      key: EFlaggers.ChangeEmailDialog,
-      value: { isOpen: false },
-    });
+		this.setFlagger({
+			key: EFlaggers.ChangeEmailDialog,
+			value: { isOpen: false },
+		});
 
-    return ServiceResponse.success(
-      this.MESSAGES.EMAIL_CHANGE_VERIFICATION_SENT
-    );
-  }
+		return ServiceResponse.success(
+			this.MESSAGES.EMAIL_CHANGE_VERIFICATION_SENT
+		);
+	}
 
-  @action({ showSuccessMessage: true })
-  public async changeEmail(dto: ChangeEmailRequestDto) {
-    const response = await this.apiService.post<ChangeEmailResponseDto>(
-      this.getAuthRoute("change-email"),
-      dto,
-      { auth: true }
-    );
+	@action({ showSuccessMessage: true })
+	public async changeEmail(dto: ChangeEmailRequestDto) {
+		const response = await this.apiService.post<ChangeEmailResponseDto>(
+			this.getAuthRoute("change-email"),
+			dto,
+			{ auth: true }
+		);
 
-    if (!response.success) {
-      return ServiceResponse.failure(response.message);
-    }
+		if (!this.isSuccess(response)) {
+			return ServiceResponse.failure(response.message);
+		}
 
-    this.dispatch(changeEmail(response.responseObject.newEmail));
+		this.dispatch(changeEmail(response.data.newEmail));
 
-    crossTab.broadcast(
-      CrossTabEvent.EmailChanged,
-      response.responseObject.newEmail
-    );
+		crossTab.broadcast(CrossTabEvent.EmailChanged, response.data.newEmail);
 
-    return ServiceResponse.success(this.MESSAGES.EMAIL_CHANGED);
-  }
+		return ServiceResponse.success(this.MESSAGES.EMAIL_CHANGED);
+	}
 }

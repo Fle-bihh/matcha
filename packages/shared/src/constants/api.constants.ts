@@ -5,10 +5,10 @@ export const API_ROUTES = {
   health: {
     "get-health": "/",
   },
-  user: {
-    all: "/users",
-    "update-profile": "/profile",
-    "update-profile-picture": "/profile-picture",
+  users: {
+    "get-users": "/",
+    "update-profile": "/",
+    "update-profile-picture": "/picture",
     "update-location": "/location",
   },
   auth: {

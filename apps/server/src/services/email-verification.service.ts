@@ -55,19 +55,19 @@ export class EmailVerificationService extends BaseService {
 
   public async sendVerificationEmail(
     userId: number
-  ): Promise<ServiceResponse<boolean>> {
+  ): Promise<ServiceResponse<null>> {
     try {
       const userResponse = await this.userService.findById(userId);
 
-      if (!userResponse.success || !userResponse.responseObject) {
+      if (!this.isSuccess(userResponse) || !userResponse.data) {
         return ServiceResponse.failure(
           "User not found",
-          false,
+          null,
           StatusCodes.NOT_FOUND
         );
       }
 
-      const user = userResponse.responseObject;
+      const user = userResponse.data;
 
       const latestVerification =
         await this.emailVerificationRepository.getLatestByUserId(userId);
@@ -82,7 +82,7 @@ export class EmailVerificationService extends BaseService {
           );
           return ServiceResponse.failure(
             `Please wait ${timeRemaining} minute(s) before requesting another verification email.`,
-            false,
+            null,
             StatusCodes.TOO_MANY_REQUESTS
           );
         }
@@ -92,15 +92,15 @@ export class EmailVerificationService extends BaseService {
 
       const tokenResponse = await this.createVerificationToken(userId);
 
-      if (!tokenResponse.success || !tokenResponse.responseObject) {
+      if (!this.isSuccess(tokenResponse)) {
         return ServiceResponse.failure(
           "Error creating verification token",
-          false,
+          null,
           StatusCodes.INTERNAL_SERVER_ERROR
         );
       }
 
-      const verificationLink = `${config.webUrl}/confirm-email?token=${tokenResponse.responseObject}`;
+      const verificationLink = `${config.webUrl}/confirm-email?token=${tokenResponse.data}`;
 
       await this.mailService.sendEmail({
         to: user.email,
@@ -110,19 +110,19 @@ export class EmailVerificationService extends BaseService {
 
       return ServiceResponse.success(
         "Verification email sent successfully",
-        true
+        null
       );
     } catch (error) {
       logger.error("Error sending verification email:", error);
       return ServiceResponse.failure(
         "Error sending verification email",
-        false,
+        null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
   }
 
-  public async verifyEmail(token: string): Promise<ServiceResponse<boolean>> {
+  public async verifyEmail(token: string): Promise<ServiceResponse<null>> {
     try {
       const verification = await this.emailVerificationRepository.findByToken(
         token
@@ -131,7 +131,7 @@ export class EmailVerificationService extends BaseService {
       if (!verification) {
         return ServiceResponse.failure(
           "Invalid or expired verification token",
-          false,
+          null,
           StatusCodes.BAD_REQUEST
         );
       }
@@ -143,7 +143,7 @@ export class EmailVerificationService extends BaseService {
       if (!marked) {
         return ServiceResponse.failure(
           "Error marking verification as used",
-          false,
+          null,
           StatusCodes.INTERNAL_SERVER_ERROR
         );
       }
@@ -155,20 +155,20 @@ export class EmailVerificationService extends BaseService {
         }
       );
 
-      if (!userResponse.success) {
+      if (!this.isSuccess(userResponse)) {
         return ServiceResponse.failure(
           "Error updating user verification status",
-          false,
+          null,
           StatusCodes.INTERNAL_SERVER_ERROR
         );
       }
 
-      return ServiceResponse.success("Email verified successfully", true);
+      return ServiceResponse.success("Email verified successfully", null);
     } catch (error) {
       logger.error("Error verifying email:", error);
       return ServiceResponse.failure(
         "Error verifying email",
-        false,
+        null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
@@ -177,19 +177,19 @@ export class EmailVerificationService extends BaseService {
   public async sendChangeEmailVerification(
     userId: number,
     newEmail: string
-  ): Promise<ServiceResponse<boolean>> {
+  ): Promise<ServiceResponse<null>> {
     try {
       const userResponse = await this.userService.findById(userId);
 
-      if (!userResponse.success || !userResponse.responseObject) {
+      if (!this.isSuccess(userResponse) || !userResponse.data) {
         return ServiceResponse.failure(
           "User not found",
-          false,
+          null,
           StatusCodes.NOT_FOUND
         );
       }
 
-      const user = userResponse.responseObject;
+      const user = userResponse.data;
 
       const token = crypto.randomBytes(32).toString("hex");
 
@@ -215,13 +215,13 @@ export class EmailVerificationService extends BaseService {
 
       return ServiceResponse.success(
         "Change email verification sent successfully",
-        true
+        null
       );
     } catch (error) {
       logger.error("Error sending change email verification:", error);
       return ServiceResponse.failure(
         "Error sending change email verification",
-        false,
+        null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
@@ -267,7 +267,7 @@ export class EmailVerificationService extends BaseService {
         }
       );
 
-      if (!userResponse.success) {
+      if (!this.isSuccess(userResponse)) {
         return ServiceResponse.failure(
           "Error updating user email",
           null,
@@ -277,7 +277,6 @@ export class EmailVerificationService extends BaseService {
 
       return ServiceResponse.success("Email changed successfully", {
         newEmail: verification.new_email,
-        success: true,
       });
     } catch (error) {
       logger.error("Error verifying email change:", error);
