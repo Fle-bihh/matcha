@@ -36,9 +36,7 @@ export class Container implements IContainer {
 	) => void;
 
 	constructor() {
-		this.store = createStore(this) as Store<TRootState, any> & {
-			dispatch: TAppDispatch;
-		};
+		this.store = createStore(this);
 	}
 
 	public setNavigate(
