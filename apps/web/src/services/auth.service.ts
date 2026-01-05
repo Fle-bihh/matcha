@@ -196,7 +196,7 @@ export class AuthService extends BaseService {
 		return ServiceResponse.success(this.MESSAGES.EMAIL_VERIFICATION_SENT);
 	}
 
-	@action({ showErrorMessage: true })
+	@action({ showErrorMessage: true, showSuccessMessage: true })
 	public async forgotPassword(dto: ForgotPasswordRequestDto) {
 		const response = await this.apiService.post<null>(
 			this.getAuthRoute("forgot-password"),

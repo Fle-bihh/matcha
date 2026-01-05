@@ -11,6 +11,7 @@ export enum ETokens {
 	PasswordResetService = "PasswordResetService",
 	FileUploadService = "FileUploadService",
 	BrowsingRepository = "BrowsingRepository",
+	UserDeletionService = "UserDeletionService",
 }
 
 export interface IContainer {
