@@ -2,7 +2,7 @@ import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { LikeRepository } from "@/repositories/like.repository";
 import { Like, CreateLikeDto, logger } from "@matcha/shared";
-import { StatusCodes } from "http-status-codes";
+import { StatusCodes } from "@matcha/shared";
 
 export class LikeService extends BaseService {
 	constructor(container: IContainer) {

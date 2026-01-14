@@ -1,3 +1,5 @@
+import { StatusCodes as HttpStatusCodes } from "http-status-codes";
+
 export type ApiResponse<T> = {
 	message: string;
 	data: T;
@@ -33,3 +35,5 @@ export enum SortOrder {
 	Asc = "asc",
 	Desc = "desc",
 }
+
+export const StatusCodes = HttpStatusCodes;

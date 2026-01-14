@@ -1,23 +1,24 @@
 {
-	"name": "@matcha/shared",
-	"version": "1.0.0",
-	"description": "",
-	"main": "dist/index.js",
-	"scripts": {
-		"build": "tsc && tsc-alias",
-		"start": "node dist/index.js",
-		"dev": "tsc -w"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"type": "commonjs",
-	"dependencies": {
-		"zod": "^4.1.11"
-	},
-	"devDependencies": {
-		"tsc-alias": "^1.8.16",
-		"tsconfig-paths": "^4.2.0",
-		"@types/node": "^24.5.2"
-	}
+  "name": "@matcha/shared",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc && tsc-alias",
+    "start": "node dist/index.js",
+    "dev": "tsc -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "zod": "^4.1.11",
+    "http-status-codes": "^2.3.0"
+  },
+  "devDependencies": {
+    "tsc-alias": "^1.8.16",
+    "tsconfig-paths": "^4.2.0",
+    "@types/node": "^24.5.2"
+  }
 }

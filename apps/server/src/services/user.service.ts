@@ -16,7 +16,7 @@ import {
 	BrowsingFilters,
 	BrowsingFiltersDto,
 } from "@matcha/shared";
-import { StatusCodes } from "http-status-codes";
+import { StatusCodes } from "@matcha/shared";
 import { HashUtils } from "@/utils/hash.utils";
 
 export class UserService extends BaseService {
