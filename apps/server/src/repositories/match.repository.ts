@@ -33,9 +33,7 @@ export class MatchRepository extends BaseRepository {
 	): Promise<Match | null> {
 		try {
 			const [user1_id, user2_id] =
-				userId1 < userId2
-					? [userId1, userId2]
-					: [userId2, userId1];
+				userId1 < userId2 ? [userId1, userId2] : [userId2, userId1];
 
 			return await this.createDocument<Match>(this.tableName, {
 				user1_id,

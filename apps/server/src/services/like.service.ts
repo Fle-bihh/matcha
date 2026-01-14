@@ -64,11 +64,10 @@ export class LikeService extends BaseService {
 				);
 			}
 
-			const isMatch =
-				await this.likeRepository.checkReverseLikeExists(
-					likerId,
-					liked_id
-				);
+			const isMatch = await this.likeRepository.checkReverseLikeExists(
+				likerId,
+				liked_id
+			);
 
 			if (isMatch) {
 				const match = await this.matchRepository.createMatch(
