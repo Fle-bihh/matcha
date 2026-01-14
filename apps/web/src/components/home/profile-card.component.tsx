@@ -14,6 +14,8 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { User } from "@matcha/shared";
 import { AuthImage } from "@/components/utils/auth-image.component";
 import MockImage from "@/assets/imperial-stormtrooper-picture.png";
+import { useDispatchActions } from "@/hooks/actions.hooks";
+import { LikeActions } from "@/store/actions";
 
 interface ProfileCardProps {
 	user: User;
@@ -23,6 +25,12 @@ export function ProfileCard({ user }: ProfileCardProps) {
 	const mainPicture = user.pictures_urls?.[0] ?? null;
 
 	const age = user.age || "N/A";
+
+	const { createLike } = useDispatchActions(LikeActions);
+
+	const handleLike = () => {
+		createLike({ liked_id: user.id });
+	};
 
 	return (
 		<Card
@@ -184,6 +192,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
 			>
 				<IconButton
 					color="error"
+					onClick={handleLike}
 					sx={{
 						"&:hover": {
 							transform: "scale(1.1)",

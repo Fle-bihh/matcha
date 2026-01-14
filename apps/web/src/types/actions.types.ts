@@ -12,6 +12,7 @@ import {
 	GeocodingResult,
 	BrowsingParams,
 	BrowsingFilters,
+	CreateLikeDto,
 } from "@matcha/shared";
 
 export enum EActionKeys {
@@ -35,6 +36,7 @@ export enum EActionKeys {
 	ApplyBrowsingFilters = "applyBrowsingFilters",
 	ClearBrowsingFilters = "clearBrowsingFilters",
 	LoadBrowsingFilters = "loadBrowsingFilters",
+	CreateLike = "createLike",
 }
 
 export interface IActionDtoMap {
@@ -60,6 +62,7 @@ export interface IActionDtoMap {
 	};
 	[EActionKeys.ClearBrowsingFilters]: null;
 	[EActionKeys.LoadBrowsingFilters]: null;
+	[EActionKeys.CreateLike]: CreateLikeDto;
 }
 
 export type ActionDto<K extends EActionKeys> = IActionDtoMap[K];
