@@ -1,7 +1,12 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { LikeRepository } from "@/repositories/like.repository";
-import { Like, CreateLikeDto, logger } from "@matcha/shared";
+import {
+	Like,
+	CreateLikeDto,
+	logger,
+	CreateLikeResponseDto,
+} from "@matcha/shared";
 import { StatusCodes } from "@matcha/shared";
 
 export class LikeService extends BaseService {
@@ -16,7 +21,7 @@ export class LikeService extends BaseService {
 	public async createLike(
 		likerId: number,
 		data: CreateLikeDto
-	): Promise<ServiceResponse<Like | null>> {
+	): Promise<ServiceResponse<CreateLikeResponseDto | null>> {
 		try {
 			const { liked_id } = data;
 
@@ -54,7 +59,9 @@ export class LikeService extends BaseService {
 				);
 			}
 
-			return ServiceResponse.success("Like created successfully", like);
+			return ServiceResponse.success("User liked successfully", {
+				isMatch: false,
+			});
 		} catch (error) {
 			logger.error("Error in createLike service:", error);
 			return ServiceResponse.failure(

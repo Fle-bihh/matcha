@@ -3,6 +3,7 @@ import { createStore } from "@/store";
 
 export enum EEntityTypes {
 	Users = "users",
+	Matches = "matches",
 }
 
 export enum EStoreSlices {
