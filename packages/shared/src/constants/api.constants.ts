@@ -24,7 +24,7 @@ export const API_ROUTES = {
 		"send-change-email-verification": "/send-change-email-verification",
 		"change-email": "/change-email",
 	},
-	likes: {
+	like: {
 		like: "/",
 	},
 } as const;

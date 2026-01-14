@@ -48,7 +48,7 @@ export class LikeRepository extends BaseRepository {
 	): Promise<Like | null> {
 		try {
 			const likes = await this.getDocs<Like>(this.tableName, {
-				where: "liker_id = $1 AND liked_id = $2",
+				where: "liker_id = ? AND liked_id = ?",
 				values: [likerId, likedId],
 				limit: 1,
 			});
