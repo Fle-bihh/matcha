@@ -198,6 +198,11 @@ export class BrowsingRepository extends BaseRepository {
 		whereConditions.push("id != ?");
 		values.push(currentUser.id);
 
+		whereConditions.push(
+			"NOT EXISTS (SELECT 1 FROM likes WHERE likes.liker_id = ? AND likes.liked_id = users.id AND likes.deleted_at IS NULL)"
+		);
+		values.push(currentUser.id);
+
 		const compatibleGenders = this.getCompatibleGenders(
 			currentUser.gender,
 			currentUser.orientation
