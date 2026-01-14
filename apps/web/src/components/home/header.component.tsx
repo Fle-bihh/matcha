@@ -2,6 +2,7 @@ import { APP_NAME } from "@matcha/shared";
 import { AppBar, Toolbar, Typography, IconButton, Box } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountIcon from "@mui/icons-material/AccountCircle";
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import { useAuthUser } from "@/hooks/auth.hook";
 import { APP_ROUTES } from "@/constants";
 import { useHeaderRef } from "@/contexts/layout-sizes.context";
@@ -14,14 +15,27 @@ const ProtectedButtons = () => {
 		routing.push(APP_ROUTES.profile);
 	};
 
+	const handleMatchesClick = () => {
+		routing.push(APP_ROUTES.matches);
+	};
+
 	return (
-		<IconButton
-			color="inherit"
-			onClick={handleAccountClick}
-			aria-label="account"
-		>
-			<AccountIcon />
-		</IconButton>
+		<>
+			<IconButton
+				color="inherit"
+				onClick={handleMatchesClick}
+				aria-label="matches"
+			>
+				<ChatBubbleIcon />
+			</IconButton>
+			<IconButton
+				color="inherit"
+				onClick={handleAccountClick}
+				aria-label="account"
+			>
+				<AccountIcon />
+			</IconButton>
+		</>
 	);
 };
 

@@ -1,7 +1,7 @@
 import { APP_PAGES } from "@/constants";
 import { Route, Routes } from "react-router-dom";
 import { withEmailVerified, withLoggedIn, withLoggedOut } from "../utils";
-import { EntryPage, NotFoundPage, HomePage } from "@/pages";
+import { EntryPage, NotFoundPage, HomePage, MatchesPage } from "@/pages";
 import { EntryLayout, ProtectedLayout, ProfileLayout } from "@/layouts";
 import { RegisterPage, LoginPage, ForgotPasswordPage } from "@/pages/auth";
 import { ConfirmEmailPage } from "@/pages/auth/confirm-email.page";
@@ -34,6 +34,7 @@ export function Router() {
 				element={withLoggedIn(ProtectedLayout)()}
 			>
 				<Route index element={<HomePage />} />
+				<Route path={APP_PAGES.matches} element={<MatchesPage />} />
 				<Route
 					path={APP_PAGES.profile}
 					element={withEmailVerified(ProfileLayout)()}
