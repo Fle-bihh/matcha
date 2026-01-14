@@ -2,67 +2,11 @@ import { Container, Typography, Box, List, Paper } from "@mui/material";
 import { MatchItem } from "@/components/matches/match-item.component";
 import { withProfileCompleteComponent } from "@/components/utils/with-condition-component.component";
 import { ProfileUncomplete } from "./profile-uncomplete.page";
-
-const mockMatches = [
-	{
-		id: 1,
-		name: "Emma Wilson",
-		lastMessage: "Hey! How are you doing?",
-		lastMessageTime: "2m ago",
-		unread: true,
-	},
-	{
-		id: 2,
-		name: "Lucas Martin",
-		lastMessage: "That sounds amazing!",
-		lastMessageTime: "1h ago",
-		unread: false,
-	},
-	{
-		id: 3,
-		name: "Sophie Anderson",
-		lastMessage: "See you tomorrow 😊",
-		lastMessageTime: "3h ago",
-		unread: true,
-	},
-	{
-		id: 4,
-		name: "James Taylor",
-		lastMessage: "Thanks for the recommendation!",
-		lastMessageTime: "5h ago",
-		unread: false,
-	},
-	{
-		id: 5,
-		name: "Olivia Brown",
-		lastMessage: "I'd love to!",
-		lastMessageTime: "Yesterday",
-		unread: false,
-	},
-	{
-		id: 6,
-		name: "Noah Johnson",
-		lastMessage: "What time works for you?",
-		lastMessageTime: "Yesterday",
-		unread: false,
-	},
-	{
-		id: 7,
-		name: "Ava Davis",
-		lastMessage: "Can't wait!",
-		lastMessageTime: "2 days ago",
-		unread: false,
-	},
-	{
-		id: 8,
-		name: "William Garcia",
-		lastMessage: "That's perfect!",
-		lastMessageTime: "3 days ago",
-		unread: false,
-	},
-];
+import { useMatches } from "@/hooks/matches.hook";
 
 function MatchesPageComp() {
+	const { matches } = useMatches();
+
 	return (
 		<Container maxWidth="md" sx={{ py: 4, pb: 12 }}>
 			<Box sx={{ mb: 4 }}>
@@ -74,22 +18,16 @@ function MatchesPageComp() {
 					color="text.secondary"
 					sx={{ mt: 1 }}
 				>
-					{mockMatches.length}{" "}
-					{mockMatches.length === 1 ? "match" : "matches"}
+					{matches.length}{" "}
+					{matches.length === 1 ? "match" : "matches"}
 				</Typography>
 			</Box>
 
-			{mockMatches.length > 0 ? (
+			{matches.length > 0 ? (
 				<Paper elevation={0} variant="outlined">
 					<List disablePadding>
-						{mockMatches.map((match) => (
-							<MatchItem
-								key={match.id}
-								name={match.name}
-								lastMessage={match.lastMessage}
-								lastMessageTime={match.lastMessageTime}
-								unread={match.unread}
-							/>
+						{matches.map((match) => (
+							<MatchItem key={match.id} match={match} />
 						))}
 					</List>
 				</Paper>

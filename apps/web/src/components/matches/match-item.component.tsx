@@ -6,22 +6,13 @@ import {
 	Avatar,
 	Typography,
 } from "@mui/material";
+import { Match } from "@matcha/shared";
 
 interface MatchItemProps {
-	name: string;
-	lastMessage: string;
-	lastMessageTime: string;
-	avatarUrl?: string;
-	unread?: boolean;
+	match: Match;
 }
 
-export function MatchItem({
-	name,
-	lastMessage,
-	lastMessageTime,
-	avatarUrl,
-	unread = false,
-}: MatchItemProps) {
+export function MatchItem({ match }: MatchItemProps) {
 	return (
 		<ListItem
 			sx={{
@@ -36,23 +27,19 @@ export function MatchItem({
 		>
 			<ListItemAvatar>
 				<Avatar
-					src={avatarUrl}
 					sx={{
 						width: 56,
 						height: 56,
 						mr: 2,
 					}}
 				>
-					{name.charAt(0).toUpperCase()}
+					{match.user1_id}
 				</Avatar>
 			</ListItemAvatar>
 			<ListItemText
 				primary={
-					<Typography
-						variant="subtitle1"
-						fontWeight={unread ? 600 : 400}
-					>
-						{name}
+					<Typography variant="subtitle1">
+						Match #{match.id}
 					</Typography>
 				}
 				secondary={
@@ -64,7 +51,7 @@ export function MatchItem({
 							maxWidth: "calc(100% - 80px)",
 						}}
 					>
-						{lastMessage}
+						Users: {match.user1_id} & {match.user2_id}
 					</Typography>
 				}
 				sx={{ pr: 2 }}
@@ -78,19 +65,8 @@ export function MatchItem({
 				}}
 			>
 				<Typography variant="caption" color="text.secondary">
-					{lastMessageTime}
+					Placeholder
 				</Typography>
-				{unread && (
-					<Box
-						sx={{
-							width: 8,
-							height: 8,
-							borderRadius: "50%",
-							bgcolor: "primary.main",
-							mt: 0.5,
-						}}
-					/>
-				)}
 			</Box>
 		</ListItem>
 	);
