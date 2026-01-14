@@ -1,10 +1,4 @@
-import {
-	Container,
-	Typography,
-	Box,
-	List,
-	Paper,
-} from "@mui/material";
+import { Container, Typography, Box, List, Paper } from "@mui/material";
 import { MatchItem } from "@/components/matches/match-item.component";
 import { withProfileCompleteComponent } from "@/components/utils/with-condition-component.component";
 import { ProfileUncomplete } from "./profile-uncomplete.page";
@@ -75,8 +69,13 @@ function MatchesPageComp() {
 				<Typography variant="h4" component="h1" fontWeight={600}>
 					Matches
 				</Typography>
-				<Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-					{mockMatches.length} {mockMatches.length === 1 ? 'match' : 'matches'}
+				<Typography
+					variant="body2"
+					color="text.secondary"
+					sx={{ mt: 1 }}
+				>
+					{mockMatches.length}{" "}
+					{mockMatches.length === 1 ? "match" : "matches"}
 				</Typography>
 			</Box>
 

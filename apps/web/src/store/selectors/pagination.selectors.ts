@@ -1,6 +1,7 @@
 import { EPagerKeys } from "@/constants";
 import { TRootState, EEntityTypes } from "@/types";
 import { createSelector } from "@reduxjs/toolkit";
+import { selectEntitiesByType } from "./entity.selectors";
 
 export const selectPager = (pagerKey: EPagerKeys) => (state: TRootState) =>
 	state.pagers[pagerKey];
@@ -16,10 +17,7 @@ export const selectPaginatedEntities = <T = any>(
 	entityType: EEntityTypes
 ) =>
 	createSelector(
-		[
-			selectPagerEntityKeys(pagerKey),
-			(state: TRootState) => state.entities[entityType],
-		],
+		[selectPagerEntityKeys(pagerKey), selectEntitiesByType<T>(entityType)],
 		(entityKeys, entities) => {
 			if (!entities) return [];
 			return entityKeys
