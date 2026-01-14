@@ -58,4 +58,17 @@ export class LikeRepository extends BaseRepository {
 			return null;
 		}
 	}
+
+	public async checkReverseLikeExists(
+		likerId: number,
+		likedId: number
+	): Promise<boolean> {
+		try {
+			const reverseLike = await this.getLikeByUsers(likedId, likerId);
+			return reverseLike !== null;
+		} catch (error) {
+			logger.error("Error checking reverse like:", error);
+			return false;
+		}
+	}
 }

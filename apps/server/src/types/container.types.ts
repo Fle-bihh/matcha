@@ -14,6 +14,7 @@ export enum ETokens {
 	UserDeletionService = "UserDeletionService",
 	LikeRepository = "LikeRepository",
 	LikeService = "LikeService",
+	MatchRepository = "MatchRepository",
 }
 
 export interface IContainer {

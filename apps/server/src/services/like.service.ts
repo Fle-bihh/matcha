@@ -1,6 +1,7 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { LikeRepository } from "@/repositories/like.repository";
+import { MatchRepository } from "@/repositories/match.repository";
 import {
 	Like,
 	CreateLikeDto,
@@ -16,6 +17,10 @@ export class LikeService extends BaseService {
 
 	private get likeRepository(): LikeRepository {
 		return this.container.get<LikeRepository>(ETokens.LikeRepository);
+	}
+
+	private get matchRepository(): MatchRepository {
+		return this.container.get<MatchRepository>(ETokens.MatchRepository);
 	}
 
 	public async createLike(
@@ -57,6 +62,32 @@ export class LikeService extends BaseService {
 					null,
 					StatusCodes.INTERNAL_SERVER_ERROR
 				);
+			}
+
+			const isMatch =
+				await this.likeRepository.checkReverseLikeExists(
+					likerId,
+					liked_id
+				);
+
+			if (isMatch) {
+				const match = await this.matchRepository.createMatch(
+					likerId,
+					liked_id
+				);
+
+				if (!match) {
+					return ServiceResponse.failure(
+						"Failed to create match",
+						null,
+						StatusCodes.INTERNAL_SERVER_ERROR
+					);
+				}
+
+				return ServiceResponse.success("It's a match!", {
+					isMatch: true,
+					match,
+				});
 			}
 
 			return ServiceResponse.success("User liked successfully", {

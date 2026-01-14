@@ -6,6 +6,7 @@ import {
 	BrowsingRepository,
 } from "@/repositories";
 import { LikeRepository } from "@/repositories/like.repository";
+import { MatchRepository } from "@/repositories/match.repository";
 import {
 	HealthService,
 	UserService,
@@ -38,6 +39,7 @@ const serviceRegistry: Record<ETokens, ServiceConstructor> = {
 	[ETokens.UserDeletionService]: UserDeletionService,
 	[ETokens.LikeRepository]: LikeRepository,
 	[ETokens.LikeService]: LikeService,
+	[ETokens.MatchRepository]: MatchRepository,
 } as const;
 
 export class Container implements IContainer {
