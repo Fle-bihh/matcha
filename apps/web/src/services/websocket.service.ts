@@ -7,12 +7,18 @@ import {
 	IWebSocketEventDtoMap,
 } from "@matcha/shared";
 import { config } from "@/config";
-import { EEntityTypes } from "@/types";
-import { setEntity } from "@/store";
+import { IContainer } from "@/types";
+import { BaseHandler, MatchHandler } from "@/handlers";
 
 export class WebSocketService extends BaseService {
 	private socket: Socket | null = null;
 	private isConnected: boolean = false;
+	private handlers: BaseHandler[];
+
+	constructor(container: IContainer) {
+		super(container);
+		this.handlers = [new MatchHandler(container)];
+	}
 
 	public async connect(): Promise<void> {
 		if (this.socket?.connected) {
@@ -54,16 +60,7 @@ export class WebSocketService extends BaseService {
 			}
 		});
 
-		this.on(EWebSocketEvents.MatchCreated, (match) => {
-			logger.info("Received MatchCreated event:", match);
-			this.dispatch(
-				setEntity({
-					entityType: EEntityTypes.Matches,
-					id: match.id.toString(),
-					entity: match,
-				})
-			);
-		});
+		this.handlers.forEach((handler) => handler.register(this.socket!));
 
 		this.socket.on("connect_error", (error: Error) => {
 			if (!error.message.includes("xhr poll error")) {
@@ -74,6 +71,9 @@ export class WebSocketService extends BaseService {
 
 	public disconnect(): void {
 		if (this.socket) {
+			this.handlers.forEach((handler) =>
+				handler.unregister(this.socket!)
+			);
 			this.socket.disconnect();
 			this.socket = null;
 			this.isConnected = false;
