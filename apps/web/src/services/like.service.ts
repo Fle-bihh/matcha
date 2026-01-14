@@ -1,8 +1,9 @@
-import { getRoute } from "@matcha/shared";
+import { getRoute, StatusCodes } from "@matcha/shared";
 import type { CreateLikeDto } from "@matcha/shared";
-import { ServiceResponse } from "@/types";
+import { EEntityTypes, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
+import { patchEntity } from "@/store";
 
 export class LikeService extends BaseService {
 	@action({ showSuccessMessage: true, showErrorMessage: true })
@@ -12,6 +13,19 @@ export class LikeService extends BaseService {
 			dto,
 			{ auth: true }
 		);
+
+		if (
+			this.isSuccess(response) ||
+			response.status === StatusCodes.CONFLICT
+		) {
+			this.dispatch(
+				patchEntity({
+					entityType: EEntityTypes.Users,
+					id: dto.liked_id.toString(),
+					entity: { isLiked: true },
+				})
+			);
+		}
 
 		if (this.isSuccess(response)) {
 			return ServiceResponse.success(response.message);

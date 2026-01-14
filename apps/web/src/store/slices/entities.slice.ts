@@ -26,6 +26,24 @@ const entitiesSlice = createSlice({
 			}
 			state[entityType][id] = sanitizeEntity(entity);
 		},
+		patchEntity: (
+			state,
+			action: PayloadAction<{
+				entityType: EEntityTypes;
+				id: string;
+				entity: any;
+			}>
+		) => {
+			const { entityType, id, entity } = action.payload;
+			if (!state[entityType]) {
+				state[entityType] = {};
+			}
+			const existingEntity = state[entityType][id] || {};
+			state[entityType][id] = {
+				...existingEntity,
+				...sanitizeEntity(entity),
+			};
+		},
 		setEntities: (
 			state,
 			action: PayloadAction<{
@@ -68,6 +86,11 @@ const entitiesSlice = createSlice({
 	},
 });
 
-export const { setEntity, setEntities, addEntities, clearEntities } =
-	entitiesSlice.actions;
+export const {
+	setEntity,
+	setEntities,
+	addEntities,
+	clearEntities,
+	patchEntity,
+} = entitiesSlice.actions;
 export default entitiesSlice.reducer;

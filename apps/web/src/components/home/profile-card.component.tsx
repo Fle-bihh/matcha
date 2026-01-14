@@ -16,9 +16,10 @@ import { AuthImage } from "@/components/utils/auth-image.component";
 import MockImage from "@/assets/imperial-stormtrooper-picture.png";
 import { useDispatchActions } from "@/hooks/actions.hooks";
 import { LikeActions } from "@/store/actions";
+import { StoreUser } from "@/types";
 
 interface ProfileCardProps {
-	user: User;
+	user: StoreUser;
 }
 
 export function ProfileCard({ user }: ProfileCardProps) {
@@ -181,27 +182,29 @@ export function ProfileCard({ user }: ProfileCardProps) {
 				)}
 			</CardContent>
 
-			<Box
-				sx={{
-					p: 1,
-					borderTop: 1,
-					borderColor: "divider",
-					display: "flex",
-					justifyContent: "center",
-				}}
-			>
-				<IconButton
-					color="error"
-					onClick={handleLike}
+			{!user.isLiked && (
+				<Box
 					sx={{
-						"&:hover": {
-							transform: "scale(1.1)",
-						},
+						p: 1,
+						borderTop: 1,
+						borderColor: "divider",
+						display: "flex",
+						justifyContent: "center",
 					}}
 				>
-					<FavoriteIcon />
-				</IconButton>
-			</Box>
+					<IconButton
+						color="error"
+						onClick={handleLike}
+						sx={{
+							"&:hover": {
+								transform: "scale(1.1)",
+							},
+						}}
+					>
+						<FavoriteIcon />
+					</IconButton>
+				</Box>
+			)}
 		</Card>
 	);
 }

@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 import { usePager } from "@/hooks/pagination.hook";
 import { selectFilters } from "@/store/selectors/filters.selectors";
 import { EPagerKeys } from "@/constants";
-import { EEntityTypes } from "@/types";
+import { EEntityTypes, StoreUser } from "@/types";
 import { User, BrowsingFilters, BrowsingParams } from "@matcha/shared";
 import { PaginationDto } from "@/types/api.types";
 import { useActionsData } from "@/hooks/actions.hooks";
@@ -42,7 +42,7 @@ function useBrowsingState() {
 		[filters]
 	);
 
-	const pager = usePager<User, BrowsingParams>({
+	const pager = usePager<StoreUser, BrowsingParams>({
 		pagerKey: EPagerKeys.Users,
 		entityType: EEntityTypes.Users,
 		fn: getUsers,
