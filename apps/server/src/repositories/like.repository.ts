@@ -71,4 +71,14 @@ export class LikeRepository extends BaseRepository {
 			return false;
 		}
 	}
+
+	public async deleteLike(id: number): Promise<boolean> {
+		try {
+			const result = await this.deleteDoc(this.tableName, id);
+			return result;
+		} catch (error) {
+			logger.error("Error deleting like:", error);
+			return false;
+		}
+	}
 }

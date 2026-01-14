@@ -7,3 +7,4 @@ export { PasswordResetService } from "./password-reset.service";
 export { FileUploadService } from "./file-upload.service";
 export { UserDeletionService } from "./user-deletion.service";
 export { LikeService } from "./like.service";
+export { WebSocketService } from "./websocket.service";

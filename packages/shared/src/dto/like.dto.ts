@@ -10,7 +10,4 @@ export const CreateLikeDtoSchema = z.object({
 
 export type CreateLikeDto = z.infer<typeof CreateLikeDtoSchema>;
 
-export interface CreateLikeResponseDto {
-	isMatch: boolean;
-	match?: Match;
-}
+export interface CreateLikeResponseDto {}

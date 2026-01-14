@@ -2,11 +2,13 @@ import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { LikeRepository } from "@/repositories/like.repository";
 import { MatchRepository } from "@/repositories/match.repository";
+import { WebSocketService } from "./websocket.service";
 import {
 	Like,
 	CreateLikeDto,
 	logger,
 	CreateLikeResponseDto,
+	EWebSocketEvents,
 } from "@matcha/shared";
 import { StatusCodes } from "@matcha/shared";
 
@@ -23,10 +25,14 @@ export class LikeService extends BaseService {
 		return this.container.get<MatchRepository>(ETokens.MatchRepository);
 	}
 
+	private get webSocketService(): WebSocketService {
+		return this.container.get<WebSocketService>(ETokens.WebSocketService);
+	}
+
 	public async createLike(
 		likerId: number,
 		data: CreateLikeDto
-	): Promise<ServiceResponse<CreateLikeResponseDto | null>> {
+	): Promise<ServiceResponse> {
 		try {
 			const { liked_id } = data;
 
@@ -76,6 +82,7 @@ export class LikeService extends BaseService {
 				);
 
 				if (!match) {
+					await this.likeRepository.deleteLike(like.id);
 					return ServiceResponse.failure(
 						"Failed to create match",
 						null,
@@ -83,19 +90,27 @@ export class LikeService extends BaseService {
 					);
 				}
 
-				return ServiceResponse.success("It's a match!", {
-					isMatch: true,
-					match,
-				});
+				this.webSocketService.emitToUser(
+					likerId,
+					EWebSocketEvents.MatchCreated,
+					match
+				);
+				this.webSocketService.emitToUser(
+					liked_id,
+					EWebSocketEvents.MatchCreated,
+					match
+				);
 			}
 
-			return ServiceResponse.success("User liked successfully", {
-				isMatch: false,
-			});
+			return ServiceResponse.success(
+				"User liked successfully",
+				null,
+				StatusCodes.CREATED
+			);
 		} catch (error) {
-			logger.error("Error in createLike service:", error);
+			logger.error("Error in createLike:", error);
 			return ServiceResponse.failure(
-				"Failed to create like",
+				"An error occurred while creating the like",
 				null,
 				StatusCodes.INTERNAL_SERVER_ERROR
 			);

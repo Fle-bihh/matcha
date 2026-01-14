@@ -28,15 +28,6 @@ export class LikeService extends BaseService {
 		}
 
 		if (this.isSuccess(response)) {
-			if (response.data.isMatch && response.data.match) {
-				this.dispatch(
-					setEntity({
-						entityType: EEntityTypes.Matches,
-						id: response.data.match.id.toString(),
-						entity: response.data.match,
-					})
-				);
-			}
 			return ServiceResponse.success(response.message);
 		} else {
 			return ServiceResponse.failure(response.message);

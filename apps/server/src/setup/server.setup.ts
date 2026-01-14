@@ -3,7 +3,7 @@ import { Container } from "@/container/container";
 import { ControllerRegistry } from "@/registry/controller.registry";
 import { GracefulShutdown } from "@/utils/graceful-shutdown.utils";
 import { APP_NAME, logger } from "@matcha/shared";
-import { ServiceResponse } from "@/types";
+import { ServiceResponse, ETokens } from "@/types";
 import {
 	limiter,
 	corsOptions,
@@ -15,6 +15,7 @@ import { authenticateRequest } from "@/middleware/auth.middleware";
 import cors from "cors";
 import http from "http";
 import { Server as WebSocketServer, ServerOptions } from "socket.io";
+import { WebSocketService } from "@/services";
 
 export class ServerSetup {
 	private container: Container;
@@ -23,7 +24,6 @@ export class ServerSetup {
 	private server: http.Server;
 	private gracefulShutdown: GracefulShutdown;
 	private controllerRegistry: ControllerRegistry;
-	// private io: WebSocketServer;
 
 	constructor(container: Container, port: number) {
 		this.container = container;
@@ -32,7 +32,7 @@ export class ServerSetup {
 		this.gracefulShutdown = GracefulShutdown.getInstance();
 		this.controllerRegistry = new ControllerRegistry(this.container);
 		this.server = http.createServer(this.app);
-		// this.io = this.setupWebSocket();
+		this.setupWebSocket();
 	}
 
 	public async initialize(): Promise<void> {
@@ -52,15 +52,10 @@ export class ServerSetup {
 		};
 		const wsServer = new WebSocketServer(this.server, ioOptions);
 
-		// this.io.on("connection", (socket) => {
-		// 	logger.info(`New WebSocket connection: ${socket.id}`);
-
-		// 	socket.on("disconnect", (reason) => {
-		// 		logger.info(
-		// 			`WebSocket disconnected: ${socket.id}, Reason: ${reason}`
-		// 		);
-		// 	});
-		// });
+		const webSocketService = this.container.get<WebSocketService>(
+			ETokens.WebSocketService
+		);
+		webSocketService.initialize(wsServer);
 
 		return wsServer;
 	}
@@ -95,14 +90,14 @@ export class ServerSetup {
 	}
 
 	private async start(): Promise<void> {
-		this.server = this.app.listen(this.port, "0.0.0.0", () => {
+		this.server.listen(this.port, "0.0.0.0", () => {
 			logger.info(`${APP_NAME} Server is running on port ${this.port}`);
 		});
 
 		this.gracefulShutdown.configure({
 			server: this.server,
 			container: this.container,
-			timeout: 30000, // 30 seconds
+			timeout: 30000,
 		});
 		this.gracefulShutdown.setup();
 	}

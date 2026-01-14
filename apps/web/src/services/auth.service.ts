@@ -29,6 +29,7 @@ import { EActionKeys } from "@/types/actions.types";
 import { crossTab } from "@/utils/cross-tab.utils";
 import { EFlaggers } from "@/constants/flaggers.constants";
 import { BrowsingService } from "./browsing.service";
+import { WebSocketService } from "./websocket.service";
 
 type AuthData = Partial<RegisterResponseDto>;
 
@@ -49,6 +50,10 @@ export class AuthService extends BaseService {
 
 	private get browsingService(): BrowsingService {
 		return this.container.get<BrowsingService>(ETokens.BrowsingService);
+	}
+
+	private get webSocketService(): WebSocketService {
+		return this.container.get<WebSocketService>(ETokens.WebSocketService);
 	}
 
 	private async storeAuthData(data: AuthData): Promise<void> {
@@ -81,6 +86,7 @@ export class AuthService extends BaseService {
 		this.dispatch(setAuthUser(null));
 		this.dispatch(clearEntities());
 		this.dispatch(resetPagers());
+		this.webSocketService.disconnect();
 	}
 
 	private async hasValidAuthData(): Promise<boolean> {
@@ -109,7 +115,8 @@ export class AuthService extends BaseService {
 					);
 
 				if (this.isSuccess(authenticateResponse)) {
-					this.storeAuthData(authenticateResponse.data);
+					await this.storeAuthData(authenticateResponse.data);
+					await this.webSocketService.connect();
 					return ServiceResponse.success(
 						this.MESSAGES.AUTH_SUCCESSFUL
 					);
