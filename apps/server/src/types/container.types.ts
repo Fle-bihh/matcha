@@ -12,6 +12,8 @@ export enum ETokens {
 	FileUploadService = "FileUploadService",
 	BrowsingRepository = "BrowsingRepository",
 	UserDeletionService = "UserDeletionService",
+	LikeRepository = "LikeRepository",
+	LikeService = "LikeService",
 }
 
 export interface IContainer {

@@ -5,6 +5,7 @@ import {
 	PasswordResetRepository,
 	BrowsingRepository,
 } from "@/repositories";
+import { LikeRepository } from "@/repositories/like.repository";
 import {
 	HealthService,
 	UserService,
@@ -15,6 +16,7 @@ import {
 	FileUploadService,
 	UserDeletionService,
 } from "@/services";
+import { LikeService } from "@/services/like.service";
 import { ETokens, IContainer } from "@/types";
 import { logger } from "@matcha/shared";
 
@@ -34,6 +36,8 @@ const serviceRegistry: Record<ETokens, ServiceConstructor> = {
 	[ETokens.FileUploadService]: FileUploadService,
 	[ETokens.BrowsingRepository]: BrowsingRepository,
 	[ETokens.UserDeletionService]: UserDeletionService,
+	[ETokens.LikeRepository]: LikeRepository,
+	[ETokens.LikeService]: LikeService,
 } as const;
 
 export class Container implements IContainer {
