@@ -21,7 +21,7 @@ function MatchesPageComp() {
 	const { isLoading } = useActionsData([EActionKeys.GetMatches]);
 
 	return (
-		<Container maxWidth="md" sx={{ py: 4, pb: 12 }}>
+		<Container maxWidth="xl" sx={{ py: 4, pb: 12 }}>
 			<Box
 				sx={{
 					display: "flex",
