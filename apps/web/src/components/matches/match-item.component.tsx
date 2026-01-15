@@ -7,12 +7,20 @@ import {
 	Typography,
 } from "@mui/material";
 import { Match } from "@matcha/shared";
+import { useRouting } from "@/hooks/routing.hooks";
+import { APP_ROUTES } from "@/constants";
 
 interface MatchItemProps {
 	match: Match;
 }
 
 export function MatchItem({ match }: MatchItemProps) {
+	const { push } = useRouting();
+
+	const handleClick = () => {
+		push(APP_ROUTES.user(String(match.user1_id)));
+	};
+
 	return (
 		<ListItem
 			sx={{
@@ -24,6 +32,7 @@ export function MatchItem({ match }: MatchItemProps) {
 					bgcolor: "action.hover",
 				},
 			}}
+			onClick={handleClick}
 		>
 			<ListItemAvatar>
 				<Avatar

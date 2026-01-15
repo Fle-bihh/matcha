@@ -2,6 +2,7 @@ import { ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import {
 	GetMatchesResponseDto,
+	logger,
 	MatchesFilterDto,
 	MatchWithDetails,
 	PaginatedResponse,
@@ -70,6 +71,14 @@ export class MatchService extends BaseService {
 					unread_conversations_count: unreadCount,
 				},
 			};
+
+			logger.info(
+				`Retrieved ${
+					matches.length
+				} matches for user ID ${userId}. Details: ${JSON.stringify(
+					response.data
+				)}`
+			);
 
 			return ServiceResponse.success(
 				"Matches retrieved successfully",

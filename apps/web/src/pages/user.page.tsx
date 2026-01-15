@@ -28,16 +28,42 @@ export function UserPage() {
 
 	if (!user) {
 		return (
-			<Box
-				sx={{
-					display: "flex",
-					justifyContent: "center",
-					alignItems: "center",
-					height: "100%",
-				}}
-			>
-				<Typography variant="h6">User not found in store</Typography>
-			</Box>
+			<Container maxWidth="xl" sx={{ py: 4, pb: 12 }}>
+				<Box
+					sx={{
+						position: "sticky",
+						top: 0,
+						zIndex: 10,
+						mb: 2,
+						ml: 2,
+					}}
+				>
+					<IconButton
+						onClick={goBack}
+						sx={{
+							bgcolor: "background.paper",
+							boxShadow: 1,
+							"&:hover": {
+								bgcolor: "action.hover",
+							},
+						}}
+					>
+						<ArrowBackIcon />
+					</IconButton>
+				</Box>
+				<Box
+					sx={{
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center",
+						height: "100%",
+					}}
+				>
+					<Typography variant="h6">
+						User not found in store
+					</Typography>
+				</Box>
+			</Container>
 		);
 	}
 

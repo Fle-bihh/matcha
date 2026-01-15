@@ -90,20 +90,20 @@ export class MatchRepository extends BaseRepository implements IRepository {
 				m.created_at,
 				m.updated_at,
 				m.deleted_at,
-				u.id as user_id,
-				u.first_name,
-				u.last_name,
-				u.gender,
-				u.orientation,
-				u.age,
-				u.bio,
-				u.pictures_urls,
-				u.interests,
-				u.location,
-				u.fame_score,
-				u.created_at as user_created_at,
-				u.updated_at as user_updated_at,
-				u.deleted_at as user_deleted_at,
+				COALESCE(u.id, u2.id) as user_id,
+				COALESCE(u.first_name, u2.first_name) as first_name,
+				COALESCE(u.last_name, u2.last_name) as last_name,
+				COALESCE(u.gender, u2.gender) as gender,
+				COALESCE(u.orientation, u2.orientation) as orientation,
+				COALESCE(u.age, u2.age) as age,
+				COALESCE(u.bio, u2.bio) as bio,
+				COALESCE(u.pictures_urls, u2.pictures_urls) as pictures_urls,
+				COALESCE(u.interests, u2.interests) as interests,
+				COALESCE(u.location, u2.location) as location,
+				COALESCE(u.fame_score, u2.fame_score) as fame_score,
+				COALESCE(u.created_at, u2.created_at) as user_created_at,
+				COALESCE(u.updated_at, u2.updated_at) as user_updated_at,
+				COALESCE(u.deleted_at, u2.deleted_at) as user_deleted_at,
 				msg.id as last_message_id,
 				msg.sender_id as last_message_sender_id,
 				msg.match_id as last_message_match_id,
@@ -113,8 +113,8 @@ export class MatchRepository extends BaseRepository implements IRepository {
 				msg.updated_at as last_message_updated_at,
 				msg.deleted_at as last_message_deleted_at
 			FROM matches m
-			LEFT JOIN users u ON (u.id = m.user2_id AND m.user1_id = ${userId})
-			LEFT JOIN users u2 ON (u2.id = m.user1_id AND m.user2_id = ${userId})
+			LEFT JOIN users u ON u.id = m.user2_id AND m.user1_id = ${userId}
+			LEFT JOIN users u2 ON u2.id = m.user1_id AND m.user2_id = ${userId}
 			LEFT JOIN LATERAL (
 				SELECT id, sender_id, match_id, content, is_read, created_at, updated_at, deleted_at
 				FROM messages
