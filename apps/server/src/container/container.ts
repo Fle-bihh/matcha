@@ -18,6 +18,7 @@ import {
 	UserDeletionService,
 } from "@/services";
 import { LikeService } from "@/services/like.service";
+import { MatchService } from "@/services/match.service";
 import { WebSocketService } from "@/services/websocket.service";
 import { ETokens, IContainer } from "@/types";
 import { logger } from "@matcha/shared";
@@ -42,6 +43,7 @@ const serviceRegistry: Record<ETokens, ServiceConstructor> = {
 	[ETokens.LikeService]: LikeService,
 	[ETokens.MatchRepository]: MatchRepository,
 	[ETokens.WebSocketService]: WebSocketService,
+	[ETokens.MatchService]: MatchService,
 } as const;
 
 export class Container implements IContainer {

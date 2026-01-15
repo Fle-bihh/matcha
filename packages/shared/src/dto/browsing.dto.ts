@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SortBy, SortOrder } from "../types";
+import { BrowsingSortBy, SortOrder } from "../types";
 
 export const BrowsingFiltersDtoSchema = z.object({
 	ageMin: z.coerce
@@ -35,7 +35,7 @@ export const BrowsingFiltersDtoSchema = z.object({
 				.filter((tag) => tag.length > 0)
 		)
 		.optional(),
-	sortBy: z.enum(SortBy).optional(),
+	sortBy: z.enum(BrowsingSortBy).optional(),
 	sortOrder: z.enum(SortOrder).optional(),
 });
 

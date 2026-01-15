@@ -4,6 +4,7 @@ export * from "./email-verification.models";
 export * from "./password-reset.models";
 export * from "./like.models";
 export * from "./match.models";
+export * from "./message.models";
 export * from "./profile-view.models";
 export * from "./report.models";
 export * from "./block.models";

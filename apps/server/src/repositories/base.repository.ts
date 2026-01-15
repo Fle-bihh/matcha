@@ -1,114 +1,114 @@
 import { BaseEntity, OmitBaseEntity } from "@matcha/shared";
 import {
-  DatabaseConnectionManager,
-  DatabaseOperations,
-  DatabaseSchemaManager,
+	DatabaseConnectionManager,
+	DatabaseOperations,
+	DatabaseSchemaManager,
 } from "./db";
 import { IContainer } from "@/types";
 
 export class BaseRepository {
-  protected container: IContainer;
-  private connectionManager: DatabaseConnectionManager;
-  private operations: DatabaseOperations;
-  private schemaManager: DatabaseSchemaManager;
+	protected container: IContainer;
+	private connectionManager: DatabaseConnectionManager;
+	private operations: DatabaseOperations;
+	private schemaManager: DatabaseSchemaManager;
 
-  constructor(container: IContainer) {
-    this.container = container;
-    this.connectionManager = DatabaseConnectionManager.getInstance();
-    this.operations = new DatabaseOperations();
-    this.schemaManager = new DatabaseSchemaManager();
-  }
+	constructor(container: IContainer) {
+		this.container = container;
+		this.connectionManager = DatabaseConnectionManager.getInstance();
+		this.operations = new DatabaseOperations();
+		this.schemaManager = new DatabaseSchemaManager();
+	}
 
-  async connect(): Promise<void> {
-    return this.connectionManager.connect();
-  }
+	async connect(): Promise<void> {
+		return this.connectionManager.connect();
+	}
 
-  async disconnect(): Promise<void> {
-    return this.connectionManager.disconnect();
-  }
+	async disconnect(): Promise<void> {
+		return this.connectionManager.disconnect();
+	}
 
-  async createDocument<T extends BaseEntity>(
-    tableName: string,
-    data: OmitBaseEntity<T>
-  ): Promise<T & BaseEntity> {
-    return this.operations.createDocument<T>(tableName, data);
-  }
+	async createDocument<T extends BaseEntity>(
+		tableName: string,
+		data: OmitBaseEntity<T>
+	): Promise<T & BaseEntity> {
+		return this.operations.createDocument<T>(tableName, data);
+	}
 
-  async updateDoc<T extends BaseEntity>(
-    tableName: string,
-    id: number,
-    data: Partial<OmitBaseEntity<T>>
-  ): Promise<(T & BaseEntity) | null> {
-    return this.operations.updateDoc<T>(tableName, id, data);
-  }
+	async updateDoc<T extends BaseEntity>(
+		tableName: string,
+		id: number,
+		data: Partial<OmitBaseEntity<T>>
+	): Promise<(T & BaseEntity) | null> {
+		return this.operations.updateDoc<T>(tableName, id, data);
+	}
 
-  async deleteDoc(tableName: string, id: number): Promise<boolean> {
-    return this.operations.deleteDoc(tableName, id);
-  }
+	async deleteDoc(tableName: string, id: number): Promise<boolean> {
+		return this.operations.deleteDoc(tableName, id);
+	}
 
-  async hardDeleteDoc(tableName: string, id: number): Promise<boolean> {
-    return this.operations.hardDeleteDoc(tableName, id);
-  }
+	async hardDeleteDoc(tableName: string, id: number): Promise<boolean> {
+		return this.operations.hardDeleteDoc(tableName, id);
+	}
 
-  async getDoc<T extends BaseEntity>(
-    tableName: string,
-    id: number,
-    includeDeleted: boolean = false
-  ): Promise<(T & BaseEntity) | null> {
-    return this.operations.getDoc<T>(tableName, id, includeDeleted);
-  }
+	async getDoc<T extends BaseEntity>(
+		tableName: string,
+		id: number,
+		includeDeleted: boolean = false
+	): Promise<(T & BaseEntity) | null> {
+		return this.operations.getDoc<T>(tableName, id, includeDeleted);
+	}
 
-  async getDocs<T extends BaseEntity>(
-    tableName: string,
-    options: {
-      where?: string;
-      values?: any[];
-      orderBy?: string;
-      limit?: number;
-      offset?: number;
-      includeDeleted?: boolean;
-    } = {}
-  ): Promise<(T & BaseEntity)[]> {
-    return this.operations.getDocs<T>(tableName, options);
-  }
+	async getDocs<T extends BaseEntity>(
+		tableName: string,
+		options: {
+			where?: string;
+			values?: any[];
+			orderBy?: string;
+			limit?: number;
+			offset?: number;
+			includeDeleted?: boolean;
+		} = {}
+	): Promise<(T & BaseEntity)[]> {
+		return this.operations.getDocs<T>(tableName, options);
+	}
 
-  async countDocs(
-    tableName: string,
-    options: {
-      where?: string;
-      values?: any[];
-      includeDeleted?: boolean;
-    } = {}
-  ): Promise<number> {
-    return this.operations.countDocs(tableName, options);
-  }
+	async countDocs(
+		tableName: string,
+		options: {
+			where?: string;
+			values?: any[];
+			includeDeleted?: boolean;
+		} = {}
+	): Promise<number> {
+		return this.operations.countDocs(tableName, options);
+	}
 
-  async restoreDoc(tableName: string, id: number): Promise<boolean> {
-    return this.operations.restoreDoc(tableName, id);
-  }
+	async restoreDoc(tableName: string, id: number): Promise<boolean> {
+		return this.operations.restoreDoc(tableName, id);
+	}
 
-  async createTableWithMetadata(
-    tableName: string,
-    fields: string,
-    additionalConstraints: string = ""
-  ): Promise<void> {
-    return this.schemaManager.createTableWithMetadata(
-      tableName,
-      fields,
-      additionalConstraints
-    );
-  }
+	async createTableWithMetadata(
+		tableName: string,
+		fields: string,
+		additionalConstraints: string = ""
+	): Promise<void> {
+		return this.schemaManager.createTableWithMetadata(
+			tableName,
+			fields,
+			additionalConstraints
+		);
+	}
 
-  async ensureMetadataColumns(tableName: string): Promise<void> {
-    await this.schemaManager.ensureMetadataColumns(tableName);
-    this.operations.clearMetadataCache(tableName);
-  }
+	async ensureMetadataColumns(tableName: string): Promise<void> {
+		await this.schemaManager.ensureMetadataColumns(tableName);
+		this.operations.clearMetadataCache(tableName);
+	}
 
-  async hasMetadataColumns(tableName: string): Promise<boolean> {
-    return this.schemaManager.hasMetadataColumns(tableName);
-  }
+	async hasMetadataColumns(tableName: string): Promise<boolean> {
+		return this.schemaManager.hasMetadataColumns(tableName);
+	}
 
-  clearMetadataCache(tableName?: string): void {
-    this.operations.clearMetadataCache(tableName);
-  }
+	clearMetadataCache(tableName?: string): void {
+		this.operations.clearMetadataCache(tableName);
+	}
 }

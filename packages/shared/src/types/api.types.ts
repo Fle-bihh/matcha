@@ -19,16 +19,10 @@ export interface PaginationMeta {
 	hasPreviousPage: boolean;
 }
 
-export interface PaginatedResponse<T> {
+export interface PaginatedResponse<T, U = undefined> {
 	data: T[];
+	extraData?: U;
 	meta: PaginationMeta;
-}
-
-export enum SortBy {
-	Age = "age",
-	Distance = "distance",
-	FameRating = "fame_rating",
-	CommonTags = "common_tags",
 }
 
 export enum SortOrder {

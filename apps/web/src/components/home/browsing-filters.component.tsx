@@ -20,7 +20,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import {
 	USER_INTERESTS,
 	BrowsingFilters,
-	SortBy,
+	BrowsingSortBy,
 	SortOrder,
 } from "@matcha/shared";
 import { useBrowsingContext } from "@/contexts/browsing.context";
@@ -204,16 +204,28 @@ export function BrowsingFiltersComponent() {
 											<MenuItem value="">
 												<em>None</em>
 											</MenuItem>
-											<MenuItem value={SortBy.Age}>
+											<MenuItem
+												value={BrowsingSortBy.Age}
+											>
 												Age
 											</MenuItem>
-											<MenuItem value={SortBy.Distance}>
+											<MenuItem
+												value={BrowsingSortBy.Distance}
+											>
 												Distance
 											</MenuItem>
-											<MenuItem value={SortBy.FameRating}>
+											<MenuItem
+												value={
+													BrowsingSortBy.FameRating
+												}
+											>
 												Fame Rating
 											</MenuItem>
-											<MenuItem value={SortBy.CommonTags}>
+											<MenuItem
+												value={
+													BrowsingSortBy.CommonTags
+												}
+											>
 												Common Tags
 											</MenuItem>
 										</Select>

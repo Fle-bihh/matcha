@@ -27,6 +27,9 @@ export const API_ROUTES = {
 	like: {
 		like: "/",
 	},
+	match: {
+		"get-matches": "/",
+	},
 } as const;
 
 export type RouteGroups = keyof typeof API_ROUTES;

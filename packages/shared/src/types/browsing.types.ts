@@ -1,4 +1,11 @@
-import { PaginationParams, SortBy, SortOrder } from "./api.types";
+import { PaginationParams, SortOrder } from "./api.types";
+
+export enum BrowsingSortBy {
+	Age = "age",
+	Distance = "distance",
+	FameRating = "fame_rating",
+	CommonTags = "common_tags",
+}
 
 export interface BrowsingFilters {
 	ageMin?: number;
@@ -7,7 +14,7 @@ export interface BrowsingFilters {
 	fameMin?: number;
 	fameMax?: number;
 	interests?: string[];
-	sortBy?: SortBy;
+	sortBy?: BrowsingSortBy;
 	sortOrder?: SortOrder;
 }
 

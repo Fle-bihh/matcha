@@ -16,6 +16,7 @@ export enum ETokens {
 	LikeService = "LikeService",
 	MatchRepository = "MatchRepository",
 	WebSocketService = "WebSocketService",
+	MatchService = "MatchService",
 }
 
 export interface IContainer {

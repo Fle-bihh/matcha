@@ -38,6 +38,8 @@ export class MatchRepository extends BaseRepository {
 			return await this.createDocument<Match>(this.tableName, {
 				user1_id,
 				user2_id,
+				unread_messages_count_user1: 0,
+				unread_messages_count_user2: 0,
 			});
 		} catch (error) {
 			logger.error("Error creating match:", error);
