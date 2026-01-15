@@ -9,20 +9,17 @@ import {
 	BrowsingFiltersDto,
 } from "@matcha/shared";
 import { ETokens, IContainer } from "@/types";
+import { IRepository, TableSchema } from "@/types/repository.types";
 import { config } from "@/config";
 import { HashUtils } from "@/utils/hash.utils";
 import { generateRandomUsers } from "@/utils/seed-users.utils";
 import { BrowsingRepository } from "./browsing.repository";
 
-export class UserRepository extends BaseRepository {
+export class UserRepository extends BaseRepository implements IRepository {
 	private readonly tableName = "users";
 
 	constructor(container: IContainer) {
 		super(container);
-
-		this.initializeTable().catch((err) => {
-			logger.error("Error initializing UserRepository table:", err);
-		});
 	}
 
 	private get browsingRepository(): BrowsingRepository {
@@ -60,10 +57,10 @@ export class UserRepository extends BaseRepository {
 		fame_score: 0,
 	};
 
-	private async initializeTable(): Promise<void> {
-		await this.createTableWithMetadata(
-			this.tableName,
-			`username VARCHAR(30) NOT NULL UNIQUE,
+	public loadTableSchema(): TableSchema {
+		return {
+			tableName: this.tableName,
+			fields: `username VARCHAR(30) NOT NULL UNIQUE,
 			 email VARCHAR(255) UNIQUE NOT NULL,
 			 first_name VARCHAR(50) NOT NULL,
 			 last_name VARCHAR(50) NOT NULL,
@@ -77,13 +74,12 @@ export class UserRepository extends BaseRepository {
        pictures_urls JSON,
        interests JSON,
        location JSON,
-       fame_score INTEGER NOT NULL DEFAULT 0`
-		);
-
-		await this.seedDatabaseIfEmpty();
+       fame_score INTEGER NOT NULL DEFAULT 0`,
+			constraints: "",
+		};
 	}
 
-	private async seedDatabaseIfEmpty(): Promise<void> {
+	public async seedDatabaseIfEmpty(): Promise<void> {
 		try {
 			const count = await this.countDocs(this.tableName);
 

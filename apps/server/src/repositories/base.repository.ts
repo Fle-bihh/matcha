@@ -72,6 +72,13 @@ export class BaseRepository {
 		return this.operations.getDocs<T>(tableName, options);
 	}
 
+	async executeQuery<T>(
+		query: string,
+		values: any[] = []
+	): Promise<[T[], any]> {
+		return this.connectionManager.executeQuery<T>(query, values);
+	}
+
 	async countDocs(
 		tableName: string,
 		options: {

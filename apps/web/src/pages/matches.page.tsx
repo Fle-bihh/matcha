@@ -1,36 +1,85 @@
-import { Container, Typography, Box, List, Paper } from "@mui/material";
+import {
+	Container,
+	Typography,
+	Box,
+	List,
+	Paper,
+	IconButton,
+	Button,
+	CircularProgress,
+} from "@mui/material";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import { MatchItem } from "@/components/matches/match-item.component";
 import { withProfileCompleteComponent } from "@/components/utils/with-condition-component.component";
 import { ProfileUncomplete } from "./profile-uncomplete.page";
 import { useMatches } from "@/hooks/matches.hook";
+import { useActionsData } from "@/hooks/actions.hooks";
+import { EActionKeys } from "@/types/actions.types";
 
 function MatchesPageComp() {
-	const { matches } = useMatches();
+	const { matches, meta, fetchNextPage, refresh, hasNextPage } = useMatches();
+	const { isLoading } = useActionsData([EActionKeys.GetMatches]);
 
 	return (
 		<Container maxWidth="md" sx={{ py: 4, pb: 12 }}>
-			<Box sx={{ mb: 4 }}>
-				<Typography variant="h4" component="h1" fontWeight={600}>
-					Matches
-				</Typography>
-				<Typography
-					variant="body2"
-					color="text.secondary"
-					sx={{ mt: 1 }}
-				>
-					{matches.length}{" "}
-					{matches.length === 1 ? "match" : "matches"}
-				</Typography>
+			<Box
+				sx={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+					mb: 4,
+				}}
+			>
+				<Box>
+					<Typography variant="h4" component="h1" fontWeight={600}>
+						Matches
+					</Typography>
+					<Typography
+						variant="body2"
+						color="text.secondary"
+						sx={{ mt: 1 }}
+					>
+						{meta?.total ?? 0}{" "}
+						{(meta?.total ?? 0) === 1 ? "match" : "matches"}
+					</Typography>
+				</Box>
+				<IconButton onClick={refresh} color="primary">
+					<RefreshIcon />
+				</IconButton>
 			</Box>
 
-			{matches.length > 0 ? (
-				<Paper elevation={0} variant="outlined">
-					<List disablePadding>
-						{matches.map((match) => (
-							<MatchItem key={match.id} match={match} />
-						))}
-					</List>
-				</Paper>
+			{isLoading && matches.length === 0 ? (
+				<Box
+					sx={{
+						display: "flex",
+						justifyContent: "center",
+						py: 8,
+					}}
+				>
+					<CircularProgress />
+				</Box>
+			) : matches.length > 0 ? (
+				<>
+					<Paper elevation={0} variant="outlined">
+						<List disablePadding>
+							{matches.map((match) => (
+								<MatchItem key={match.id} match={match} />
+							))}
+						</List>
+					</Paper>
+
+					{hasNextPage && (
+						<Box sx={{ mt: 3, textAlign: "center" }}>
+							<Button
+								onClick={fetchNextPage}
+								variant="outlined"
+								disabled={isLoading}
+							>
+								{isLoading ? "Loading..." : "Load More"}
+							</Button>
+						</Box>
+					)}
+				</>
 			) : (
 				<Box
 					sx={{

@@ -60,7 +60,9 @@ export class WebSocketService extends BaseService {
 			}
 		});
 
-		this.handlers.forEach((handler) => handler.register(this.socket!));
+		this.handlers.forEach((handler) => {
+			handler.register(this.socket!);
+		});
 
 		this.socket.on("connect_error", (error: Error) => {
 			if (!error.message.includes("xhr poll error")) {

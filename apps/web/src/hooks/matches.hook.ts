@@ -1,13 +1,39 @@
+import { useCallback } from "react";
 import { useSelector } from "react-redux";
-import { useAuthUser } from "./auth.hook";
-import { selectAllEntities } from "@/store/selectors/entity.selectors";
+import { usePager } from "./pagination.hook";
+import { useDispatchActions } from "./actions.hooks";
+import { MatchActions, selectAllEntities } from "@/store";
+import { EPagerKeys } from "@/constants";
 import { EEntityTypes } from "@/types";
-import { Match } from "@matcha/shared";
+import { MatchWithDetails, MatchesParams } from "@matcha/shared";
+import { PaginationDto } from "@/types/api.types";
 
 export function useMatches() {
-	const matches = useSelector(selectAllEntities<Match>(EEntityTypes.Matches));
+	const { getMatches } = useDispatchActions({
+		...MatchActions,
+	});
+
+	const allMatches = useSelector(
+		selectAllEntities<MatchWithDetails>(EEntityTypes.Matches)
+	);
+
+	const buildParams = useCallback(
+		(pagination: PaginationDto): MatchesParams => ({
+			...pagination,
+		}),
+		[]
+	);
+
+	const pager = usePager<MatchWithDetails, MatchesParams>({
+		pagerKey: EPagerKeys.Matches,
+		entityType: EEntityTypes.Matches,
+		fn: getMatches,
+		buildParams,
+		loadData: false,
+	});
 
 	return {
-		matches,
+		...pager,
+		matches: allMatches,
 	};
 }

@@ -1,30 +1,25 @@
 import { BaseRepository } from "./base.repository";
 import { Like, logger } from "@matcha/shared";
 import { IContainer } from "@/types";
+import { IRepository, TableSchema } from "@/types/repository.types";
 
-export class LikeRepository extends BaseRepository {
+export class LikeRepository extends BaseRepository implements IRepository {
 	private readonly tableName = "likes";
 
 	constructor(container: IContainer) {
 		super(container);
-
-		this.initializeTable().catch((err) => {
-			logger.error("Error initializing LikeRepository table:", err);
-		});
 	}
 
-	private async initializeTable(): Promise<void> {
-		await this.createTableWithMetadata(
-			this.tableName,
-			`
+	public loadTableSchema(): TableSchema {
+		return {
+			tableName: this.tableName,
+			fields: `
 				liker_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 				liked_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 			`,
-			`CONSTRAINT unique_like UNIQUE (liker_id, liked_id),
-			 CONSTRAINT no_self_like CHECK (liker_id != liked_id)`
-		);
-
-		logger.info(`${this.tableName} table initialized`);
+			constraints: `CONSTRAINT unique_like UNIQUE (liker_id, liked_id),
+			 CONSTRAINT no_self_like CHECK (liker_id != liked_id)`,
+		};
 	}
 
 	public async createLike(

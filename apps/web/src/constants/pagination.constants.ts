@@ -1,5 +1,6 @@
 export enum EPagerKeys {
-  Users = "users",
+	Users = "users",
+	Matches = "matches",
 }
 
 export const DEFAULT_PAGE_SIZE = 20;

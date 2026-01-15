@@ -7,6 +7,7 @@ import {
 } from "@/repositories";
 import { LikeRepository } from "@/repositories/like.repository";
 import { MatchRepository } from "@/repositories/match.repository";
+import { MessageRepository } from "@/repositories/message.repository";
 import {
 	HealthService,
 	UserService,
@@ -20,8 +21,9 @@ import {
 import { LikeService } from "@/services/like.service";
 import { MatchService } from "@/services/match.service";
 import { WebSocketService } from "@/services/websocket.service";
-import { ETokens, IContainer } from "@/types";
+import { ETokens, IContainer, REPOSITORY_TOKENS } from "@/types";
 import { logger } from "@matcha/shared";
+import { IRepository } from "@/types/repository.types";
 
 type ServiceConstructor = new (container: IContainer) => any;
 
@@ -42,6 +44,7 @@ const serviceRegistry: Record<ETokens, ServiceConstructor> = {
 	[ETokens.LikeRepository]: LikeRepository,
 	[ETokens.LikeService]: LikeService,
 	[ETokens.MatchRepository]: MatchRepository,
+	[ETokens.MessageRepository]: MessageRepository,
 	[ETokens.WebSocketService]: WebSocketService,
 	[ETokens.MatchService]: MatchService,
 } as const;
@@ -76,6 +79,10 @@ export class Container implements IContainer {
 
 	public getInstantiatedTokens(): ETokens[] {
 		return Array.from(this.instances.keys());
+	}
+
+	public getRepositories(): IRepository[] {
+		return REPOSITORY_TOKENS.map((token) => this.get<IRepository>(token));
 	}
 
 	public clear(): void {

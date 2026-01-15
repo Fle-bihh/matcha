@@ -1,30 +1,30 @@
 import { BaseRepository } from "./base.repository";
-import { Match, logger } from "@matcha/shared";
-import { IContainer } from "@/types";
+import { Match, MatchWithDetails, User, Message, logger } from "@matcha/shared";
+import { IContainer, ETokens } from "@/types";
+import { IRepository, TableSchema } from "@/types/repository.types";
+import { MessageRepository } from "./message.repository";
 
-export class MatchRepository extends BaseRepository {
+export class MatchRepository extends BaseRepository implements IRepository {
 	private readonly tableName = "matches";
 
 	constructor(container: IContainer) {
 		super(container);
 
-		this.initializeTable().catch((err) => {
-			logger.error("Error initializing MatchRepository table:", err);
-		});
+		container.get<MessageRepository>(ETokens.MessageRepository);
 	}
 
-	private async initializeTable(): Promise<void> {
-		await this.createTableWithMetadata(
-			this.tableName,
-			`
+	public loadTableSchema(): TableSchema {
+		return {
+			tableName: this.tableName,
+			fields: `
 				user1_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-				user2_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
+				user2_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+				unread_messages_count_user1 INTEGER DEFAULT 0 NOT NULL,
+				unread_messages_count_user2 INTEGER DEFAULT 0 NOT NULL
 			`,
-			`CONSTRAINT unique_match UNIQUE (user1_id, user2_id),
-			 CONSTRAINT ordered_users CHECK (user1_id < user2_id)`
-		);
-
-		logger.info(`${this.tableName} table initialized`);
+			constraints: `CONSTRAINT unique_match UNIQUE (user1_id, user2_id),
+			 CONSTRAINT ordered_users CHECK (user1_id < user2_id)`,
+		};
 	}
 
 	public async createMatch(
@@ -44,6 +44,180 @@ export class MatchRepository extends BaseRepository {
 		} catch (error) {
 			logger.error("Error creating match:", error);
 			return null;
+		}
+	}
+
+	public async getMatchesWithDetails(
+		userId: number,
+		limit: number,
+		offset: number,
+		unreadOnly: boolean
+	): Promise<MatchWithDetails[]> {
+		try {
+			const query = this.buildMatchesQuery(
+				userId,
+				limit,
+				offset,
+				unreadOnly
+			);
+			const [rows] = await this.executeQuery<any>(query, []);
+			return rows.map((row) =>
+				this.mapRowToMatchWithDetails(row, userId)
+			);
+		} catch (error) {
+			logger.error("Error fetching matches with details:", error);
+			throw error;
+		}
+	}
+
+	private buildMatchesQuery(
+		userId: number,
+		limit: number,
+		offset: number,
+		unreadOnly: boolean
+	): string {
+		const unreadFilter = unreadOnly
+			? `AND ((m.user1_id = ${userId} AND m.unread_messages_count_user1 > 0) OR (m.user2_id = ${userId} AND m.unread_messages_count_user2 > 0))`
+			: "";
+
+		return `
+			SELECT 
+				m.id,
+				m.user1_id,
+				m.user2_id,
+				m.unread_messages_count_user1,
+				m.unread_messages_count_user2,
+				m.created_at,
+				m.updated_at,
+				m.deleted_at,
+				u.id as user_id,
+				u.first_name,
+				u.last_name,
+				u.gender,
+				u.orientation,
+				u.age,
+				u.bio,
+				u.pictures_urls,
+				u.interests,
+				u.location,
+				u.fame_score,
+				u.created_at as user_created_at,
+				u.updated_at as user_updated_at,
+				u.deleted_at as user_deleted_at,
+				msg.id as last_message_id,
+				msg.sender_id as last_message_sender_id,
+				msg.match_id as last_message_match_id,
+				msg.content as last_message_content,
+				msg.is_read as last_message_is_read,
+				msg.created_at as last_message_created_at,
+				msg.updated_at as last_message_updated_at,
+				msg.deleted_at as last_message_deleted_at
+			FROM matches m
+			LEFT JOIN users u ON (u.id = m.user2_id AND m.user1_id = ${userId})
+			LEFT JOIN users u2 ON (u2.id = m.user1_id AND m.user2_id = ${userId})
+			LEFT JOIN LATERAL (
+				SELECT id, sender_id, match_id, content, is_read, created_at, updated_at, deleted_at
+				FROM messages
+				WHERE match_id = m.id AND deleted_at IS NULL
+				ORDER BY created_at DESC
+				LIMIT 1
+			) msg ON true
+			WHERE (m.user1_id = ${userId} OR m.user2_id = ${userId})
+				AND m.deleted_at IS NULL
+				AND (u.deleted_at IS NULL OR u2.deleted_at IS NULL)
+				${unreadFilter}
+			ORDER BY COALESCE(msg.created_at, m.created_at) DESC
+			LIMIT ${limit} OFFSET ${offset}
+		`;
+	}
+
+	private mapRowToMatchWithDetails(
+		row: any,
+		userId: number
+	): MatchWithDetails {
+		return {
+			...this.mapRowToMatch(row),
+			other_user: this.mapRowToUser(row),
+			last_message: this.mapRowToMessage(row),
+			unread_conversations_count: this.getUnreadCount(row, userId),
+		};
+	}
+
+	private mapRowToMatch(row: any): Match {
+		return {
+			id: row.id,
+			user1_id: row.user1_id,
+			user2_id: row.user2_id,
+			unread_messages_count_user1: row.unread_messages_count_user1,
+			unread_messages_count_user2: row.unread_messages_count_user2,
+			created_at: row.created_at,
+			updated_at: row.updated_at,
+			deleted_at: row.deleted_at,
+		};
+	}
+
+	private mapRowToUser(row: any): User {
+		return {
+			id: row.user_id,
+			first_name: row.first_name,
+			last_name: row.last_name,
+			gender: row.gender,
+			orientation: row.orientation,
+			age: row.age,
+			bio: row.bio,
+			pictures_urls: row.pictures_urls,
+			interests: row.interests,
+			location: row.location,
+			fame_score: row.fame_score,
+			created_at: row.user_created_at,
+			updated_at: row.user_updated_at,
+			deleted_at: row.user_deleted_at,
+		};
+	}
+
+	private mapRowToMessage(row: any): Message | null {
+		if (!row.last_message_id) return null;
+
+		return {
+			id: row.last_message_id,
+			sender_id: row.last_message_sender_id,
+			match_id: row.last_message_match_id,
+			content: row.last_message_content,
+			is_read: row.last_message_is_read,
+			created_at: row.last_message_created_at,
+			updated_at: row.last_message_updated_at,
+			deleted_at: row.last_message_deleted_at,
+		};
+	}
+
+	private getUnreadCount(row: any, userId: number): number {
+		return row.user1_id === userId
+			? row.unread_messages_count_user1
+			: row.unread_messages_count_user2;
+	}
+
+	public async countMatches(
+		userId: number,
+		unreadOnly: boolean
+	): Promise<number> {
+		try {
+			const unreadFilter = unreadOnly
+				? `AND ((m.user1_id = ${userId} AND m.unread_messages_count_user1 > 0) OR (m.user2_id = ${userId} AND m.unread_messages_count_user2 > 0))`
+				: "";
+
+			const query = `
+				SELECT COUNT(*) as count
+				FROM matches m
+				WHERE (m.user1_id = ${userId} OR m.user2_id = ${userId})
+					AND m.deleted_at IS NULL
+					${unreadFilter}
+			`;
+
+			const [rows] = await this.executeQuery<any>(query, []);
+			return rows[0].count;
+		} catch (error) {
+			logger.error("Error counting matches:", error);
+			throw error;
 		}
 	}
 }

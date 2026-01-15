@@ -5,3 +5,4 @@ export { PasswordResetRepository } from "./password-reset.repository";
 export { BrowsingRepository } from "./browsing.repository";
 export { LikeRepository } from "./like.repository";
 export { MatchRepository } from "./match.repository";
+export { MessageRepository } from "./message.repository";

@@ -7,9 +7,18 @@ import {
 import { QueryOptions } from "@/types/db.types";
 import { ETokens } from "@/types";
 import { BaseRepository, UserRepository } from "@/repositories";
+import { IRepository, TableSchema } from "@/types/repository.types";
 
-export class BrowsingRepository extends BaseRepository {
+export class BrowsingRepository extends BaseRepository implements IRepository {
 	private readonly MAX_DISTANCE_KM = 999999;
+
+	public loadTableSchema(): TableSchema {
+		return {
+			tableName: "",
+			fields: "",
+			constraints: "",
+		};
+	}
 
 	private get userRepository(): UserRepository {
 		return this.container.get<UserRepository>(ETokens.UserRepository);

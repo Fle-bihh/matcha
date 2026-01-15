@@ -3,19 +3,84 @@ import { BaseService } from "./base.service";
 import {
 	GetMatchesResponseDto,
 	MatchesFilterDto,
+	MatchWithDetails,
 	PaginatedResponse,
 	PaginationParams,
+	StatusCodes,
 } from "@matcha/shared";
+import { MatchRepository } from "@/repositories";
+import { ETokens } from "@/types/container.types";
+import { IContainer } from "@/types";
 
 export class MatchService extends BaseService {
+	private matchRepository: MatchRepository;
+
+	constructor(container: IContainer) {
+		super(container);
+		this.matchRepository = this.container.get<MatchRepository>(
+			ETokens.MatchRepository
+		);
+	}
+
 	public async getMatches(
 		userId: number,
 		pagination: PaginationParams,
 		filters: MatchesFilterDto
 	): Promise<
-		ServiceResponse<PaginatedResponse<GetMatchesResponseDto> | null>
+		ServiceResponse<PaginatedResponse<
+			MatchWithDetails,
+			GetMatchesResponseDto
+		> | null>
 	> {
-		// Implementation here
-		return ServiceResponse.success("Matches retrieved successfully", null);
+		try {
+			const unreadOnly = filters.unread_only ?? false;
+			const offset = (pagination.page - 1) * pagination.limit;
+
+			const [matches, totalCount] = await Promise.all([
+				this.matchRepository.getMatchesWithDetails(
+					userId,
+					pagination.limit,
+					offset,
+					unreadOnly
+				),
+				this.matchRepository.countMatches(userId, unreadOnly),
+			]);
+
+			const unreadCount = await this.matchRepository.countMatches(
+				userId,
+				true
+			);
+
+			const totalPages = Math.ceil(totalCount / pagination.limit);
+
+			const response: PaginatedResponse<
+				MatchWithDetails,
+				GetMatchesResponseDto
+			> = {
+				data: matches,
+				meta: {
+					page: pagination.page,
+					limit: pagination.limit,
+					total: totalCount,
+					totalPages,
+					hasNextPage: pagination.page < totalPages,
+					hasPreviousPage: pagination.page > 1,
+				},
+				extraData: {
+					unread_conversations_count: unreadCount,
+				},
+			};
+
+			return ServiceResponse.success(
+				"Matches retrieved successfully",
+				response
+			);
+		} catch (error) {
+			return ServiceResponse.failure(
+				"Failed to retrieve matches",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
 	}
 }

@@ -203,6 +203,14 @@ export class DatabaseOperations {
 		return rows as (T & BaseEntity)[];
 	}
 
+	async executeQuery<T>(
+		query: string,
+		values: any[] = []
+	): Promise<[T[], any]> {
+		const pool = this.connectionManager.getPool();
+		return pool.execute(query, values) as Promise<[T[], any]>;
+	}
+
 	async countDocs(
 		tableName: string,
 		options: {

@@ -7,6 +7,7 @@ import {
 	SnackbarService,
 	BrowsingService,
 	LikeService,
+	MatchService,
 	WebSocketService,
 } from "@/services";
 import { LocationService } from "@/services/location.service";
@@ -28,6 +29,7 @@ const serviceConstructors: Record<ETokens, ServiceConstructor> = {
 	[ETokens.LocationService]: LocationService,
 	[ETokens.BrowsingService]: BrowsingService,
 	[ETokens.LikeService]: LikeService,
+	[ETokens.MatchService]: MatchService,
 	[ETokens.WebSocketService]: WebSocketService,
 } as const;
 

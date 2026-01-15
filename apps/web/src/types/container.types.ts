@@ -10,6 +10,7 @@ export enum ETokens {
 	LocationService = "LocationService",
 	BrowsingService = "BrowsingService",
 	LikeService = "LikeService",
+	MatchService = "MatchService",
 	WebSocketService = "WebSocketService",
 }
 

@@ -29,6 +29,7 @@ import { EActionKeys } from "@/types/actions.types";
 import { crossTab } from "@/utils/cross-tab.utils";
 import { EFlaggers } from "@/constants/flaggers.constants";
 import { BrowsingService } from "./browsing.service";
+import { MatchService } from "./match.service";
 import { WebSocketService } from "./websocket.service";
 
 type AuthData = Partial<RegisterResponseDto>;
@@ -50,6 +51,10 @@ export class AuthService extends BaseService {
 
 	private get browsingService(): BrowsingService {
 		return this.container.get<BrowsingService>(ETokens.BrowsingService);
+	}
+
+	private get matchService(): MatchService {
+		return this.container.get<MatchService>(ETokens.MatchService);
 	}
 
 	private get webSocketService(): WebSocketService {
@@ -77,6 +82,8 @@ export class AuthService extends BaseService {
 			this.dispatch(setAuthUser(user));
 			if (user.is_profile_complete) {
 				this.browsingService.loadBrowsingFilters();
+				this.webSocketService.connect();
+				this.matchService.getMatches({ page: 1, limit: 10 });
 			}
 		}
 	}
@@ -116,7 +123,6 @@ export class AuthService extends BaseService {
 
 				if (this.isSuccess(authenticateResponse)) {
 					await this.storeAuthData(authenticateResponse.data);
-					await this.webSocketService.connect();
 					return ServiceResponse.success(
 						this.MESSAGES.AUTH_SUCCESSFUL
 					);
