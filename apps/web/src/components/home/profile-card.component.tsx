@@ -3,6 +3,8 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { AuthImage, FameScore } from "@/components/utils";
 import MockImage from "@/assets/imperial-stormtrooper-picture.png";
 import { StoreUser } from "@/types";
+import { useRouting } from "@/hooks/routing.hooks";
+import { APP_ROUTES } from "@/constants";
 
 interface ProfileCardProps {
 	user: StoreUser;
@@ -11,10 +13,16 @@ interface ProfileCardProps {
 export function ProfileCard({ user }: ProfileCardProps) {
 	const mainPicture = user.pictures_urls?.[0] ?? null;
 	const age = user.age || "N/A";
+	const { push } = useRouting();
+
+	const handleClick = () => {
+		push(APP_ROUTES.user(String(user.id)));
+	};
 
 	return (
 		<Box sx={{ position: "relative", width: "100%" }}>
 			<Card
+				onClick={handleClick}
 				sx={{
 					width: "100%",
 					aspectRatio: "1/1",

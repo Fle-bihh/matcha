@@ -13,6 +13,7 @@ import { ProfilePreviewPage } from "@/pages/profile/profile-preview.page";
 import { ProfilePicturesPage } from "@/pages/profile/profile-pictures.page";
 import { ProfileInterestsPage } from "@/pages/profile/profile-interests.page";
 import { ProfileLocationPage } from "@/pages/profile/profile-location.page";
+import { UserPage } from "@/pages/user.page";
 
 export function Router() {
 	return (
@@ -34,6 +35,7 @@ export function Router() {
 				element={withLoggedIn(ProtectedLayout)()}
 			>
 				<Route index element={<HomePage />} />
+				<Route path={APP_PAGES.user} element={<UserPage />} />
 				<Route path={APP_PAGES.matches} element={<MatchesPage />} />
 				<Route
 					path={APP_PAGES.profile}
