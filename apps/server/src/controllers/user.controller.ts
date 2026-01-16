@@ -8,6 +8,7 @@ import {
 	UpdateProfilePictureDtoSchema,
 	UpdateLocationDtoSchema,
 	BrowsingFiltersDtoSchema,
+	UserIdParamsDtoSchema,
 	ApiResponse,
 } from "@matcha/shared";
 import { uploadProfilePictureMiddleware } from "@/middleware/upload.middleware";
@@ -74,6 +75,15 @@ export class UsersController extends BaseController {
 			req.pagination!,
 			req.validated?.query!
 		);
+		this.sendResult(res, result);
+	}
+
+	@auth()
+	@validate(UserIdParamsDtoSchema, "params")
+	@route("GET", "get-user-by-id")
+	private async getUserById(req: Request, res: Response): Promise<void> {
+		const { id } = req.validated?.params!;
+		const result = await this.userService.getUserById(req.user!.id, id);
 		this.sendResult(res, result);
 	}
 }

@@ -7,6 +7,7 @@ export const API_ROUTES = {
 	},
 	users: {
 		"get-users": "/",
+		"get-user-by-id": "/:id",
 		"update-profile": "/",
 		"update-profile-picture": "/picture",
 		"update-location": "/location",

@@ -119,6 +119,64 @@ export class UserService extends BaseService {
 		}
 	}
 
+	public async getUserById(
+		requesterId: number,
+		targetUserId: number
+	): Promise<ServiceResponse<User | null>> {
+		try {
+			const requesterResult = await this.userRepository.findUserById(
+				requesterId
+			);
+			if (!requesterResult) {
+				return ServiceResponse.failure(
+					"User not found",
+					null,
+					StatusCodes.NOT_FOUND
+				);
+			}
+
+			if (!requesterResult.is_profile_complete) {
+				return ServiceResponse.failure(
+					"Requester profile is not complete",
+					null,
+					StatusCodes.FORBIDDEN
+				);
+			}
+
+			const targetResult = await this.userRepository.findUserById(
+				targetUserId
+			);
+			if (!targetResult) {
+				return ServiceResponse.failure(
+					"User not found",
+					null,
+					StatusCodes.NOT_FOUND
+				);
+			}
+
+			if (!targetResult.is_profile_complete) {
+				return ServiceResponse.failure(
+					"User profile is not complete",
+					null,
+					StatusCodes.FORBIDDEN
+				);
+			}
+
+			const publicUser = this.userRepository.excludePrivateFields(
+				targetResult as AuthUserWithPassword
+			);
+
+			return ServiceResponse.success("User found", publicUser);
+		} catch (error) {
+			logger.error("Error in getUserById:", error);
+			return ServiceResponse.failure(
+				"Error retrieving user",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
+
 	public async createUser(
 		userData: CreateUserDto
 	): Promise<ServiceResponse<AuthUser | null>> {
