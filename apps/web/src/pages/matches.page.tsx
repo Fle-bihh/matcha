@@ -17,7 +17,7 @@ import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
 
 function MatchesPageComp() {
-	const { matches, meta, fetchNextPage, refresh, hasNextPage } = useMatches();
+	const { matches, fetchNextPage, refresh, hasNextPage } = useMatches();
 	const { isLoading } = useActionsData([EActionKeys.GetMatches]);
 
 	return (
@@ -33,14 +33,6 @@ function MatchesPageComp() {
 				<Box>
 					<Typography variant="h4" component="h1" fontWeight={600}>
 						Matches
-					</Typography>
-					<Typography
-						variant="body2"
-						color="text.secondary"
-						sx={{ mt: 1 }}
-					>
-						{meta?.total ?? 0}{" "}
-						{(meta?.total ?? 0) === 1 ? "match" : "matches"}
 					</Typography>
 				</Box>
 				<IconButton onClick={refresh} color="primary">

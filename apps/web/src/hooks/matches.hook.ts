@@ -33,7 +33,9 @@ export function useMatches() {
 	});
 
 	return {
-		...pager,
+		fetchNextPage: pager.fetchNextPage,
+		refresh: pager.refresh,
+		hasNextPage: pager.hasNextPage,
 		matches: allMatches,
 	};
 }

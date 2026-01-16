@@ -135,6 +135,51 @@ export class LikeService extends BaseService {
 				);
 			}
 
+			const existingMatch = await this.matchRepository.getMatchByUsers(
+				likerId,
+				likedId
+			);
+
+			if (existingMatch) {
+				const reverseLike = await this.likeRepository.getLikeByUsers(
+					likedId,
+					likerId
+				);
+
+				const matchDeleted = await this.matchRepository.deleteMatch(
+					existingMatch.id
+				);
+
+				if (!matchDeleted) {
+					return ServiceResponse.failure(
+						"Failed to delete match",
+						null,
+						StatusCodes.INTERNAL_SERVER_ERROR
+					);
+				}
+
+				if (reverseLike) {
+					await this.likeRepository.deleteLike(reverseLike.id);
+				}
+
+				this.webSocketService.emitToUser(
+					likerId,
+					EWebSocketEvents.MatchDeleted,
+					{
+						match_id: existingMatch.id,
+					}
+				);
+				this.webSocketService.emitToUser(
+					likedId,
+					EWebSocketEvents.MatchDeleted,
+					{
+						match_id: existingMatch.id,
+						unlike_id: likerId,
+						message: "The user has unliked you, match deleted.",
+					}
+				);
+			}
+
 			const deleted = await this.likeRepository.deleteLike(
 				existingLike.id
 			);

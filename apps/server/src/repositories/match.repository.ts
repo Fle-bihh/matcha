@@ -22,8 +22,7 @@ export class MatchRepository extends BaseRepository implements IRepository {
 				unread_messages_count_user1 INTEGER DEFAULT 0 NOT NULL,
 				unread_messages_count_user2 INTEGER DEFAULT 0 NOT NULL
 			`,
-			constraints: `CONSTRAINT unique_match UNIQUE (user1_id, user2_id),
-			 CONSTRAINT ordered_users CHECK (user1_id < user2_id)`,
+			constraints: `CONSTRAINT ordered_users CHECK (user1_id < user2_id)`,
 		};
 	}
 
@@ -44,6 +43,36 @@ export class MatchRepository extends BaseRepository implements IRepository {
 		} catch (error) {
 			logger.error("Error creating match:", error);
 			return null;
+		}
+	}
+
+	public async getMatchByUsers(
+		userId1: number,
+		userId2: number
+	): Promise<Match | null> {
+		try {
+			const [user1_id, user2_id] =
+				userId1 < userId2 ? [userId1, userId2] : [userId2, userId1];
+
+			const matches = await this.getDocs<Match>(this.tableName, {
+				where: "user1_id = ? AND user2_id = ?",
+				values: [user1_id, user2_id],
+				limit: 1,
+			});
+			return matches[0] || null;
+		} catch (error) {
+			logger.error("Error fetching match:", error);
+			return null;
+		}
+	}
+
+	public async deleteMatch(id: number): Promise<boolean> {
+		try {
+			const result = await this.deleteDoc(this.tableName, id);
+			return result;
+		} catch (error) {
+			logger.error("Error deleting match:", error);
+			return false;
 		}
 	}
 

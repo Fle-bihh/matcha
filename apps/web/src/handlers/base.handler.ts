@@ -1,4 +1,5 @@
-import { IContainer } from "@/types";
+import { SnackbarService } from "@/services";
+import { ETokens, IContainer } from "@/types";
 import { Socket } from "socket.io-client";
 
 export abstract class BaseHandler {
@@ -10,6 +11,10 @@ export abstract class BaseHandler {
 
 	protected get dispatch() {
 		return this.container.store.dispatch;
+	}
+
+	protected get snackbar() {
+		return this.container.get<SnackbarService>(ETokens.SnackbarService);
 	}
 
 	public abstract register(socket: Socket): void;
