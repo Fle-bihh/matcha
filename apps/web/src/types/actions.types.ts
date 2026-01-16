@@ -14,6 +14,7 @@ import {
 	BrowsingFilters,
 	CreateLikeDto,
 	MatchesParams,
+	UnlikeUserDto,
 } from "@matcha/shared";
 
 export enum EActionKeys {
@@ -38,6 +39,7 @@ export enum EActionKeys {
 	ClearBrowsingFilters = "clearBrowsingFilters",
 	LoadBrowsingFilters = "loadBrowsingFilters",
 	CreateLike = "createLike",
+	UnlikeUser = "unlikeUser",
 	GetMatches = "getMatches",
 	GetUserById = "getUserById",
 }
@@ -66,6 +68,7 @@ export interface IActionDtoMap {
 	[EActionKeys.ClearBrowsingFilters]: null;
 	[EActionKeys.LoadBrowsingFilters]: null;
 	[EActionKeys.CreateLike]: CreateLikeDto;
+	[EActionKeys.UnlikeUser]: UnlikeUserDto;
 	[EActionKeys.GetMatches]: MatchesParams;
 	[EActionKeys.GetUserById]: string;
 }

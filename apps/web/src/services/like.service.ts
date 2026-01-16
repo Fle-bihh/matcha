@@ -1,5 +1,9 @@
 import { getRoute, StatusCodes } from "@matcha/shared";
-import type { CreateLikeDto, CreateLikeResponseDto } from "@matcha/shared";
+import type {
+	CreateLikeDto,
+	CreateLikeResponseDto,
+	UnlikeUserDto,
+} from "@matcha/shared";
 import { EEntityTypes, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
@@ -28,6 +32,27 @@ export class LikeService extends BaseService {
 		}
 
 		if (this.isSuccess(response)) {
+			return ServiceResponse.success(response.message);
+		} else {
+			return ServiceResponse.failure(response.message);
+		}
+	}
+
+	@action({ showSuccessMessage: true, showErrorMessage: true })
+	async unlikeUser(dto: UnlikeUserDto): Promise<ServiceResponse> {
+		const response = await this.apiService.delete<void>(
+			`${getRoute("like", "unlike").replace(":id", dto.id.toString())}`,
+			{ auth: true }
+		);
+
+		if (this.isSuccess(response)) {
+			this.dispatch(
+				patchEntity({
+					entityType: EEntityTypes.Users,
+					id: dto.id.toString(),
+					entity: { isLiked: false },
+				})
+			);
 			return ServiceResponse.success(response.message);
 		} else {
 			return ServiceResponse.failure(response.message);

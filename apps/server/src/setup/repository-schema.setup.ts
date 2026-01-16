@@ -108,7 +108,7 @@ export class RepositorySchemaSetup {
 			ETokens.BaseRepository
 		);
 
-		const query = `
+		const columnsQuery = `
 			SELECT column_name, data_type, is_nullable, column_default
 			FROM information_schema.columns
 			WHERE table_name = ?
@@ -120,8 +120,23 @@ export class RepositorySchemaSetup {
 			data_type: string;
 			is_nullable: string;
 			column_default: string | null;
-		}>(query, [schema.tableName]);
+		}>(columnsQuery, [schema.tableName]);
 
-		return true;
+		const constraintsQuery = `
+			SELECT constraint_name, constraint_type
+			FROM information_schema.table_constraints
+			WHERE table_name = ?
+		`;
+
+		const [constraints] = await baseRepository.executeQuery<{
+			constraint_name: string;
+			constraint_type: string;
+		}>(constraintsQuery, [schema.tableName]);
+
+		logger.debug(
+			`Table ${schema.tableName} - Columns: ${columns.length}, Constraints: ${constraints.length}`
+		);
+
+		return false;
 	}
 }

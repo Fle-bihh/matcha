@@ -3,7 +3,11 @@ import { BaseController } from "./base.controller";
 import { ETokens } from "@/types";
 import { LikeService } from "@/services/like.service";
 import { auth, route, validate } from "@/decorators";
-import { CreateLikeDtoSchema, UnlikeUserDtoSchema } from "@matcha/shared";
+import {
+	CreateLikeDtoSchema,
+	UnlikeUserDtoSchema,
+	UserIdParamsDtoSchema,
+} from "@matcha/shared";
 
 export class LikeController extends BaseController {
 	private get likeService(): LikeService {
@@ -23,11 +27,11 @@ export class LikeController extends BaseController {
 	}
 
 	@auth()
-	@validate(UnlikeUserDtoSchema, "params")
-	@route("DELETE", "like")
+	@validate(UserIdParamsDtoSchema, "params")
+	@route("DELETE", "unlike")
 	private async unlikeUser(req: Request, res: Response): Promise<void> {
 		const { id } = req.user!;
-		const { liked_id } = req.validated!.params;
+		const { id: liked_id } = req.validated!.params;
 		const result = await this.likeService.unlikeUser(id, liked_id);
 		this.sendResult(res, result);
 	}

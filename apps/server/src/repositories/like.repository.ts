@@ -17,8 +17,7 @@ export class LikeRepository extends BaseRepository implements IRepository {
 				liker_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 				liked_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 			`,
-			constraints: `CONSTRAINT unique_like UNIQUE (liker_id, liked_id),
-			 CONSTRAINT no_self_like CHECK (liker_id != liked_id)`,
+			constraints: `CONSTRAINT no_self_like CHECK (liker_id != liked_id)`,
 		};
 	}
 
