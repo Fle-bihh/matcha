@@ -52,7 +52,9 @@ const entitiesSlice = createSlice({
 			}>
 		) => {
 			const { entityType, entities } = action.payload;
-			state[entityType] = {};
+			if (!state[entityType]) {
+				state[entityType] = {};
+			}
 			const sanitizedEntities = sanitizeEntities(entities);
 			sanitizedEntities.forEach((entity) => {
 				if (entity && typeof entity === "object" && "id" in entity) {

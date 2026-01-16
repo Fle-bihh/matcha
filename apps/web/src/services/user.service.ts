@@ -4,10 +4,10 @@ import type {
 	UpdateProfilePictureDto,
 	UpdateLocationDto,
 } from "@matcha/shared";
-import { ServiceResponse } from "@/types";
+import { EEntityTypes, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
-import { resetLocationState, setAuthUser } from "@/store";
+import { resetLocationState, setAuthUser, setEntity } from "@/store";
 import { EFlaggers } from "@/constants";
 import { ETokens } from "@/types";
 import { BrowsingService } from "./browsing.service";
@@ -81,6 +81,27 @@ export class UserService extends BaseService {
 				value: { isOpen: false },
 			});
 			this.maybeResetBrowsing(response.data);
+			return ServiceResponse.success(response.message);
+		} else {
+			return ServiceResponse.failure(response.message);
+		}
+	}
+
+	@action({ showErrorMessage: true })
+	async getUserById(userId: string): Promise<ServiceResponse> {
+		const response = await this.apiService.get(
+			`${getRoute("users", "get-user-by-id").replace(":id", userId)}`,
+			{ auth: true }
+		);
+
+		if (this.isSuccess(response)) {
+			this.dispatch(
+				setEntity({
+					entityType: EEntityTypes.Users,
+					id: userId,
+					entity: response.data,
+				})
+			);
 			return ServiceResponse.success(response.message);
 		} else {
 			return ServiceResponse.failure(response.message);

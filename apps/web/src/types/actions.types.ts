@@ -39,6 +39,7 @@ export enum EActionKeys {
 	LoadBrowsingFilters = "loadBrowsingFilters",
 	CreateLike = "createLike",
 	GetMatches = "getMatches",
+	GetUserById = "getUserById",
 }
 
 export interface IActionDtoMap {
@@ -66,6 +67,7 @@ export interface IActionDtoMap {
 	[EActionKeys.LoadBrowsingFilters]: null;
 	[EActionKeys.CreateLike]: CreateLikeDto;
 	[EActionKeys.GetMatches]: MatchesParams;
+	[EActionKeys.GetUserById]: string;
 }
 
 export type ActionDto<K extends EActionKeys> = IActionDtoMap[K];
