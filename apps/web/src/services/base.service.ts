@@ -6,7 +6,6 @@ import { RouterService } from "./router.service";
 import { SnackbarService } from "./snackbar.service";
 import { LocationService } from "./location.service";
 import {
-	addEntities,
 	appendToPager,
 	setEntities,
 	setFlagger,
@@ -68,35 +67,21 @@ export abstract class BaseService {
 	) {
 		const { data, meta } = response;
 
+		this.dispatch(
+			setEntities({
+				entityType,
+				entities: data,
+			})
+		);
+
 		const entityKeys = data.map((entity) => String(entity.id));
-		if (append) {
-			this.dispatch(
-				addEntities({
-					entityType,
-					entities: data,
-				})
-			);
-			this.dispatch(
-				appendToPager({
-					pagerKey,
-					meta,
-					entityKeys,
-				})
-			);
-		} else {
-			this.dispatch(
-				setEntities({
-					entityType,
-					entities: data,
-				})
-			);
-			this.dispatch(
-				setPager({
-					pagerKey,
-					meta,
-					entityKeys,
-				})
-			);
-		}
+		const pagerAction = append ? appendToPager : setPager;
+		this.dispatch(
+			pagerAction({
+				pagerKey,
+				meta,
+				entityKeys,
+			})
+		);
 	}
 }
