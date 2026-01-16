@@ -105,7 +105,7 @@ export class BrowsingService extends BaseService {
 		const filtersToApply =
 			filters || this.container.store.getState().filters?.browsing || {};
 		const pager = this.container.store.getState().pagers?.users;
-		const currentLimit = pager?.meta?.limit ?? 10;
+		const currentLimit = pager?.meta?.limit ?? 12;
 		await this.getUsers({
 			page: 1,
 			limit: currentLimit,

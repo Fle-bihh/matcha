@@ -38,6 +38,7 @@ function useBrowsingState() {
 		(pagination: PaginationDto): BrowsingParams => ({
 			...pagination,
 			...(filters || {}),
+			limit: pagination.limit || 12,
 		}),
 		[filters]
 	);
@@ -53,7 +54,7 @@ function useBrowsingState() {
 	const applyFilters = useCallback(
 		(newFilters?: BrowsingFilters) => {
 			const filtersToApply = newFilters || filters || {};
-			const currentLimit = pager.meta?.limit ?? 10;
+			const currentLimit = pager.meta?.limit ?? 12;
 
 			applyBrowsingFilters({
 				...filtersToApply,
@@ -68,7 +69,7 @@ function useBrowsingState() {
 	}, [clearBrowsingFilters]);
 
 	const refresh = useCallback(() => {
-		const currentLimit = pager.meta?.limit ?? 10;
+		const currentLimit = pager.meta?.limit ?? 12;
 
 		applyBrowsingFilters({
 			...(filters || {}),
