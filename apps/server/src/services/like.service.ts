@@ -116,4 +116,49 @@ export class LikeService extends BaseService {
 			);
 		}
 	}
+
+	public async unlikeUser(
+		likerId: number,
+		likedId: number
+	): Promise<ServiceResponse> {
+		try {
+			const existingLike = await this.likeRepository.getLikeByUsers(
+				likerId,
+				likedId
+			);
+
+			if (!existingLike) {
+				return ServiceResponse.failure(
+					"You have not liked this user",
+					null,
+					StatusCodes.NOT_FOUND
+				);
+			}
+
+			const deleted = await this.likeRepository.deleteLike(
+				existingLike.id
+			);
+
+			if (!deleted) {
+				return ServiceResponse.failure(
+					"Failed to unlike user",
+					null,
+					StatusCodes.INTERNAL_SERVER_ERROR
+				);
+			}
+
+			return ServiceResponse.success(
+				"User unliked successfully",
+				null,
+				StatusCodes.OK
+			);
+		} catch (error) {
+			logger.error("Error in unlikeUser:", error);
+			return ServiceResponse.failure(
+				"An error occurred while unliking the user",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR
+			);
+		}
+	}
 }

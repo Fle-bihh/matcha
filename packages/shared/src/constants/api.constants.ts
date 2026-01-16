@@ -27,6 +27,7 @@ export const API_ROUTES = {
 	},
 	like: {
 		like: "/",
+		unlike: "/",
 	},
 	match: {
 		"get-matches": "/",
