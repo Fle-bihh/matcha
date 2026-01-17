@@ -81,7 +81,11 @@ export function ProfileVisitsPage() {
 												visit.visited.pictures_urls?.[0]
 											}
 											alt={`${visit.visited.first_name} ${visit.visited.last_name}`}
-											sx={{ width: 56, height: 56 }}
+											sx={{
+												width: 56,
+												height: 56,
+												mr: 2,
+											}}
 										/>
 									</ListItemAvatar>
 									<ListItemText

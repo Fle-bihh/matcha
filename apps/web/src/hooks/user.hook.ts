@@ -4,6 +4,7 @@ import { selectEntityById } from "@/store/selectors";
 import { EEntityTypes, StoreUser } from "@/types";
 import { useAuthUser } from "./auth.hook";
 import { useVisits } from "./visit.hook";
+import { useScroll } from "./scroll.hooks";
 
 export const useUser = (
 	userId: string | undefined,
@@ -12,6 +13,8 @@ export const useUser = (
 	const user = useSelector(
 		selectEntityById<StoreUser>(EEntityTypes.Users, userId ?? "")
 	);
+
+	const { scrollToTop } = useScroll();
 
 	const { getUserById } = useAuthUser();
 	const { createVisit } = useVisits();
@@ -25,9 +28,9 @@ export const useUser = (
 
 	useEffect(() => {
 		if (shouldTrackVisit && userId && user && !visitTrackedRef.current) {
-			console.log("Tracking visit for user:", userId);
 			visitTrackedRef.current = true;
 			createVisit({ visited_id: parseInt(userId, 10) });
+			scrollToTop();
 		}
 	}, [shouldTrackVisit, userId, user, createVisit]);
 
