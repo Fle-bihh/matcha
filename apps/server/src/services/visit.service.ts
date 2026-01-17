@@ -5,7 +5,8 @@ import {
 	CreateVisitDto,
 	PaginatedResponse,
 	StatusCodes,
-	VisitWithUser,
+	VisitWithVisitedUser,
+	VisitsMadeResponseDto,
 	logger,
 } from "@matcha/shared";
 import { emptyPaginatedResponse } from "@/utils/pagination.utils";
@@ -70,27 +71,34 @@ export class VisitService extends BaseService {
 		userId: number,
 		page: number,
 		limit: number
-	): Promise<ServiceResponse<PaginatedResponse<VisitWithUser>>> {
+	): Promise<ServiceResponse<VisitsMadeResponseDto>> {
 		try {
-			const { visits, total } =
-				await this.visitRepository.getVisitsReceived(
-					userId,
-					page,
-					limit
-				);
+			const { visits: visitsMade, total: totalMade } =
+				await this.visitRepository.getVisitsMade(userId, page, limit);
 
-			const totalPages = Math.ceil(total / limit);
+			const visitsReceivedCount = await this.visitRepository.countDocs(
+				"visits",
+				{
+					where: "visited_id = ?",
+					values: [userId],
+				}
+			);
 
-			const response: PaginatedResponse<VisitWithUser> = {
-				data: visits,
-				meta: {
-					total,
-					page,
-					limit,
-					totalPages,
-					hasNextPage: page < totalPages,
-					hasPreviousPage: page > 1,
+			const totalPages = Math.ceil(totalMade / limit);
+
+			const response: VisitsMadeResponseDto = {
+				visitsMade: {
+					data: visitsMade,
+					meta: {
+						total: totalMade,
+						page,
+						limit,
+						totalPages,
+						hasNextPage: page < totalPages,
+						hasPreviousPage: page > 1,
+					},
 				},
+				visitsReceivedCount,
 			};
 
 			return ServiceResponse.success(
@@ -99,9 +107,13 @@ export class VisitService extends BaseService {
 			);
 		} catch (error) {
 			logger.error("Error in getVisitsReceived:", error);
-			return ServiceResponse.failure<PaginatedResponse<VisitWithUser>>(
+			return ServiceResponse.failure<VisitsMadeResponseDto>(
 				"An error occurred while retrieving visits",
-				emptyPaginatedResponse<VisitWithUser>(limit),
+				{
+					visitsMade:
+						emptyPaginatedResponse<VisitWithVisitedUser>(limit),
+					visitsReceivedCount: 0,
+				},
 				StatusCodes.INTERNAL_SERVER_ERROR
 			);
 		}

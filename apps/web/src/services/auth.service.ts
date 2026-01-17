@@ -12,6 +12,7 @@ import {
 	type SendChangeEmailVerificationRequestDto,
 	type ChangeEmailRequestDto,
 	ChangeEmailResponseDto,
+	ERouteGroups,
 } from "@matcha/shared";
 import { BaseService } from "./base.service";
 import { CrossTabEvent, ETokens, ServiceResponse } from "@/types";
@@ -105,8 +106,8 @@ export class AuthService extends BaseService {
 		return !!(accessToken && refreshToken);
 	}
 
-	private getAuthRoute(route: RouteKeys<"auth">): string {
-		return getRoute("auth", route);
+	private getAuthRoute(route: RouteKeys<ERouteGroups.Auth>): string {
+		return getRoute(ERouteGroups.Auth, route);
 	}
 
 	@action()

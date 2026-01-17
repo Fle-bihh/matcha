@@ -5,6 +5,7 @@ import {
 	logger,
 	getRoute,
 	RefreshTokenResponseDto,
+	ERouteGroups,
 } from "@matcha/shared";
 import { EStorageKeys } from "@/types/storage.constants";
 import { config } from "@/config";
@@ -129,7 +130,7 @@ export class ApiService extends BaseService {
 				}
 
 				const response = await this.fetch<RefreshTokenResponseDto>(
-					`${this.baseUrl}${getRoute("auth", "refresh")}`,
+					`${this.baseUrl}${getRoute(ERouteGroups.Auth, "refresh")}`,
 					{
 						method: "POST",
 						headers: {

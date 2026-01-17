@@ -1,5 +1,5 @@
 import { BaseRepository } from "./base.repository";
-import { Visit, logger, VisitWithUser } from "@matcha/shared";
+import { Visit, logger, VisitWithVisitedUser } from "@matcha/shared";
 import { IContainer } from "@/types";
 import { IRepository, TableSchema } from "@/types/repository.types";
 
@@ -47,26 +47,28 @@ export class VisitRepository extends BaseRepository implements IRepository {
 		return visits.length > 0 ? visits[0] : null;
 	}
 
-	public async getVisitsReceived(
+	public async getVisitsMade(
 		userId: number,
 		page: number,
 		limit: number
-	): Promise<{ visits: VisitWithUser[]; total: number }> {
+	): Promise<{ visits: VisitWithVisitedUser[]; total: number }> {
 		try {
 			const offset = (page - 1) * limit;
 
 			const query = this.buildVisitsQuery(userId, limit, offset);
 			const [rows] = await this.executeQuery<any>(query, []);
-			const visits = rows.map((row) => this.mapRowToVisitWithUser(row));
+			const visits = rows.map((row) =>
+				this.mapRowToVisitWithVisitedUser(row)
+			);
 
 			const total = await this.countDocs(this.tableName, {
-				where: "visited_id = ?",
+				where: "visitor_id = ?",
 				values: [userId],
 			});
 
 			return { visits, total };
 		} catch (error) {
-			logger.error("Error fetching visits received:", error);
+			logger.error("Error fetching visits made:", error);
 			return { visits: [], total: 0 };
 		}
 	}
@@ -99,8 +101,8 @@ export class VisitRepository extends BaseRepository implements IRepository {
 				u.updated_at as user_updated_at,
 				u.deleted_at as user_deleted_at
 			FROM visits v
-			INNER JOIN users u ON u.id = v.visitor_id
-			WHERE v.visited_id = ${userId}
+			INNER JOIN users u ON u.id = v.visited_id
+			WHERE v.visitor_id = ${userId}
 				AND v.deleted_at IS NULL
 				AND u.deleted_at IS NULL
 			ORDER BY v.created_at DESC
@@ -108,28 +110,30 @@ export class VisitRepository extends BaseRepository implements IRepository {
 		`;
 	}
 
-	private mapRowToVisitWithUser(row: any): VisitWithUser {
+	private mapRowToVisitWithVisitedUser(row: any): VisitWithVisitedUser {
+		const user = {
+			id: row.user_id,
+			first_name: row.first_name,
+			last_name: row.last_name,
+			gender: row.gender,
+			orientation: row.orientation,
+			age: row.age,
+			bio: row.bio,
+			pictures_urls: row.pictures_urls,
+			interests: row.interests,
+			location: row.location,
+			fame_score: row.fame_score,
+			created_at: row.user_created_at,
+			updated_at: row.user_updated_at,
+			deleted_at: row.user_deleted_at,
+		};
+
 		return {
 			id: row.id,
 			visitor_id: row.visitor_id,
 			visited_id: row.visited_id,
 			created_at: row.created_at,
-			visitor: {
-				id: row.user_id,
-				first_name: row.first_name,
-				last_name: row.last_name,
-				gender: row.gender,
-				orientation: row.orientation,
-				age: row.age,
-				bio: row.bio,
-				pictures_urls: row.pictures_urls,
-				interests: row.interests,
-				location: row.location,
-				fame_score: row.fame_score,
-				created_at: row.user_created_at,
-				updated_at: row.user_updated_at,
-				deleted_at: row.user_deleted_at,
-			},
+			visited: user,
 		};
 	}
 }

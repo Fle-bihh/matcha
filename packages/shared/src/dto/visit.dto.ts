@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { AuthUser, User } from "../models";
+import { PaginatedResponse } from "../types";
 
 export const CreateVisitDtoSchema = z.object({
 	visited_id: z.coerce
@@ -10,10 +11,15 @@ export const CreateVisitDtoSchema = z.object({
 
 export type CreateVisitDto = z.infer<typeof CreateVisitDtoSchema>;
 
-export interface VisitWithUser {
+export interface VisitWithVisitedUser {
 	id: number;
 	visitor_id: number;
 	visited_id: number;
 	created_at: string;
-	visitor: User;
+	visited: User;
+}
+
+export interface VisitsMadeResponseDto {
+	visitsMade: PaginatedResponse<VisitWithVisitedUser>;
+	visitsReceivedCount: number;
 }

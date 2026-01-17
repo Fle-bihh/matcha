@@ -1,18 +1,27 @@
 export const API_VERSION = "v1" as const;
 export const API_PREFIX = `/api/${API_VERSION}` as const;
 
+export enum ERouteGroups {
+	Health = "health",
+	User = "user",
+	Auth = "auth",
+	Like = "like",
+	Match = "match",
+	Visit = "visit",
+}
+
 export const API_ROUTES = {
-	health: {
+	[ERouteGroups.Health]: {
 		"get-health": "/",
 	},
-	users: {
+	[ERouteGroups.User]: {
 		"get-users": "/",
 		"get-user-by-id": "/:id",
 		"update-profile": "/",
 		"update-profile-picture": "/picture",
 		"update-location": "/location",
 	},
-	auth: {
+	[ERouteGroups.Auth]: {
 		register: "/register",
 		login: "/login",
 		refresh: "/refresh",
@@ -25,14 +34,14 @@ export const API_ROUTES = {
 		"send-change-email-verification": "/send-change-email-verification",
 		"change-email": "/change-email",
 	},
-	like: {
+	[ERouteGroups.Like]: {
 		like: "/",
 		unlike: "/:id",
 	},
-	match: {
+	[ERouteGroups.Match]: {
 		"get-matches": "/",
 	},
-	visit: {
+	[ERouteGroups.Visit]: {
 		"create-visit": "/",
 		"get-visits": "/",
 	},

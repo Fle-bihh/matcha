@@ -5,7 +5,7 @@ import { useDispatchActions } from "./actions.hooks";
 import { VisitActions, selectAllEntities } from "@/store";
 import { EPagerKeys } from "@/constants";
 import { EEntityTypes } from "@/types";
-import type { VisitWithUser } from "@matcha/shared";
+import type { VisitWithVisitedUser } from "@matcha/shared";
 import type { PaginationDto } from "@/types/api.types";
 
 export function useVisits() {
@@ -20,7 +20,7 @@ export function useVisits() {
 		[]
 	);
 
-	const pager = usePager<VisitWithUser, PaginationDto>({
+	const pager = usePager<VisitWithVisitedUser, PaginationDto>({
 		pagerKey: EPagerKeys.Visits,
 		entityType: EEntityTypes.Visits,
 		fn: getVisitsReceived,

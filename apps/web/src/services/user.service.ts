@@ -1,4 +1,4 @@
-import { AuthUser, getRoute } from "@matcha/shared";
+import { AuthUser, ERouteGroups, getRoute } from "@matcha/shared";
 import type {
 	UpdateProfileDto,
 	UpdateProfilePictureDto,
@@ -30,7 +30,7 @@ export class UserService extends BaseService {
 	@action({ showSuccessMessage: true, showErrorMessage: true })
 	async updateProfile(dto: UpdateProfileDto): Promise<ServiceResponse> {
 		const response = await this.apiService.patch<AuthUser>(
-			getRoute("users", "update-profile"),
+			getRoute(ERouteGroups.User, "update-profile"),
 			dto,
 			{ auth: true }
 		);
@@ -49,7 +49,7 @@ export class UserService extends BaseService {
 		dto: UpdateProfilePictureDto
 	): Promise<ServiceResponse> {
 		const response = await this.apiService.patch<AuthUser>(
-			getRoute("users", "update-profile-picture"),
+			getRoute(ERouteGroups.User, "update-profile-picture"),
 			{
 				picture: dto.file,
 				index: dto.index,
@@ -68,7 +68,7 @@ export class UserService extends BaseService {
 	@action({ showSuccessMessage: true, showErrorMessage: true })
 	async updateLocation(dto: UpdateLocationDto): Promise<ServiceResponse> {
 		const response = await this.apiService.patch<AuthUser>(
-			getRoute("users", "update-location"),
+			getRoute(ERouteGroups.User, "update-location"),
 			dto,
 			{ auth: true }
 		);
@@ -90,7 +90,10 @@ export class UserService extends BaseService {
 	@action({ showErrorMessage: true })
 	async getUserById(userId: string): Promise<ServiceResponse> {
 		const response = await this.apiService.get(
-			`${getRoute("users", "get-user-by-id").replace(":id", userId)}`,
+			`${getRoute(ERouteGroups.User, "get-user-by-id").replace(
+				":id",
+				userId
+			)}`,
 			{ auth: true }
 		);
 

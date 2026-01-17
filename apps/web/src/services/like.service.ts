@@ -1,4 +1,4 @@
-import { getRoute, StatusCodes } from "@matcha/shared";
+import { ERouteGroups, getRoute, StatusCodes } from "@matcha/shared";
 import type {
 	CreateLikeDto,
 	CreateLikeResponseDto,
@@ -13,7 +13,7 @@ export class LikeService extends BaseService {
 	@action({ showSuccessMessage: true, showErrorMessage: true })
 	async createLike(dto: CreateLikeDto): Promise<ServiceResponse> {
 		const response = await this.apiService.post<CreateLikeResponseDto>(
-			getRoute("like", "like"),
+			getRoute(ERouteGroups.Like, "like"),
 			dto,
 			{ auth: true }
 		);
@@ -41,7 +41,10 @@ export class LikeService extends BaseService {
 	@action({ showSuccessMessage: true, showErrorMessage: true })
 	async unlikeUser(dto: UnlikeUserDto): Promise<ServiceResponse> {
 		const response = await this.apiService.delete<void>(
-			`${getRoute("like", "unlike").replace(":id", dto.id.toString())}`,
+			`${getRoute(ERouteGroups.Like, "unlike").replace(
+				":id",
+				dto.id.toString()
+			)}`,
 			{ auth: true }
 		);
 

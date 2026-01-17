@@ -1,4 +1,4 @@
-import { getRoute } from "@matcha/shared";
+import { ERouteGroups, getRoute } from "@matcha/shared";
 import type {
 	PaginatedResponse,
 	User,
@@ -62,7 +62,7 @@ export class BrowsingService extends BaseService {
 	@action({ showErrorMessage: false, showSuccessMessage: false })
 	async getUsers(params: BrowsingParams): Promise<ServiceResponse> {
 		const response = await this.apiService.get<PaginatedResponse<User>>(
-			getRoute("users", "get-users"),
+			getRoute(ERouteGroups.User, "get-users"),
 			{ auth: true, params }
 		);
 

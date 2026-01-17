@@ -1,4 +1,4 @@
-import { getRoute } from "@matcha/shared";
+import { ERouteGroups, getRoute } from "@matcha/shared";
 import type {
 	PaginatedResponse,
 	MatchWithDetails,
@@ -17,7 +17,7 @@ export class MatchService extends BaseService {
 	async getMatches(params: MatchesParams): Promise<ServiceResponse> {
 		const response = await this.apiService.get<
 			PaginatedResponse<MatchWithDetails, GetMatchesResponseDto>
-		>(getRoute("match", "get-matches"), { auth: true, params });
+		>(getRoute(ERouteGroups.Match, "get-matches"), { auth: true, params });
 
 		if (!this.isSuccess(response)) {
 			return ServiceResponse.failure(response.message);
