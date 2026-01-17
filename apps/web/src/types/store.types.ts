@@ -4,6 +4,7 @@ import { createStore } from "@/store";
 export enum EEntityTypes {
 	Users = "users",
 	Matches = "matches",
+	Visits = "visits",
 }
 
 export enum EStoreSlices {

@@ -15,7 +15,9 @@ import {
 	CreateLikeDto,
 	MatchesParams,
 	UnlikeUserDto,
+	CreateVisitDto,
 } from "@matcha/shared";
+import { PaginationDto } from "./api.types";
 
 export enum EActionKeys {
 	Authenticate = "authenticate",
@@ -42,6 +44,8 @@ export enum EActionKeys {
 	UnlikeUser = "unlikeUser",
 	GetMatches = "getMatches",
 	GetUserById = "getUserById",
+	CreateVisit = "createVisit",
+	GetVisitsReceived = "getVisitsReceived",
 }
 
 export interface IActionDtoMap {
@@ -71,6 +75,8 @@ export interface IActionDtoMap {
 	[EActionKeys.UnlikeUser]: UnlikeUserDto;
 	[EActionKeys.GetMatches]: MatchesParams;
 	[EActionKeys.GetUserById]: string;
+	[EActionKeys.CreateVisit]: CreateVisitDto;
+	[EActionKeys.GetVisitsReceived]: PaginationDto;
 }
 
 export type ActionDto<K extends EActionKeys> = IActionDtoMap[K];
