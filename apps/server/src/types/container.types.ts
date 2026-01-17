@@ -18,6 +18,8 @@ export enum ETokens {
 	MessageRepository = "MessageRepository",
 	WebSocketService = "WebSocketService",
 	MatchService = "MatchService",
+	VisitRepository = "VisitRepository",
+	VisitService = "VisitService",
 }
 
 export const REPOSITORY_TOKENS: ETokens[] = [
@@ -28,6 +30,7 @@ export const REPOSITORY_TOKENS: ETokens[] = [
 	ETokens.LikeRepository,
 	ETokens.MatchRepository,
 	ETokens.MessageRepository,
+	ETokens.VisitRepository,
 ];
 
 export interface IContainer {

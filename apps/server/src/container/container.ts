@@ -8,6 +8,7 @@ import {
 import { LikeRepository } from "@/repositories/like.repository";
 import { MatchRepository } from "@/repositories/match.repository";
 import { MessageRepository } from "@/repositories/message.repository";
+import { VisitRepository } from "@/repositories/visit.repository";
 import {
 	HealthService,
 	UserService,
@@ -21,6 +22,7 @@ import {
 import { LikeService } from "@/services/like.service";
 import { MatchService } from "@/services/match.service";
 import { WebSocketService } from "@/services/websocket.service";
+import { VisitService } from "@/services/visit.service";
 import { ETokens, IContainer, REPOSITORY_TOKENS } from "@/types";
 import { logger } from "@matcha/shared";
 import { IRepository } from "@/types/repository.types";
@@ -47,6 +49,8 @@ const serviceRegistry: Record<ETokens, ServiceConstructor> = {
 	[ETokens.MessageRepository]: MessageRepository,
 	[ETokens.WebSocketService]: WebSocketService,
 	[ETokens.MatchService]: MatchService,
+	[ETokens.VisitRepository]: VisitRepository,
+	[ETokens.VisitService]: VisitService,
 } as const;
 
 export class Container implements IContainer {

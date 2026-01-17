@@ -6,3 +6,4 @@ export { BrowsingRepository } from "./browsing.repository";
 export { LikeRepository } from "./like.repository";
 export { MatchRepository } from "./match.repository";
 export { MessageRepository } from "./message.repository";
+export { VisitRepository } from "./visit.repository";

@@ -5,3 +5,4 @@ export * from "./file.dto";
 export * from "./browsing.dto";
 export * from "./like.dto";
 export * from "./match.dto";
+export * from "./visit.dto";

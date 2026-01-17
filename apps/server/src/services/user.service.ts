@@ -18,6 +18,7 @@ import {
 } from "@matcha/shared";
 import { StatusCodes } from "@matcha/shared";
 import { HashUtils } from "@/utils/hash.utils";
+import { emptyPaginatedResponse } from "@/utils/pagination.utils";
 
 export class UserService extends BaseService {
 	constructor(container: IContainer) {
@@ -503,17 +504,7 @@ export class UserService extends BaseService {
 			logger.error("Error in getUsers:", error);
 			return ServiceResponse.failure(
 				"Error retrieving users",
-				{
-					data: [],
-					meta: {
-						page: 1,
-						limit: 20,
-						total: 0,
-						totalPages: 0,
-						hasNextPage: false,
-						hasPreviousPage: false,
-					},
-				},
+				emptyPaginatedResponse<User>(paginationParams.limit),
 				StatusCodes.INTERNAL_SERVER_ERROR
 			);
 		}
@@ -537,32 +528,6 @@ export class UserService extends BaseService {
 			logger.error("Error deleting user:", error);
 			return ServiceResponse.failure(
 				"Error deleting user",
-				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
-			);
-		}
-	}
-
-	public async restoreUser(userId: number): Promise<ServiceResponse<null>> {
-		try {
-			const success =
-				await this.userDeletionService.restoreUserAndRelatedData(
-					userId
-				);
-
-			if (!success) {
-				return ServiceResponse.failure(
-					"Failed to restore user",
-					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
-				);
-			}
-
-			return ServiceResponse.success("User restored successfully", null);
-		} catch (error) {
-			logger.error("Error restoring user:", error);
-			return ServiceResponse.failure(
-				"Error restoring user",
 				null,
 				StatusCodes.INTERNAL_SERVER_ERROR
 			);

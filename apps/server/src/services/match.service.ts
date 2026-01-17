@@ -12,6 +12,7 @@ import {
 import { MatchRepository } from "@/repositories";
 import { ETokens } from "@/types/container.types";
 import { IContainer } from "@/types";
+import { emptyPaginatedResponse } from "@/utils/pagination.utils";
 
 export class MatchService extends BaseService {
 	private matchRepository: MatchRepository;
@@ -87,7 +88,9 @@ export class MatchService extends BaseService {
 		} catch (error) {
 			return ServiceResponse.failure(
 				"Failed to retrieve matches",
-				null,
+				emptyPaginatedResponse<MatchWithDetails, GetMatchesResponseDto>(
+					pagination.limit
+				),
 				StatusCodes.INTERNAL_SERVER_ERROR
 			);
 		}

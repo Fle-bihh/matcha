@@ -8,3 +8,4 @@ export * from "./message.models";
 export * from "./profile-view.models";
 export * from "./report.models";
 export * from "./block.models";
+export * from "./visit.models";

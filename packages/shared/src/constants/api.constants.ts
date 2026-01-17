@@ -32,6 +32,10 @@ export const API_ROUTES = {
 	match: {
 		"get-matches": "/",
 	},
+	visit: {
+		"create-visit": "/",
+		"get-visits": "/",
+	},
 } as const;
 
 export type RouteGroups = keyof typeof API_ROUTES;

@@ -8,3 +8,4 @@ export { FileUploadService } from "./file-upload.service";
 export { UserDeletionService } from "./user-deletion.service";
 export { LikeService } from "./like.service";
 export { WebSocketService } from "./websocket.service";
+export { VisitService } from "./visit.service";
