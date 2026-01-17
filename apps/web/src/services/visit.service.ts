@@ -10,7 +10,8 @@ import { ServiceResponse, EEntityTypes } from "@/types";
 import type { PaginationDto } from "@/types/api.types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
-import { EPagerKeys } from "@/constants";
+import { EFlaggers, EPagerKeys } from "@/constants";
+import { setReceivedCount } from "@/store";
 
 type VisitEntity = VisitWithVisitedUser & Pick<BaseEntity, "updated_at">;
 
@@ -51,6 +52,10 @@ export class VisitService extends BaseService {
 			EPagerKeys.Visits,
 			EEntityTypes.Visits,
 			params?.refresh !== true
+		);
+
+		this.container.store.dispatch(
+			setReceivedCount(visitData.visitsReceivedCount)
 		);
 
 		return ServiceResponse.success(response.message);

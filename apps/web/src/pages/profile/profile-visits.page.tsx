@@ -8,6 +8,7 @@ import {
 	Typography,
 	Button,
 	CircularProgress,
+	Chip,
 } from "@mui/material";
 import { ProfilePageWrapper } from "@/components/profile/profile-page-wrapper.component";
 import { useVisits } from "@/hooks/visit.hook";
@@ -16,12 +17,13 @@ import { useRouting } from "@/hooks/routing.hooks";
 import { APP_ROUTES } from "@/constants";
 import { useActionsData } from "@/hooks/actions.hooks";
 import { EActionKeys } from "@/types/actions.types";
+import { useSelector } from "react-redux";
 
 export function ProfileVisitsPage() {
-	const { visits, fetchNextPage, hasNextPage } = useVisits();
+	const { visits, fetchNextPage, hasNextPage, refresh, visitsReceivedCount } =
+		useVisits();
 	const { push } = useRouting();
 	const { isLoading } = useActionsData([EActionKeys.GetVisitsReceived]);
-
 	const handleVisitClick = (userId: number) => {
 		push(APP_ROUTES.user(String(userId)));
 	};
@@ -29,12 +31,31 @@ export function ProfileVisitsPage() {
 	return (
 		<ProfilePageWrapper
 			title="Visits"
-			description="Users who have visited your profile."
+			description="Profiles you've visited and visitors to your profile."
 		>
 			<Box sx={{ maxWidth: 800 }}>
+				<Box
+					sx={{
+						mb: 3,
+						display: "flex",
+						gap: 2,
+						alignItems: "center",
+					}}
+				>
+					<Chip
+						label={`Visits Received: ${visitsReceivedCount}`}
+						color="primary"
+						variant="outlined"
+					/>
+				</Box>
+
+				<Typography variant="h6" sx={{ mb: 2 }}>
+					Profiles You Visited
+				</Typography>
+
 				{visits.length === 0 && !isLoading ? (
 					<Typography variant="body1" color="text.secondary">
-						No visits yet.
+						You haven't visited any profiles yet.
 					</Typography>
 				) : (
 					<>
@@ -51,28 +72,28 @@ export function ProfileVisitsPage() {
 										mb: 1,
 									}}
 									onClick={() =>
-										handleVisitClick(visit.visitor.id)
+										handleVisitClick(visit.visited.id)
 									}
 								>
 									<ListItemAvatar>
 										<Avatar
 											src={
-												visit.visitor.pictures_urls?.[0]
+												visit.visited.pictures_urls?.[0]
 											}
-											alt={`${visit.visitor.first_name} ${visit.visitor.last_name}`}
+											alt={`${visit.visited.first_name} ${visit.visited.last_name}`}
 											sx={{ width: 56, height: 56 }}
 										/>
 									</ListItemAvatar>
 									<ListItemText
-										primary={`${visit.visitor.first_name} ${visit.visitor.last_name}`}
+										primary={`${visit.visited.first_name} ${visit.visited.last_name}`}
 										secondary={
 											<>
-												{visit.visitor.age && (
+												{visit.visited.age && (
 													<Typography
 														component="span"
 														variant="body2"
 													>
-														Age: {visit.visitor.age}
+														Age: {visit.visited.age}
 													</Typography>
 												)}
 												<Typography

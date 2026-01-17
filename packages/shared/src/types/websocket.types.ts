@@ -6,6 +6,7 @@ export enum EWebSocketEvents {
 	Disconnect = "disconnect",
 	MatchCreated = "match:created",
 	MatchDeleted = "match:deleted",
+	NewVisit = "visit:created",
 }
 
 export interface IWebSocketEventDtoMap {
@@ -13,4 +14,5 @@ export interface IWebSocketEventDtoMap {
 	[EWebSocketEvents.Disconnect]: string;
 	[EWebSocketEvents.MatchCreated]: Match;
 	[EWebSocketEvents.MatchDeleted]: DeleteMatchSocketDto;
+	[EWebSocketEvents.NewVisit]: undefined;
 }

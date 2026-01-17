@@ -2,7 +2,11 @@ import { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { usePager } from "./pagination.hook";
 import { useDispatchActions } from "./actions.hooks";
-import { VisitActions, selectAllEntities } from "@/store";
+import {
+	VisitActions,
+	selectAllEntities,
+	selectVisitsReceivedCount,
+} from "@/store";
 import { EPagerKeys } from "@/constants";
 import { EEntityTypes } from "@/types";
 import type { VisitWithVisitedUser } from "@matcha/shared";
@@ -28,11 +32,14 @@ export function useVisits() {
 		loadData: true,
 	});
 
+	const visitsReceivedCount = useSelector(selectVisitsReceivedCount);
+
 	return {
 		createVisit,
 		fetchNextPage: pager.fetchNextPage,
 		refresh: pager.refresh,
 		hasNextPage: pager.hasNextPage,
 		visits: pager.data,
+		visitsReceivedCount,
 	};
 }
