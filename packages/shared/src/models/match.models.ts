@@ -12,5 +12,5 @@ export interface Match extends BaseEntity {
 export interface MatchWithDetails extends Match {
 	other_user: User;
 	last_message: Message | null;
-	unread_conversations_count: number;
+	unread_messages_count: number;
 }

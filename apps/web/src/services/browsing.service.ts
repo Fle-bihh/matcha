@@ -6,7 +6,7 @@ import type {
 	BrowsingFilters,
 	AuthUser,
 } from "@matcha/shared";
-import { ServiceResponse } from "@/types";
+import { ServiceResponse, StoreUser } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
 import { setFilters, clearFilters } from "@/store/slices/filters.slice";
@@ -20,12 +20,12 @@ const FILTER_KEY = EFilterKeys.Browsing;
 
 export class BrowsingService extends BaseService {
 	private async updateBrowsingFilters(
-		filters: BrowsingFilters
+		filters: BrowsingFilters,
 	): Promise<ServiceResponse> {
 		this.dispatch(setFilters({ key: FILTER_KEY, filters }));
 		await this.storageService.setItem(
 			EStorageKeys.BrowsingFilters,
-			filters
+			filters,
 		);
 
 		return ServiceResponse.success("Filters updated");
@@ -33,12 +33,12 @@ export class BrowsingService extends BaseService {
 
 	async loadBrowsingFilters(): Promise<ServiceResponse> {
 		const savedFilters = await this.storageService.getItem(
-			EStorageKeys.BrowsingFilters
+			EStorageKeys.BrowsingFilters,
 		);
 
 		if (savedFilters) {
 			this.dispatch(
-				setFilters({ key: FILTER_KEY, filters: savedFilters })
+				setFilters({ key: FILTER_KEY, filters: savedFilters }),
 			);
 			this.resetBrowsing(savedFilters);
 			return ServiceResponse.success("Filters loaded");
@@ -63,18 +63,18 @@ export class BrowsingService extends BaseService {
 	async getUsers(params: BrowsingParams): Promise<ServiceResponse> {
 		const response = await this.apiService.get<PaginatedResponse<User>>(
 			getRoute(ERouteGroups.User, "get-users"),
-			{ auth: true, params }
+			{ auth: true, params },
 		);
 
 		if (!this.isSuccess(response)) {
 			return ServiceResponse.failure(response.message);
 		}
 
-		this.handlePaginatedResponse<User>(
+		this.handlePaginatedResponse(
 			response.data,
 			EPagerKeys.Users,
 			EEntityTypes.Users,
-			params?.refresh !== true
+			params?.refresh !== true,
 		);
 
 		return ServiceResponse.success(response.message);
@@ -84,7 +84,7 @@ export class BrowsingService extends BaseService {
 	async applyBrowsingFilters(
 		filters: BrowsingFilters & {
 			currentLimit: number;
-		}
+		},
 	): Promise<ServiceResponse> {
 		const { currentLimit, ...rest } = filters;
 		await this.updateBrowsingFilters({

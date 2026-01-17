@@ -28,7 +28,7 @@ export class MatchRepository extends BaseRepository implements IRepository {
 
 	public async createMatch(
 		userId1: number,
-		userId2: number
+		userId2: number,
 	): Promise<Match | null> {
 		try {
 			const [user1_id, user2_id] =
@@ -48,7 +48,7 @@ export class MatchRepository extends BaseRepository implements IRepository {
 
 	public async getMatchByUsers(
 		userId1: number,
-		userId2: number
+		userId2: number,
 	): Promise<Match | null> {
 		try {
 			const [user1_id, user2_id] =
@@ -62,6 +62,68 @@ export class MatchRepository extends BaseRepository implements IRepository {
 			return matches[0] || null;
 		} catch (error) {
 			logger.error("Error fetching match:", error);
+			return null;
+		}
+	}
+
+	public async getMatchByIdWithDetails(
+		matchId: number,
+		otherUserId: number,
+	): Promise<MatchWithDetails | null> {
+		try {
+			const query = `
+				SELECT 
+					m.id,
+					m.user1_id,
+					m.user2_id,
+					m.unread_messages_count_user1,
+					m.unread_messages_count_user2,
+					m.created_at,
+					m.updated_at,
+					m.deleted_at,
+					COALESCE(u.id, u2.id) as user_id,
+					COALESCE(u.first_name, u2.first_name) as first_name,
+					COALESCE(u.last_name, u2.last_name) as last_name,
+					COALESCE(u.gender, u2.gender) as gender,
+					COALESCE(u.orientation, u2.orientation) as orientation,
+					COALESCE(u.age, u2.age) as age,
+					COALESCE(u.bio, u2.bio) as bio,
+					COALESCE(u.pictures_urls, u2.pictures_urls) as pictures_urls,
+					COALESCE(u.interests, u2.interests) as interests,
+					COALESCE(u.location, u2.location) as location,
+					COALESCE(u.fame_score, u2.fame_score) as fame_score,
+					COALESCE(u.created_at, u2.created_at) as user_created_at,
+					COALESCE(u.updated_at, u2.updated_at) as user_updated_at,
+					COALESCE(u.deleted_at, u2.deleted_at) as user_deleted_at,
+					msg.id as last_message_id,
+					msg.sender_id as last_message_sender_id,
+					msg.match_id as last_message_match_id,
+					msg.content as last_message_content,
+					msg.is_read as last_message_is_read,
+					msg.created_at as last_message_created_at,
+					msg.updated_at as last_message_updated_at,
+					msg.deleted_at as last_message_deleted_at
+				FROM matches m
+				LEFT JOIN users u ON u.id = m.user2_id AND m.user1_id = ${otherUserId}
+				LEFT JOIN users u2 ON u2.id = m.user1_id AND m.user2_id = ${otherUserId}
+				LEFT JOIN LATERAL (
+					SELECT id, sender_id, match_id, content, is_read, created_at, updated_at, deleted_at
+					FROM messages
+					WHERE match_id = m.id AND deleted_at IS NULL
+					ORDER BY created_at DESC
+					LIMIT 1
+				) msg ON true
+				WHERE m.id = ${matchId}
+					AND m.deleted_at IS NULL
+					AND (u.deleted_at IS NULL OR u2.deleted_at IS NULL)
+			`;
+
+			const [rows] = await this.executeQuery<any>(query, []);
+			if (rows.length === 0) return null;
+
+			return this.mapRowToMatchWithDetails(rows[0], otherUserId);
+		} catch (error) {
+			logger.error("Error fetching match with details:", error);
 			return null;
 		}
 	}
@@ -80,18 +142,18 @@ export class MatchRepository extends BaseRepository implements IRepository {
 		userId: number,
 		limit: number,
 		offset: number,
-		unreadOnly: boolean
+		unreadOnly: boolean,
 	): Promise<MatchWithDetails[]> {
 		try {
 			const query = this.buildMatchesQuery(
 				userId,
 				limit,
 				offset,
-				unreadOnly
+				unreadOnly,
 			);
 			const [rows] = await this.executeQuery<any>(query, []);
 			return rows.map((row) =>
-				this.mapRowToMatchWithDetails(row, userId)
+				this.mapRowToMatchWithDetails(row, userId),
 			);
 		} catch (error) {
 			logger.error("Error fetching matches with details:", error);
@@ -103,7 +165,7 @@ export class MatchRepository extends BaseRepository implements IRepository {
 		userId: number,
 		limit: number,
 		offset: number,
-		unreadOnly: boolean
+		unreadOnly: boolean,
 	): string {
 		const unreadFilter = unreadOnly
 			? `AND ((m.user1_id = ${userId} AND m.unread_messages_count_user1 > 0) OR (m.user2_id = ${userId} AND m.unread_messages_count_user2 > 0))`
@@ -162,13 +224,13 @@ export class MatchRepository extends BaseRepository implements IRepository {
 
 	private mapRowToMatchWithDetails(
 		row: any,
-		userId: number
+		userId: number,
 	): MatchWithDetails {
 		return {
 			...this.mapRowToMatch(row),
 			other_user: this.mapRowToUser(row),
 			last_message: this.mapRowToMessage(row),
-			unread_conversations_count: this.getUnreadCount(row, userId),
+			unread_messages_count: this.getUnreadCount(row, userId),
 		};
 	}
 
@@ -227,7 +289,7 @@ export class MatchRepository extends BaseRepository implements IRepository {
 
 	public async countMatches(
 		userId: number,
-		unreadOnly: boolean
+		unreadOnly: boolean,
 	): Promise<number> {
 		try {
 			const unreadFilter = unreadOnly

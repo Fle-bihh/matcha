@@ -25,18 +25,18 @@ export class MatchService extends BaseService {
 
 		const { data, meta } = response.data;
 
-		this.handlePaginatedResponse<MatchWithDetails>(
+		this.handlePaginatedResponse(
 			{ data, meta },
 			EPagerKeys.Matches,
 			EEntityTypes.Matches,
-			params?.refresh !== true
+			params?.refresh !== true,
 		);
 
 		if (response.data.extraData) {
 			this.dispatch(
 				setUnreadMatchesCount(
-					response.data.extraData.unread_conversations_count
-				)
+					response.data.extraData.unread_conversations_count,
+				),
 			);
 		}
 

@@ -21,7 +21,7 @@ export class VisitService extends BaseService {
 		const response = await this.apiService.post<void>(
 			getRoute(ERouteGroups.Visit, "create-visit"),
 			dto,
-			{ auth: true }
+			{ auth: true },
 		);
 
 		if (this.isSuccess(response)) {
@@ -35,7 +35,7 @@ export class VisitService extends BaseService {
 	async getVisitsReceived(params: PaginationDto): Promise<ServiceResponse> {
 		const response = await this.apiService.get<VisitsMadeResponseDto>(
 			getRoute(ERouteGroups.Visit, "get-visits"),
-			{ auth: true, params }
+			{ auth: true, params },
 		);
 
 		if (!this.isSuccess(response)) {
@@ -44,18 +44,18 @@ export class VisitService extends BaseService {
 
 		const visitData = response.data;
 
-		this.handlePaginatedResponse<VisitEntity>(
+		this.handlePaginatedResponse(
 			{
 				data: visitData.visitsMade.data as VisitEntity[],
 				meta: visitData.visitsMade.meta,
 			},
 			EPagerKeys.Visits,
 			EEntityTypes.Visits,
-			params?.refresh !== true
+			params?.refresh !== true,
 		);
 
 		this.container.store.dispatch(
-			setReceivedCount(visitData.visitsReceivedCount)
+			setReceivedCount(visitData.visitsReceivedCount),
 		);
 
 		return ServiceResponse.success(response.message);

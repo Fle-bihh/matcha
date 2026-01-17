@@ -3,6 +3,7 @@ import type {
 	UpdateProfileDto,
 	UpdateProfilePictureDto,
 	UpdateLocationDto,
+	User,
 } from "@matcha/shared";
 import { EEntityTypes, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
@@ -32,7 +33,7 @@ export class UserService extends BaseService {
 		const response = await this.apiService.patch<AuthUser>(
 			getRoute(ERouteGroups.User, "update-profile"),
 			dto,
-			{ auth: true }
+			{ auth: true },
 		);
 
 		if (this.isSuccess(response)) {
@@ -46,7 +47,7 @@ export class UserService extends BaseService {
 
 	@action({ showSuccessMessage: true, showErrorMessage: true })
 	async updateProfilePicture(
-		dto: UpdateProfilePictureDto
+		dto: UpdateProfilePictureDto,
 	): Promise<ServiceResponse> {
 		const response = await this.apiService.patch<AuthUser>(
 			getRoute(ERouteGroups.User, "update-profile-picture"),
@@ -54,7 +55,7 @@ export class UserService extends BaseService {
 				picture: dto.file,
 				index: dto.index,
 			},
-			{ auth: true, formData: true }
+			{ auth: true, formData: true },
 		);
 
 		if (this.isSuccess(response)) {
@@ -70,7 +71,7 @@ export class UserService extends BaseService {
 		const response = await this.apiService.patch<AuthUser>(
 			getRoute(ERouteGroups.User, "update-location"),
 			dto,
-			{ auth: true }
+			{ auth: true },
 		);
 
 		if (this.isSuccess(response)) {
@@ -89,12 +90,12 @@ export class UserService extends BaseService {
 
 	@action({ showErrorMessage: true })
 	async getUserById(userId: string): Promise<ServiceResponse> {
-		const response = await this.apiService.get(
+		const response = await this.apiService.get<User>(
 			`${getRoute(ERouteGroups.User, "get-user-by-id").replace(
 				":id",
-				userId
+				userId,
 			)}`,
-			{ auth: true }
+			{ auth: true },
 		);
 
 		if (this.isSuccess(response)) {
@@ -103,7 +104,7 @@ export class UserService extends BaseService {
 					entityType: EEntityTypes.Users,
 					id: userId,
 					entity: response.data,
-				})
+				}),
 			);
 			return ServiceResponse.success(response.message);
 		} else {

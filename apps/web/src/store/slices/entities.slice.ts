@@ -1,9 +1,9 @@
-import { EEntityTypes, EStoreSlices } from "@/types";
+import { EEntityTypes, EStoreSlices, IEntityTypeMap } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { sanitizeEntity, sanitizeEntities } from "@/utils/sanitization.utils";
 
 export interface EntityState {
-	[entityType: string]: { [id: string]: any };
+	[entityType: string]: { [id: string]: unknown };
 }
 
 const initialState: EntityState = {};
@@ -12,12 +12,12 @@ const entitiesSlice = createSlice({
 	name: EStoreSlices.Entities,
 	initialState,
 	reducers: {
-		setEntity: (
-			state,
+		setEntity: <T extends EEntityTypes>(
+			state: EntityState,
 			action: PayloadAction<{
-				entityType: EEntityTypes;
+				entityType: T;
 				id: string;
-				entity: any;
+				entity: IEntityTypeMap[T];
 			}>
 		) => {
 			const { entityType, id, entity } = action.payload;
@@ -26,12 +26,12 @@ const entitiesSlice = createSlice({
 			}
 			state[entityType][id] = sanitizeEntity(entity);
 		},
-		patchEntity: (
-			state,
+		patchEntity: <T extends EEntityTypes>(
+			state: EntityState,
 			action: PayloadAction<{
-				entityType: EEntityTypes;
+				entityType: T;
 				id: string;
-				entity: any;
+				entity: Partial<IEntityTypeMap[T]>;
 			}>
 		) => {
 			const { entityType, id, entity } = action.payload;
@@ -44,11 +44,11 @@ const entitiesSlice = createSlice({
 				...sanitizeEntity(entity),
 			};
 		},
-		setEntities: (
-			state,
+		setEntities: <T extends EEntityTypes>(
+			state: EntityState,
 			action: PayloadAction<{
-				entityType: EEntityTypes;
-				entities: any[];
+				entityType: T;
+				entities: IEntityTypeMap[T][];
 			}>
 		) => {
 			const { entityType, entities } = action.payload;
@@ -63,18 +63,19 @@ const entitiesSlice = createSlice({
 			});
 		},
 		deleteEntity: (
-			state,
+			state: EntityState,
 			action: PayloadAction<{
 				entityType: EEntityTypes;
 				id: string;
 			}>
 		) => {
 			const { entityType, id } = action.payload;
-			if (state[entityType] && state[entityType][id]) {
-				delete state[entityType][id];
+			const entities = state[entityType];
+			if (entities && entities[id]) {
+				delete entities[id];
 			}
 		},
-		clearEntities: (state) => {
+		clearEntities: (state: EntityState) => {
 			Object.keys(state).forEach((key) => {
 				state[key] = {};
 			});

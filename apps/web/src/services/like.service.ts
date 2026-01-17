@@ -26,7 +26,7 @@ export class LikeService extends BaseService {
 				patchEntity({
 					entityType: EEntityTypes.Users,
 					id: dto.liked_id.toString(),
-					entity: { isLiked: true },
+					entity: { is_liked: true },
 				})
 			);
 		}
@@ -53,7 +53,7 @@ export class LikeService extends BaseService {
 				patchEntity({
 					entityType: EEntityTypes.Users,
 					id: dto.id.toString(),
-					entity: { isLiked: false },
+					entity: { is_liked: false },
 				})
 			);
 			return ServiceResponse.success(response.message);

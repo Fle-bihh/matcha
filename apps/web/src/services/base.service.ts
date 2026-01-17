@@ -1,4 +1,4 @@
-import { EEntityTypes, ETokens, IContainer } from "@/types";
+import { EEntityTypes, ETokens, IContainer, IEntityTypeMap } from "@/types";
 import { ApiService } from "./api.service";
 import { StorageService } from "./storage.service";
 import { AuthService } from "./auth.service";
@@ -59,11 +59,11 @@ export abstract class BaseService {
 		return response.status >= 200 && response.status < 300;
 	}
 
-	protected handlePaginatedResponse<T extends BaseEntity>(
-		response: PaginatedResponse<T>,
+	protected handlePaginatedResponse<T extends EEntityTypes>(
+		response: PaginatedResponse<IEntityTypeMap[T]>,
 		pagerKey: EPagerKeys,
-		entityType: EEntityTypes,
-		append?: boolean
+		entityType: T,
+		append?: boolean,
 	) {
 		const { data, meta } = response;
 
@@ -71,7 +71,7 @@ export abstract class BaseService {
 			setEntities({
 				entityType,
 				entities: data,
-			})
+			}),
 		);
 
 		const entityKeys = data.map((entity) => String(entity.id));
@@ -81,7 +81,7 @@ export abstract class BaseService {
 				pagerKey,
 				meta,
 				entityKeys,
-			})
+			}),
 		);
 	}
 }

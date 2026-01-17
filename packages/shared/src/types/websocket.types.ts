@@ -5,7 +5,7 @@ import {
 	SubscriptionConfirmationDto,
 	UserStatusUpdateDto,
 } from "../dto";
-import { Match } from "../models";
+import { Match, MatchWithDetails } from "../models";
 
 export enum EWebSocketEvents {
 	Connect = "connect",
@@ -22,7 +22,7 @@ export enum EWebSocketEvents {
 export interface IWebSocketEventDtoMap {
 	[EWebSocketEvents.Connect]: undefined;
 	[EWebSocketEvents.Disconnect]: string;
-	[EWebSocketEvents.MatchCreated]: Match;
+	[EWebSocketEvents.MatchCreated]: MatchWithDetails;
 	[EWebSocketEvents.MatchDeleted]: DeleteMatchSocketDto;
 	[EWebSocketEvents.NewVisit]: undefined;
 	[EWebSocketEvents.Subscribe]: SubscribeChannelRequestDto;

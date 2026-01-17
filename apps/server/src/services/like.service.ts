@@ -2,14 +2,7 @@ import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { LikeRepository } from "@/repositories/like.repository";
 import { MatchRepository } from "@/repositories/match.repository";
-import { WebSocketService } from "./websocket.service";
-import {
-	Like,
-	CreateLikeDto,
-	logger,
-	CreateLikeResponseDto,
-	EWebSocketEvents,
-} from "@matcha/shared";
+import { CreateLikeDto, logger, EWebSocketEvents } from "@matcha/shared";
 import { StatusCodes } from "@matcha/shared";
 
 export class LikeService extends BaseService {
@@ -25,13 +18,9 @@ export class LikeService extends BaseService {
 		return this.container.get<MatchRepository>(ETokens.MatchRepository);
 	}
 
-	private get webSocketService(): WebSocketService {
-		return this.container.get<WebSocketService>(ETokens.WebSocketService);
-	}
-
 	public async createLike(
 		likerId: number,
-		data: CreateLikeDto
+		data: CreateLikeDto,
 	): Promise<ServiceResponse> {
 		try {
 			const { liked_id } = data;
@@ -40,45 +29,45 @@ export class LikeService extends BaseService {
 				return ServiceResponse.failure(
 					"Cannot like yourself",
 					null,
-					StatusCodes.BAD_REQUEST
+					StatusCodes.BAD_REQUEST,
 				);
 			}
 
 			const existingLike = await this.likeRepository.getLikeByUsers(
 				likerId,
-				liked_id
+				liked_id,
 			);
 
 			if (existingLike) {
 				return ServiceResponse.failure(
 					"You already liked this user",
 					null,
-					StatusCodes.CONFLICT
+					StatusCodes.CONFLICT,
 				);
 			}
 
 			const like = await this.likeRepository.createLike(
 				likerId,
-				liked_id
+				liked_id,
 			);
 
 			if (!like) {
 				return ServiceResponse.failure(
 					"Failed to create like",
 					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
+					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
 
 			const isMatch = await this.likeRepository.checkReverseLikeExists(
 				likerId,
-				liked_id
+				liked_id,
 			);
 
 			if (isMatch) {
 				const match = await this.matchRepository.createMatch(
 					likerId,
-					liked_id
+					liked_id,
 				);
 
 				if (!match) {
@@ -86,75 +75,97 @@ export class LikeService extends BaseService {
 					return ServiceResponse.failure(
 						"Failed to create match",
 						null,
-						StatusCodes.INTERNAL_SERVER_ERROR
+						StatusCodes.INTERNAL_SERVER_ERROR,
+					);
+				}
+
+				const matchDetailed =
+					await this.matchRepository.getMatchByIdWithDetails(
+						match.id,
+						likerId,
+					);
+
+				const otherUserMatchDetailed =
+					await this.matchRepository.getMatchByIdWithDetails(
+						match.id,
+						liked_id,
+					);
+
+				if (!matchDetailed || !otherUserMatchDetailed) {
+					await this.matchRepository.deleteMatch(match.id);
+					await this.likeRepository.deleteLike(like.id);
+					return ServiceResponse.failure(
+						"Failed to retrieve match details",
+						null,
+						StatusCodes.INTERNAL_SERVER_ERROR,
 					);
 				}
 
 				this.webSocketService.emitToUser(
 					likerId,
 					EWebSocketEvents.MatchCreated,
-					match
+					matchDetailed,
 				);
 				this.webSocketService.emitToUser(
 					liked_id,
 					EWebSocketEvents.MatchCreated,
-					match
+					otherUserMatchDetailed,
 				);
 			}
 
 			return ServiceResponse.success(
 				"User liked successfully",
 				null,
-				StatusCodes.CREATED
+				StatusCodes.CREATED,
 			);
 		} catch (error) {
 			logger.error("Error in createLike:", error);
 			return ServiceResponse.failure(
 				"An error occurred while creating the like",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
 
 	public async unlikeUser(
 		likerId: number,
-		likedId: number
+		likedId: number,
 	): Promise<ServiceResponse> {
 		try {
 			const existingLike = await this.likeRepository.getLikeByUsers(
 				likerId,
-				likedId
+				likedId,
 			);
 
 			if (!existingLike) {
 				return ServiceResponse.failure(
 					"You have not liked this user",
 					null,
-					StatusCodes.NOT_FOUND
+					StatusCodes.NOT_FOUND,
 				);
 			}
 
 			const existingMatch = await this.matchRepository.getMatchByUsers(
 				likerId,
-				likedId
+				likedId,
 			);
 
 			if (existingMatch) {
 				const reverseLike = await this.likeRepository.getLikeByUsers(
 					likedId,
-					likerId
+					likerId,
 				);
 
 				const matchDeleted = await this.matchRepository.deleteMatch(
-					existingMatch.id
+					existingMatch.id,
 				);
 
 				if (!matchDeleted) {
 					return ServiceResponse.failure(
 						"Failed to delete match",
 						null,
-						StatusCodes.INTERNAL_SERVER_ERROR
+						StatusCodes.INTERNAL_SERVER_ERROR,
 					);
 				}
 
@@ -167,7 +178,7 @@ export class LikeService extends BaseService {
 					EWebSocketEvents.MatchDeleted,
 					{
 						match_id: existingMatch.id,
-					}
+					},
 				);
 				this.webSocketService.emitToUser(
 					likedId,
@@ -176,33 +187,33 @@ export class LikeService extends BaseService {
 						match_id: existingMatch.id,
 						unlike_id: likerId,
 						message: "The user has unliked you, match deleted.",
-					}
+					},
 				);
 			}
 
 			const deleted = await this.likeRepository.deleteLike(
-				existingLike.id
+				existingLike.id,
 			);
 
 			if (!deleted) {
 				return ServiceResponse.failure(
 					"Failed to unlike user",
 					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
+					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
 
 			return ServiceResponse.success(
 				"User unliked successfully",
 				null,
-				StatusCodes.OK
+				StatusCodes.OK,
 			);
 		} catch (error) {
 			logger.error("Error in unlikeUser:", error);
 			return ServiceResponse.failure(
 				"An error occurred while unliking the user",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
