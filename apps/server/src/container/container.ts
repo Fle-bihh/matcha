@@ -4,6 +4,7 @@ import {
 	EmailVerificationRepository,
 	PasswordResetRepository,
 	BrowsingRepository,
+	UserStatusRepository,
 } from "@/repositories";
 import { LikeRepository } from "@/repositories/like.repository";
 import { MatchRepository } from "@/repositories/match.repository";
@@ -51,6 +52,7 @@ const serviceRegistry: Record<ETokens, ServiceConstructor> = {
 	[ETokens.MatchService]: MatchService,
 	[ETokens.VisitRepository]: VisitRepository,
 	[ETokens.VisitService]: VisitService,
+	[ETokens.UserStatusRepository]: UserStatusRepository,
 } as const;
 
 export class Container implements IContainer {

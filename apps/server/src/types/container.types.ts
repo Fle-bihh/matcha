@@ -20,6 +20,7 @@ export enum ETokens {
 	MatchService = "MatchService",
 	VisitRepository = "VisitRepository",
 	VisitService = "VisitService",
+	UserStatusRepository = "UserStatusRepository",
 }
 
 export const REPOSITORY_TOKENS: ETokens[] = [
@@ -31,6 +32,7 @@ export const REPOSITORY_TOKENS: ETokens[] = [
 	ETokens.MatchRepository,
 	ETokens.MessageRepository,
 	ETokens.VisitRepository,
+	ETokens.UserStatusRepository,
 ];
 
 export interface IContainer {

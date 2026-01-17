@@ -1,5 +1,5 @@
 import { Server as WebSocketServer } from "socket.io";
-import { IContainer } from "@/types";
+import { ETokens, IContainer } from "@/types";
 import { BaseService } from "./base.service";
 import {
 	ConnectedUser,
@@ -13,17 +13,20 @@ import {
 	IWebSocketEventDtoMap,
 } from "@matcha/shared";
 import { authenticateSocket } from "@/middleware/websocket-auth.middleware";
+import { UserStatusRepository } from "@/repositories";
 
 export class WebSocketService extends BaseService implements IWebSocketService {
 	private io: WebSocketServer | null = null;
 	private connectedUsers: Map<number, ConnectedUser> = new Map();
-	private eventHandlers: Map<
-		string,
-		(socket: AuthenticatedSocket, data: any) => void | Promise<void>
-	> = new Map();
 
 	constructor(container: IContainer) {
 		super(container);
+	}
+
+	protected get UserStatusRepository(): UserStatusRepository {
+		return this.container.get<UserStatusRepository>(
+			ETokens.UserStatusRepository
+		);
 	}
 
 	public initialize(io: WebSocketServer): void {
@@ -43,16 +46,12 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 			authSocket.on(EWebSocketEvents.Disconnect, () => {
 				this.handleUserDisconnection(authSocket);
 			});
-
-			for (const [event, handler] of this.eventHandlers.entries()) {
-				authSocket.on(event, (data: any) => {
-					handler(authSocket, data);
-				});
-			}
 		});
 	}
 
-	private handleUserConnection(socket: AuthenticatedSocket): void {
+	private async handleUserConnection(
+		socket: AuthenticatedSocket
+	): Promise<void> {
 		const userId = socket.user.id;
 		const existingConnection = this.connectedUsers.get(userId);
 
@@ -69,20 +68,18 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 			socket,
 		});
 
+		await this.UserStatusRepository.setUserOnline(userId);
+
 		logger.info(`User ${userId} connected with socket ${socket.id}`);
 	}
 
-	private handleUserDisconnection(socket: AuthenticatedSocket): void {
+	private async handleUserDisconnection(
+		socket: AuthenticatedSocket
+	): Promise<void> {
 		const userId = socket.user.id;
 		this.connectedUsers.delete(userId);
+		await this.UserStatusRepository.setUserOffline(userId);
 		logger.info(`User ${userId} disconnected`);
-	}
-
-	public registerEventHandler<K extends keyof IWebSocketEventDtoMap>(
-		event: K,
-		handler: WebSocketEventHandler<K>
-	): void {
-		this.eventHandlers.set(event, handler);
 	}
 
 	public emitToUser<K extends keyof IWebSocketEventDtoMap>(
