@@ -16,6 +16,8 @@ import {
 	MatchesParams,
 	UnlikeUserDto,
 	CreateVisitDto,
+	SubscribeChannelRequestDto,
+	UnsubscribeChannelRequestDto,
 } from "@matcha/shared";
 import { PaginationDto } from "./api.types";
 
@@ -46,6 +48,8 @@ export enum EActionKeys {
 	GetUserById = "getUserById",
 	CreateVisit = "createVisit",
 	GetVisitsReceived = "getVisitsReceived",
+	SubscribeToChannel = "subscribeToChannel",
+	UnsubscribeFromChannel = "unsubscribeFromChannel",
 }
 
 export interface IActionDtoMap {
@@ -77,6 +81,8 @@ export interface IActionDtoMap {
 	[EActionKeys.GetUserById]: string;
 	[EActionKeys.CreateVisit]: CreateVisitDto;
 	[EActionKeys.GetVisitsReceived]: PaginationDto;
+	[EActionKeys.SubscribeToChannel]: SubscribeChannelRequestDto;
+	[EActionKeys.UnsubscribeFromChannel]: UnsubscribeChannelRequestDto;
 }
 
 export type ActionDto<K extends EActionKeys> = IActionDtoMap[K];

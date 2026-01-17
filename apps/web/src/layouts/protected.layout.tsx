@@ -7,6 +7,7 @@ import {
 	useLayoutSizes,
 } from "@/contexts/layout-sizes.context";
 import { BrowsingProvider } from "@/contexts/browsing.context";
+import { WebSocketSubscriptionProvider } from "@/contexts/websocket-subscription.context";
 
 function ProtectedLayoutContent() {
 	const { headerHeight } = useLayoutSizes();
@@ -37,9 +38,11 @@ function ProtectedLayoutContent() {
 export function ProtectedLayout() {
 	return (
 		<LayoutSizesProvider>
-			<BrowsingProvider>
-				<ProtectedLayoutContent />
-			</BrowsingProvider>
+			<WebSocketSubscriptionProvider>
+				<BrowsingProvider>
+					<ProtectedLayoutContent />
+				</BrowsingProvider>
+			</WebSocketSubscriptionProvider>
 		</LayoutSizesProvider>
 	);
 }

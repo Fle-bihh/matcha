@@ -5,6 +5,7 @@ import { EEntityTypes, StoreUser } from "@/types";
 import { useAuthUser } from "./auth.hook";
 import { useVisits } from "./visit.hook";
 import { useScroll } from "./scroll.hooks";
+import { useWebSocketSubscription } from "./websocket-subscription.hook";
 
 export const useUser = (
 	userId: string | undefined,
@@ -18,6 +19,8 @@ export const useUser = (
 
 	const { getUserById } = useAuthUser();
 	const { createVisit } = useVisits();
+	const { subscribeToUserStatus, unsubscribeFromUserStatus } =
+		useWebSocketSubscription();
 	const visitTrackedRef = useRef(false);
 
 	useEffect(() => {
@@ -27,12 +30,30 @@ export const useUser = (
 	}, [userId, user, getUserById]);
 
 	useEffect(() => {
-		if (shouldTrackVisit && userId && user && !visitTrackedRef.current) {
+		if (!shouldTrackVisit || !userId) return;
+
+		const userIdNum = parseInt(userId, 10);
+
+		subscribeToUserStatus(userIdNum);
+
+		if (user && !visitTrackedRef.current) {
 			visitTrackedRef.current = true;
-			createVisit({ visited_id: parseInt(userId, 10) });
+			createVisit({ visited_id: userIdNum });
 			scrollToTop();
 		}
-	}, [shouldTrackVisit, userId, user, createVisit]);
+
+		return () => {
+			unsubscribeFromUserStatus(userIdNum);
+		};
+	}, [
+		shouldTrackVisit,
+		userId,
+		user,
+		subscribeToUserStatus,
+		unsubscribeFromUserStatus,
+		createVisit,
+		scrollToTop,
+	]);
 
 	return user;
 };

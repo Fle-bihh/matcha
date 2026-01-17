@@ -9,3 +9,4 @@ export { LikeService } from "./like.service";
 export { MatchService } from "./match.service";
 export { WebSocketService } from "./websocket.service";
 export { VisitService } from "./visit.service";
+export { WebSocketSubscriptionService } from "./websocket-subscription.service";
