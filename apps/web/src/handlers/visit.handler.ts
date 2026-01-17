@@ -1,13 +1,7 @@
 import { BaseHandler } from "./base.handler";
 import { Socket } from "socket.io-client";
-import {
-	EWebSocketEvents,
-	IWebSocketEventDtoMap,
-	logger,
-} from "@matcha/shared";
-import { deleteEntity, patchEntity, setEntity } from "@/store";
+import { EWebSocketEvents } from "@matcha/shared";
 import { incrementReceivedCount } from "@/store/slices/visits.slice";
-import { EEntityTypes } from "@/types";
 
 export class VisitHandler extends BaseHandler {
 	public register(socket: Socket): void {

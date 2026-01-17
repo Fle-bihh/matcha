@@ -8,7 +8,7 @@ import {
 } from "@matcha/shared";
 import { config } from "@/config";
 import { IContainer } from "@/types";
-import { BaseHandler, MatchHandler } from "@/handlers";
+import { BaseHandler, MatchHandler, VisitHandler } from "@/handlers";
 
 export class WebSocketService extends BaseService {
 	private socket: Socket | null = null;
@@ -17,7 +17,10 @@ export class WebSocketService extends BaseService {
 
 	constructor(container: IContainer) {
 		super(container);
-		this.handlers = [new MatchHandler(container)];
+		this.handlers = [
+			new MatchHandler(container),
+			new VisitHandler(container),
+		];
 	}
 
 	public async connect(): Promise<void> {
