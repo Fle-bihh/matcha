@@ -5,7 +5,6 @@ import {
 	ConnectedUser,
 	IWebSocketService,
 	AuthenticatedSocket,
-	WebSocketEventHandler,
 } from "@/types/websocket.types";
 import {
 	logger,
@@ -14,10 +13,11 @@ import {
 } from "@matcha/shared";
 import { authenticateSocket } from "@/middleware/websocket-auth.middleware";
 import { UserStatusRepository } from "@/repositories";
+import { WebSocketConnectionManager } from "@/utils/websocket-connection.utils";
 
 export class WebSocketService extends BaseService implements IWebSocketService {
 	private io: WebSocketServer | null = null;
-	private connectedUsers: Map<number, ConnectedUser> = new Map();
+	private connectionManager = new WebSocketConnectionManager();
 
 	constructor(container: IContainer) {
 		super(container);
@@ -39,47 +39,36 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 	private setupEventHandlers(): void {
 		if (!this.io) return;
 
-		this.io.on(EWebSocketEvents.Connect, (socket: any) => {
+		this.io.on(EWebSocketEvents.Connect, (socket) => {
 			const authSocket = socket as AuthenticatedSocket;
-			this.handleUserConnection(authSocket);
-
+			this.onConnect(authSocket);
 			authSocket.on(EWebSocketEvents.Disconnect, () => {
-				this.handleUserDisconnection(authSocket);
+				this.onDisconnect(authSocket);
 			});
 		});
 	}
 
-	private async handleUserConnection(
-		socket: AuthenticatedSocket
-	): Promise<void> {
-		const userId = socket.user.id;
-		const existingConnection = this.connectedUsers.get(userId);
-
-		if (existingConnection) {
-			logger.info(
-				`User ${userId} reconnecting, disconnecting previous socket ${existingConnection.socketId}`
-			);
-			existingConnection.socket.disconnect();
+	private async onConnect(socket: AuthenticatedSocket): Promise<void> {
+		try {
+			const userId = socket.user.id;
+			this.connectionManager.add(userId, socket);
+			await this.UserStatusRepository.setUserOnline(userId);
+			logger.info(`User ${userId} connected with socket ${socket.id}`);
+		} catch (error) {
+			logger.error(`Error handling user connection: ${error}`);
+			socket.disconnect();
 		}
-
-		this.connectedUsers.set(userId, {
-			userId,
-			socketId: socket.id,
-			socket,
-		});
-
-		await this.UserStatusRepository.setUserOnline(userId);
-
-		logger.info(`User ${userId} connected with socket ${socket.id}`);
 	}
 
-	private async handleUserDisconnection(
-		socket: AuthenticatedSocket
-	): Promise<void> {
-		const userId = socket.user.id;
-		this.connectedUsers.delete(userId);
-		await this.UserStatusRepository.setUserOffline(userId);
-		logger.info(`User ${userId} disconnected`);
+	private async onDisconnect(socket: AuthenticatedSocket): Promise<void> {
+		try {
+			const userId = socket.user.id;
+			this.connectionManager.remove(userId);
+			await this.UserStatusRepository.setUserOffline(userId);
+			logger.info(`User ${userId} disconnected`);
+		} catch (error) {
+			logger.error(`Error handling user disconnection: ${error}`);
+		}
 	}
 
 	public emitToUser<K extends keyof IWebSocketEventDtoMap>(
@@ -87,13 +76,19 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 		event: K,
 		data: IWebSocketEventDtoMap[K]
 	): void {
-		logger.debug(
-			`Emitting event ${event} to user ${userId} with data:`,
-			data
-		);
-		const user = this.connectedUsers.get(userId);
-		if (user) {
-			user.socket.emit(event as string, data);
+		try {
+			logger.debug(
+				`Emitting event ${event} to user ${userId} with data:`,
+				data
+			);
+			const user = this.connectionManager.get(userId);
+			if (user) {
+				user.socket.emit(event, data);
+			}
+		} catch (error) {
+			logger.error(
+				`Error emitting event ${event} to user ${userId}: ${error}`
+			);
 		}
 	}
 
@@ -101,16 +96,22 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 		event: K,
 		data: IWebSocketEventDtoMap[K]
 	): void {
-		if (this.io) {
-			this.io.emit(event as string, data);
+		try {
+			if (this.io) {
+				this.io.emit(event, data);
+			}
+		} catch (error) {
+			logger.error(
+				`Error emitting event ${event} to all users: ${error}`
+			);
 		}
 	}
 
 	public getConnectedUsers(): Map<number, ConnectedUser> {
-		return new Map(this.connectedUsers);
+		return this.connectionManager.getAll();
 	}
 
 	public isUserConnected(userId: number): boolean {
-		return this.connectedUsers.has(userId);
+		return this.connectionManager.has(userId);
 	}
 }
