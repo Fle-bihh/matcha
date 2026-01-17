@@ -8,7 +8,12 @@ import {
 } from "@matcha/shared";
 import { config } from "@/config";
 import { IContainer } from "@/types";
-import { BaseHandler, MatchHandler, VisitHandler } from "@/handlers";
+import {
+	BaseHandler,
+	MatchHandler,
+	UserStatusHandler,
+	VisitHandler,
+} from "@/handlers";
 
 export class WebSocketService extends BaseService {
 	private socket: Socket | null = null;
@@ -20,6 +25,7 @@ export class WebSocketService extends BaseService {
 		this.handlers = [
 			new MatchHandler(container),
 			new VisitHandler(container),
+			new UserStatusHandler(container),
 		];
 	}
 
