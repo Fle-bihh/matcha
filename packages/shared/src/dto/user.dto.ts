@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { fields } from "../validation";
-import { AuthUser, Gender, Orientation } from "../models";
+import { AuthUser, Gender, Orientation, User, UserStatus } from "../models";
 import { FileDto } from "./file.dto";
 
 export const CreateUserDtoSchema = z.object({
@@ -51,3 +51,8 @@ export const UserIdParamsDtoSchema = z.object({
 });
 
 export type UserIdParamsDto = z.infer<typeof UserIdParamsDtoSchema>;
+
+export interface GetUserByIdResponseDto {
+	user: User;
+	status: UserStatus | null;
+}

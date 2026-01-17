@@ -4,6 +4,7 @@ import type {
 	UpdateProfilePictureDto,
 	UpdateLocationDto,
 	User,
+	GetUserByIdResponseDto,
 } from "@matcha/shared";
 import { EEntityTypes, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
@@ -90,7 +91,7 @@ export class UserService extends BaseService {
 
 	@action({ showErrorMessage: true })
 	async getUserById(userId: string): Promise<ServiceResponse> {
-		const response = await this.apiService.get<User>(
+		const response = await this.apiService.get<GetUserByIdResponseDto>(
 			`${getRoute(ERouteGroups.User, "get-user-by-id").replace(
 				":id",
 				userId,
@@ -103,7 +104,10 @@ export class UserService extends BaseService {
 				setEntity({
 					entityType: EEntityTypes.Users,
 					id: userId,
-					entity: response.data,
+					entity: {
+						...response.data.user,
+						status: response.data.status || undefined,
+					},
 				}),
 			);
 			return ServiceResponse.success(response.message);
