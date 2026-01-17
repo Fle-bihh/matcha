@@ -11,30 +11,50 @@ export class UserStatusRepository
 	public loadTableSchema(): TableSchema {
 		return {
 			tableName: this.collectionName,
-			fields: "",
+			fields: `
+				user_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+				is_online BOOLEAN NOT NULL DEFAULT FALSE,
+				last_active_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+			`,
 			constraints: "",
 		};
 	}
 
 	public async getUserStatus(userId: number): Promise<UserStatus | null> {
-		const status = await this.getDoc<UserStatus>(
-			this.collectionName,
-			userId
-		);
-		return status;
+		const statuses = await this.getDocs<UserStatus>(this.collectionName, {
+			where: "user_id = ?",
+			values: [userId],
+			limit: 1,
+		});
+		return statuses[0] || null;
+	}
+
+	private async updateUserStatus(
+		userId: number,
+		isOnline: boolean
+	): Promise<void> {
+		const existing = await this.getUserStatus(userId);
+		const timestamp = mysqlTimestamp();
+
+		if (existing) {
+			await this.executeQuery(
+				`UPDATE ${this.collectionName} SET is_online = ?, last_active_at = ? WHERE user_id = ?`,
+				[isOnline, timestamp, userId]
+			);
+		} else {
+			await this.createDocument<UserStatus>(this.collectionName, {
+				user_id: userId,
+				is_online: isOnline,
+				last_active_at: timestamp,
+			});
+		}
 	}
 
 	public async setUserOnline(userId: number): Promise<void> {
-		await this.updateDoc<UserStatus>(this.collectionName, userId, {
-			is_online: true,
-			last_active_at: mysqlTimestamp(),
-		});
+		await this.updateUserStatus(userId, true);
 	}
 
 	public async setUserOffline(userId: number): Promise<void> {
-		await this.updateDoc<UserStatus>(this.collectionName, userId, {
-			is_online: false,
-			last_active_at: mysqlTimestamp(),
-		});
+		await this.updateUserStatus(userId, false);
 	}
 }
