@@ -7,7 +7,6 @@ import { NavigationSetup } from "./navigation.component";
 import { Snackbar } from "../utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCrossTabSync } from "@/hooks/cross-tab.hook";
-import { ContainerProvider } from "@/contexts/container.context";
 
 import { ThemeProvider } from "@mui/material/styles";
 import { appTheme } from "@/config";
@@ -33,13 +32,11 @@ export function Provider({ children }: React.PropsWithChildren<{}>) {
 			<ThemeProvider theme={appTheme}>
 				<ReduxProvider store={store}>
 					<QueryClientProvider client={queryClient}>
-						<ContainerProvider container={container}>
-							<NavigationSetup container={container} />
-							<CrossTabSyncProvider>
-								<AuthProvider>{children}</AuthProvider>
-							</CrossTabSyncProvider>
-							<Snackbar />
-						</ContainerProvider>
+						<NavigationSetup container={container} />
+						<CrossTabSyncProvider>
+							<AuthProvider>{children}</AuthProvider>
+						</CrossTabSyncProvider>
+						<Snackbar />
 					</QueryClientProvider>
 				</ReduxProvider>
 			</ThemeProvider>
