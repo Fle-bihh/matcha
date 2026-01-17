@@ -72,7 +72,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
 					}
 				/>
 
-				{user.isLiked && (
+				{user.is_liked && (
 					<Box
 						sx={{
 							position: "absolute",
@@ -113,7 +113,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
 							zIndex: 2,
 						}}
 					>
-						{user.isLiked ? (
+						{user.is_liked ? (
 							<IconButton
 								onClick={handleUnlike}
 								sx={{

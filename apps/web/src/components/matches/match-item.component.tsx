@@ -9,16 +9,20 @@ import {
 import { Match } from "@matcha/shared";
 import { useRouting } from "@/hooks/routing.hooks";
 import { APP_ROUTES } from "@/constants";
+import { useAuthUser } from "@/hooks/auth.hook";
 
 interface MatchItemProps {
 	match: Match;
 }
 
 export function MatchItem({ match }: MatchItemProps) {
+	const { authUser } = useAuthUser();
 	const { push } = useRouting();
 
 	const handleClick = () => {
-		push(APP_ROUTES.user(String(match.user1_id)));
+		const otherUserId =
+			authUser?.id === match.user1_id ? match.user2_id : match.user1_id;
+		push(APP_ROUTES.user(otherUserId.toString()));
 	};
 
 	return (
