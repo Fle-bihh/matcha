@@ -3,6 +3,7 @@ import { BaseService } from "./base.service";
 import { VisitRepository } from "@/repositories/visit.repository";
 import {
 	CreateVisitDto,
+	EWebSocketEvents,
 	PaginatedResponse,
 	StatusCodes,
 	VisitWithVisitedUser,
@@ -55,6 +56,12 @@ export class VisitService extends BaseService {
 					StatusCodes.INTERNAL_SERVER_ERROR
 				);
 			}
+
+			this.webSocketService.emitToUser(
+				visited_id,
+				EWebSocketEvents.NewVisit,
+				undefined
+			);
 
 			return ServiceResponse.success("Visit recorded", null);
 		} catch (error) {

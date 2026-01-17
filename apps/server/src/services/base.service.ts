@@ -1,6 +1,7 @@
 import { ETokens, IContainer, ServiceResponse } from "@/types";
 import { MailService } from "./mail.service";
 import { FileUploadService } from "./file-upload.service";
+import { WebSocketService } from "./websocket.service";
 
 export abstract class BaseService {
 	protected container: IContainer;
@@ -19,5 +20,9 @@ export abstract class BaseService {
 
 	protected get fileUploadService(): FileUploadService {
 		return this.container.get<FileUploadService>(ETokens.FileUploadService);
+	}
+
+	protected get webSocketService() {
+		return this.container.get<WebSocketService>(ETokens.WebSocketService);
 	}
 }
