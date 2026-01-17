@@ -1,7 +1,13 @@
 import { IRepository, TableSchema } from "@/types/repository.types";
 import { BaseRepository } from "./base.repository";
-import { UserStatus } from "@matcha/shared";
+import {
+	UserStatus,
+	EWebSocketEvents,
+	EWebSocketChannels,
+} from "@matcha/shared";
 import { mysqlTimestamp } from "@/utils/date.utils";
+import { ETokens } from "@/types";
+import { WebSocketService } from "@/services";
 
 export class UserStatusRepository
 	extends BaseRepository
@@ -18,6 +24,10 @@ export class UserStatusRepository
 			`,
 			constraints: "",
 		};
+	}
+
+	private get WebSocketService(): WebSocketService {
+		return this.container.get<WebSocketService>(ETokens.WebSocketService);
 	}
 
 	public async getUserStatus(userId: number): Promise<UserStatus | null> {
@@ -48,6 +58,23 @@ export class UserStatusRepository
 				last_active_at: timestamp,
 			});
 		}
+
+		const updatedStatus = await this.getUserStatus(userId);
+		if (updatedStatus) {
+			this.emitStatusUpdate(userId, updatedStatus);
+		}
+	}
+
+	private emitStatusUpdate(userId: number, status: UserStatus): void {
+		const channel = EWebSocketChannels.UserStatus(userId);
+		this.WebSocketService.emitToChannel(
+			channel,
+			EWebSocketEvents.UserStatusUpdate,
+			{
+				userId,
+				status,
+			}
+		);
 	}
 
 	public async setUserOnline(userId: number): Promise<void> {

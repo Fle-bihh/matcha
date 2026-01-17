@@ -1,5 +1,9 @@
 import { Socket } from "socket.io";
-import { EWebSocketEvents, IWebSocketEventDtoMap } from "@matcha/shared";
+import {
+	EWebSocketEvents,
+	IWebSocketEventDtoMap,
+	TWebSocketChannel,
+} from "@matcha/shared";
 import { JwtPayload } from "./auth.types";
 
 export interface AuthenticatedSocket extends Socket {
@@ -25,6 +29,11 @@ export interface IWebSocketService {
 		data: IWebSocketEventDtoMap[K]
 	): void;
 	emitToAll<K extends keyof IWebSocketEventDtoMap>(
+		event: K,
+		data: IWebSocketEventDtoMap[K]
+	): void;
+	emitToChannel<K extends keyof IWebSocketEventDtoMap>(
+		channel: TWebSocketChannel,
 		event: K,
 		data: IWebSocketEventDtoMap[K]
 	): void;
