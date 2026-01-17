@@ -20,7 +20,7 @@ export function UserPage() {
 	const { id } = useParams<{ id: string }>();
 	const { goBack } = useRouting();
 
-	const user = useUser(id);
+	const user = useUser(id, true);
 
 	if (!user) {
 		return (
