@@ -13,10 +13,6 @@ export function useVisits() {
 		...VisitActions,
 	});
 
-	const allVisits = useSelector(
-		selectAllEntities<VisitWithUser>(EEntityTypes.Visits)
-	);
-
 	const buildParams = useCallback(
 		(pagination: PaginationDto): PaginationDto => ({
 			...pagination,
@@ -29,7 +25,7 @@ export function useVisits() {
 		entityType: EEntityTypes.Visits,
 		fn: getVisitsReceived,
 		buildParams,
-		loadData: false,
+		loadData: true,
 	});
 
 	return {
@@ -37,6 +33,6 @@ export function useVisits() {
 		fetchNextPage: pager.fetchNextPage,
 		refresh: pager.refresh,
 		hasNextPage: pager.hasNextPage,
-		visits: allVisits,
+		visits: pager.data,
 	};
 }
