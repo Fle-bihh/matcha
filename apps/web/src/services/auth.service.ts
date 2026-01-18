@@ -15,7 +15,13 @@ import {
 	ERouteGroups,
 } from "@matcha/shared";
 import { BaseService } from "./base.service";
-import { CrossTabEvent, EActionKeys, EStorageKeys, ETokens, ServiceResponse } from "@/types";
+import {
+	CrossTabEvent,
+	EActionKeys,
+	EStorageKeys,
+	ETokens,
+	ServiceResponse,
+} from "@/types";
 import {
 	changeEmail,
 	clearAction,

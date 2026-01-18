@@ -15,7 +15,7 @@ export class ServiceResponse<T = null> implements ApiResponse<T> {
 	static success<T>(
 		message: string,
 		data: T,
-		statusCode: number = StatusCodes.OK
+		statusCode: number = StatusCodes.OK,
 	) {
 		return new ServiceResponse(message, data, statusCode);
 	}
@@ -23,7 +23,7 @@ export class ServiceResponse<T = null> implements ApiResponse<T> {
 	static failure<T>(
 		message: string,
 		data: T,
-		statusCode: number = StatusCodes.BAD_REQUEST
+		statusCode: number = StatusCodes.BAD_REQUEST,
 	) {
 		return new ServiceResponse(message, data, statusCode);
 	}

@@ -6,7 +6,14 @@ import type {
 	BrowsingFilters,
 	AuthUser,
 } from "@matcha/shared";
-import { EEntityTypes, EFilterKeys, EStorageKeys, ETokens, ServiceResponse, StoreUser } from "@/types";
+import {
+	EEntityTypes,
+	EFilterKeys,
+	EStorageKeys,
+	ETokens,
+	ServiceResponse,
+	StoreUser,
+} from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
 import { setFilters, clearFilters } from "@/store";
