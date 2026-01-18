@@ -72,10 +72,10 @@ export class MatchService extends BaseService {
 			}),
 		);
 
-		if (response.data.extraData) {
+		if (response.data.extra_data) {
 			this.dispatch(
 				setUnreadMatchesCount(
-					response.data.extraData.unread_conversations_count,
+					response.data.extra_data.unread_conversations_count,
 				),
 			);
 		}

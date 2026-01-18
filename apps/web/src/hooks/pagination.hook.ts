@@ -52,13 +52,13 @@ export function usePager<T extends EEntityTypes, TParams = PaginationDto>(
 	);
 
 	const fetchNextPage = useCallback(() => {
-		if (meta?.hasNextPage) {
+		if (meta?.has_next_page) {
 			fetchPage(meta.page + 1);
 		}
 	}, [meta, fetchPage]);
 
 	const fetchPreviousPage = useCallback(() => {
-		if (meta?.hasPreviousPage) {
+		if (meta?.has_previous_page) {
 			fetchPage(meta.page - 1);
 		}
 	}, [meta, fetchPage]);
@@ -83,7 +83,7 @@ export function usePager<T extends EEntityTypes, TParams = PaginationDto>(
 		fetchPreviousPage,
 		refresh,
 		setLimit,
-		hasNextPage: meta?.hasNextPage ?? false,
-		hasPreviousPage: meta?.hasPreviousPage ?? false,
+		hasNextPage: meta?.has_next_page ?? false,
+		hasPreviousPage: meta?.has_previous_page ?? false,
 	};
 }

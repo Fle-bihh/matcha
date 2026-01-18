@@ -1,7 +1,7 @@
 import { PaginatedResponse } from "@matcha/shared";
 
 export function emptyPaginatedResponse<T, U = undefined>(
-	limit: number
+	limit: number,
 ): PaginatedResponse<T, U> {
 	return {
 		data: [],
@@ -9,9 +9,9 @@ export function emptyPaginatedResponse<T, U = undefined>(
 			total: 0,
 			page: 1,
 			limit: limit,
-			totalPages: 0,
-			hasNextPage: false,
-			hasPreviousPage: false,
+			total_pages: 0,
+			has_next_page: false,
+			has_previous_page: false,
 		},
 	};
 }

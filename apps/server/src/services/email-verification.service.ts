@@ -277,7 +277,7 @@ export class EmailVerificationService extends BaseService {
 			}
 
 			return ServiceResponse.success("Email changed successfully", {
-				newEmail: verification.new_email,
+				new_email: verification.new_email,
 			});
 		} catch (error) {
 			logger.error("Error verifying email change:", error);

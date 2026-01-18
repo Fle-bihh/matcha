@@ -1,7 +1,7 @@
 import { PaginationParams } from "./api.types";
 
 export interface MatchesFilters {
-	unreadOnly?: boolean;
+	unread_only?: boolean;
 }
 
 export interface MatchesParams extends PaginationParams, MatchesFilters {

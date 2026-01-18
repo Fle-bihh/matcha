@@ -23,7 +23,7 @@ export class UserStatusHandler extends BaseHandler {
 		this.dispatch(
 			patchEntity({
 				entityType: EEntityTypes.Users,
-				id: dto.userId.toString(),
+				id: dto.user_id.toString(),
 				entity: { status: dto.status },
 			}),
 		);

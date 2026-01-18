@@ -14,14 +14,14 @@ export interface PaginationMeta {
 	page: number;
 	limit: number;
 	total: number;
-	totalPages: number;
-	hasNextPage: boolean;
-	hasPreviousPage: boolean;
+	total_pages: number;
+	has_next_page: boolean;
+	has_previous_page: boolean;
 }
 
 export interface PaginatedResponse<T, U = undefined> {
 	data: T[];
-	extraData?: U;
+	extra_data?: U;
 	meta: PaginationMeta;
 }
 

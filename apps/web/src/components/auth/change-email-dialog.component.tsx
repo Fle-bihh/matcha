@@ -72,15 +72,15 @@ export function ChangeEmailDialog() {
 								</Alert>
 
 								<TextField
-									{...register("newEmail")}
+									{...register("new_email")}
 									label="New Email Address"
 									type="email"
 									fullWidth
 									placeholder="Enter your new email"
 									autoFocus
 									disabled={isLoading}
-									error={!!errors.newEmail}
-									helperText={errors.newEmail?.message}
+									error={!!errors.new_email}
+									helperText={errors.new_email?.message}
 								/>
 							</>
 						)}

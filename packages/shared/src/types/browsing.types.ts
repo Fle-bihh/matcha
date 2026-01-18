@@ -8,14 +8,14 @@ export enum BrowsingSortBy {
 }
 
 export interface BrowsingFilters {
-	ageMin?: number;
-	ageMax?: number;
-	distanceMax?: number;
-	fameMin?: number;
-	fameMax?: number;
+	age_min?: number;
+	age_max?: number;
+	distance_max?: number;
+	fame_min?: number;
+	fame_max?: number;
 	interests?: string[];
-	sortBy?: BrowsingSortBy;
-	sortOrder?: SortOrder;
+	sort_by?: BrowsingSortBy;
+	sort_order?: SortOrder;
 }
 
 export interface BrowsingParams extends PaginationParams, BrowsingFilters {

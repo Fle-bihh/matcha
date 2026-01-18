@@ -70,7 +70,7 @@ export class UserStatusRepository
 			channel,
 			EWebSocketEvents.UserStatusUpdate,
 			{
-				userId,
+				user_id: userId,
 				status,
 			},
 		);

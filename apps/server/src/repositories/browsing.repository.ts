@@ -103,13 +103,13 @@ export class BrowsingRepository extends BaseRepository implements IRepository {
 		values: any[],
 		filters: BrowsingFiltersDto,
 	): void {
-		if (filters.ageMin !== undefined) {
+		if (filters.age_min !== undefined) {
 			whereConditions.push("age >= ?");
-			values.push(filters.ageMin);
+			values.push(filters.age_min);
 		}
-		if (filters.ageMax !== undefined) {
+		if (filters.age_max !== undefined) {
 			whereConditions.push("age <= ?");
-			values.push(filters.ageMax);
+			values.push(filters.age_max);
 		}
 	}
 
@@ -118,13 +118,13 @@ export class BrowsingRepository extends BaseRepository implements IRepository {
 		values: any[],
 		filters: BrowsingFiltersDto,
 	): void {
-		if (filters.fameMin !== undefined) {
+		if (filters.fame_min !== undefined) {
 			whereConditions.push("fame_score >= ?");
-			values.push(filters.fameMin);
+			values.push(filters.fame_min);
 		}
-		if (filters.fameMax !== undefined) {
-			whereConditions.push("fame_score <= ?");
-			values.push(filters.fameMax);
+		if (filters.fame_max !== undefined) {
+			whereConditions.push("fame_score >= ?");
+			values.push(filters.fame_max);
 		}
 	}
 
@@ -154,7 +154,7 @@ export class BrowsingRepository extends BaseRepository implements IRepository {
 		userLon: number | null,
 	): void {
 		if (
-			filters.distanceMax === undefined ||
+			filters.distance_max === undefined ||
 			userLat === null ||
 			userLon === null
 		) {
@@ -163,7 +163,7 @@ export class BrowsingRepository extends BaseRepository implements IRepository {
 
 		const distanceCalc = this.buildDistanceQuery(userLat, userLon);
 		whereConditions.push(`(${distanceCalc}) <= ?`);
-		values.push(filters.distanceMax);
+		values.push(filters.distance_max);
 	}
 
 	private buildOrderByClause(
@@ -171,13 +171,13 @@ export class BrowsingRepository extends BaseRepository implements IRepository {
 		distanceQuery: string,
 		sharedInterestsQuery: string,
 	): string {
-		if (!filters.sortBy) {
+		if (!filters.sort_by) {
 			return this.getDefaultOrderBy(distanceQuery, sharedInterestsQuery);
 		}
 
-		const sortOrder = filters.sortOrder === "desc" ? "DESC" : "ASC";
+		const sortOrder = filters.sort_order === "desc" ? "DESC" : "ASC";
 
-		switch (filters.sortBy) {
+		switch (filters.sort_by) {
 			case "age":
 				return `age ${sortOrder}, id ASC`;
 			case "distance":

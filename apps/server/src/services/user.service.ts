@@ -506,9 +506,9 @@ export class UserService extends BaseService {
 					page: paginationParams.page,
 					limit: paginationParams.limit,
 					total,
-					totalPages,
-					hasNextPage: paginationParams.page < totalPages,
-					hasPreviousPage: paginationParams.page > 1,
+					total_pages: totalPages,
+					has_next_page: paginationParams.page < totalPages,
+					has_previous_page: paginationParams.page > 1,
 				},
 			};
 

@@ -30,20 +30,20 @@ export class LikeService extends BaseService {
 		has_liked_you: boolean;
 		is_matched: boolean;
 	}> {
-		const is_liked = await this.likeRepository.checkLikeExists(
+		const isLiked = await this.likeRepository.checkLikeExists(
 			userId,
 			otherUserId,
 		);
 
-		const has_liked_you = await this.likeRepository.checkLikeExists(
+		const hasLikedYou = await this.likeRepository.checkLikeExists(
 			otherUserId,
 			userId,
 		);
 
 		return {
-			is_liked,
-			has_liked_you,
-			is_matched: is_liked && has_liked_you,
+			is_liked: isLiked,
+			has_liked_you: hasLikedYou,
+			is_matched: isLiked && hasLikedYou,
 		};
 	}
 

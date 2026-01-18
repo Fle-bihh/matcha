@@ -96,11 +96,11 @@ export class MatchService extends BaseService {
 					page: pagination.page,
 					limit: pagination.limit,
 					total: totalCount,
-					totalPages,
-					hasNextPage: pagination.page < totalPages,
-					hasPreviousPage: pagination.page > 1,
+					total_pages: totalPages,
+					has_next_page: pagination.page < totalPages,
+					has_previous_page: pagination.page > 1,
 				},
-				extraData: {
+				extra_data: {
 					unread_conversations_count: unreadCount,
 				},
 			};

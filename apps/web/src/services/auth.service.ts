@@ -279,9 +279,9 @@ export class AuthService extends BaseService {
 			return ServiceResponse.failure(response.message);
 		}
 
-		this.dispatch(changeEmail(response.data.newEmail));
+		this.dispatch(changeEmail(response.data.new_email));
 
-		crossTab.broadcast(CrossTabEvent.EmailChanged, response.data.newEmail);
+		crossTab.broadcast(CrossTabEvent.EmailChanged, response.data.new_email);
 
 		return ServiceResponse.success(this.MESSAGES.EMAIL_CHANGED);
 	}

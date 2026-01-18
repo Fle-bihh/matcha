@@ -326,7 +326,9 @@ export class AuthService extends BaseService {
 				);
 			}
 
-			const emailInUse = await this.userService.findByEmail(dto.newEmail);
+			const emailInUse = await this.userService.findByEmail(
+				dto.new_email,
+			);
 
 			if (this.isSuccess(emailInUse)) {
 				return ServiceResponse.failure(
@@ -339,7 +341,7 @@ export class AuthService extends BaseService {
 			const result =
 				await this.emailVerificationService.sendChangeEmailVerification(
 					userId,
-					dto.newEmail,
+					dto.new_email,
 				);
 
 			if (!this.isSuccess(result)) {

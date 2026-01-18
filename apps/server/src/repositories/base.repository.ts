@@ -29,7 +29,7 @@ export class BaseRepository {
 
 	async createDocument<T extends BaseEntity>(
 		tableName: string,
-		data: OmitBaseEntity<T>
+		data: OmitBaseEntity<T>,
 	): Promise<T & BaseEntity> {
 		return this.operations.createDocument<T>(tableName, data);
 	}
@@ -37,7 +37,7 @@ export class BaseRepository {
 	async updateDoc<T extends BaseEntity>(
 		tableName: string,
 		id: number,
-		data: Partial<OmitBaseEntity<T>>
+		data: Partial<OmitBaseEntity<T>>,
 	): Promise<(T & BaseEntity) | null> {
 		return this.operations.updateDoc<T>(tableName, id, data);
 	}
@@ -53,7 +53,7 @@ export class BaseRepository {
 	async getDoc<T extends BaseEntity>(
 		tableName: string,
 		id: number,
-		includeDeleted: boolean = false
+		includeDeleted: boolean = false,
 	): Promise<(T & BaseEntity) | null> {
 		return this.operations.getDoc<T>(tableName, id, includeDeleted);
 	}
@@ -67,14 +67,14 @@ export class BaseRepository {
 			limit?: number;
 			offset?: number;
 			includeDeleted?: boolean;
-		} = {}
+		} = {},
 	): Promise<(T & BaseEntity)[]> {
 		return this.operations.getDocs<T>(tableName, options);
 	}
 
 	async executeQuery<T>(
 		query: string,
-		values: any[] = []
+		values: any[] = [],
 	): Promise<[T[], any]> {
 		return this.connectionManager.executeQuery<T>(query, values);
 	}
@@ -85,7 +85,7 @@ export class BaseRepository {
 			where?: string;
 			values?: any[];
 			includeDeleted?: boolean;
-		} = {}
+		} = {},
 	): Promise<number> {
 		return this.operations.countDocs(tableName, options);
 	}
@@ -97,12 +97,12 @@ export class BaseRepository {
 	async createTableWithMetadata(
 		tableName: string,
 		fields: string,
-		additionalConstraints: string = ""
+		additionalConstraints: string = "",
 	): Promise<void> {
 		return this.schemaManager.createTableWithMetadata(
 			tableName,
 			fields,
-			additionalConstraints
+			additionalConstraints,
 		);
 	}
 

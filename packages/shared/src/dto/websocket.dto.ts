@@ -14,6 +14,6 @@ export interface SubscriptionConfirmationDto {
 }
 
 export interface UserStatusUpdateDto {
-	userId: number;
+	user_id: number;
 	status: UserStatus;
 }
