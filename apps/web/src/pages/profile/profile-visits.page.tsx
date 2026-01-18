@@ -21,7 +21,7 @@ import { useSelector } from "react-redux";
 
 export function ProfileVisitsPage() {
 	const { visits, fetchNextPage, hasNextPage, refresh, visitsReceivedCount } =
-		useVisits();
+		useVisits(true);
 	const { push } = useRouting();
 	const { isLoading } = useActionsData([EActionKeys.GetVisitsReceived]);
 	const handleVisitClick = (userId: number) => {
@@ -107,7 +107,7 @@ export function ProfileVisitsPage() {
 												>
 													Visited:{" "}
 													{new Date(
-														visit.created_at
+														visit.created_at,
 													).toLocaleString()}
 												</Typography>
 											</>

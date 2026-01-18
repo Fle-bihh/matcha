@@ -10,9 +10,10 @@ import { Match } from "@matcha/shared";
 import { useRouting } from "@/hooks/routing.hooks";
 import { APP_ROUTES } from "@/constants";
 import { useAuthUser } from "@/hooks/auth.hook";
+import { StoreMatch } from "@/types/match.types";
 
 interface MatchItemProps {
-	match: Match;
+	match: StoreMatch;
 }
 
 export function MatchItem({ match }: MatchItemProps) {

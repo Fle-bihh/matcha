@@ -6,7 +6,8 @@ import {
 	logger,
 } from "@matcha/shared";
 import { deleteEntity, patchEntity, setEntity } from "@/store";
-import { EEntityTypes } from "@/types";
+import { EEntityTypes, ETokens } from "@/types";
+import { MatchService } from "@/services";
 
 type MatchCreatedDto = IWebSocketEventDtoMap[EWebSocketEvents.MatchCreated];
 type MatchDeletedDto = IWebSocketEventDtoMap[EWebSocketEvents.MatchDeleted];
@@ -22,14 +23,12 @@ export class MatchHandler extends BaseHandler {
 		socket.off(EWebSocketEvents.MatchDeleted, this.handleMatchDeleted);
 	}
 
+	protected get matchService(): MatchService {
+		return this.container.get<MatchService>(ETokens.MatchService);
+	}
+
 	private handleMatchCreated = (dto: MatchCreatedDto): void => {
-		this.dispatch(
-			setEntity({
-				entityType: EEntityTypes.Matches,
-				id: dto.id.toString(),
-				entity: dto,
-			})
-		);
+		this.matchService.handleMatchWithDetails(dto);
 		this.snackbar.success("You have a new match!");
 	};
 
@@ -38,7 +37,7 @@ export class MatchHandler extends BaseHandler {
 			deleteEntity({
 				entityType: EEntityTypes.Matches,
 				id: dto.match_id.toString(),
-			})
+			}),
 		);
 		if (dto.unlike_id) {
 			this.dispatch(
@@ -46,7 +45,7 @@ export class MatchHandler extends BaseHandler {
 					entityType: EEntityTypes.Users,
 					id: dto.unlike_id.toString(),
 					entity: { is_liked: false },
-				})
+				}),
 			);
 		}
 		if (dto.message) {

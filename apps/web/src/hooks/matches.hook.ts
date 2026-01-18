@@ -4,9 +4,10 @@ import { usePager } from "./pagination.hook";
 import { useDispatchActions } from "./actions.hooks";
 import { MatchActions, selectAllEntities } from "@/store";
 import { EPagerKeys } from "@/constants";
-import { EEntityTypes } from "@/types";
+import { EEntityTypes, StoreUser } from "@/types";
 import { MatchWithDetails, MatchesParams } from "@matcha/shared";
 import { PaginationDto } from "@/types/api.types";
+import { StoreMatch } from "@/types/match.types";
 
 export function useMatches() {
 	const { getMatches } = useDispatchActions({
@@ -14,17 +15,17 @@ export function useMatches() {
 	});
 
 	const allMatches = useSelector(
-		selectAllEntities<MatchWithDetails>(EEntityTypes.Matches)
+		selectAllEntities<StoreMatch>(EEntityTypes.Matches),
 	);
 
 	const buildParams = useCallback(
 		(pagination: PaginationDto): MatchesParams => ({
 			...pagination,
 		}),
-		[]
+		[],
 	);
 
-	const pager = usePager<MatchWithDetails, MatchesParams>({
+	const pager = usePager<StoreMatch, MatchesParams>({
 		pagerKey: EPagerKeys.Matches,
 		entityType: EEntityTypes.Matches,
 		fn: getMatches,

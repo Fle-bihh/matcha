@@ -2,6 +2,7 @@ import { Store } from "@reduxjs/toolkit";
 import { createStore } from "@/store";
 import { MatchWithDetails, VisitWithVisitedUser } from "@matcha/shared";
 import { StoreUser } from "./user.types";
+import { StoreMatch } from "./match.types";
 
 export enum EEntityTypes {
 	Users = "users",
@@ -11,7 +12,7 @@ export enum EEntityTypes {
 
 export interface IEntityTypeMap {
 	[EEntityTypes.Users]: StoreUser;
-	[EEntityTypes.Matches]: MatchWithDetails;
+	[EEntityTypes.Matches]: StoreMatch;
 	[EEntityTypes.Visits]: VisitWithVisitedUser;
 }
 

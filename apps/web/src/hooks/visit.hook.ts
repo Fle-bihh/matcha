@@ -12,7 +12,7 @@ import { EEntityTypes } from "@/types";
 import type { VisitWithVisitedUser } from "@matcha/shared";
 import type { PaginationDto } from "@/types/api.types";
 
-export function useVisits() {
+export function useVisits(loadPagerData = false) {
 	const { createVisit, getVisitsReceived } = useDispatchActions({
 		...VisitActions,
 	});
@@ -21,7 +21,7 @@ export function useVisits() {
 		(pagination: PaginationDto): PaginationDto => ({
 			...pagination,
 		}),
-		[]
+		[],
 	);
 
 	const pager = usePager<VisitWithVisitedUser, PaginationDto>({
@@ -29,7 +29,7 @@ export function useVisits() {
 		entityType: EEntityTypes.Visits,
 		fn: getVisitsReceived,
 		buildParams,
-		loadData: true,
+		loadData: loadPagerData,
 	});
 
 	const visitsReceivedCount = useSelector(selectVisitsReceivedCount);
