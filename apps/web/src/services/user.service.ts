@@ -94,7 +94,7 @@ export class UserService extends BaseService {
 			{ auth: true },
 		);
 
-		const { user, status, ...likingDetails } = response.data;
+		const { user, status, is_reported, ...likingDetails } = response.data;
 
 		if (this.isSuccess(response)) {
 			this.dispatch(
@@ -104,6 +104,7 @@ export class UserService extends BaseService {
 					entity: {
 						...response.data.user,
 						...likingDetails,
+						is_reported,
 						status: response.data.status || undefined,
 					},
 				}),

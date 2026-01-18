@@ -58,4 +58,5 @@ export interface GetUserByIdResponseDto {
 	has_liked_you?: boolean;
 	is_liked?: boolean;
 	is_matched?: boolean;
+	is_reported?: boolean;
 }

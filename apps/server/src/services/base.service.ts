@@ -15,6 +15,7 @@ import {
 	VisitRepository,
 } from "@/repositories";
 import { UserDeletionService } from "./user-deletion.service";
+import { ReportService } from "./report.service";
 
 export abstract class BaseService {
 	protected container: IContainer;
@@ -93,5 +94,9 @@ export abstract class BaseService {
 
 	protected get visitRepository(): VisitRepository {
 		return this.container.get<VisitRepository>(ETokens.VisitRepository);
+	}
+
+	protected get reportService(): ReportService {
+		return this.container.get<ReportService>(ETokens.ReportService);
 	}
 }

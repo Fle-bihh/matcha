@@ -234,14 +234,23 @@ export function UserPage() {
 									Like
 								</Button>
 							)}
-							<Button
-								variant="outlined"
-								color="warning"
-								onClick={handleReport}
-								size="medium"
-							>
-								Report Fake
-							</Button>
+							{!user.is_reported && (
+								<Button
+									variant="outlined"
+									color="warning"
+									onClick={handleReport}
+									size="medium"
+								>
+									Report Fake
+								</Button>
+							)}
+							{user.is_reported && (
+								<Chip
+									label="Reported"
+									color="warning"
+									size="medium"
+								/>
+							)}
 						</Stack>
 
 						<Stack direction="row" spacing={1} sx={{ mb: 2 }}>

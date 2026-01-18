@@ -12,6 +12,13 @@ export class ReportService extends BaseService {
 		return this.container.get<ReportRepository>(ETokens.ReportRepository);
 	}
 
+	public async checkReportExists(
+		reporterId: number,
+		reportedId: number,
+	): Promise<boolean> {
+		return this.reportRepository.checkReportExists(reporterId, reportedId);
+	}
+
 	public async createReport(
 		reporterId: number,
 		data: CreateReportDto,

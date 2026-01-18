@@ -167,10 +167,16 @@ export class UserService extends BaseService {
 				targetUserId,
 			);
 
+			const isUserReported = await this.reportService.checkReportExists(
+				requesterId,
+				targetUserId,
+			);
+
 			return ServiceResponse.success("User found", {
 				user: { ...publicUser },
 				status: userStatus,
 				...userLikingDetails,
+				is_reported: isUserReported,
 			});
 		} catch (error) {
 			logger.error("Error in getUserById:", error);
