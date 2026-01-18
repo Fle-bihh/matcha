@@ -9,10 +9,10 @@ import { useWebSocketSubscription } from "./websocket-subscription.hook";
 
 export const useUser = (
 	userId: string | undefined,
-	shouldTrackVisit = false
+	shouldTrackVisit = false,
 ) => {
 	const user = useSelector(
-		selectEntityById<StoreUser>(EEntityTypes.Users, userId ?? "")
+		selectEntityById(EEntityTypes.Users, userId ?? ""),
 	);
 
 	const { scrollToTop } = useScroll();

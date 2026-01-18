@@ -24,9 +24,8 @@ export function useVisits(loadPagerData = false) {
 		[],
 	);
 
-	const pager = usePager<VisitWithVisitedUser, PaginationDto>({
+	const pager = usePager(EEntityTypes.Visits, {
 		pagerKey: EPagerKeys.Visits,
-		entityType: EEntityTypes.Visits,
 		fn: getVisitsReceived,
 		buildParams,
 		loadData: loadPagerData,

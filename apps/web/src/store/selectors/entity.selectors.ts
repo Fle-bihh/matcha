@@ -1,26 +1,30 @@
-import { TRootState, EEntityTypes } from "@/types";
+import { TRootState, EEntityTypes, IEntityTypeMap } from "@/types";
 import { createSelector } from "@reduxjs/toolkit";
 
 const selectEntityState = (state: TRootState) => state.entities;
 
-export const selectEntitiesByType = <T = any>(entityType: EEntityTypes) =>
+export const selectEntitiesByType = <T extends EEntityTypes>(entityType: T) =>
 	createSelector(
 		[selectEntityState],
-		(entities) => (entities[entityType] || {}) as Record<string | number, T>
+		(entities) =>
+			(entities[entityType] || {}) as Record<
+				string | number,
+				IEntityTypeMap[T]
+			>,
 	);
 
-export const selectEntityById = <T = any>(
-	entityType: EEntityTypes,
-	id: string | number
+export const selectEntityById = <T extends EEntityTypes>(
+	entityType: T,
+	id: string | number,
 ) =>
 	createSelector(
-		[selectEntitiesByType<T>(entityType)],
-		(entities) => entities[id] as T | undefined
+		[selectEntitiesByType(entityType)],
+		(entities) => entities[id] as IEntityTypeMap[T] | undefined,
 	);
 
-export const selectAllEntities = <T = any>(entityType: EEntityTypes) =>
-	createSelector([selectEntitiesByType<T>(entityType)], (entities) =>
+export const selectAllEntities = <T extends EEntityTypes>(entityType: T) =>
+	createSelector([selectEntitiesByType(entityType)], (entities) =>
 		Object.values(entities).filter(
-			(entity): entity is T => entity !== undefined
-		)
+			(entity): entity is IEntityTypeMap[T] => entity !== undefined,
+		),
 	);

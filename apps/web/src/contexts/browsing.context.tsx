@@ -25,7 +25,7 @@ const FILTER_KEY = EFilterKeys.Browsing;
 type BrowsingContextType = ReturnType<typeof useBrowsingState>;
 
 const BrowsingContext = createContext<BrowsingContextType | undefined>(
-	undefined
+	undefined,
 );
 
 function useBrowsingState() {
@@ -40,12 +40,11 @@ function useBrowsingState() {
 			...(filters || {}),
 			limit: pagination.limit || 12,
 		}),
-		[filters]
+		[filters],
 	);
 
-	const pager = usePager<StoreUser, BrowsingParams>({
+	const pager = usePager(EEntityTypes.Users, {
 		pagerKey: EPagerKeys.Users,
-		entityType: EEntityTypes.Users,
 		fn: getUsers,
 		buildParams,
 		loadData: false,
@@ -61,7 +60,7 @@ function useBrowsingState() {
 				currentLimit,
 			});
 		},
-		[filters, pager.meta?.limit, applyBrowsingFilters]
+		[filters, pager.meta?.limit, applyBrowsingFilters],
 	);
 
 	const clearFiltersHandler = useCallback(() => {
@@ -91,7 +90,7 @@ function useBrowsingState() {
 			}
 			return false;
 		},
-		[filters]
+		[filters],
 	);
 
 	return {
@@ -119,7 +118,7 @@ export function useBrowsingContext() {
 	const context = useContext(BrowsingContext);
 	if (!context) {
 		throw new Error(
-			"useBrowsingContext must be used within BrowsingProvider"
+			"useBrowsingContext must be used within BrowsingProvider",
 		);
 	}
 	return context;

@@ -14,9 +14,7 @@ export function useMatches() {
 		...MatchActions,
 	});
 
-	const allMatches = useSelector(
-		selectAllEntities<StoreMatch>(EEntityTypes.Matches),
-	);
+	const allMatches = useSelector(selectAllEntities(EEntityTypes.Matches));
 
 	const buildParams = useCallback(
 		(pagination: PaginationDto): MatchesParams => ({
@@ -25,9 +23,8 @@ export function useMatches() {
 		[],
 	);
 
-	const pager = usePager<StoreMatch, MatchesParams>({
+	const pager = usePager(EEntityTypes.Matches, {
 		pagerKey: EPagerKeys.Matches,
-		entityType: EEntityTypes.Matches,
 		fn: getMatches,
 		buildParams,
 		loadData: false,

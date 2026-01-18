@@ -1,5 +1,5 @@
 import { EPagerKeys } from "@/constants";
-import { TRootState, EEntityTypes } from "@/types";
+import { TRootState, EEntityTypes, IEntityTypeMap } from "@/types";
 import { createSelector } from "@reduxjs/toolkit";
 import { selectEntitiesByType } from "./entity.selectors";
 
@@ -12,31 +12,34 @@ export const selectPagerMeta = (pagerKey: EPagerKeys) =>
 export const selectPagerEntityKeys = (pagerKey: EPagerKeys) =>
 	createSelector([selectPager(pagerKey)], (pager) => pager?.entityKeys || []);
 
-export const selectPaginatedEntities = <T = any>(
+export const selectPaginatedEntities = <T extends EEntityTypes>(
 	pagerKey: EPagerKeys,
-	entityType: EEntityTypes
+	entityType: T,
 ) =>
 	createSelector(
-		[selectPagerEntityKeys(pagerKey), selectEntitiesByType<T>(entityType)],
+		[selectPagerEntityKeys(pagerKey), selectEntitiesByType(entityType)],
 		(entityKeys, entities) => {
 			if (!entities) return [];
 			return entityKeys
 				.map((key) => entities[key])
-				.filter((entity): entity is T => entity !== undefined);
-		}
+				.filter(
+					(entity): entity is IEntityTypeMap[T] =>
+						entity !== undefined,
+				);
+		},
 	);
 
-export const selectPaginatedData = <T = any>(
+export const selectPaginatedData = <T extends EEntityTypes>(
 	pagerKey: EPagerKeys,
-	entityType: EEntityTypes
+	entityType: T,
 ) =>
 	createSelector(
 		[
-			selectPaginatedEntities<T>(pagerKey, entityType),
+			selectPaginatedEntities(pagerKey, entityType),
 			selectPagerMeta(pagerKey),
 		],
 		(data, meta) => ({
 			data,
 			meta,
-		})
+		}),
 	);
