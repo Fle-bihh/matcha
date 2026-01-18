@@ -6,9 +6,8 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { AuthImage, FameScore } from "@/components";
 import MockImage from "@/assets/imperial-stormtrooper-picture.png";
 import { StoreUser } from "@/types";
-import { useRouting } from "@/hooks";
+import { useLike, useRouting } from "@/hooks";
 import { APP_ROUTES } from "@/constants";
-import { useLike } from "@/hooks";
 import { useState } from "react";
 
 interface ProfileCardProps {

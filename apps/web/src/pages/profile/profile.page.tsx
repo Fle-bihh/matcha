@@ -1,11 +1,5 @@
 import { Box } from "@mui/material";
-import { ProfilePageWrapper } from "@/components";
-import { FirstNameCard } from "@/components";
-import { LastNameCard } from "@/components";
-import { GenderCard } from "@/components";
-import { OrientationCard } from "@/components";
-import { AgeCard } from "@/components";
-import { BioCard } from "@/components";
+import { AgeCard, BioCard, FirstNameCard, GenderCard, LastNameCard, OrientationCard, ProfilePageWrapper } from "@/components";
 
 export function ProfilePage() {
 	return (

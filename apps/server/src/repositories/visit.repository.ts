@@ -1,7 +1,6 @@
 import { BaseRepository } from "./base.repository";
-import { Visit, logger, VisitWithVisitedUser } from "@matcha/shared";
-import { IContainer } from "@/types";
-import { IRepository, TableSchema } from "@/types";
+import { Visit, VisitWithVisitedUser, logger } from "@matcha/shared";
+import { IContainer, IRepository, TableSchema } from "@/types";
 
 export class VisitRepository extends BaseRepository implements IRepository {
 	private readonly tableName = "visits";

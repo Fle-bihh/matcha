@@ -16,8 +16,8 @@ import {
 	BrowsingFilters,
 	BrowsingFiltersDto,
 	GetUserByIdResponseDto,
+	StatusCodes,
 } from "@matcha/shared";
-import { StatusCodes } from "@matcha/shared";
 import { HashUtils, emptyPaginatedResponse } from "@/utils";
 import { LikeService } from "./like.service";
 

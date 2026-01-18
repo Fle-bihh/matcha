@@ -6,7 +6,7 @@ import type {
 	VisitsMadeResponseDto,
 	BaseEntity,
 } from "@matcha/shared";
-import { ServiceResponse, EEntityTypes } from "@/types";
+import { EEntityTypes, ServiceResponse } from "@/types";
 import type { PaginationDto } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";

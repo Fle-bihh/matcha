@@ -6,13 +6,11 @@ import type {
 	MatchesParams,
 	User,
 } from "@matcha/shared";
-import { ServiceResponse } from "@/types";
+import { EEntityTypes, ServiceResponse, StoreMatch } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
 import { EPagerKeys } from "@/constants";
-import { EEntityTypes } from "@/types";
 import { patchEntity, setEntities, setUnreadMatchesCount } from "@/store";
-import { StoreMatch } from "@/types";
 
 export class MatchService extends BaseService {
 	async handleMatchWithDetails(match: MatchWithDetails): Promise<void> {

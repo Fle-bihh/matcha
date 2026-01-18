@@ -1,12 +1,6 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import { useAuthUser } from "@/hooks";
-import { ProfilePageWrapper } from "@/components";
-import { ProfilePreviewImage } from "@/components";
-import { ProfilePreviewInfo } from "@/components";
-import { ProfilePreviewLocation } from "@/components";
-import { ProfilePreviewBio } from "@/components";
-import { ProfilePreviewInterests } from "@/components";
-import { ProfilePreviewFame } from "@/components";
+import { ProfilePageWrapper, ProfilePreviewBio, ProfilePreviewFame, ProfilePreviewImage, ProfilePreviewInfo, ProfilePreviewInterests, ProfilePreviewLocation } from "@/components";
 
 export function ProfilePreviewPage() {
 	const { authUser } = useAuthUser();

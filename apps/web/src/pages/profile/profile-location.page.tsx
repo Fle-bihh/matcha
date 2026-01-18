@@ -1,11 +1,9 @@
 import { Box, Button, Alert, Paper, Typography } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import EditLocationIcon from "@mui/icons-material/EditLocation";
-import { ProfilePageWrapper } from "@/components";
-import { useAuthUser } from "@/hooks";
-import { useFlagger } from "@/hooks";
+import { ChangeLocationDialog, ProfilePageWrapper } from "@/components";
+import { useAuthUser, useFlagger } from "@/hooks";
 import { EFlaggers } from "@/constants";
-import { ChangeLocationDialog } from "@/components";
 
 export function ProfileLocationPage() {
 	const { authUser } = useAuthUser();

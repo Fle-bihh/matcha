@@ -8,8 +8,7 @@ import {
 	PartialBaseEntity,
 	BrowsingFiltersDto,
 } from "@matcha/shared";
-import { ETokens, IContainer } from "@/types";
-import { IRepository, TableSchema } from "@/types";
+import { ETokens, IContainer, IRepository, TableSchema } from "@/types";
 import { config } from "@/config";
 import { HashUtils, generateRandomUsers } from "@/utils";
 import { BrowsingRepository } from "./browsing.repository";

@@ -6,13 +6,10 @@ import {
 	Button,
 	TextField,
 } from "@mui/material";
-import { ProfilePageWrapper } from "@/components";
-import { useAuthUser } from "@/hooks";
-import { ChangeEmailDialog } from "@/components";
-import { useFlagger } from "@/hooks";
+import { ChangeEmailDialog, ProfilePageWrapper } from "@/components";
+import { useActionsData, useAuthUser, useFlagger } from "@/hooks";
 import { EFlaggers } from "@/constants";
 import { ResetPasswordForm } from "@/forms";
-import { useActionsData } from "@/hooks";
 import { EActionKeys } from "@/types";
 
 export function ProfileSettingsPage() {

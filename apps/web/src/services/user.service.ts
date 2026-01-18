@@ -6,12 +6,11 @@ import type {
 	User,
 	GetUserByIdResponseDto,
 } from "@matcha/shared";
-import { EEntityTypes, ServiceResponse } from "@/types";
+import { EEntityTypes, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
 import { resetLocationState, setAuthUser, setEntity } from "@/store";
 import { EFlaggers } from "@/constants";
-import { ETokens } from "@/types";
 import { BrowsingService } from "./browsing.service";
 
 export class UserService extends BaseService {

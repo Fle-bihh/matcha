@@ -1,8 +1,7 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { LikeRepository, MatchRepository } from "@/repositories";
-import { CreateLikeDto, logger, EWebSocketEvents, Like } from "@matcha/shared";
-import { StatusCodes } from "@matcha/shared";
+import { CreateLikeDto, EWebSocketEvents, Like, StatusCodes, logger } from "@matcha/shared";
 
 export class LikeService extends BaseService {
 	constructor(container: IContainer) {

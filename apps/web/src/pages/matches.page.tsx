@@ -9,11 +9,9 @@ import {
 	CircularProgress,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { MatchItem } from "@/components";
-import { withProfileCompleteComponent } from "@/components";
+import { MatchItem, withProfileCompleteComponent } from "@/components";
 import { ProfileUncomplete } from "./profile-uncomplete.page";
-import { useMatches } from "@/hooks";
-import { useActionsData } from "@/hooks";
+import { useActionsData, useMatches } from "@/hooks";
 import { EActionKeys } from "@/types";
 
 function MatchesPageComp() {

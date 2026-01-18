@@ -2,8 +2,7 @@ import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { EmailVerificationRepository } from "@/repositories";
 import { UserService } from "./user.service";
-import { ChangeEmailResponseDto, logger } from "@matcha/shared";
-import { StatusCodes } from "@matcha/shared";
+import { ChangeEmailResponseDto, StatusCodes, logger } from "@matcha/shared";
 import crypto from "crypto";
 import { config } from "@/config";
 

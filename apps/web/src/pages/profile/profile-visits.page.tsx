@@ -11,11 +11,9 @@ import {
 	Chip,
 } from "@mui/material";
 import { ProfilePageWrapper } from "@/components";
-import { useVisits } from "@/hooks";
+import { useActionsData, useRouting, useVisits } from "@/hooks";
 import { useEffect } from "react";
-import { useRouting } from "@/hooks";
 import { APP_ROUTES } from "@/constants";
-import { useActionsData } from "@/hooks";
 import { EActionKeys } from "@/types";
 import { useSelector } from "react-redux";
 

@@ -6,14 +6,11 @@ import type {
 	BrowsingFilters,
 	AuthUser,
 } from "@matcha/shared";
-import { ServiceResponse, StoreUser } from "@/types";
+import { EEntityTypes, EFilterKeys, EStorageKeys, ETokens, ServiceResponse, StoreUser } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
 import { setFilters, clearFilters } from "@/store";
 import { EPagerKeys } from "@/constants";
-import { EEntityTypes, ETokens } from "@/types";
-import { EFilterKeys } from "@/types";
-import { EStorageKeys } from "@/types";
 import { StorageService } from "./storage.service";
 
 const FILTER_KEY = EFilterKeys.Browsing;

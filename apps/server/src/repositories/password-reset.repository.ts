@@ -1,7 +1,6 @@
 import { BaseRepository } from "./base.repository";
-import { logger, PasswordReset } from "@matcha/shared";
-import { IContainer } from "@/types";
-import { IRepository, TableSchema } from "@/types";
+import { PasswordReset, logger } from "@matcha/shared";
+import { IContainer, IRepository, TableSchema } from "@/types";
 
 export class PasswordResetRepository
 	extends BaseRepository

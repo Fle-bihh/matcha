@@ -7,10 +7,8 @@ import {
 	CircularProgress,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { withProfileCompleteComponent } from "@/components";
+import { BrowsingFiltersComponent, ProfileCard, withProfileCompleteComponent } from "@/components";
 import { ProfileUncomplete } from "./profile-uncomplete.page";
-import { ProfileCard } from "@/components";
-import { BrowsingFiltersComponent } from "@/components";
 import { useBrowsingContext } from "@/contexts";
 
 function HomePageComp() {

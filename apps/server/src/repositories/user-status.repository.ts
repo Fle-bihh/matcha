@@ -1,12 +1,11 @@
-import { IRepository, TableSchema } from "@/types";
+import { ETokens, IRepository, TableSchema } from "@/types";
 import { BaseRepository } from "./base.repository";
 import {
-	UserStatus,
-	EWebSocketEvents,
 	EWebSocketChannels,
+	EWebSocketEvents,
+	UserStatus,
 } from "@matcha/shared";
 import { mysqlTimestamp } from "@/utils";
-import { ETokens } from "@/types";
 import { WebSocketService } from "@/services";
 
 export class UserStatusRepository

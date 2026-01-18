@@ -4,10 +4,8 @@ import { usePager } from "./pagination.hook";
 import { useDispatchActions } from "./actions.hooks";
 import { MatchActions, selectAllEntities } from "@/store";
 import { EPagerKeys } from "@/constants";
-import { EEntityTypes, StoreUser } from "@/types";
+import { EEntityTypes, PaginationDto, StoreMatch, StoreUser } from "@/types";
 import { MatchWithDetails, MatchesParams } from "@matcha/shared";
-import { PaginationDto } from "@/types";
-import { StoreMatch } from "@/types";
 
 export function useMatches() {
 	const { getMatches } = useDispatchActions({
