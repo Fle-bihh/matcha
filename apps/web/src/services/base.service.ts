@@ -16,6 +16,9 @@ import {
 import { ApiResponse, BaseEntity, PaginatedResponse } from "@matcha/shared";
 import { ApiRequestResponse } from "@/types";
 import { EPagerKeys } from "@/constants";
+import { BrowsingService } from "./browsing.service";
+import { MatchService } from "./match.service";
+import { WebSocketService } from "./websocket.service";
 
 export abstract class BaseService {
 	protected container: IContainer;
@@ -50,6 +53,18 @@ export abstract class BaseService {
 
 	protected get locationService(): LocationService {
 		return this.container.get<LocationService>(ETokens.LocationService);
+	}
+
+	protected get browsingService(): BrowsingService {
+		return this.container.get<BrowsingService>(ETokens.BrowsingService);
+	}
+
+	protected get matchService(): MatchService {
+		return this.container.get<MatchService>(ETokens.MatchService);
+	}
+
+	protected get webSocketService(): WebSocketService {
+		return this.container.get<WebSocketService>(ETokens.WebSocketService);
 	}
 
 	protected setFlagger(payload: SetFlaggerPayload) {

@@ -18,10 +18,6 @@ export class UserService extends BaseService {
 		this.dispatch(setAuthUser(user));
 	}
 
-	private get browsingService(): BrowsingService {
-		return this.container.get<BrowsingService>(ETokens.BrowsingService);
-	}
-
 	private maybeResetBrowsing(user: AuthUser) {
 		if (user.is_profile_complete) {
 			this.browsingService.resetBrowsing();

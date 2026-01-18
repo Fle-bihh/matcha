@@ -54,18 +54,6 @@ export class AuthService extends BaseService {
 		EMAIL_CHANGED: "Email changed successfully",
 	} as const;
 
-	private get browsingService(): BrowsingService {
-		return this.container.get<BrowsingService>(ETokens.BrowsingService);
-	}
-
-	private get matchService(): MatchService {
-		return this.container.get<MatchService>(ETokens.MatchService);
-	}
-
-	private get webSocketService(): WebSocketService {
-		return this.container.get<WebSocketService>(ETokens.WebSocketService);
-	}
-
 	private async storeAuthData(data: AuthData): Promise<void> {
 		const { accessToken, refreshToken, user } = data;
 

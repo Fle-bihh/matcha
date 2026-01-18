@@ -8,18 +8,14 @@ import {
 } from "@matcha/shared";
 
 export class WebSocketSubscriptionService extends BaseService {
-	protected get webSocketService(): WebSocketService {
-		return this.container.get<WebSocketService>(ETokens.WebSocketService);
-	}
-
 	public async subscribeToChannel(
-		dto: SubscribeChannelRequestDto
+		dto: SubscribeChannelRequestDto,
 	): Promise<void> {
 		this.webSocketService.emit(EWebSocketEvents.Subscribe, dto);
 	}
 
 	public async unsubscribeFromChannel(
-		dto: UnsubscribeChannelRequestDto
+		dto: UnsubscribeChannelRequestDto,
 	): Promise<void> {
 		this.webSocketService.emit(EWebSocketEvents.Unsubscribe, dto);
 	}
