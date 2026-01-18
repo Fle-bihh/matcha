@@ -20,7 +20,11 @@ export function UserPage() {
 	const { id } = useParams<{ id: string }>();
 	const { goBack } = useRouting();
 
-	const user = useUser(id, true);
+	const user = useUser({
+		userId: id,
+		shouldTrackVisit: true,
+		shouldFetch: true,
+	});
 
 	if (!user) {
 		return (

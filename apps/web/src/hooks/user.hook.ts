@@ -7,10 +7,13 @@ import { useVisits } from "./visit.hook";
 import { useScroll } from "./scroll.hooks";
 import { useWebSocketSubscription } from "./websocket-subscription.hook";
 
-export const useUser = (
-	userId: string | undefined,
-	shouldTrackVisit = false,
-) => {
+interface UserHookProps {
+	userId: string | undefined;
+	shouldTrackVisit?: boolean;
+	shouldFetch?: boolean;
+}
+export const useUser = (props: UserHookProps) => {
+	const { userId, shouldTrackVisit = false, shouldFetch = false } = props;
 	const user = useSelector(
 		selectEntityById(EEntityTypes.Users, userId ?? ""),
 	);
@@ -21,13 +24,16 @@ export const useUser = (
 	const { createVisit } = useVisits();
 	const { subscribeToUserStatus, unsubscribeFromUserStatus } =
 		useWebSocketSubscription();
+
 	const visitTrackedRef = useRef(false);
+	const fetchedRef = useRef(false);
 
 	useEffect(() => {
-		if (userId && !user) {
+		if (shouldFetch && userId && !fetchedRef.current) {
+			fetchedRef.current = true;
 			getUserById(userId);
 		}
-	}, [userId, user, getUserById]);
+	}, [shouldFetch, userId, getUserById]);
 
 	useEffect(() => {
 		if (!shouldTrackVisit || !userId) return;
