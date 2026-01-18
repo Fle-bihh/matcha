@@ -23,6 +23,7 @@ export function UserStatus({ status }: UserStatusProps) {
 				display: "flex",
 				alignItems: "center",
 				gap: 1,
+				m: 1,
 			}}
 		>
 			<FiberManualRecordIcon
