@@ -8,6 +8,7 @@ export enum ERouteGroups {
 	Like = "like",
 	Match = "match",
 	Visit = "visit",
+	Report = "report",
 }
 
 export const API_ROUTES = {
@@ -45,6 +46,9 @@ export const API_ROUTES = {
 		"create-visit": "/",
 		"get-visits": "/",
 	},
+	[ERouteGroups.Report]: {
+		report: "/",
+	},
 } as const;
 
 export type RouteGroups = keyof typeof API_ROUTES;
@@ -59,7 +63,7 @@ export type RouteValue = string;
 
 export function getRoute<T extends RouteGroups, K extends RouteKeys<T>>(
 	group: T,
-	key: K
+	key: K,
 ): RouteValue {
 	const routeGroup = API_ROUTES[group];
 	if (!routeGroup) {
@@ -74,14 +78,14 @@ export function getRoute<T extends RouteGroups, K extends RouteKeys<T>>(
 
 export function buildApiRoute<T extends RouteGroups, K extends RouteKeys<T>>(
 	group: T,
-	key: K
+	key: K,
 ): string {
 	return `${API_PREFIX}${getRoute(group, key)}`;
 }
 
 export function buildApiRouteUnsafe(
 	group: RouteGroups,
-	key: AllRouteKeys
+	key: AllRouteKeys,
 ): string {
 	const routeGroup = API_ROUTES[group];
 	if (!routeGroup) {

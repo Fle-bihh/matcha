@@ -6,6 +6,7 @@ import {
 	MatchRepository,
 	MessageRepository,
 	PasswordResetRepository,
+	ReportRepository,
 	UserRepository,
 	UserStatusRepository,
 	VisitRepository,
@@ -19,6 +20,7 @@ import {
 	MailService,
 	MatchService,
 	PasswordResetService,
+	ReportService,
 	UserDeletionService,
 	UserService,
 	VisitService,
@@ -51,6 +53,8 @@ const serviceRegistry: Record<ETokens, ServiceConstructor> = {
 	[ETokens.MatchService]: MatchService,
 	[ETokens.VisitRepository]: VisitRepository,
 	[ETokens.VisitService]: VisitService,
+	[ETokens.ReportRepository]: ReportRepository,
+	[ETokens.ReportService]: ReportService,
 	[ETokens.UserStatusRepository]: UserStatusRepository,
 } as const;
 

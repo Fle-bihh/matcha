@@ -11,3 +11,4 @@ export * from "./user-deletion.service";
 export * from "./user.service";
 export * from "./visit.service";
 export * from "./websocket.service";
+export * from "./report.service";
