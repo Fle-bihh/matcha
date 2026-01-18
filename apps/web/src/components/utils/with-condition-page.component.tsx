@@ -6,7 +6,7 @@ import { Navigate } from "react-router-dom";
 function withConditionPage(
 	Component: FunctionComponent,
 	condition: boolean,
-	redirectTo: string
+	redirectTo: string,
 ) {
 	return function InnerComponent(props?: any) {
 		return condition ? (
@@ -29,12 +29,12 @@ export function withLoggedIn(Component: React.FunctionComponent) {
 
 export function withEmailVerified(
 	Component: React.FunctionComponent,
-	redirectTo = APP_ROUTES.protected
+	redirectTo = APP_ROUTES.protected,
 ) {
 	const { authUser } = useAuthUser();
 	return withConditionPage(
 		Component,
 		!!authUser && authUser.is_email_verified,
-		redirectTo
+		redirectTo,
 	);
 }

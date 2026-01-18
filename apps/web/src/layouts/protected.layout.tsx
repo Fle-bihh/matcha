@@ -2,10 +2,7 @@ import { HomeHeader } from "@/components";
 import { Box, Toolbar } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import { useMemo } from "react";
-import {
-	LayoutSizesProvider,
-	useLayoutSizes,
-} from "@/contexts";
+import { LayoutSizesProvider, useLayoutSizes } from "@/contexts";
 import { BrowsingProvider } from "@/contexts";
 import { WebSocketSubscriptionProvider } from "@/contexts";
 
@@ -13,7 +10,7 @@ function ProtectedLayoutContent() {
 	const { headerHeight } = useLayoutSizes();
 	const boxHeight = useMemo(
 		() => `calc(100vh - ${headerHeight}px)`,
-		[headerHeight]
+		[headerHeight],
 	);
 
 	return (

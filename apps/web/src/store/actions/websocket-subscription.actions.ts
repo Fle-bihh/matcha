@@ -7,5 +7,5 @@ export const WebSocketSubscriptionActions = createActions(
 	[
 		EActionKeys.SubscribeToChannel,
 		EActionKeys.UnsubscribeFromChannel,
-	] as const
+	] as const,
 );

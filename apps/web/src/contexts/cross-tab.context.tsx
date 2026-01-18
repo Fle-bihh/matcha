@@ -1,8 +1,8 @@
 import { useCrossTabSync } from "@/hooks";
 
 export function CrossTabSyncProvider({
-  children,
+	children,
 }: React.PropsWithChildren<{}>) {
-  useCrossTabSync();
-  return <>{children}</>;
+	useCrossTabSync();
+	return <>{children}</>;
 }

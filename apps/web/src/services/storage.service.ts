@@ -3,7 +3,7 @@ import { BaseService } from "./base.service";
 
 export class StorageService extends BaseService {
 	public async getItem<T extends EStorageKeys>(
-		key: T
+		key: T,
 	): Promise<StorageDataType[T]> {
 		const item = localStorage.getItem(key);
 		if (!item) return null;
@@ -17,7 +17,7 @@ export class StorageService extends BaseService {
 
 	public async setItem<T extends EStorageKeys>(
 		key: T,
-		value: StorageDataType[T]
+		value: StorageDataType[T],
 	): Promise<void> {
 		const item = typeof value === "string" ? value : JSON.stringify(value);
 		localStorage.setItem(key, item);

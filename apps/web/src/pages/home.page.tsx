@@ -109,5 +109,5 @@ function HomePageComp() {
 
 export const HomePage = withProfileCompleteComponent(
 	HomePageComp,
-	ProfileUncomplete
+	ProfileUncomplete,
 );

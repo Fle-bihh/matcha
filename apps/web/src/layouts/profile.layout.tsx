@@ -18,10 +18,7 @@ import LocationIcon from "@mui/icons-material/LocationOn";
 import HistoryIcon from "@mui/icons-material/History";
 import { APP_ROUTES } from "@/constants";
 import { useRouting } from "@/hooks";
-import {
-	useLayoutSizes,
-	useProfileDrawerRef,
-} from "@/contexts";
+import { useLayoutSizes, useProfileDrawerRef } from "@/contexts";
 import { useWindow } from "@/hooks";
 
 const menuItems = [

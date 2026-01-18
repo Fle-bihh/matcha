@@ -1,68 +1,68 @@
 import { useAuthUser } from "@/hooks";
 
 function withConditionComponent<T extends object>(
-  Component: React.ComponentType<T>,
-  condition: boolean,
-  FallbackComponent: React.ComponentType = () => null
+	Component: React.ComponentType<T>,
+	condition: boolean,
+	FallbackComponent: React.ComponentType = () => null,
 ) {
-  return (props: T) => {
-    if (condition) {
-      return <Component {...(props as T & JSX.IntrinsicAttributes)} />;
-    } else {
-      return <FallbackComponent />;
-    }
-  };
+	return (props: T) => {
+		if (condition) {
+			return <Component {...(props as T & JSX.IntrinsicAttributes)} />;
+		} else {
+			return <FallbackComponent />;
+		}
+	};
 }
 
 export function withEmailNotVerifiedComponent(
-  Component: React.ComponentType,
-  FallbackComponent: React.ComponentType = () => null
+	Component: React.ComponentType,
+	FallbackComponent: React.ComponentType = () => null,
 ) {
-  return function WrappedComponent(props: any) {
-    const { authUser } = useAuthUser();
+	return function WrappedComponent(props: any) {
+		const { authUser } = useAuthUser();
 
-    const ConditionedComponent = withConditionComponent(
-      Component,
-      !authUser?.is_email_verified,
-      FallbackComponent
-    );
+		const ConditionedComponent = withConditionComponent(
+			Component,
+			!authUser?.is_email_verified,
+			FallbackComponent,
+		);
 
-    return <ConditionedComponent {...props} />;
-  };
+		return <ConditionedComponent {...props} />;
+	};
 }
 
 export function withEmailVerifiedComponent(
-  Component: React.ComponentType,
-  FallbackComponent: React.ComponentType = () => null
+	Component: React.ComponentType,
+	FallbackComponent: React.ComponentType = () => null,
 ) {
-  return function WrappedComponent(props: any) {
-    const { authUser } = useAuthUser();
+	return function WrappedComponent(props: any) {
+		const { authUser } = useAuthUser();
 
-    const ConditionedComponent = withConditionComponent(
-      Component,
-      authUser?.is_email_verified ?? false,
-      FallbackComponent
-    );
+		const ConditionedComponent = withConditionComponent(
+			Component,
+			authUser?.is_email_verified ?? false,
+			FallbackComponent,
+		);
 
-    return <ConditionedComponent {...props} />;
-  };
+		return <ConditionedComponent {...props} />;
+	};
 }
 
 export function withProfileCompleteComponent(
-  Component: React.ComponentType,
-  FallbackComponent: React.ComponentType = () => null
+	Component: React.ComponentType,
+	FallbackComponent: React.ComponentType = () => null,
 ) {
-  return function WrappedComponent(props: any) {
-    const { authUser } = useAuthUser();
+	return function WrappedComponent(props: any) {
+		const { authUser } = useAuthUser();
 
-    const isProfileComplete = authUser?.is_profile_complete ?? false;
+		const isProfileComplete = authUser?.is_profile_complete ?? false;
 
-    const ConditionedComponent = withConditionComponent(
-      Component,
-      isProfileComplete,
-      FallbackComponent
-    );
+		const ConditionedComponent = withConditionComponent(
+			Component,
+			isProfileComplete,
+			FallbackComponent,
+		);
 
-    return <ConditionedComponent {...props} />;
-  };
+		return <ConditionedComponent {...props} />;
+	};
 }

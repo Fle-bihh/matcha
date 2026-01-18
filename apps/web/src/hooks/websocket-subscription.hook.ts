@@ -6,7 +6,7 @@ export const useWebSocketSubscription = () => {
 
 	if (!context) {
 		throw new Error(
-			"useWebSocketSubscription must be used within WebSocketSubscriptionProvider"
+			"useWebSocketSubscription must be used within WebSocketSubscriptionProvider",
 		);
 	}
 

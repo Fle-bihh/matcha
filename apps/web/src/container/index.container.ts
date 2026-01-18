@@ -42,7 +42,7 @@ export class Container implements IContainer {
 	public readonly store: TReduxStore;
 	private navigateFunc?: (
 		path: string,
-		options?: { replace?: boolean }
+		options?: { replace?: boolean },
 	) => void;
 
 	constructor() {
@@ -50,7 +50,7 @@ export class Container implements IContainer {
 	}
 
 	public setNavigate(
-		navigateFunc: (path: string, options?: { replace?: boolean }) => void
+		navigateFunc: (path: string, options?: { replace?: boolean }) => void,
 	): void {
 		this.navigateFunc = navigateFunc;
 	}

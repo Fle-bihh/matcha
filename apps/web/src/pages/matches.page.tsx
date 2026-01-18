@@ -97,5 +97,5 @@ function MatchesPageComp() {
 
 export const MatchesPage = withProfileCompleteComponent(
 	MatchesPageComp,
-	ProfileUncomplete
+	ProfileUncomplete,
 );

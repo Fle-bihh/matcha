@@ -24,7 +24,7 @@ const pagersSlice = createSlice({
 				pagerKey: EPagerKeys;
 				meta: PaginationMeta;
 				entityKeys: string[];
-			}>
+			}>,
 		) => {
 			const { pagerKey, meta, entityKeys } = action.payload;
 			state[pagerKey] = {
@@ -37,7 +37,7 @@ const pagersSlice = createSlice({
 			action: PayloadAction<{
 				pagerKey: EPagerKeys;
 				meta: Partial<PaginationMeta>;
-			}>
+			}>,
 		) => {
 			const { pagerKey, meta } = action.payload;
 			if (state[pagerKey]) {
@@ -53,14 +53,14 @@ const pagersSlice = createSlice({
 				pagerKey: EPagerKeys;
 				meta: PaginationMeta;
 				entityKeys: string[];
-			}>
+			}>,
 		) => {
 			const { pagerKey, meta, entityKeys } = action.payload;
 			if (state[pagerKey]) {
 				state[pagerKey].meta = meta;
 				const existingKeys = new Set(state[pagerKey].entityKeys);
 				const newUniqueKeys = entityKeys.filter(
-					(key) => !existingKeys.has(key)
+					(key) => !existingKeys.has(key),
 				);
 				state[pagerKey].entityKeys = [
 					...state[pagerKey].entityKeys,

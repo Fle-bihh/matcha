@@ -68,14 +68,14 @@ export class AuthService extends BaseService {
 		if (accessToken) {
 			await this.storageService.setItem(
 				EStorageKeys.AccessToken,
-				accessToken
+				accessToken,
 			);
 		}
 
 		if (refreshToken) {
 			await this.storageService.setItem(
 				EStorageKeys.RefreshToken,
-				refreshToken
+				refreshToken,
 			);
 		}
 
@@ -119,13 +119,13 @@ export class AuthService extends BaseService {
 				const authenticateResponse =
 					await this.apiService.get<AuthenticateResponseDto>(
 						this.getAuthRoute("authenticate"),
-						{ auth: true }
+						{ auth: true },
 					);
 
 				if (this.isSuccess(authenticateResponse)) {
 					await this.storeAuthData(authenticateResponse.data);
 					return ServiceResponse.success(
-						this.MESSAGES.AUTH_SUCCESSFUL
+						this.MESSAGES.AUTH_SUCCESSFUL,
 					);
 				}
 
@@ -145,7 +145,7 @@ export class AuthService extends BaseService {
 		this.dispatch(clearAction({ key: EActionKeys.Register }));
 		const response = await this.apiService.post<LoginResponseDto>(
 			this.getAuthRoute("login"),
-			dto
+			dto,
 		);
 
 		if (!this.isSuccess(response)) {
@@ -161,7 +161,7 @@ export class AuthService extends BaseService {
 		this.dispatch(clearAction({ key: EActionKeys.Login }));
 		const response = await this.apiService.post<RegisterResponseDto>(
 			this.getAuthRoute("register"),
-			dto
+			dto,
 		);
 
 		if (!this.isSuccess(response)) {
@@ -182,7 +182,7 @@ export class AuthService extends BaseService {
 	public async verifyEmail(dto: VerifyEmailRequestDto) {
 		const response = await this.apiService.post<null>(
 			this.getAuthRoute("verify-email"),
-			dto
+			dto,
 		);
 
 		if (!this.isSuccess(response)) {
@@ -200,7 +200,7 @@ export class AuthService extends BaseService {
 	public async resendVerificationEmail() {
 		const response = await this.apiService.get<null>(
 			this.getAuthRoute("resend-verification-email"),
-			{ auth: true }
+			{ auth: true },
 		);
 
 		if (!this.isSuccess(response)) {
@@ -214,7 +214,7 @@ export class AuthService extends BaseService {
 	public async forgotPassword(dto: ForgotPasswordRequestDto) {
 		const response = await this.apiService.post<null>(
 			this.getAuthRoute("forgot-password"),
-			dto
+			dto,
 		);
 
 		if (!this.isSuccess(response)) {
@@ -228,7 +228,7 @@ export class AuthService extends BaseService {
 	public async resetPassword(dto: ResetPasswordRequestDto) {
 		const response = await this.apiService.post<null>(
 			this.getAuthRoute("reset-password"),
-			dto
+			dto,
 		);
 
 		if (!this.isSuccess(response)) {
@@ -241,12 +241,12 @@ export class AuthService extends BaseService {
 
 	@action({ showSuccessMessage: true, showErrorMessage: true })
 	public async sendChangeEmailVerification(
-		dto: SendChangeEmailVerificationRequestDto
+		dto: SendChangeEmailVerificationRequestDto,
 	) {
 		const response = await this.apiService.post<null>(
 			this.getAuthRoute("send-change-email-verification"),
 			dto,
-			{ auth: true }
+			{ auth: true },
 		);
 
 		if (!this.isSuccess(response)) {
@@ -259,7 +259,7 @@ export class AuthService extends BaseService {
 		});
 
 		return ServiceResponse.success(
-			this.MESSAGES.EMAIL_CHANGE_VERIFICATION_SENT
+			this.MESSAGES.EMAIL_CHANGE_VERIFICATION_SENT,
 		);
 	}
 
@@ -268,7 +268,7 @@ export class AuthService extends BaseService {
 		const response = await this.apiService.post<ChangeEmailResponseDto>(
 			this.getAuthRoute("change-email"),
 			dto,
-			{ auth: true }
+			{ auth: true },
 		);
 
 		if (!this.isSuccess(response)) {

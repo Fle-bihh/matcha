@@ -18,7 +18,7 @@ const filtersSlice = createSlice({
 			action: PayloadAction<{
 				key: EFilterKeys;
 				filters: BrowsingFilters;
-			}>
+			}>,
 		) => {
 			const { key, filters } = action.payload;
 			state[key] = filters;
@@ -28,7 +28,7 @@ const filtersSlice = createSlice({
 			action: PayloadAction<{
 				key: EFilterKeys;
 				filters: Partial<BrowsingFilters>;
-			}>
+			}>,
 		) => {
 			const { key, filters } = action.payload;
 			state[key] = { ...state[key], ...filters };

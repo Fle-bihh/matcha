@@ -35,7 +35,7 @@ export function BrowsingFiltersComponent() {
 	const [localFilters, setLocalFilters] = useState<BrowsingFilters>(filters);
 	const hasChanges = useMemo(
 		() => hasChangesCb(localFilters),
-		[hasChangesCb, localFilters]
+		[hasChangesCb, localFilters],
 	);
 
 	const handleChange = (key: keyof BrowsingFilters, value: any) => {
@@ -64,7 +64,7 @@ export function BrowsingFiltersComponent() {
 			value !== undefined &&
 			value !== null &&
 			value !== "" &&
-			(Array.isArray(value) ? value.length > 0 : true)
+			(Array.isArray(value) ? value.length > 0 : true),
 	);
 
 	useEffect(() => {
@@ -197,7 +197,7 @@ export function BrowsingFiltersComponent() {
 											onChange={(e) =>
 												handleChange(
 													"sortBy",
-													e.target.value
+													e.target.value,
 												)
 											}
 										>
@@ -242,7 +242,7 @@ export function BrowsingFiltersComponent() {
 											onChange={(e) =>
 												handleChange(
 													"sortOrder",
-													e.target.value
+													e.target.value,
 												)
 											}
 											disabled={!localFilters.sortBy}
@@ -281,14 +281,14 @@ export function BrowsingFiltersComponent() {
 										}
 										color={
 											localFilters.interests?.includes(
-												interest
+												interest,
 											)
 												? "primary"
 												: "default"
 										}
 										variant={
 											localFilters.interests?.includes(
-												interest
+												interest,
 											)
 												? "filled"
 												: "outlined"

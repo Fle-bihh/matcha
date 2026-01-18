@@ -36,7 +36,7 @@ export class WebSocketService extends BaseService {
 		}
 
 		const token = await this.storageService.getItem(
-			EStorageKeys.AccessToken
+			EStorageKeys.AccessToken,
 		);
 
 		if (!token) {
@@ -83,7 +83,7 @@ export class WebSocketService extends BaseService {
 	public disconnect(): void {
 		if (this.socket) {
 			this.handlers.forEach((handler) =>
-				handler.unregister(this.socket!)
+				handler.unregister(this.socket!),
 			);
 			this.socket.disconnect();
 			this.socket = null;
@@ -94,7 +94,7 @@ export class WebSocketService extends BaseService {
 
 	public on<K extends keyof IWebSocketEventDtoMap>(
 		event: K,
-		callback: (data: IWebSocketEventDtoMap[K]) => void
+		callback: (data: IWebSocketEventDtoMap[K]) => void,
 	): void {
 		if (this.socket) {
 			this.socket.on(event as string, callback);
@@ -103,7 +103,7 @@ export class WebSocketService extends BaseService {
 
 	public off<K extends keyof IWebSocketEventDtoMap>(
 		event: K,
-		callback?: (data: IWebSocketEventDtoMap[K]) => void
+		callback?: (data: IWebSocketEventDtoMap[K]) => void,
 	): void {
 		if (this.socket) {
 			this.socket.off(event as string, callback);
@@ -112,7 +112,7 @@ export class WebSocketService extends BaseService {
 
 	public emit<K extends keyof IWebSocketEventDtoMap>(
 		event: K,
-		data: IWebSocketEventDtoMap[K]
+		data: IWebSocketEventDtoMap[K],
 	): void {
 		if (this.socket?.connected) {
 			this.socket.emit(event as string, data);

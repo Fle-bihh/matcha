@@ -35,7 +35,7 @@ function useWebSocketSubscriptionState() {
 			subscribeToChannel({ channel });
 			activeSubscriptions.current.add(channel);
 		},
-		[subscribeToChannel]
+		[subscribeToChannel],
 	);
 
 	const unsubscribeFromUserStatus = useCallback(
@@ -49,7 +49,7 @@ function useWebSocketSubscriptionState() {
 			unsubscribeFromChannel({ channel });
 			activeSubscriptions.current.delete(channel);
 		},
-		[unsubscribeFromChannel]
+		[unsubscribeFromChannel],
 	);
 
 	useEffect(() => {
