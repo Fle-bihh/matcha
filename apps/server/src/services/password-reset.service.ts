@@ -1,6 +1,6 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
-import { PasswordResetRepository } from "@/repositories/password-reset.repository";
+import { PasswordResetRepository } from "@/repositories";
 import { UserService } from "./user.service";
 import { logger } from "@matcha/shared";
 import { StatusCodes } from "@matcha/shared";
@@ -14,7 +14,7 @@ export class PasswordResetService extends BaseService {
 
 	private get passwordResetRepository(): PasswordResetRepository {
 		return this.container.get<PasswordResetRepository>(
-			ETokens.PasswordResetRepository
+			ETokens.PasswordResetRepository,
 		);
 	}
 
@@ -23,7 +23,7 @@ export class PasswordResetService extends BaseService {
 	}
 
 	public async createResetToken(
-		userId: number
+		userId: number,
 	): Promise<ServiceResponse<string | null>> {
 		try {
 			const token = crypto.randomBytes(32).toString("hex");
@@ -36,25 +36,25 @@ export class PasswordResetService extends BaseService {
 			await this.passwordResetRepository.createPasswordReset(
 				userId,
 				token,
-				expiresAt
+				expiresAt,
 			);
 
 			return ServiceResponse.success(
 				"Password reset token created successfully",
-				token
+				token,
 			);
 		} catch (error) {
 			logger.error("Error creating password reset token:", error);
 			return ServiceResponse.failure(
 				"Error creating password reset token",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
 
 	public async sendPasswordResetEmail(
-		email: string
+		email: string,
 	): Promise<ServiceResponse<null>> {
 		try {
 			const userResponse = await this.userService.findByEmail(email);
@@ -62,7 +62,7 @@ export class PasswordResetService extends BaseService {
 			if (!this.isSuccess(userResponse) || !userResponse.data) {
 				return ServiceResponse.success(
 					"If the email exists, a password reset link has been sent",
-					null
+					null,
 				);
 			}
 
@@ -79,12 +79,12 @@ export class PasswordResetService extends BaseService {
 					const timeRemaining = Math.ceil(
 						(lastEmailDate.getTime() + 5 * 60 * 1000 - Date.now()) /
 							1000 /
-							60
+							60,
 					);
 					return ServiceResponse.failure(
 						`Please wait ${timeRemaining} minute(s) before requesting another password reset email.`,
 						null,
-						StatusCodes.TOO_MANY_REQUESTS
+						StatusCodes.TOO_MANY_REQUESTS,
 					);
 				}
 			}
@@ -97,7 +97,7 @@ export class PasswordResetService extends BaseService {
 				return ServiceResponse.failure(
 					"Error creating password reset token",
 					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
+					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
 
@@ -111,20 +111,20 @@ export class PasswordResetService extends BaseService {
 
 			return ServiceResponse.success(
 				"If the email exists, a password reset link has been sent",
-				null
+				null,
 			);
 		} catch (error) {
 			logger.error("Error sending password reset email:", error);
 			return ServiceResponse.failure(
 				"Error sending password reset email",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
 
 	public async verifyResetToken(
-		token: string
+		token: string,
 	): Promise<ServiceResponse<number | null>> {
 		try {
 			const reset = await this.passwordResetRepository.findByToken(token);
@@ -133,27 +133,27 @@ export class PasswordResetService extends BaseService {
 				return ServiceResponse.failure(
 					"Invalid or expired password reset token",
 					null,
-					StatusCodes.BAD_REQUEST
+					StatusCodes.BAD_REQUEST,
 				);
 			}
 
 			return ServiceResponse.success(
 				"Password reset token is valid",
-				reset.user_id
+				reset.user_id,
 			);
 		} catch (error) {
 			logger.error("Error verifying reset token:", error);
 			return ServiceResponse.failure(
 				"Error verifying reset token",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
 
 	public async resetPassword(
 		token: string,
-		newPassword: string
+		newPassword: string,
 	): Promise<ServiceResponse<null>> {
 		try {
 			const reset = await this.passwordResetRepository.findByToken(token);
@@ -162,32 +162,32 @@ export class PasswordResetService extends BaseService {
 				return ServiceResponse.failure(
 					"Invalid or expired password reset token",
 					null,
-					StatusCodes.BAD_REQUEST
+					StatusCodes.BAD_REQUEST,
 				);
 			}
 
 			const userResponse = await this.userService.updateUserPassword(
 				reset.user_id,
-				newPassword
+				newPassword,
 			);
 
 			if (!this.isSuccess(userResponse)) {
 				return ServiceResponse.failure(
 					userResponse.message,
 					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
+					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
 
 			const marked = await this.passwordResetRepository.markAsUsed(
-				reset.id
+				reset.id,
 			);
 
 			if (!marked) {
 				return ServiceResponse.failure(
 					"Error marking reset token as used",
 					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
+					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
 
@@ -199,7 +199,7 @@ export class PasswordResetService extends BaseService {
 			return ServiceResponse.failure(
 				"Error resetting password",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}

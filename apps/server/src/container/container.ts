@@ -1,32 +1,31 @@
 import {
 	BaseRepository,
-	UserRepository,
-	EmailVerificationRepository,
-	PasswordResetRepository,
 	BrowsingRepository,
+	EmailVerificationRepository,
+	LikeRepository,
+	MatchRepository,
+	MessageRepository,
+	PasswordResetRepository,
+	UserRepository,
 	UserStatusRepository,
+	VisitRepository,
 } from "@/repositories";
-import { LikeRepository } from "@/repositories/like.repository";
-import { MatchRepository } from "@/repositories/match.repository";
-import { MessageRepository } from "@/repositories/message.repository";
-import { VisitRepository } from "@/repositories/visit.repository";
 import {
-	HealthService,
-	UserService,
 	AuthService,
-	MailService,
 	EmailVerificationService,
-	PasswordResetService,
 	FileUploadService,
+	HealthService,
+	LikeService,
+	MailService,
+	MatchService,
+	PasswordResetService,
 	UserDeletionService,
+	UserService,
+	VisitService,
+	WebSocketService,
 } from "@/services";
-import { LikeService } from "@/services/like.service";
-import { MatchService } from "@/services/match.service";
-import { WebSocketService } from "@/services/websocket.service";
-import { VisitService } from "@/services/visit.service";
-import { ETokens, IContainer, REPOSITORY_TOKENS } from "@/types";
+import { ETokens, IContainer, REPOSITORY_TOKENS, IRepository } from "@/types";
 import { logger } from "@matcha/shared";
-import { IRepository } from "@/types/repository.types";
 
 type ServiceConstructor = new (container: IContainer) => any;
 

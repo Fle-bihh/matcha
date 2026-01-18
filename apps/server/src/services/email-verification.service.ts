@@ -1,6 +1,6 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
-import { EmailVerificationRepository } from "@/repositories/email-verification.repository";
+import { EmailVerificationRepository } from "@/repositories";
 import { UserService } from "./user.service";
 import { ChangeEmailResponseDto, logger } from "@matcha/shared";
 import { StatusCodes } from "@matcha/shared";
@@ -14,7 +14,7 @@ export class EmailVerificationService extends BaseService {
 
 	private get emailVerificationRepository(): EmailVerificationRepository {
 		return this.container.get<EmailVerificationRepository>(
-			ETokens.EmailVerificationRepository
+			ETokens.EmailVerificationRepository,
 		);
 	}
 
@@ -23,7 +23,7 @@ export class EmailVerificationService extends BaseService {
 	}
 
 	public async createVerificationToken(
-		userId: number
+		userId: number,
 	): Promise<ServiceResponse<string | null>> {
 		try {
 			const token = crypto.randomBytes(32).toString("hex");
@@ -36,25 +36,25 @@ export class EmailVerificationService extends BaseService {
 			await this.emailVerificationRepository.createVerification(
 				userId,
 				token,
-				expiresAt
+				expiresAt,
 			);
 
 			return ServiceResponse.success(
 				"Verification token created successfully",
-				token
+				token,
 			);
 		} catch (error) {
 			logger.error("Error creating verification token:", error);
 			return ServiceResponse.failure(
 				"Error creating verification token",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
 
 	public async sendVerificationEmail(
-		userId: number
+		userId: number,
 	): Promise<ServiceResponse<null>> {
 		try {
 			const userResponse = await this.userService.findById(userId);
@@ -63,7 +63,7 @@ export class EmailVerificationService extends BaseService {
 				return ServiceResponse.failure(
 					"User not found",
 					null,
-					StatusCodes.NOT_FOUND
+					StatusCodes.NOT_FOUND,
 				);
 			}
 
@@ -71,7 +71,7 @@ export class EmailVerificationService extends BaseService {
 
 			const latestVerification =
 				await this.emailVerificationRepository.getLatestByUserId(
-					userId
+					userId,
 				);
 
 			if (latestVerification) {
@@ -82,12 +82,12 @@ export class EmailVerificationService extends BaseService {
 					const timeRemaining = Math.ceil(
 						(lastEmailDate.getTime() + 5 * 60 * 1000 - Date.now()) /
 							1000 /
-							60
+							60,
 					);
 					return ServiceResponse.failure(
 						`Please wait ${timeRemaining} minute(s) before requesting another verification email.`,
 						null,
-						StatusCodes.TOO_MANY_REQUESTS
+						StatusCodes.TOO_MANY_REQUESTS,
 					);
 				}
 			}
@@ -100,7 +100,7 @@ export class EmailVerificationService extends BaseService {
 				return ServiceResponse.failure(
 					"Error creating verification token",
 					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
+					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
 
@@ -114,14 +114,14 @@ export class EmailVerificationService extends BaseService {
 
 			return ServiceResponse.success(
 				"Verification email sent successfully",
-				null
+				null,
 			);
 		} catch (error) {
 			logger.error("Error sending verification email:", error);
 			return ServiceResponse.failure(
 				"Error sending verification email",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
@@ -135,19 +135,19 @@ export class EmailVerificationService extends BaseService {
 				return ServiceResponse.failure(
 					"Invalid or expired verification token",
 					null,
-					StatusCodes.BAD_REQUEST
+					StatusCodes.BAD_REQUEST,
 				);
 			}
 
 			const marked = await this.emailVerificationRepository.markAsUsed(
-				verification.id
+				verification.id,
 			);
 
 			if (!marked) {
 				return ServiceResponse.failure(
 					"Error marking verification as used",
 					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
+					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
 
@@ -155,14 +155,14 @@ export class EmailVerificationService extends BaseService {
 				verification.user_id,
 				{
 					is_email_verified: true,
-				}
+				},
 			);
 
 			if (!this.isSuccess(userResponse)) {
 				return ServiceResponse.failure(
 					"Error updating user verification status",
 					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
+					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
 
@@ -172,14 +172,14 @@ export class EmailVerificationService extends BaseService {
 			return ServiceResponse.failure(
 				"Error verifying email",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
 
 	public async sendChangeEmailVerification(
 		userId: number,
-		newEmail: string
+		newEmail: string,
 	): Promise<ServiceResponse<null>> {
 		try {
 			const userResponse = await this.userService.findById(userId);
@@ -188,7 +188,7 @@ export class EmailVerificationService extends BaseService {
 				return ServiceResponse.failure(
 					"User not found",
 					null,
-					StatusCodes.NOT_FOUND
+					StatusCodes.NOT_FOUND,
 				);
 			}
 
@@ -205,7 +205,7 @@ export class EmailVerificationService extends BaseService {
 				userId,
 				newEmail,
 				token,
-				expiresAt
+				expiresAt,
 			);
 
 			const verificationLink = `${config.webUrl}/confirm-email-change?token=${token}`;
@@ -218,20 +218,20 @@ export class EmailVerificationService extends BaseService {
 
 			return ServiceResponse.success(
 				"Change email verification sent successfully",
-				null
+				null,
 			);
 		} catch (error) {
 			logger.error("Error sending change email verification:", error);
 			return ServiceResponse.failure(
 				"Error sending change email verification",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
 
 	public async verifyEmailChange(
-		token: string
+		token: string,
 	): Promise<ServiceResponse<ChangeEmailResponseDto | null>> {
 		try {
 			const verification =
@@ -245,19 +245,19 @@ export class EmailVerificationService extends BaseService {
 				return ServiceResponse.failure(
 					"Invalid or expired verification token",
 					null,
-					StatusCodes.BAD_REQUEST
+					StatusCodes.BAD_REQUEST,
 				);
 			}
 
 			const marked = await this.emailVerificationRepository.markAsUsed(
-				verification.id
+				verification.id,
 			);
 
 			if (!marked) {
 				return ServiceResponse.failure(
 					"Error marking verification as used",
 					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
+					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
 
@@ -266,14 +266,14 @@ export class EmailVerificationService extends BaseService {
 				{
 					email: verification.new_email,
 					is_email_verified: true,
-				}
+				},
 			);
 
 			if (!this.isSuccess(userResponse)) {
 				return ServiceResponse.failure(
 					"Error updating user email",
 					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
+					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
 
@@ -285,7 +285,7 @@ export class EmailVerificationService extends BaseService {
 			return ServiceResponse.failure(
 				"Error verifying email change",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}

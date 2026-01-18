@@ -1,7 +1,7 @@
 import { BaseRepository } from "./base.repository";
 import { Visit, logger, VisitWithVisitedUser } from "@matcha/shared";
 import { IContainer } from "@/types";
-import { IRepository, TableSchema } from "@/types/repository.types";
+import { IRepository, TableSchema } from "@/types";
 
 export class VisitRepository extends BaseRepository implements IRepository {
 	private readonly tableName = "visits";
@@ -23,7 +23,7 @@ export class VisitRepository extends BaseRepository implements IRepository {
 
 	public async createVisit(
 		visitorId: number,
-		visitedId: number
+		visitedId: number,
 	): Promise<Visit | null> {
 		try {
 			return await this.createDocument<Visit>(this.tableName, {
@@ -50,7 +50,7 @@ export class VisitRepository extends BaseRepository implements IRepository {
 	public async getVisitsMade(
 		userId: number,
 		page: number,
-		limit: number
+		limit: number,
 	): Promise<{ visits: VisitWithVisitedUser[]; total: number }> {
 		try {
 			const offset = (page - 1) * limit;
@@ -58,7 +58,7 @@ export class VisitRepository extends BaseRepository implements IRepository {
 			const query = this.buildVisitsQuery(userId, limit, offset);
 			const [rows] = await this.executeQuery<any>(query, []);
 			const visits = rows.map((row) =>
-				this.mapRowToVisitWithVisitedUser(row)
+				this.mapRowToVisitWithVisitedUser(row),
 			);
 
 			const total = await this.countDocs(this.tableName, {
@@ -76,7 +76,7 @@ export class VisitRepository extends BaseRepository implements IRepository {
 	private buildVisitsQuery(
 		userId: number,
 		limit: number,
-		offset: number
+		offset: number,
 	): string {
 		return `
 			SELECT 

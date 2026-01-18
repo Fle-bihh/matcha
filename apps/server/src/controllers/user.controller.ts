@@ -11,7 +11,7 @@ import {
 	UserIdParamsDtoSchema,
 	ApiResponse,
 } from "@matcha/shared";
-import { uploadProfilePictureMiddleware } from "@/middleware/upload.middleware";
+import { uploadProfilePictureMiddleware } from "@/middleware";
 
 export class UserController extends BaseController {
 	private get userService(): UserService {
@@ -25,7 +25,7 @@ export class UserController extends BaseController {
 		const { id } = req.user!;
 		const result = await this.userService.updateUser(
 			id,
-			req.validated?.body
+			req.validated?.body,
 		);
 		this.sendResult(res, result);
 	}
@@ -40,7 +40,7 @@ export class UserController extends BaseController {
 	@route("PATCH", "update-profile-picture")
 	private async updateProfilePicture(
 		req: Request,
-		res: Response
+		res: Response,
 	): Promise<void> {
 		const imageFile = req.file!;
 		const { index } = req.validated?.body!;
@@ -48,7 +48,7 @@ export class UserController extends BaseController {
 		const result = await this.userService.updateProfilePicture(
 			id,
 			imageFile,
-			index
+			index,
 		);
 		this.sendResult(res, result);
 	}
@@ -60,7 +60,7 @@ export class UserController extends BaseController {
 		const { id } = req.user!;
 		const result = await this.userService.updateLocation(
 			id,
-			req.validated?.body
+			req.validated?.body,
 		);
 		this.sendResult(res, result);
 	}
@@ -73,7 +73,7 @@ export class UserController extends BaseController {
 		const result = await this.userService.getUsers(
 			req.user?.id!,
 			req.pagination!,
-			req.validated?.query!
+			req.validated?.query!,
 		);
 		this.sendResult(res, result);
 	}

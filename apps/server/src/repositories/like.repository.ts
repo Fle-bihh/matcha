@@ -1,7 +1,7 @@
 import { BaseRepository } from "./base.repository";
 import { Like, logger } from "@matcha/shared";
 import { IContainer } from "@/types";
-import { IRepository, TableSchema } from "@/types/repository.types";
+import { IRepository, TableSchema } from "@/types";
 
 export class LikeRepository extends BaseRepository implements IRepository {
 	private readonly tableName = "likes";

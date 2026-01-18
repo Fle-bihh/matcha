@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { BaseController } from "./base.controller";
 import { ETokens } from "@/types";
-import { LikeService } from "@/services/like.service";
+import { LikeService } from "@/services";
 import { auth, route, validate } from "@/decorators";
 import {
 	CreateLikeDtoSchema,
@@ -21,7 +21,7 @@ export class LikeController extends BaseController {
 		const { id } = req.user!;
 		const result = await this.likeService.createLike(
 			id,
-			req.validated?.body
+			req.validated?.body,
 		);
 		this.sendResult(res, result);
 	}

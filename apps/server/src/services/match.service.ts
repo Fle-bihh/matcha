@@ -1,4 +1,5 @@
-import { ServiceResponse } from "@/types";
+import { ServiceResponse, ETokens, IContainer } from "@/types";
+import { emptyPaginatedResponse } from "@/utils";
 import { BaseService } from "./base.service";
 import {
 	GetMatchesResponseDto,
@@ -11,9 +12,6 @@ import {
 	StatusCodes,
 } from "@matcha/shared";
 import { MatchRepository } from "@/repositories";
-import { ETokens } from "@/types/container.types";
-import { IContainer } from "@/types";
-import { emptyPaginatedResponse } from "@/utils/pagination.utils";
 
 export class MatchService extends BaseService {
 	private matchRepository: MatchRepository;

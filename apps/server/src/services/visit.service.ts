@@ -1,6 +1,6 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
-import { VisitRepository } from "@/repositories/visit.repository";
+import { VisitRepository } from "@/repositories";
 import {
 	CreateVisitDto,
 	EWebSocketEvents,
@@ -10,7 +10,7 @@ import {
 	VisitsMadeResponseDto,
 	logger,
 } from "@matcha/shared";
-import { emptyPaginatedResponse } from "@/utils/pagination.utils";
+import { emptyPaginatedResponse } from "@/utils";
 
 export class VisitService extends BaseService {
 	constructor(container: IContainer) {
@@ -23,7 +23,7 @@ export class VisitService extends BaseService {
 
 	public async createVisit(
 		visitorId: number,
-		data: CreateVisitDto
+		data: CreateVisitDto,
 	): Promise<ServiceResponse> {
 		try {
 			const { visited_id } = data;
@@ -32,13 +32,12 @@ export class VisitService extends BaseService {
 				return ServiceResponse.failure(
 					"Cannot visit yourself",
 					null,
-					StatusCodes.BAD_REQUEST
+					StatusCodes.BAD_REQUEST,
 				);
 			}
 
-			const lastVisit = await this.visitRepository.getLastVisit(
-				visitorId
-			);
+			const lastVisit =
+				await this.visitRepository.getLastVisit(visitorId);
 
 			if (lastVisit?.visited_id === visited_id) {
 				return ServiceResponse.success("Visit already recorded", null);
@@ -46,21 +45,21 @@ export class VisitService extends BaseService {
 
 			const visit = await this.visitRepository.createVisit(
 				visitorId,
-				visited_id
+				visited_id,
 			);
 
 			if (!visit) {
 				return ServiceResponse.failure(
 					"Failed to record visit",
 					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
+					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
 
 			this.webSocketService.emitToUser(
 				visited_id,
 				EWebSocketEvents.NewVisit,
-				undefined
+				undefined,
 			);
 
 			return ServiceResponse.success("Visit recorded", null);
@@ -69,7 +68,7 @@ export class VisitService extends BaseService {
 			return ServiceResponse.failure(
 				"An error occurred while recording visit",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
@@ -77,7 +76,7 @@ export class VisitService extends BaseService {
 	public async getVisitsReceived(
 		userId: number,
 		page: number,
-		limit: number
+		limit: number,
 	): Promise<ServiceResponse<VisitsMadeResponseDto>> {
 		try {
 			const { visits: visitsMade, total: totalMade } =
@@ -88,7 +87,7 @@ export class VisitService extends BaseService {
 				{
 					where: "visited_id = ?",
 					values: [userId],
-				}
+				},
 			);
 
 			const totalPages = Math.ceil(totalMade / limit);
@@ -110,7 +109,7 @@ export class VisitService extends BaseService {
 
 			return ServiceResponse.success(
 				"Visits retrieved successfully",
-				response
+				response,
 			);
 		} catch (error) {
 			logger.error("Error in getVisitsReceived:", error);
@@ -121,7 +120,7 @@ export class VisitService extends BaseService {
 						emptyPaginatedResponse<VisitWithVisitedUser>(limit),
 					visitsReceivedCount: 0,
 				},
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}

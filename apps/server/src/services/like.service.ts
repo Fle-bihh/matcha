@@ -1,7 +1,6 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
-import { LikeRepository } from "@/repositories/like.repository";
-import { MatchRepository } from "@/repositories/match.repository";
+import { LikeRepository, MatchRepository } from "@/repositories";
 import { CreateLikeDto, logger, EWebSocketEvents, Like } from "@matcha/shared";
 import { StatusCodes } from "@matcha/shared";
 

@@ -1,4 +1,4 @@
-import { AuthenticatedSocket, ConnectedUser } from "@/types/websocket.types";
+import { AuthenticatedSocket, ConnectedUser } from "@/types";
 import { logger } from "@matcha/shared";
 
 export class WebSocketConnectionManager {
@@ -8,7 +8,7 @@ export class WebSocketConnectionManager {
 		const existing = this.connections.get(userId);
 		if (existing) {
 			logger.info(
-				`User ${userId} reconnecting, disconnecting previous socket ${existing.socketId}`
+				`User ${userId} reconnecting, disconnecting previous socket ${existing.socketId}`,
 			);
 			existing.socket.disconnect();
 		}

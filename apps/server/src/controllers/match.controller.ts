@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { BaseController } from "./base.controller";
 import { ETokens } from "@/types";
-import { MatchService } from "@/services/match.service";
+import { MatchService } from "@/services";
 import { auth, route, validate, paginate } from "@/decorators";
 import { MatchesFiltersDtoSchema } from "@matcha/shared";
 
@@ -18,7 +18,7 @@ export class MatchController extends BaseController {
 		const result = await this.matchService.getMatches(
 			req.user?.id!,
 			req.pagination!,
-			req.validated?.query!
+			req.validated?.query!,
 		);
 		this.sendResult(res, result);
 	}

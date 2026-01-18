@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { BaseController } from "./base.controller";
 import { ETokens } from "@/types";
-import { VisitService } from "@/services/visit.service";
+import { VisitService } from "@/services";
 import { auth, route, validate, paginate } from "@/decorators";
 import { CreateVisitDtoSchema } from "@matcha/shared";
 
@@ -17,7 +17,7 @@ export class VisitController extends BaseController {
 		const { id } = req.user!;
 		const result = await this.visitService.createVisit(
 			id,
-			req.validated?.body
+			req.validated?.body,
 		);
 		this.sendResult(res, result);
 	}
@@ -27,14 +27,14 @@ export class VisitController extends BaseController {
 	@route("GET", "get-visits")
 	private async getVisitsReceived(
 		req: Request,
-		res: Response
+		res: Response,
 	): Promise<void> {
 		const { id } = req.user!;
 		const { page, limit } = req.pagination!;
 		const result = await this.visitService.getVisitsReceived(
 			id,
 			page,
-			limit
+			limit,
 		);
 		this.sendResult(res, result);
 	}

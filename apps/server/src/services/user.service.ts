@@ -18,8 +18,7 @@ import {
 	GetUserByIdResponseDto,
 } from "@matcha/shared";
 import { StatusCodes } from "@matcha/shared";
-import { HashUtils } from "@/utils/hash.utils";
-import { emptyPaginatedResponse } from "@/utils/pagination.utils";
+import { HashUtils, emptyPaginatedResponse } from "@/utils";
 import { LikeService } from "./like.service";
 
 export class UserService extends BaseService {

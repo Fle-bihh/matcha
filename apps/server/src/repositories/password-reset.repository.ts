@@ -1,7 +1,7 @@
 import { BaseRepository } from "./base.repository";
 import { logger, PasswordReset } from "@matcha/shared";
 import { IContainer } from "@/types";
-import { IRepository, TableSchema } from "@/types/repository.types";
+import { IRepository, TableSchema } from "@/types";
 
 export class PasswordResetRepository
 	extends BaseRepository
@@ -27,7 +27,7 @@ export class PasswordResetRepository
 	public async createPasswordReset(
 		userId: number,
 		resetToken: string,
-		expiresAt: Date
+		expiresAt: Date,
 	): Promise<PasswordReset> {
 		const reset = await this.createDocument<PasswordReset>(this.tableName, {
 			user_id: userId,
@@ -53,7 +53,7 @@ export class PasswordResetRepository
 	}
 
 	public async findLatestByUserId(
-		userId: number
+		userId: number,
 	): Promise<PasswordReset | null> {
 		try {
 			const resets = await this.getDocs<PasswordReset>(this.tableName, {
@@ -76,7 +76,7 @@ export class PasswordResetRepository
 				id,
 				{
 					is_used: true,
-				}
+				},
 			);
 			return result !== null;
 		} catch (error) {

@@ -1,7 +1,6 @@
-import { Container } from "@/container/container";
+import { Container } from "@/container";
 import { BaseRepository, UserRepository } from "@/repositories";
-import { ETokens } from "@/types";
-import { IRepository, TableSchema } from "@/types/repository.types";
+import { ETokens, IRepository, TableSchema } from "@/types";
 import { logger } from "@matcha/shared";
 
 export class RepositorySchemaSetup {
@@ -31,7 +30,7 @@ export class RepositorySchemaSetup {
 	}
 
 	private async initializeRepositorySchema(
-		repository: IRepository
+		repository: IRepository,
 	): Promise<void> {
 		const schema = repository.loadTableSchema();
 		const { tableName, fields, constraints } = schema;
@@ -44,7 +43,7 @@ export class RepositorySchemaSetup {
 		logger.debug(`Initializing schema for table: ${tableName}`);
 
 		const baseRepository = this.container.get<BaseRepository>(
-			ETokens.BaseRepository
+			ETokens.BaseRepository,
 		);
 
 		const tableExists = await this.tableExists(tableName);
@@ -54,7 +53,7 @@ export class RepositorySchemaSetup {
 			await baseRepository.createTableWithMetadata(
 				tableName,
 				fields,
-				constraints
+				constraints,
 			);
 			return;
 		}
@@ -70,7 +69,7 @@ export class RepositorySchemaSetup {
 
 		if (!schemaMatches) {
 			logger.warn(
-				`Schema mismatch for table: ${tableName}. Manual migration required.`
+				`Schema mismatch for table: ${tableName}. Manual migration required.`,
 			);
 		} else {
 			logger.debug(`Table ${tableName} is up to date`);
@@ -79,14 +78,14 @@ export class RepositorySchemaSetup {
 
 	private async seedUserRepository(): Promise<void> {
 		const userRepository = this.container.get<UserRepository>(
-			ETokens.UserRepository
+			ETokens.UserRepository,
 		);
 		await userRepository.seedDatabaseIfEmpty();
 	}
 
 	private async tableExists(tableName: string): Promise<boolean> {
 		const baseRepository = this.container.get<BaseRepository>(
-			ETokens.BaseRepository
+			ETokens.BaseRepository,
 		);
 
 		const query = `
@@ -105,7 +104,7 @@ export class RepositorySchemaSetup {
 
 	private async verifySchema(schema: TableSchema): Promise<boolean> {
 		const baseRepository = this.container.get<BaseRepository>(
-			ETokens.BaseRepository
+			ETokens.BaseRepository,
 		);
 
 		const columnsQuery = `
@@ -134,7 +133,7 @@ export class RepositorySchemaSetup {
 		}>(constraintsQuery, [schema.tableName]);
 
 		logger.debug(
-			`Table ${schema.tableName} - Columns: ${columns.length}, Constraints: ${constraints.length}`
+			`Table ${schema.tableName} - Columns: ${columns.length}, Constraints: ${constraints.length}`,
 		);
 
 		return false;

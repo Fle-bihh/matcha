@@ -1,7 +1,7 @@
 import { BaseRepository } from "./base.repository";
 import { EmailVerification, logger } from "@matcha/shared";
 import { IContainer } from "@/types";
-import { IRepository, TableSchema } from "@/types/repository.types";
+import { IRepository, TableSchema } from "@/types";
 
 export class EmailVerificationRepository
 	extends BaseRepository
@@ -29,7 +29,7 @@ export class EmailVerificationRepository
 	public async createVerification(
 		userId: number,
 		verificationToken: string,
-		expiresAt: Date
+		expiresAt: Date,
 	): Promise<EmailVerification> {
 		const verification = await this.createDocument<EmailVerification>(
 			this.tableName,
@@ -40,7 +40,7 @@ export class EmailVerificationRepository
 				is_new_email: false,
 				new_email: null,
 				expires_at: expiresAt,
-			}
+			},
 		);
 		return verification;
 	}
@@ -49,7 +49,7 @@ export class EmailVerificationRepository
 		userId: number,
 		newEmail: string,
 		verificationToken: string,
-		expiresAt: Date
+		expiresAt: Date,
 	): Promise<EmailVerification> {
 		const verification = await this.createDocument<EmailVerification>(
 			this.tableName,
@@ -60,7 +60,7 @@ export class EmailVerificationRepository
 				is_new_email: true,
 				new_email: newEmail,
 				expires_at: expiresAt,
-			}
+			},
 		);
 		return verification;
 	}
@@ -73,7 +73,7 @@ export class EmailVerificationRepository
 					where: "verification_token = ? AND is_used = FALSE AND expires_at > NOW()",
 					values: [token],
 					limit: 1,
-				}
+				},
 			);
 			return verifications.length > 0 ? verifications[0] : null;
 		} catch (error) {
@@ -89,7 +89,7 @@ export class EmailVerificationRepository
 				id,
 				{
 					is_used: true,
-				}
+				},
 			);
 			return result !== null;
 		} catch (error) {
@@ -105,7 +105,7 @@ export class EmailVerificationRepository
 				{
 					where: "user_id = ?",
 					values: [userId],
-				}
+				},
 			);
 
 			for (const verification of verifications) {
@@ -120,7 +120,7 @@ export class EmailVerificationRepository
 	}
 
 	public async getLatestByUserId(
-		userId: number
+		userId: number,
 	): Promise<EmailVerification | null> {
 		try {
 			const verifications = await this.getDocs<EmailVerification>(
@@ -130,13 +130,13 @@ export class EmailVerificationRepository
 					values: [userId],
 					orderBy: "created_at DESC",
 					limit: 1,
-				}
+				},
 			);
 			return verifications.length > 0 ? verifications[0] : null;
 		} catch (error) {
 			logger.error(
 				"Error getting latest verification by user ID:",
-				error
+				error,
 			);
 			return null;
 		}

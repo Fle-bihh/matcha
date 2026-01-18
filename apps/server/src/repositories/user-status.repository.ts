@@ -1,11 +1,11 @@
-import { IRepository, TableSchema } from "@/types/repository.types";
+import { IRepository, TableSchema } from "@/types";
 import { BaseRepository } from "./base.repository";
 import {
 	UserStatus,
 	EWebSocketEvents,
 	EWebSocketChannels,
 } from "@matcha/shared";
-import { mysqlTimestamp } from "@/utils/date.utils";
+import { mysqlTimestamp } from "@/utils";
 import { ETokens } from "@/types";
 import { WebSocketService } from "@/services";
 
@@ -41,7 +41,7 @@ export class UserStatusRepository
 
 	private async updateUserStatus(
 		userId: number,
-		isOnline: boolean
+		isOnline: boolean,
 	): Promise<void> {
 		const existing = await this.getUserStatus(userId);
 		const timestamp = mysqlTimestamp();
@@ -49,7 +49,7 @@ export class UserStatusRepository
 		if (existing) {
 			await this.executeQuery(
 				`UPDATE ${this.collectionName} SET is_online = ?, last_active_at = ? WHERE user_id = ?`,
-				[isOnline, timestamp, userId]
+				[isOnline, timestamp, userId],
 			);
 		} else {
 			await this.createDocument<UserStatus>(this.collectionName, {
@@ -73,7 +73,7 @@ export class UserStatusRepository
 			{
 				userId,
 				status,
-			}
+			},
 		);
 	}
 

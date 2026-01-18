@@ -1,7 +1,6 @@
 import { BaseRepository } from "./base.repository";
 import { Match, MatchWithDetails, User, Message, logger } from "@matcha/shared";
-import { IContainer, ETokens } from "@/types";
-import { IRepository, TableSchema } from "@/types/repository.types";
+import { IContainer, ETokens, IRepository, TableSchema } from "@/types";
 import { MessageRepository } from "./message.repository";
 
 export class MatchRepository extends BaseRepository implements IRepository {

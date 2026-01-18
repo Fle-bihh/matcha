@@ -1,11 +1,12 @@
 import { Server as WebSocketServer } from "socket.io";
-import { ETokens, IContainer } from "@/types";
-import { BaseService } from "./base.service";
 import {
+	ETokens,
+	IContainer,
 	ConnectedUser,
 	IWebSocketService,
 	AuthenticatedSocket,
-} from "@/types/websocket.types";
+} from "@/types";
+import { BaseService } from "./base.service";
 import {
 	logger,
 	EWebSocketEvents,
@@ -15,9 +16,9 @@ import {
 	EWebSocketChannels,
 	TWebSocketChannel,
 } from "@matcha/shared";
-import { authenticateSocket } from "@/middleware/websocket-auth.middleware";
+import { authenticateSocket } from "@/middleware";
 import { UserStatusRepository } from "@/repositories";
-import { WebSocketConnectionManager } from "@/utils/websocket-connection.utils";
+import { WebSocketConnectionManager } from "@/utils";
 
 export class WebSocketService extends BaseService implements IWebSocketService {
 	private io: WebSocketServer | null = null;
@@ -31,7 +32,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 
 	protected get UserStatusRepository(): UserStatusRepository {
 		return this.container.get<UserStatusRepository>(
-			ETokens.UserStatusRepository
+			ETokens.UserStatusRepository,
 		);
 	}
 
@@ -53,14 +54,14 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 				EWebSocketEvents.Subscribe,
 				(data: SubscribeChannelRequestDto) => {
 					this.handleSubscribe(authSocket, data);
-				}
+				},
 			);
 
 			authSocket.on(
 				EWebSocketEvents.Unsubscribe,
 				(data: UnsubscribeChannelRequestDto) => {
 					this.handleUnsubscribe(authSocket, data);
-				}
+				},
 			);
 
 			authSocket.on(EWebSocketEvents.Disconnect, () => {
@@ -95,7 +96,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 
 	private handleSubscribe(
 		socket: AuthenticatedSocket,
-		data: SubscribeChannelRequestDto
+		data: SubscribeChannelRequestDto,
 	): void {
 		try {
 			const { channel } = data;
@@ -112,7 +113,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 			});
 
 			logger.debug(
-				`Socket ${socket.id} subscribed to channel: ${channel}`
+				`Socket ${socket.id} subscribed to channel: ${channel}`,
 			);
 		} catch (error) {
 			logger.error(`Error handling subscribe: ${error}`);
@@ -121,7 +122,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 
 	private handleUnsubscribe(
 		socket: AuthenticatedSocket,
-		data: UnsubscribeChannelRequestDto
+		data: UnsubscribeChannelRequestDto,
 	): void {
 		try {
 			const { channel } = data;
@@ -140,7 +141,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 			});
 
 			logger.debug(
-				`Socket ${socket.id} unsubscribed from channel: ${channel}`
+				`Socket ${socket.id} unsubscribed from channel: ${channel}`,
 			);
 		} catch (error) {
 			logger.error(`Error handling unsubscribe: ${error}`);
@@ -162,12 +163,12 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 	public emitToUser<K extends keyof IWebSocketEventDtoMap>(
 		userId: number,
 		event: K,
-		data: IWebSocketEventDtoMap[K]
+		data: IWebSocketEventDtoMap[K],
 	): void {
 		try {
 			logger.debug(
 				`Emitting event ${event} to user ${userId} with data:`,
-				data
+				data,
 			);
 			const user = this.connectionManager.get(userId);
 			if (user) {
@@ -175,14 +176,14 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 			}
 		} catch (error) {
 			logger.error(
-				`Error emitting event ${event} to user ${userId}: ${error}`
+				`Error emitting event ${event} to user ${userId}: ${error}`,
 			);
 		}
 	}
 
 	public emitToAll<K extends keyof IWebSocketEventDtoMap>(
 		event: K,
-		data: IWebSocketEventDtoMap[K]
+		data: IWebSocketEventDtoMap[K],
 	): void {
 		try {
 			if (this.io) {
@@ -190,7 +191,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 			}
 		} catch (error) {
 			logger.error(
-				`Error emitting event ${event} to all users: ${error}`
+				`Error emitting event ${event} to all users: ${error}`,
 			);
 		}
 	}
@@ -206,7 +207,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 	public emitToChannel<K extends keyof IWebSocketEventDtoMap>(
 		channel: TWebSocketChannel,
 		event: K,
-		data: IWebSocketEventDtoMap[K]
+		data: IWebSocketEventDtoMap[K],
 	): void {
 		try {
 			const subscribers = this.channelSubscriptions.get(channel);
@@ -216,7 +217,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 			}
 
 			logger.debug(
-				`Emitting event ${event} to channel ${channel} with ${subscribers.size} subscribers`
+				`Emitting event ${event} to channel ${channel} with ${subscribers.size} subscribers`,
 			);
 
 			for (const socketId of subscribers) {
@@ -226,7 +227,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 			}
 		} catch (error) {
 			logger.error(
-				`Error emitting event ${event} to channel ${channel}: ${error}`
+				`Error emitting event ${event} to channel ${channel}: ${error}`,
 			);
 		}
 	}

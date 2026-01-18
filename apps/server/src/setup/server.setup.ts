@@ -1,7 +1,7 @@
 import express, { Express } from "express";
-import { Container } from "@/container/container";
-import { ControllerRegistry } from "@/registry/controller.registry";
-import { GracefulShutdown } from "@/utils/graceful-shutdown.utils";
+import { Container } from "@/container";
+import { ControllerRegistry } from "@/registry";
+import { GracefulShutdown } from "@/utils";
 import { APP_NAME, logger } from "@matcha/shared";
 import { ServiceResponse, ETokens } from "@/types";
 import {
@@ -10,8 +10,8 @@ import {
 	helmetConfig,
 	xssSanitize,
 	hppMiddleware,
-} from "@/middleware/security.middleware";
-import { authenticateRequest } from "@/middleware/auth.middleware";
+	authenticateRequest,
+} from "@/middleware";
 import cors from "cors";
 import http from "http";
 import { Server as WebSocketServer, ServerOptions } from "socket.io";
@@ -53,7 +53,7 @@ export class ServerSetup {
 		const wsServer = new WebSocketServer(this.server, ioOptions);
 
 		const webSocketService = this.container.get<WebSocketService>(
-			ETokens.WebSocketService
+			ETokens.WebSocketService,
 		);
 		webSocketService.initialize(wsServer);
 
@@ -71,7 +71,7 @@ export class ServerSetup {
 		this.app.use(
 			"/api/v1/uploads",
 			authenticateRequest,
-			express.static("uploads")
+			express.static("uploads"),
 		);
 
 		this.app.use(limiter);

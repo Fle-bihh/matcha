@@ -1,11 +1,11 @@
 import { Socket } from "socket.io";
-import { JwtUtils } from "@/utils/jwt.utils";
+import { JwtUtils } from "@/utils";
 import { logger } from "@matcha/shared";
-import { AuthenticatedSocket } from "@/types/websocket.types";
+import { AuthenticatedSocket } from "@/types";
 
 export const authenticateSocket = (
 	socket: Socket,
-	next: (err?: Error) => void
+	next: (err?: Error) => void,
 ): void => {
 	try {
 		const token = socket.handshake.auth.token;

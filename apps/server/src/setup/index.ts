@@ -1,5 +1,5 @@
-export { ApplicationSetup } from "./application.setup";
-export { ContainerSetup } from "./container.setup";
-export { DatabaseSetup } from "./database.setup";
-export { ServerSetup } from "./server.setup";
-export { RepositorySchemaSetup } from "./repository-schema.setup";
+export * from "./application.setup";
+export * from "./container.setup";
+export * from "./database.setup";
+export * from "./repository-schema.setup";
+export * from "./server.setup";

@@ -1,7 +1,7 @@
 import { BaseEntity } from "@matcha/shared";
 import { DatabaseConnectionManager } from "./database-connection-manager";
 import { DatabaseSchemaManager } from "./database-schema-manager";
-import { QueryOptions } from "@/types/db.types";
+import { QueryOptions } from "@/types";
 
 export class DatabaseOperations {
 	private connectionManager: DatabaseConnectionManager;
@@ -18,9 +18,8 @@ export class DatabaseOperations {
 			return this.metadataCache.get(tableName)!;
 		}
 
-		const hasMetadata = await this.schemaManager.hasMetadataColumns(
-			tableName
-		);
+		const hasMetadata =
+			await this.schemaManager.hasMetadataColumns(tableName);
 		this.metadataCache.set(tableName, hasMetadata);
 		return hasMetadata;
 	}
@@ -35,7 +34,7 @@ export class DatabaseOperations {
 
 	async createDocument<T extends Record<string, any>>(
 		tableName: string,
-		data: Omit<T, "id" | "created_at" | "updated_at" | "deleted_at">
+		data: Omit<T, "id" | "created_at" | "updated_at" | "deleted_at">,
 	): Promise<T & BaseEntity> {
 		const pool = this.connectionManager.getPool();
 
@@ -46,7 +45,7 @@ export class DatabaseOperations {
 
 		const [result] = await pool.execute(
 			`INSERT INTO ${tableName} (${fieldsList}) VALUES (${placeholders})`,
-			values
+			values,
 		);
 
 		const insertId = (result as any).insertId;
@@ -54,7 +53,7 @@ export class DatabaseOperations {
 
 		if (!created) {
 			throw new Error(
-				`Failed to retrieve created document from ${tableName}`
+				`Failed to retrieve created document from ${tableName}`,
 			);
 		}
 
@@ -66,13 +65,13 @@ export class DatabaseOperations {
 		id: number,
 		data: Partial<
 			Omit<T, "id" | "created_at" | "updated_at" | "deleted_at">
-		>
+		>,
 	): Promise<(T & BaseEntity) | null> {
 		const pool = this.connectionManager.getPool();
 		const hasMetadata = await this.hasMetadataColumns(tableName);
 
 		const updateFields = Object.keys(data).filter(
-			(key) => data[key] !== undefined
+			(key) => data[key] !== undefined,
 		);
 
 		if (updateFields.length === 0) {
@@ -91,7 +90,7 @@ export class DatabaseOperations {
 
 		await pool.execute(
 			`UPDATE ${tableName} SET ${setClause} ${whereClause}`,
-			values
+			values,
 		);
 
 		return this.getDoc<T>(tableName, id);
@@ -104,7 +103,7 @@ export class DatabaseOperations {
 		if (hasMetadata) {
 			const [result] = await pool.execute(
 				`UPDATE ${tableName} SET deleted_at = CURRENT_TIMESTAMP WHERE id = ? AND deleted_at IS NULL`,
-				[id]
+				[id],
 			);
 			return (result as any).affectedRows > 0;
 		} else {
@@ -117,7 +116,7 @@ export class DatabaseOperations {
 
 		const [result] = await pool.execute(
 			`DELETE FROM ${tableName} WHERE id = ?`,
-			[id]
+			[id],
 		);
 
 		return (result as any).affectedRows > 0;
@@ -126,7 +125,7 @@ export class DatabaseOperations {
 	async getDoc<T extends Record<string, any>>(
 		tableName: string,
 		id: number,
-		includeDeleted: boolean = false
+		includeDeleted: boolean = false,
 	): Promise<(T & BaseEntity) | null> {
 		const pool = this.connectionManager.getPool();
 		const hasMetadata = await this.hasMetadataColumns(tableName);
@@ -138,7 +137,7 @@ export class DatabaseOperations {
 
 		const [rows] = await pool.execute(
 			`SELECT * FROM ${tableName} ${whereClause}`,
-			[id]
+			[id],
 		);
 
 		const results = rows as (T & BaseEntity)[];
@@ -147,7 +146,7 @@ export class DatabaseOperations {
 
 	async getDocs<T extends Record<string, any>>(
 		tableName: string,
-		options: QueryOptions = {}
+		options: QueryOptions = {},
 	): Promise<(T & BaseEntity)[]> {
 		const pool = this.connectionManager.getPool();
 		const hasMetadata = await this.hasMetadataColumns(tableName);
@@ -205,7 +204,7 @@ export class DatabaseOperations {
 
 	async executeQuery<T>(
 		query: string,
-		values: any[] = []
+		values: any[] = [],
 	): Promise<[T[], any]> {
 		const pool = this.connectionManager.getPool();
 		return pool.execute(query, values) as Promise<[T[], any]>;
@@ -217,7 +216,7 @@ export class DatabaseOperations {
 			where?: string;
 			values?: any[];
 			includeDeleted?: boolean;
-		} = {}
+		} = {},
 	): Promise<number> {
 		const pool = this.connectionManager.getPool();
 		const hasMetadata = await this.hasMetadataColumns(tableName);
@@ -253,13 +252,13 @@ export class DatabaseOperations {
 
 		if (!hasMetadata) {
 			throw new Error(
-				`Table ${tableName} does not support soft delete/restore operations`
+				`Table ${tableName} does not support soft delete/restore operations`,
 			);
 		}
 
 		const [result] = await pool.execute(
 			`UPDATE ${tableName} SET deleted_at = NULL WHERE id = ? AND deleted_at IS NOT NULL`,
-			[id]
+			[id],
 		);
 
 		return (result as any).affectedRows > 0;
