@@ -16,13 +16,14 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import LinkOffIcon from "@mui/icons-material/LinkOff";
 import { useParams } from "react-router-dom";
 import { AuthImage, FameScore, UserStatus } from "@/components";
-import { useLike, useRouting, useUser } from "@/hooks";
+import { useLike, useReport, useRouting, useUser } from "@/hooks";
 import MockImage from "@/assets/imperial-stormtrooper-picture.png";
 
 export function UserPage() {
 	const { id } = useParams<{ id: string }>();
 	const { goBack } = useRouting();
 	const { createLike, unlikeUser } = useLike();
+	const { createReport } = useReport();
 
 	const user = useUser({
 		userId: id,
@@ -83,6 +84,10 @@ export function UserPage() {
 
 	const handleUnlike = () => {
 		unlikeUser({ id: user.id });
+	};
+
+	const handleReport = () => {
+		createReport({ reported_id: user.id, reason: "This user is fake" });
 	};
 
 	return (
@@ -229,6 +234,14 @@ export function UserPage() {
 									Like
 								</Button>
 							)}
+							<Button
+								variant="outlined"
+								color="warning"
+								onClick={handleReport}
+								size="medium"
+							>
+								Report Fake
+							</Button>
 						</Stack>
 
 						<Stack direction="row" spacing={1} sx={{ mb: 2 }}>

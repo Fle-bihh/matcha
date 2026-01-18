@@ -27,6 +27,20 @@ export class ReportService extends BaseService {
 				);
 			}
 
+			const existingReport =
+				await this.reportRepository.checkReportExists(
+					reporterId,
+					reported_id,
+				);
+
+			if (existingReport) {
+				return ServiceResponse.failure(
+					"You have already reported this user",
+					null,
+					StatusCodes.CONFLICT,
+				);
+			}
+
 			const report = await this.reportRepository.createReport(
 				reporterId,
 				reported_id,

@@ -37,4 +37,21 @@ export class ReportRepository extends BaseRepository implements IRepository {
 			return null;
 		}
 	}
+
+	public async checkReportExists(
+		reporterId: number,
+		reportedId: number,
+	): Promise<boolean> {
+		try {
+			const reports = await this.getDocs<Report>(this.tableName, {
+				where: "reporter_id = ? AND reported_id = ?",
+				values: [reporterId, reportedId],
+				limit: 1,
+			});
+			return reports.length > 0;
+		} catch (error) {
+			logger.error("Error checking report existence:", error);
+			return false;
+		}
+	}
 }

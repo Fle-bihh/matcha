@@ -11,6 +11,7 @@ import {
 	WebSocketService,
 	VisitService,
 	WebSocketSubscriptionService,
+	ReportService,
 } from "@/services";
 import { LocationService } from "@/services";
 import { Store } from "@reduxjs/toolkit";
@@ -35,6 +36,7 @@ const serviceConstructors: Record<ETokens, ServiceConstructor> = {
 	[ETokens.WebSocketService]: WebSocketService,
 	[ETokens.VisitService]: VisitService,
 	[ETokens.WebSocketSubscriptionService]: WebSocketSubscriptionService,
+	[ETokens.ReportService]: ReportService,
 } as const;
 
 export class Container implements IContainer {

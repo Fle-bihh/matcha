@@ -12,3 +12,4 @@ export * from "./visit.service";
 export * from "./websocket-subscription.service";
 export * from "./router.service";
 export * from "./location.service";
+export * from "./report.service";

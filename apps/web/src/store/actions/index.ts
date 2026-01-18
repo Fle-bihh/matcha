@@ -7,3 +7,4 @@ export * from "./like.actions";
 export * from "./match.actions";
 export * from "./visit.actions";
 export * from "./websocket-subscription.actions";
+export * from "./report.actions";
