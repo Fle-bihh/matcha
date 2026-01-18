@@ -2,7 +2,7 @@ import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { LikeRepository } from "@/repositories/like.repository";
 import { MatchRepository } from "@/repositories/match.repository";
-import { CreateLikeDto, logger, EWebSocketEvents } from "@matcha/shared";
+import { CreateLikeDto, logger, EWebSocketEvents, Like } from "@matcha/shared";
 import { StatusCodes } from "@matcha/shared";
 
 export class LikeService extends BaseService {
@@ -16,6 +16,31 @@ export class LikeService extends BaseService {
 
 	private get matchRepository(): MatchRepository {
 		return this.container.get<MatchRepository>(ETokens.MatchRepository);
+	}
+
+	public async getLikingByUsers(
+		userId: number,
+		otherUserId: number,
+	): Promise<{
+		is_liked: boolean;
+		has_liked_you: boolean;
+		is_matched: boolean;
+	}> {
+		const is_liked = await this.likeRepository.checkLikeExists(
+			userId,
+			otherUserId,
+		);
+
+		const has_liked_you = await this.likeRepository.checkLikeExists(
+			otherUserId,
+			userId,
+		);
+
+		return {
+			is_liked,
+			has_liked_you,
+			is_matched: is_liked && has_liked_you,
+		};
 	}
 
 	public async createLike(

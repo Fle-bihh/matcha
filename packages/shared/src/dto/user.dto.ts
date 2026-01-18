@@ -55,4 +55,7 @@ export type UserIdParamsDto = z.infer<typeof UserIdParamsDtoSchema>;
 export interface GetUserByIdResponseDto {
 	user: User;
 	status: UserStatus | null;
+	has_liked_you?: boolean;
+	is_liked?: boolean;
+	is_matched?: boolean;
 }

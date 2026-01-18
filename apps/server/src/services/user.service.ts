@@ -20,6 +20,7 @@ import {
 import { StatusCodes } from "@matcha/shared";
 import { HashUtils } from "@/utils/hash.utils";
 import { emptyPaginatedResponse } from "@/utils/pagination.utils";
+import { LikeService } from "./like.service";
 
 export class UserService extends BaseService {
 	constructor(container: IContainer) {
@@ -40,6 +41,10 @@ export class UserService extends BaseService {
 		return this.container.get<UserDeletionService>(
 			ETokens.UserDeletionService,
 		);
+	}
+
+	private get likeService() {
+		return this.container.get<LikeService>(ETokens.LikeService);
 	}
 
 	public async findByEmail<T extends boolean = false>(
@@ -174,9 +179,15 @@ export class UserService extends BaseService {
 			const userStatus =
 				await this.userStatusRepository.getUserStatus(targetUserId);
 
+			const userLikingDetails = await this.likeService.getLikingByUsers(
+				requesterId,
+				targetUserId,
+			);
+
 			return ServiceResponse.success("User found", {
-				user: publicUser,
+				user: { ...publicUser },
 				status: userStatus,
+				...userLikingDetails,
 			});
 		} catch (error) {
 			logger.error("Error in getUserById:", error);

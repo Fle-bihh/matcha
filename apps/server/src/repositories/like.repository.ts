@@ -23,7 +23,7 @@ export class LikeRepository extends BaseRepository implements IRepository {
 
 	public async createLike(
 		likerId: number,
-		likedId: number
+		likedId: number,
 	): Promise<Like | null> {
 		try {
 			return await this.createDocument<Like>(this.tableName, {
@@ -38,7 +38,7 @@ export class LikeRepository extends BaseRepository implements IRepository {
 
 	public async getLikeByUsers(
 		likerId: number,
-		likedId: number
+		likedId: number,
 	): Promise<Like | null> {
 		try {
 			const likes = await this.getDocs<Like>(this.tableName, {
@@ -53,9 +53,22 @@ export class LikeRepository extends BaseRepository implements IRepository {
 		}
 	}
 
+	public async checkLikeExists(
+		likerId: number,
+		likedId: number,
+	): Promise<boolean> {
+		try {
+			const like = await this.getLikeByUsers(likerId, likedId);
+			return like !== null;
+		} catch (error) {
+			logger.error("Error checking like existence:", error);
+			return false;
+		}
+	}
+
 	public async checkReverseLikeExists(
 		likerId: number,
-		likedId: number
+		likedId: number,
 	): Promise<boolean> {
 		try {
 			const reverseLike = await this.getLikeByUsers(likedId, likerId);

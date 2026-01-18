@@ -3,6 +3,7 @@ import { BaseService } from "./base.service";
 import {
 	GetMatchesResponseDto,
 	logger,
+	Match,
 	MatchesFilterDto,
 	MatchWithDetails,
 	PaginatedResponse,
@@ -20,14 +21,47 @@ export class MatchService extends BaseService {
 	constructor(container: IContainer) {
 		super(container);
 		this.matchRepository = this.container.get<MatchRepository>(
-			ETokens.MatchRepository
+			ETokens.MatchRepository,
 		);
+	}
+
+	public async getMatchByUsers(
+		userAId: number,
+		userBId: number,
+	): Promise<ServiceResponse<Match | null>> {
+		try {
+			const match = await this.matchRepository.getMatchByUsers(
+				userAId,
+				userBId,
+			);
+
+			if (!match) {
+				return ServiceResponse.failure(
+					"Match not found",
+					null,
+					StatusCodes.NOT_FOUND,
+				);
+			}
+
+			return ServiceResponse.success(
+				"Match retrieved successfully",
+				match,
+				StatusCodes.OK,
+			);
+		} catch (error) {
+			logger.error("Error in getMatchByUsers:", error);
+			return ServiceResponse.failure(
+				"An error occurred while retrieving the match",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR,
+			);
+		}
 	}
 
 	public async getMatches(
 		userId: number,
 		pagination: PaginationParams,
-		filters: MatchesFilterDto
+		filters: MatchesFilterDto,
 	): Promise<
 		ServiceResponse<PaginatedResponse<
 			MatchWithDetails,
@@ -43,14 +77,14 @@ export class MatchService extends BaseService {
 					userId,
 					pagination.limit,
 					offset,
-					unreadOnly
+					unreadOnly,
 				),
 				this.matchRepository.countMatches(userId, unreadOnly),
 			]);
 
 			const unreadCount = await this.matchRepository.countMatches(
 				userId,
-				true
+				true,
 			);
 
 			const totalPages = Math.ceil(totalCount / pagination.limit);
@@ -77,21 +111,21 @@ export class MatchService extends BaseService {
 				`Retrieved ${
 					matches.length
 				} matches for user ID ${userId}. Details: ${JSON.stringify(
-					response.data
-				)}`
+					response.data,
+				)}`,
 			);
 
 			return ServiceResponse.success(
 				"Matches retrieved successfully",
-				response
+				response,
 			);
 		} catch (error) {
 			return ServiceResponse.failure(
 				"Failed to retrieve matches",
 				emptyPaginatedResponse<MatchWithDetails, GetMatchesResponseDto>(
-					pagination.limit
+					pagination.limit,
 				),
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}

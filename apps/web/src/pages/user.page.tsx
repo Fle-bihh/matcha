@@ -7,18 +7,24 @@ import {
 	Stack,
 	Chip,
 	IconButton,
+	Button,
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import LinkOffIcon from "@mui/icons-material/LinkOff";
 import { useParams } from "react-router-dom";
 import { AuthImage, FameScore, UserStatus } from "@/components/utils";
 import { useRouting } from "@/hooks/routing.hooks";
 import { useUser } from "@/hooks/user.hook";
+import { useLike } from "@/hooks/like.hook";
 import MockImage from "@/assets/imperial-stormtrooper-picture.png";
 
 export function UserPage() {
 	const { id } = useParams<{ id: string }>();
 	const { goBack } = useRouting();
+	const { createLike, unlikeUser } = useLike();
 
 	const user = useUser({
 		userId: id,
@@ -72,6 +78,14 @@ export function UserPage() {
 		allPictures[4] ?? null,
 	];
 	const displayName = `${user.first_name} ${user.last_name}`;
+
+	const handleLike = () => {
+		createLike({ liked_id: user.id });
+	};
+
+	const handleUnlike = () => {
+		unlikeUser({ id: user.id });
+	};
 
 	return (
 		<>
@@ -165,6 +179,53 @@ export function UserPage() {
 						</Typography>
 
 						<UserStatus status={user.status} />
+
+						{user.is_matched && (
+							<Box sx={{ mb: 2 }}>
+								<Chip
+									label="Connected"
+									color="success"
+									icon={<FavoriteIcon />}
+									size="medium"
+								/>
+							</Box>
+						)}
+
+						{user.has_liked_you && !user.is_matched && (
+							<Box sx={{ mb: 2 }}>
+								<Chip
+									label="Likes You"
+									color="error"
+									icon={<FavoriteIcon />}
+									variant="outlined"
+									size="medium"
+								/>
+							</Box>
+						)}
+
+						<Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+							{user.is_liked ? (
+								<Button
+									variant="contained"
+									color="error"
+									startIcon={user.is_matched ? <LinkOffIcon /> : <FavoriteIcon />}
+									onClick={handleUnlike}
+									size="medium"
+								>
+									{user.is_matched ? "Disconnect" : "Unlike"}
+								</Button>
+							) : (
+								<Button
+									variant="contained"
+									color="error"
+									startIcon={<FavoriteBorderIcon />}
+									onClick={handleLike}
+									size="medium"
+								>
+									Like
+								</Button>
+							)}
+						</Stack>
 
 						<Stack direction="row" spacing={1} sx={{ mb: 2 }}>
 							{user.gender && (

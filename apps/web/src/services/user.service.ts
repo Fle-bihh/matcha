@@ -99,6 +99,8 @@ export class UserService extends BaseService {
 			{ auth: true },
 		);
 
+		const { user, status, ...likingDetails } = response.data;
+
 		if (this.isSuccess(response)) {
 			this.dispatch(
 				setEntity({
@@ -106,6 +108,7 @@ export class UserService extends BaseService {
 					id: userId,
 					entity: {
 						...response.data.user,
+						...likingDetails,
 						status: response.data.status || undefined,
 					},
 				}),

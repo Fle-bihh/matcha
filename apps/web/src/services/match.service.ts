@@ -30,7 +30,12 @@ export class MatchService extends BaseService {
 			patchEntity({
 				entityType: EEntityTypes.Users,
 				id: other_user.id.toString(),
-				entity: other_user,
+				entity: {
+					...other_user,
+					is_matched: true,
+					has_liked_you: true,
+					is_liked: true,
+				},
 			}),
 		);
 	}
@@ -59,6 +64,7 @@ export class MatchService extends BaseService {
 			EPagerKeys.Matches,
 			EEntityTypes.Matches,
 			params?.refresh !== true,
+			params?.refresh === true,
 		);
 
 		this.dispatch(

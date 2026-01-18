@@ -18,7 +18,7 @@ const entitiesSlice = createSlice({
 				entityType: T;
 				id: string;
 				entity: IEntityTypeMap[T];
-			}>
+			}>,
 		) => {
 			const { entityType, id, entity } = action.payload;
 			if (!state[entityType]) {
@@ -32,7 +32,7 @@ const entitiesSlice = createSlice({
 				entityType: T;
 				id: string;
 				entity: Partial<IEntityTypeMap[T]>;
-			}>
+			}>,
 		) => {
 			const { entityType, id, entity } = action.payload;
 			if (!state[entityType]) {
@@ -49,7 +49,7 @@ const entitiesSlice = createSlice({
 			action: PayloadAction<{
 				entityType: T;
 				entities: IEntityTypeMap[T][];
-			}>
+			}>,
 		) => {
 			const { entityType, entities } = action.payload;
 			if (!state[entityType]) {
@@ -62,12 +62,32 @@ const entitiesSlice = createSlice({
 				}
 			});
 		},
+		setEntitiesStrict: <T extends EEntityTypes>(
+			state: EntityState,
+			action: PayloadAction<{
+				entityType: T;
+				entities: IEntityTypeMap[T][];
+			}>,
+		) => {
+			const { entityType, entities } = action.payload;
+			if (!state[entityType]) {
+				state[entityType] = {};
+			}
+			const sanitizedEntities = sanitizeEntities(entities);
+			const newEntitiesMap: { [id: string]: unknown } = {};
+			sanitizedEntities.forEach((entity) => {
+				if (entity && typeof entity === "object" && "id" in entity) {
+					newEntitiesMap[entity.id] = entity;
+				}
+			});
+			state[entityType] = newEntitiesMap;
+		},
 		deleteEntity: (
 			state: EntityState,
 			action: PayloadAction<{
 				entityType: EEntityTypes;
 				id: string;
-			}>
+			}>,
 		) => {
 			const { entityType, id } = action.payload;
 			const entities = state[entityType];
@@ -89,5 +109,6 @@ export const {
 	clearEntities,
 	patchEntity,
 	deleteEntity,
+	setEntitiesStrict,
 } = entitiesSlice.actions;
 export default entitiesSlice.reducer;

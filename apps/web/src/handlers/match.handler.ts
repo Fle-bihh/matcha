@@ -44,7 +44,11 @@ export class MatchHandler extends BaseHandler {
 				patchEntity({
 					entityType: EEntityTypes.Users,
 					id: dto.unlike_id.toString(),
-					entity: { is_liked: false },
+					entity: {
+						is_liked: false,
+						is_matched: false,
+						has_liked_you: false,
+					},
 				}),
 			);
 		}

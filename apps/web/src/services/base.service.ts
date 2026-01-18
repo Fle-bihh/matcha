@@ -8,6 +8,7 @@ import { LocationService } from "./location.service";
 import {
 	appendToPager,
 	setEntities,
+	setEntitiesStrict,
 	setFlagger,
 	SetFlaggerPayload,
 	setPager,
@@ -64,11 +65,13 @@ export abstract class BaseService {
 		pagerKey: EPagerKeys,
 		entityType: T,
 		append?: boolean,
+		strict?: boolean,
 	) {
 		const { data, meta } = response;
 
+		const entitiesAction = strict ? setEntitiesStrict : setEntities;
 		this.dispatch(
-			setEntities({
+			entitiesAction({
 				entityType,
 				entities: data,
 			}),
