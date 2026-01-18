@@ -17,10 +17,6 @@ export class VisitService extends BaseService {
 		super(container);
 	}
 
-	private get visitRepository(): VisitRepository {
-		return this.container.get<VisitRepository>(ETokens.VisitRepository);
-	}
-
 	public async createVisit(
 		visitorId: number,
 		data: CreateVisitDto,

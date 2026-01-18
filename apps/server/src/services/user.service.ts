@@ -26,22 +26,6 @@ export class UserService extends BaseService {
 		super(container);
 	}
 
-	private get userRepository(): UserRepository {
-		return this.container.get<UserRepository>(ETokens.UserRepository);
-	}
-
-	private get userStatusRepository(): UserStatusRepository {
-		return this.container.get<UserStatusRepository>(
-			ETokens.UserStatusRepository,
-		);
-	}
-
-	private get userDeletionService(): UserDeletionService {
-		return this.container.get<UserDeletionService>(
-			ETokens.UserDeletionService,
-		);
-	}
-
 	private get likeService() {
 		return this.container.get<LikeService>(ETokens.LikeService);
 	}

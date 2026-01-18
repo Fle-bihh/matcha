@@ -8,10 +8,6 @@ export class UserDeletionService extends BaseService {
 		super(container);
 	}
 
-	private get userRepository(): UserRepository {
-		return this.container.get<UserRepository>(ETokens.UserRepository);
-	}
-
 	public async deleteUserAndRelatedData(userId: number): Promise<boolean> {
 		try {
 			logger.info(`Starting soft-delete for user ${userId}`);
@@ -33,23 +29,23 @@ export class UserDeletionService extends BaseService {
 				const success = await step.fn();
 				if (!success) {
 					logger.error(
-						`Failed to delete ${step.name} for user ${userId}`
+						`Failed to delete ${step.name} for user ${userId}`,
 					);
 					return false;
 				}
 				logger.debug(
-					`Successfully deleted ${step.name} for user ${userId}`
+					`Successfully deleted ${step.name} for user ${userId}`,
 				);
 			}
 
 			logger.info(
-				`Successfully completed soft-delete for user ${userId}`
+				`Successfully completed soft-delete for user ${userId}`,
 			);
 			return true;
 		} catch (error) {
 			logger.error(
 				`Error during user deletion for user ${userId}:`,
-				error
+				error,
 			);
 			return false;
 		}

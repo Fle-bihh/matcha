@@ -30,12 +30,6 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 		super(container);
 	}
 
-	protected get UserStatusRepository(): UserStatusRepository {
-		return this.container.get<UserStatusRepository>(
-			ETokens.UserStatusRepository,
-		);
-	}
-
 	public initialize(io: WebSocketServer): void {
 		this.io = io;
 		this.io.use(authenticateSocket);
@@ -74,7 +68,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 		try {
 			const userId = socket.user.id;
 			this.connectionManager.add(userId, socket);
-			await this.UserStatusRepository.setUserOnline(userId);
+			await this.userStatusRepository.setUserOnline(userId);
 			logger.info(`User ${userId} connected with socket ${socket.id}`);
 		} catch (error) {
 			logger.error(`Error handling user connection: ${error}`);
@@ -87,7 +81,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 			const userId = socket.user.id;
 			this.cleanupSocketSubscriptions(socket.id);
 			this.connectionManager.remove(userId);
-			await this.UserStatusRepository.setUserOffline(userId);
+			await this.userStatusRepository.setUserOffline(userId);
 			logger.info(`User ${userId} disconnected`);
 		} catch (error) {
 			logger.error(`Error handling user disconnection: ${error}`);

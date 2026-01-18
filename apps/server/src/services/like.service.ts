@@ -14,14 +14,6 @@ export class LikeService extends BaseService {
 		super(container);
 	}
 
-	private get likeRepository(): LikeRepository {
-		return this.container.get<LikeRepository>(ETokens.LikeRepository);
-	}
-
-	private get matchRepository(): MatchRepository {
-		return this.container.get<MatchRepository>(ETokens.MatchRepository);
-	}
-
 	public async getLikingByUsers(
 		userId: number,
 		otherUserId: number,

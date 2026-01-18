@@ -11,16 +11,10 @@ import {
 	PaginationParams,
 	StatusCodes,
 } from "@matcha/shared";
-import { MatchRepository } from "@/repositories";
 
 export class MatchService extends BaseService {
-	private matchRepository: MatchRepository;
-
 	constructor(container: IContainer) {
 		super(container);
-		this.matchRepository = this.container.get<MatchRepository>(
-			ETokens.MatchRepository,
-		);
 	}
 
 	public async getMatchByUsers(

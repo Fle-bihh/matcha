@@ -27,22 +27,6 @@ export class AuthService extends BaseService {
 		super(container);
 	}
 
-	private get userService(): UserService {
-		return this.container.get<UserService>(ETokens.UserService);
-	}
-
-	private get emailVerificationService(): EmailVerificationService {
-		return this.container.get<EmailVerificationService>(
-			ETokens.EmailVerificationService,
-		);
-	}
-
-	private get passwordResetService(): PasswordResetService {
-		return this.container.get<PasswordResetService>(
-			ETokens.PasswordResetService,
-		);
-	}
-
 	public async authenticate(
 		userId: number,
 	): Promise<ServiceResponse<AuthenticateResponseDto | null>> {

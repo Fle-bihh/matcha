@@ -11,16 +11,6 @@ export class PasswordResetService extends BaseService {
 		super(container);
 	}
 
-	private get passwordResetRepository(): PasswordResetRepository {
-		return this.container.get<PasswordResetRepository>(
-			ETokens.PasswordResetRepository,
-		);
-	}
-
-	private get userService(): UserService {
-		return this.container.get<UserService>(ETokens.UserService);
-	}
-
 	public async createResetToken(
 		userId: number,
 	): Promise<ServiceResponse<string | null>> {
