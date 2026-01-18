@@ -11,7 +11,7 @@ import {
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useParams } from "react-router-dom";
-import { AuthImage, FameScore } from "@/components/utils";
+import { AuthImage, FameScore, UserStatus } from "@/components/utils";
 import { useRouting } from "@/hooks/routing.hooks";
 import { useUser } from "@/hooks/user.hook";
 import MockImage from "@/assets/imperial-stormtrooper-picture.png";
@@ -159,6 +159,8 @@ export function UserPage() {
 								</Typography>
 							)}
 						</Typography>
+
+						<UserStatus status={user.status} />
 
 						<Stack direction="row" spacing={1} sx={{ mb: 2 }}>
 							{user.gender && (
