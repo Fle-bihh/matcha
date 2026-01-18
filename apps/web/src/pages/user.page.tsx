@@ -208,7 +208,13 @@ export function UserPage() {
 								<Button
 									variant="contained"
 									color="error"
-									startIcon={user.is_matched ? <LinkOffIcon /> : <FavoriteIcon />}
+									startIcon={
+										user.is_matched ? (
+											<LinkOffIcon />
+										) : (
+											<FavoriteIcon />
+										)
+									}
 									onClick={handleUnlike}
 									size="medium"
 								>
