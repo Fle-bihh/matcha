@@ -1,6 +1,6 @@
-import { useActionsData } from "@/hooks/actions.hooks";
-import { useAuthUser } from "@/hooks/auth.hook";
-import { EActionKeys } from "@/types/actions.types";
+import { useActionsData } from "@/hooks";
+import { useAuthUser } from "@/hooks";
+import { EActionKeys } from "@/types";
 import { PropsWithChildren, useEffect, useRef } from "react";
 import { AuthenticateLoading } from "../loading/authenticate-loading.component";
 

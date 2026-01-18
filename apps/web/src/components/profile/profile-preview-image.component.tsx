@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { AuthImage } from "@/components/utils/auth-image.component";
+import { AuthImage } from "@/components";
 
 interface ProfilePreviewImageProps {
   pictureUrl?: string;

@@ -9,12 +9,12 @@ import {
 	CircularProgress,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { MatchItem } from "@/components/matches/match-item.component";
-import { withProfileCompleteComponent } from "@/components/utils/with-condition-component.component";
+import { MatchItem } from "@/components";
+import { withProfileCompleteComponent } from "@/components";
 import { ProfileUncomplete } from "./profile-uncomplete.page";
-import { useMatches } from "@/hooks/matches.hook";
-import { useActionsData } from "@/hooks/actions.hooks";
-import { EActionKeys } from "@/types/actions.types";
+import { useMatches } from "@/hooks";
+import { useActionsData } from "@/hooks";
+import { EActionKeys } from "@/types";
 
 function MatchesPageComp() {
 	const { matches, fetchNextPage, refresh, hasNextPage } = useMatches();

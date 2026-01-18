@@ -1,7 +1,7 @@
 import { BaseHandler } from "./base.handler";
 import { Socket } from "socket.io-client";
 import { EWebSocketEvents } from "@matcha/shared";
-import { incrementReceivedCount } from "@/store/slices/visits.slice";
+import { incrementReceivedCount } from "@/store";
 
 export class VisitHandler extends BaseHandler {
 	public register(socket: Socket): void {

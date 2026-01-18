@@ -6,11 +6,11 @@ import { AuthProvider } from "../auth";
 import { NavigationSetup } from "./navigation.component";
 import { Snackbar } from "../utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useCrossTabSync } from "@/hooks/cross-tab.hook";
+import { useCrossTabSync } from "@/hooks";
 
 import { ThemeProvider } from "@mui/material/styles";
 import { appTheme } from "@/config";
-import { CrossTabSyncProvider } from "@/contexts/cross-tab.context";
+import { CrossTabSyncProvider } from "@/contexts";
 
 const queryClient = new QueryClient({
 	defaultOptions: {

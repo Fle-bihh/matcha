@@ -24,11 +24,11 @@ import {
 	setAuthUser,
 	setEmailToVerified,
 } from "@/store";
-import { EStorageKeys } from "@/types/storage.constants";
+import { EStorageKeys } from "@/types";
 import { action } from "@/decorators";
-import { EActionKeys } from "@/types/actions.types";
-import { crossTab } from "@/utils/cross-tab.utils";
-import { EFlaggers } from "@/constants/flaggers.constants";
+import { EActionKeys } from "@/types";
+import { crossTab } from "@/utils";
+import { EFlaggers } from "@/constants";
 import { BrowsingService } from "./browsing.service";
 import { MatchService } from "./match.service";
 import { WebSocketService } from "./websocket.service";

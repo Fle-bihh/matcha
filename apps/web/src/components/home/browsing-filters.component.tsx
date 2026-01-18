@@ -23,7 +23,7 @@ import {
 	BrowsingSortBy,
 	SortOrder,
 } from "@matcha/shared";
-import { useBrowsingContext } from "@/contexts/browsing.context";
+import { useBrowsingContext } from "@/contexts";
 
 export function BrowsingFiltersComponent() {
 	const {

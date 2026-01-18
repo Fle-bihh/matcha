@@ -1,11 +1,11 @@
 import { Box } from "@mui/material";
-import { ProfilePageWrapper } from "@/components/profile/profile-page-wrapper.component";
-import { FirstNameCard } from "@/components/profile/first-name-card.component";
-import { LastNameCard } from "@/components/profile/last-name-card.component";
-import { GenderCard } from "@/components/profile/gender-card.component";
-import { OrientationCard } from "@/components/profile/orientation-card.component";
-import { AgeCard } from "@/components/profile/age-card.component";
-import { BioCard } from "@/components/profile/bio-card.component";
+import { ProfilePageWrapper } from "@/components";
+import { FirstNameCard } from "@/components";
+import { LastNameCard } from "@/components";
+import { GenderCard } from "@/components";
+import { OrientationCard } from "@/components";
+import { AgeCard } from "@/components";
+import { BioCard } from "@/components";
 
 export function ProfilePage() {
   return (

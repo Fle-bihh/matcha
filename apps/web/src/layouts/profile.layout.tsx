@@ -17,12 +17,12 @@ import InterestsIcon from "@mui/icons-material/LocalOffer";
 import LocationIcon from "@mui/icons-material/LocationOn";
 import HistoryIcon from "@mui/icons-material/History";
 import { APP_ROUTES } from "@/constants";
-import { useRouting } from "@/hooks/routing.hooks";
+import { useRouting } from "@/hooks";
 import {
 	useLayoutSizes,
 	useProfileDrawerRef,
-} from "@/contexts/layout-sizes.context";
-import { useWindow } from "@/hooks/window.hook";
+} from "@/contexts";
+import { useWindow } from "@/hooks";
 
 const menuItems = [
 	{

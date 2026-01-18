@@ -2,11 +2,11 @@ import { useSelector } from "react-redux";
 import {
 	selectPaginatedEntities,
 	selectPagerMeta,
-} from "@/store/selectors/pagination.selectors";
+} from "@/store";
 import { EPagerKeys } from "@/constants";
 import { EEntityTypes, IEntityTypeMap } from "@/types";
 import { useEffect, useRef, useCallback, useMemo } from "react";
-import { PaginationDto } from "@/types/api.types";
+import { PaginationDto } from "@/types";
 
 interface IPagerHookOptions<TParams = PaginationDto> {
 	pagerKey: EPagerKeys;

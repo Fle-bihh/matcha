@@ -14,7 +14,7 @@ import {
 	setPager,
 } from "@/store";
 import { ApiResponse, BaseEntity, PaginatedResponse } from "@matcha/shared";
-import { ApiRequestResponse } from "@/types/api.types";
+import { ApiRequestResponse } from "@/types";
 import { EPagerKeys } from "@/constants";
 
 export abstract class BaseService {

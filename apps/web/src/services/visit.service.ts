@@ -7,7 +7,7 @@ import type {
 	BaseEntity,
 } from "@matcha/shared";
 import { ServiceResponse, EEntityTypes } from "@/types";
-import type { PaginationDto } from "@/types/api.types";
+import type { PaginationDto } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
 import { EFlaggers, EPagerKeys } from "@/constants";

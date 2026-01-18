@@ -1,8 +1,8 @@
-import { CenteredPaper } from "@/components/app/centered-paper.component";
+import { CenteredPaper } from "@/components";
 import { Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import { APP_ROUTES } from "@/constants";
-import { ResetPasswordForm } from "@/forms/reset-password.form";
+import { ResetPasswordForm } from "@/forms";
 
 export function ForgotPasswordPage() {
 	return (

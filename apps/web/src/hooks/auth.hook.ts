@@ -3,7 +3,7 @@ import { AuthActions, UserActions, LocationActions } from "@/store";
 import {
   selectAuthUser,
   selectIsAuthInitialized,
-} from "@/store/selectors/auth.selectors";
+} from "@/store";
 import { useDispatchActions } from "./actions.hooks";
 
 export const useAuthUser = () => {

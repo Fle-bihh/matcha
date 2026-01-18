@@ -1,4 +1,4 @@
-import { useCrossTabSync } from "@/hooks/cross-tab.hook";
+import { useCrossTabSync } from "@/hooks";
 
 export function CrossTabSyncProvider({
   children,

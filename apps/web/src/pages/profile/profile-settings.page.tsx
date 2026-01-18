@@ -6,14 +6,14 @@ import {
 	Button,
 	TextField,
 } from "@mui/material";
-import { ProfilePageWrapper } from "@/components/profile/profile-page-wrapper.component";
-import { useAuthUser } from "@/hooks/auth.hook";
-import { ChangeEmailDialog } from "@/components/auth/change-email-dialog.component";
-import { useFlagger } from "@/hooks/flaggers.hook";
-import { EFlaggers } from "@/constants/flaggers.constants";
-import { ResetPasswordForm } from "@/forms/reset-password.form";
-import { useActionsData } from "@/hooks/actions.hooks";
-import { EActionKeys } from "@/types/actions.types";
+import { ProfilePageWrapper } from "@/components";
+import { useAuthUser } from "@/hooks";
+import { ChangeEmailDialog } from "@/components";
+import { useFlagger } from "@/hooks";
+import { EFlaggers } from "@/constants";
+import { ResetPasswordForm } from "@/forms";
+import { useActionsData } from "@/hooks";
+import { EActionKeys } from "@/types";
 
 export function ProfileSettingsPage() {
 	const { authUser, forgotPassword } = useAuthUser();

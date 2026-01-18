@@ -7,9 +7,9 @@ import {
 	RefreshTokenResponseDto,
 	ERouteGroups,
 } from "@matcha/shared";
-import { EStorageKeys } from "@/types/storage.constants";
+import { EStorageKeys } from "@/types";
 import { config } from "@/config";
-import { ApiRequestResponse } from "@/types/api.types";
+import { ApiRequestResponse } from "@/types";
 import { AuthService } from "./auth.service";
 
 interface RequestOptions {

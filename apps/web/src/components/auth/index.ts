@@ -1,1 +1,2 @@
-export { AuthProvider } from "./auth-provider.component";
+export * from "./auth-provider.component";
+export * from "./change-email-dialog.component";

@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Provider } from "@/components/app";
+import { Provider } from "@/components";
 import { AppLayout } from "@/layouts";
 
 document.body.style.margin = "0";

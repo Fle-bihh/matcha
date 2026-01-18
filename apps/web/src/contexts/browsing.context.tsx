@@ -8,17 +8,17 @@ import {
 	useState,
 } from "react";
 import { useSelector } from "react-redux";
-import { usePager } from "@/hooks/pagination.hook";
-import { selectFilters } from "@/store/selectors/filters.selectors";
+import { usePager } from "@/hooks";
+import { selectFilters } from "@/store";
 import { EPagerKeys } from "@/constants";
 import { EEntityTypes, StoreUser } from "@/types";
 import { User, BrowsingFilters, BrowsingParams } from "@matcha/shared";
-import { PaginationDto } from "@/types/api.types";
-import { useActionsData } from "@/hooks/actions.hooks";
-import { EActionKeys } from "@/types/actions.types";
-import { useBrowsing } from "@/hooks/browsing.hook";
-import { useAuthUser } from "@/hooks/auth.hook";
-import { EFilterKeys } from "@/types/filters.types";
+import { PaginationDto } from "@/types";
+import { useActionsData } from "@/hooks";
+import { EActionKeys } from "@/types";
+import { useBrowsing } from "@/hooks";
+import { useAuthUser } from "@/hooks";
+import { EFilterKeys } from "@/types";
 
 const FILTER_KEY = EFilterKeys.Browsing;
 

@@ -6,8 +6,8 @@ import { MatchActions, selectAllEntities } from "@/store";
 import { EPagerKeys } from "@/constants";
 import { EEntityTypes, StoreUser } from "@/types";
 import { MatchWithDetails, MatchesParams } from "@matcha/shared";
-import { PaginationDto } from "@/types/api.types";
-import { StoreMatch } from "@/types/match.types";
+import { PaginationDto } from "@/types";
+import { StoreMatch } from "@/types";
 
 export function useMatches() {
 	const { getMatches } = useDispatchActions({

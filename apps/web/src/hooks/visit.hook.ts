@@ -10,7 +10,7 @@ import {
 import { EPagerKeys } from "@/constants";
 import { EEntityTypes } from "@/types";
 import type { VisitWithVisitedUser } from "@matcha/shared";
-import type { PaginationDto } from "@/types/api.types";
+import type { PaginationDto } from "@/types";
 
 export function useVisits(loadPagerData = false) {
 	const { createVisit, getVisitsReceived } = useDispatchActions({

@@ -22,7 +22,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import SaveIcon from "@mui/icons-material/Save";
 import { GeocodingResult } from "@matcha/shared";
-import { useAuthUser } from "@/hooks/auth.hook";
+import { useAuthUser } from "@/hooks";
 import { useSelector, useDispatch } from "react-redux";
 import {
   selectSelectedLocation,
@@ -30,10 +30,10 @@ import {
   selectIsGettingGPS,
   selectIsSearching,
   selectLocationError,
-} from "@/store/selectors/location.selectors";
+} from "@/store";
 import { clearLocationError, resetLocationState } from "@/store";
-import { useFlagger } from "@/hooks/flaggers.hook";
-import { EFlaggers } from "@/constants/flaggers.constants";
+import { useFlagger } from "@/hooks";
+import { EFlaggers } from "@/constants";
 
 export function ChangeLocationDialog() {
   const {

@@ -1,5 +1,5 @@
 import { APP_ROUTES } from "@/constants";
-import { useAuthUser } from "@/hooks/auth.hook";
+import { useAuthUser } from "@/hooks";
 import { FunctionComponent } from "react";
 import { Navigate } from "react-router-dom";
 

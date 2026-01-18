@@ -1,8 +1,8 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { setAction } from "../slices";
-import { serializeError } from "@/utils/error.utils";
-import { EActionKeys, EActionStatus, ActionDto } from "@/types/actions.types";
+import { serializeError } from "@/utils";
+import { EActionKeys, EActionStatus, ActionDto } from "@/types";
 import { getActionOptions } from "@/decorators";
 import { SnackbarService } from "@/services";
 

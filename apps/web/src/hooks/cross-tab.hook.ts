@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { crossTab } from "@/utils/cross-tab.utils";
+import { crossTab } from "@/utils";
 import { useAuthUser } from "./auth.hook";
 import { useDispatch } from "react-redux";
 import { changeEmail, setEmailToVerified } from "@/store";

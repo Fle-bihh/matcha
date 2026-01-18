@@ -1,9 +1,9 @@
-import { useAuthUser } from "@/hooks/auth.hook";
+import { useAuthUser } from "@/hooks";
 import { Alert, Typography, Button } from "@mui/material";
 import { Warning as WarningIcon } from "@mui/icons-material";
 import { withEmailNotVerifiedComponent } from "../utils/with-condition-component.component";
-import { useActionsData } from "@/hooks/actions.hooks";
-import { EActionKeys } from "@/types/actions.types";
+import { useActionsData } from "@/hooks";
+import { EActionKeys } from "@/types";
 
 function VerifyEmailBoxComp() {
   const { resendVerificationEmail } = useAuthUser();

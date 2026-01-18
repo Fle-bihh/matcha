@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useRouting } from "@/hooks/routing.hooks";
+import { useRouting } from "@/hooks";
 
 export function PaperBackButton() {
   const { goBack } = useRouting();

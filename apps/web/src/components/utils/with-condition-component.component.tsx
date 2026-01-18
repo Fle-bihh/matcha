@@ -1,4 +1,4 @@
-import { useAuthUser } from "@/hooks/auth.hook";
+import { useAuthUser } from "@/hooks";
 
 function withConditionComponent<T extends object>(
   Component: React.ComponentType<T>,

@@ -12,7 +12,7 @@ import { action } from "@/decorators";
 import { EPagerKeys } from "@/constants";
 import { EEntityTypes } from "@/types";
 import { patchEntity, setEntities, setUnreadMatchesCount } from "@/store";
-import { StoreMatch } from "@/types/match.types";
+import { StoreMatch } from "@/types";
 
 export class MatchService extends BaseService {
 	async handleMatchWithDetails(match: MatchWithDetails): Promise<void> {

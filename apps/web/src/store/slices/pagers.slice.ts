@@ -1,7 +1,7 @@
 import { EStoreSlices } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { PaginationMeta } from "@matcha/shared";
-import { EPagerKeys } from "@/constants/pagination.constants";
+import { EPagerKeys } from "@/constants";
 
 export interface PagerState {
 	meta: PaginationMeta;

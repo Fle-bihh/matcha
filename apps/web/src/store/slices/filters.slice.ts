@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { EStoreSlices } from "@/types";
 import { BrowsingFilters } from "@matcha/shared";
-import { EFilterKeys } from "@/types/filters.types";
+import { EFilterKeys } from "@/types";
 
 export interface FiltersState {
 	[key: string]: BrowsingFilters;

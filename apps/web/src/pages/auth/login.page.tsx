@@ -1,8 +1,8 @@
 import { APP_ROUTES } from "@/constants";
 import { Box, Typography, Button } from "@mui/material";
 import { Link } from "react-router-dom";
-import { LoginForm } from "@/forms/login.form";
-import { CenteredPaper } from "@/components/app/centered-paper.component";
+import { LoginForm } from "@/forms";
+import { CenteredPaper } from "@/components";
 
 export function LoginPage() {
   return (

@@ -10,13 +10,13 @@ import {
 	CircularProgress,
 	Chip,
 } from "@mui/material";
-import { ProfilePageWrapper } from "@/components/profile/profile-page-wrapper.component";
-import { useVisits } from "@/hooks/visit.hook";
+import { ProfilePageWrapper } from "@/components";
+import { useVisits } from "@/hooks";
 import { useEffect } from "react";
-import { useRouting } from "@/hooks/routing.hooks";
+import { useRouting } from "@/hooks";
 import { APP_ROUTES } from "@/constants";
-import { useActionsData } from "@/hooks/actions.hooks";
-import { EActionKeys } from "@/types/actions.types";
+import { useActionsData } from "@/hooks";
+import { EActionKeys } from "@/types";
 import { useSelector } from "react-redux";
 
 export function ProfileVisitsPage() {

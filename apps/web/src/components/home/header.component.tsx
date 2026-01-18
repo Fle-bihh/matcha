@@ -3,10 +3,10 @@ import { AppBar, Toolbar, Typography, IconButton, Box } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountIcon from "@mui/icons-material/AccountCircle";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
-import { useAuthUser } from "@/hooks/auth.hook";
+import { useAuthUser } from "@/hooks";
 import { APP_ROUTES } from "@/constants";
-import { useHeaderRef } from "@/contexts/layout-sizes.context";
-import { useRouting } from "@/hooks/routing.hooks";
+import { useHeaderRef } from "@/contexts";
+import { useRouting } from "@/hooks";
 import { withEmailVerifiedComponent } from "../utils/with-condition-component.component";
 
 const ProtectedButtons = () => {

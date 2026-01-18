@@ -3,12 +3,12 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { AuthImage, FameScore } from "@/components/utils";
+import { AuthImage, FameScore } from "@/components";
 import MockImage from "@/assets/imperial-stormtrooper-picture.png";
 import { StoreUser } from "@/types";
-import { useRouting } from "@/hooks/routing.hooks";
+import { useRouting } from "@/hooks";
 import { APP_ROUTES } from "@/constants";
-import { useLike } from "@/hooks/like.hook";
+import { useLike } from "@/hooks";
 import { useState } from "react";
 
 interface ProfileCardProps {

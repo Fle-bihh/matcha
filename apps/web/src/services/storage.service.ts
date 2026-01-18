@@ -1,4 +1,4 @@
-import { EStorageKeys, StorageDataType } from "@/types/storage.constants";
+import { EStorageKeys, StorageDataType } from "@/types";
 import { BaseService } from "./base.service";
 
 export class StorageService extends BaseService {

@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { EActionKeys, EActionStatus, IActionData } from "@/types/actions.types";
+import { EActionKeys, EActionStatus, IActionData } from "@/types";
 import { useCallback, useMemo } from "react";
 
 const selectAction = <T extends EActionKeys>(action: T) => {

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { selectEntityById } from "@/store/selectors";
+import { selectEntityById } from "@/store";
 import { EEntityTypes, StoreUser } from "@/types";
 import { useAuthUser } from "./auth.hook";
 import { useVisits } from "./visit.hook";

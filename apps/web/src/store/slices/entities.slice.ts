@@ -1,6 +1,6 @@
 import { EEntityTypes, EStoreSlices, IEntityTypeMap } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { sanitizeEntity, sanitizeEntities } from "@/utils/sanitization.utils";
+import { sanitizeEntity, sanitizeEntities } from "@/utils";
 
 export interface EntityState {
 	[entityType: string]: { [id: string]: unknown };

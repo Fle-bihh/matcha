@@ -1,5 +1,5 @@
 import { Box, CircularProgress, SxProps, Theme } from "@mui/material";
-import { useAuthenticatedImage } from "@/hooks/use-authenticated-image.hook";
+import { useAuthenticatedImage } from "@/hooks";
 
 interface AuthImageProps {
   src: string | null | undefined;

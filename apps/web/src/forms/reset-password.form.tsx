@@ -5,9 +5,9 @@ import {
 	ForgotPasswordRequestSchema,
 	ForgotPasswordRequestDto,
 } from "@matcha/shared";
-import { useAuthUser } from "@/hooks/auth.hook";
-import { useActionsData } from "@/hooks/actions.hooks";
-import { EActionKeys } from "@/types/actions.types";
+import { useAuthUser } from "@/hooks";
+import { useActionsData } from "@/hooks";
+import { EActionKeys } from "@/types";
 
 interface ResetPasswordFormProps {
 	showError?: boolean;

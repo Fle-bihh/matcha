@@ -1,12 +1,12 @@
-import { CenteredPaper } from "@/components/app/centered-paper.component";
+import { CenteredPaper } from "@/components";
 import { Box, Typography, Button, Alert } from "@mui/material";
-import { useAuthUser } from "@/hooks/auth.hook";
-import { useActionsData } from "@/hooks/actions.hooks";
-import { EActionKeys } from "@/types/actions.types";
+import { useAuthUser } from "@/hooks";
+import { useActionsData } from "@/hooks";
+import { EActionKeys } from "@/types";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { useRouting } from "@/hooks/routing.hooks";
+import { useRouting } from "@/hooks";
 import { APP_ROUTES } from "@/constants";
 
 export function ConfirmEmailPage() {

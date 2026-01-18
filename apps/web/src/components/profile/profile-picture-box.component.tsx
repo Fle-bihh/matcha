@@ -1,6 +1,6 @@
 import { Box, Paper, CircularProgress } from "@mui/material";
 import { AddPhotoAlternate } from "@mui/icons-material";
-import { AuthImage } from "@/components/utils/auth-image.component";
+import { AuthImage } from "@/components";
 
 interface ProfilePictureBoxProps {
   pictureUrl?: string;

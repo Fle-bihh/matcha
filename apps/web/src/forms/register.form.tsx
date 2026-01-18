@@ -2,9 +2,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterRequestSchema, RegisterRequestDto } from "@matcha/shared";
 import { TextField, Button, Stack, Typography, Box } from "@mui/material";
-import { useAuthUser } from "@/hooks/auth.hook";
-import { useActionsData } from "@/hooks/actions.hooks";
-import { EActionKeys } from "@/types/actions.types";
+import { useAuthUser } from "@/hooks";
+import { useActionsData } from "@/hooks";
+import { EActionKeys } from "@/types";
 
 export function RegisterForm() {
   const { register: registerUser } = useAuthUser();

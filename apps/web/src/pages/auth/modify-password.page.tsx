@@ -1,4 +1,4 @@
-import { CenteredPaper } from "@/components/app/centered-paper.component";
+import { CenteredPaper } from "@/components";
 import {
   Box,
   Typography,
@@ -13,9 +13,9 @@ import {
   ResetPasswordRequestSchema,
   ResetPasswordRequestDto,
 } from "@matcha/shared";
-import { useAuthUser } from "@/hooks/auth.hook";
-import { useActionsData } from "@/hooks/actions.hooks";
-import { EActionKeys } from "@/types/actions.types";
+import { useAuthUser } from "@/hooks";
+import { useActionsData } from "@/hooks";
+import { EActionKeys } from "@/types";
 import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 

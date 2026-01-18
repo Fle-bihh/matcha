@@ -1,7 +1,7 @@
 import { Box, Chip, Button } from "@mui/material";
-import { ProfilePageWrapper } from "@/components/profile/profile-page-wrapper.component";
+import { ProfilePageWrapper } from "@/components";
 import { USER_INTERESTS, MAX_USER_INTERESTS } from "@matcha/shared";
-import { useAuthUser } from "@/hooks/auth.hook";
+import { useAuthUser } from "@/hooks";
 import { useState, useEffect, useMemo } from "react";
 
 export function ProfileInterestsPage() {

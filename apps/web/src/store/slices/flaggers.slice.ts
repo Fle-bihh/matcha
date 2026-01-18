@@ -3,7 +3,7 @@ import {
   FlaggerDataMap,
   FlaggerData,
   FLAGGERS_INITIAL_STATE,
-} from "@/constants/flaggers.constants";
+} from "@/constants";
 import { EStoreSlices } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 

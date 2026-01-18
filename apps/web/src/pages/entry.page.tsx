@@ -1,4 +1,4 @@
-import { CenteredPaper } from "@/components/app/centered-paper.component";
+import { CenteredPaper } from "@/components";
 import { APP_ROUTES } from "@/constants";
 import { APP_NAME } from "@matcha/shared";
 import {

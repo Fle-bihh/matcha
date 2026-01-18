@@ -1,5 +1,5 @@
-import { CenteredPaper } from "@/components/app/centered-paper.component";
-import { useRouting } from "@/hooks/routing.hooks";
+import { CenteredPaper } from "@/components";
+import { useRouting } from "@/hooks";
 import { Box, Button, Typography } from "@mui/material";
 
 export function NotFoundPage() {

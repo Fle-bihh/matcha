@@ -1,9 +1,9 @@
 import { APP_ROUTES } from "@/constants";
 import { Box, Paper, Typography, Button } from "@mui/material";
 import { Link } from "react-router-dom";
-import { RegisterForm } from "@/forms/register.form";
-import { PaperBackButton } from "@/components/utils/paper-back-button.component";
-import { CenteredPaper } from "@/components/app/centered-paper.component";
+import { RegisterForm } from "@/forms";
+import { PaperBackButton } from "@/components";
+import { CenteredPaper } from "@/components";
 
 export function RegisterPage() {
   return (

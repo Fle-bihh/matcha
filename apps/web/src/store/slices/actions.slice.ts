@@ -1,5 +1,5 @@
 import { EStoreSlices } from "@/types";
-import { EActionKeys, IActionData } from "@/types/actions.types";
+import { EActionKeys, IActionData } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type ActionState = {

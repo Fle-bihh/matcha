@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { BaseService } from "./base.service";
-import { EStorageKeys } from "@/types/storage.constants";
+import { EStorageKeys } from "@/types";
 import {
 	logger,
 	EWebSocketEvents,

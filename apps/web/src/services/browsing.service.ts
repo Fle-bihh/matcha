@@ -9,11 +9,11 @@ import type {
 import { ServiceResponse, StoreUser } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
-import { setFilters, clearFilters } from "@/store/slices/filters.slice";
+import { setFilters, clearFilters } from "@/store";
 import { EPagerKeys } from "@/constants";
 import { EEntityTypes, ETokens } from "@/types";
-import { EFilterKeys } from "@/types/filters.types";
-import { EStorageKeys } from "@/types/storage.constants";
+import { EFilterKeys } from "@/types";
+import { EStorageKeys } from "@/types";
 import { StorageService } from "./storage.service";
 
 const FILTER_KEY = EFilterKeys.Browsing;

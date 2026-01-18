@@ -9,11 +9,11 @@ import {
   Typography,
   Alert,
 } from "@mui/material";
-import { useFlagger } from "@/hooks/flaggers.hook";
-import { EFlaggers } from "@/constants/flaggers.constants";
-import { useAuthUser } from "@/hooks/auth.hook";
-import { useActionsData } from "@/hooks/actions.hooks";
-import { EActionKeys } from "@/types/actions.types";
+import { useFlagger } from "@/hooks";
+import { EFlaggers } from "@/constants";
+import { useAuthUser } from "@/hooks";
+import { useActionsData } from "@/hooks";
+import { EActionKeys } from "@/types";
 import { useForm } from "react-hook-form";
 import {
   SendChangeEmailVerificationRequestDto,

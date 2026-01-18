@@ -7,10 +7,10 @@ import {
 	Typography,
 } from "@mui/material";
 import { Match } from "@matcha/shared";
-import { useRouting } from "@/hooks/routing.hooks";
+import { useRouting } from "@/hooks";
 import { APP_ROUTES } from "@/constants";
-import { useAuthUser } from "@/hooks/auth.hook";
-import { StoreMatch } from "@/types/match.types";
+import { useAuthUser } from "@/hooks";
+import { StoreMatch } from "@/types";
 
 interface MatchItemProps {
 	match: StoreMatch;

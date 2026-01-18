@@ -7,11 +7,11 @@ import {
 	CircularProgress,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { withProfileCompleteComponent } from "@/components/utils/with-condition-component.component";
+import { withProfileCompleteComponent } from "@/components";
 import { ProfileUncomplete } from "./profile-uncomplete.page";
-import { ProfileCard } from "@/components/home/profile-card.component";
-import { BrowsingFiltersComponent } from "@/components/home/browsing-filters.component";
-import { useBrowsingContext } from "@/contexts/browsing.context";
+import { ProfileCard } from "@/components";
+import { BrowsingFiltersComponent } from "@/components";
+import { useBrowsingContext } from "@/contexts";
 
 function HomePageComp() {
 	const {

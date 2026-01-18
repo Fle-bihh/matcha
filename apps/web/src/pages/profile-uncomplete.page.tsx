@@ -1,10 +1,10 @@
-import { CenteredPaper } from "@/components/app/centered-paper.component";
+import { CenteredPaper } from "@/components";
 import { Box, Button, Typography } from "@mui/material";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import { useRouting } from "@/hooks/routing.hooks";
+import { useRouting } from "@/hooks";
 import { APP_ROUTES } from "@/constants";
-import { withEmailVerifiedComponent } from "@/components/utils/with-condition-component.component";
-import { VerifyEmailBox } from "@/components/home/verify-email-box.component";
+import { withEmailVerifiedComponent } from "@/components";
+import { VerifyEmailBox } from "@/components";
 
 function ProfileUncompleteComp() {
   const routing = useRouting();

@@ -12,12 +12,12 @@ import {
 	VisitService,
 	WebSocketSubscriptionService,
 } from "@/services";
-import { LocationService } from "@/services/location.service";
+import { LocationService } from "@/services";
 import { Store } from "@reduxjs/toolkit";
 import { TAppDispatch, TReduxStore, TRootState } from "@/types";
 import { createStore } from "@/store";
 import { logger } from "@matcha/shared";
-import { RouterService } from "@/services/router.service";
+import { RouterService } from "@/services";
 
 type ServiceConstructor = new (container: IContainer) => any;
 

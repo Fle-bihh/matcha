@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { setFlagger, resetFlagger } from "@/store";
 import { TRootState } from "@/types";
-import { EFlaggers, FlaggerData } from "@/constants/flaggers.constants";
+import { EFlaggers, FlaggerData } from "@/constants";
 
 interface UseFlaggerReturn<T extends EFlaggers> {
   data: FlaggerData<T>;

@@ -1,5 +1,5 @@
 import { ETokens } from "@/types";
-import { EActionKeys } from "@/types/actions.types";
+import { EActionKeys } from "@/types";
 import { createActions } from "./base.actions";
 
 export const UserActions = createActions(ETokens.UserService, [

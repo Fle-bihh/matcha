@@ -5,7 +5,7 @@ import {
 	useEffect,
 	useRef,
 } from "react";
-import { useDispatchActions } from "@/hooks/actions.hooks";
+import { useDispatchActions } from "@/hooks";
 import { WebSocketSubscriptionActions } from "@/store";
 import { EWebSocketChannels } from "@matcha/shared";
 

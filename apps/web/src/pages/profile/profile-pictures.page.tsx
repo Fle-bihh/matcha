@@ -1,11 +1,11 @@
 import { Box } from "@mui/material";
 import { useRef } from "react";
-import { EActionKeys } from "@/types/actions.types";
-import { useActionsData } from "@/hooks/actions.hooks";
-import { useAuthUser } from "@/hooks/auth.hook";
-import { MainPictureSection } from "@/components/profile/main-picture-section.component";
-import { AdditionalPicturesSection } from "@/components/profile/additional-pictures-section.component";
-import { ProfilePageWrapper } from "@/components/profile/profile-page-wrapper.component";
+import { EActionKeys } from "@/types";
+import { useActionsData } from "@/hooks";
+import { useAuthUser } from "@/hooks";
+import { MainPictureSection } from "@/components";
+import { AdditionalPicturesSection } from "@/components";
+import { ProfilePageWrapper } from "@/components";
 
 export const ProfilePicturesPage = () => {
   const { authUser, updateProfilePicture } = useAuthUser();
