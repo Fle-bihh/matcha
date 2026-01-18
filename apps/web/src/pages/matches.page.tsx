@@ -9,10 +9,11 @@ import {
 	CircularProgress,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { MatchItem, withProfileCompleteComponent } from "@/components";
+import { MatchItem } from "@/components";
 import { ProfileUncomplete } from "./profile-uncomplete.page";
 import { useActionsData, useMatches } from "@/hooks";
 import { EActionKeys } from "@/types";
+import { withProfileCompleteComponent } from "@/utils";
 
 function MatchesPageComp() {
 	const { matches, fetchNextPage, refresh, hasNextPage } = useMatches();

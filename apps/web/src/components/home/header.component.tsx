@@ -7,7 +7,7 @@ import { useAuthUser } from "@/hooks";
 import { APP_ROUTES } from "@/constants";
 import { useHeaderRef } from "@/contexts";
 import { useRouting } from "@/hooks";
-import { withEmailVerifiedComponent } from "../utils/with-condition-component.component";
+import { withEmailVerifiedComponent } from "@/utils";
 
 const ProtectedButtons = () => {
 	const routing = useRouting();

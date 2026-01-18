@@ -1,7 +1,7 @@
 import { useAuthUser } from "@/hooks";
 import { Alert, Typography, Button } from "@mui/material";
 import { Warning as WarningIcon } from "@mui/icons-material";
-import { withEmailNotVerifiedComponent } from "../utils/with-condition-component.component";
+import { withEmailNotVerifiedComponent } from "@/utils";
 import { useActionsData } from "@/hooks";
 import { EActionKeys } from "@/types";
 
