@@ -145,8 +145,9 @@ export class LikeService extends BaseService {
 		userAId: number,
 		userBId: number,
 		emitWebSocketEvents: boolean = false,
-	): Promise<ServiceResponse> {
+	): Promise<ServiceResponse<{ match_deleted: boolean } | null>> {
 		try {
+			let hasDeletedMatch = false;
 			const [likeAtoB, likeBtoA] = await Promise.all([
 				this.likeRepository.getLikeByUsers(userAId, userBId),
 				this.likeRepository.getLikeByUsers(userBId, userAId),
@@ -171,6 +172,8 @@ export class LikeService extends BaseService {
 						StatusCodes.INTERNAL_SERVER_ERROR,
 					);
 				}
+
+				hasDeletedMatch = true;
 
 				if (emitWebSocketEvents) {
 					this.webSocketService.emitToUser(
@@ -206,8 +209,10 @@ export class LikeService extends BaseService {
 			}
 
 			return ServiceResponse.success(
-				"Likes and matches deleted successfully",
-				null,
+				hasDeletedMatch
+					? "Likes and match deleted successfully"
+					: "Likes deleted successfully",
+				{ match_deleted: hasDeletedMatch },
 				StatusCodes.OK,
 			);
 		} catch (error) {
@@ -238,10 +243,34 @@ export class LikeService extends BaseService {
 				);
 			}
 
-			return await this.deleteAllLikesBetweenUsers(
+			const res = await this.deleteAllLikesBetweenUsers(
 				likerId,
 				likedId,
 				true,
+			);
+
+			if (!this.isSuccess(res) || !res.data) {
+				return ServiceResponse.failure(
+					"Failed to unlike user",
+					null,
+					StatusCodes.INTERNAL_SERVER_ERROR,
+				);
+			}
+
+			if (!res.data.match_deleted) {
+				this.webSocketService.emitToUser(
+					likedId,
+					EWebSocketEvents.LikeDeleted,
+					{
+						liker_id: likerId,
+					},
+				);
+			}
+
+			return ServiceResponse.success(
+				"User unliked successfully",
+				null,
+				StatusCodes.OK,
 			);
 		} catch (error) {
 			logger.error("Error in unlikeUser:", error);

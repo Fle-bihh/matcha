@@ -18,7 +18,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
 	const mainPicture = user.pictures_urls?.[0] ?? null;
 	const age = user.age || "N/A";
 	const { push } = useRouting();
-	const { createLike, unlikeUser } = useLike();
+	const { createLike } = useLike();
 	const [isHovered, setIsHovered] = useState(false);
 
 	const handleViewProfile = (e: React.MouseEvent) => {
@@ -29,11 +29,6 @@ export function ProfileCard({ user }: ProfileCardProps) {
 	const handleLike = (e: React.MouseEvent) => {
 		e.stopPropagation();
 		createLike({ liked_id: user.id });
-	};
-
-	const handleUnlike = (e: React.MouseEvent) => {
-		e.stopPropagation();
-		unlikeUser({ id: user.id });
 	};
 
 	return (
@@ -112,19 +107,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
 							zIndex: 2,
 						}}
 					>
-						{user.is_liked ? (
-							<IconButton
-								onClick={handleUnlike}
-								sx={{
-									bgcolor: "rgba(255, 255, 255, 0.9)",
-									"&:hover": {
-										bgcolor: "white",
-									},
-								}}
-							>
-								<FavoriteIcon sx={{ color: "error.main" }} />
-							</IconButton>
-						) : (
+						{!user.is_liked && (
 							<IconButton
 								onClick={handleLike}
 								sx={{

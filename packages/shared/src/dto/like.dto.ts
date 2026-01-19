@@ -20,3 +20,7 @@ export interface CreateLikeResponseDto {}
 export interface LikeCreatedSocketDto {
 	liker_id: number;
 }
+
+export interface LikeDeletedSocketDto {
+	liker_id: number;
+}
