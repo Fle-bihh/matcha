@@ -26,10 +26,6 @@ export class UserService extends BaseService {
 		super(container);
 	}
 
-	private get likeService() {
-		return this.container.get<LikeService>(ETokens.LikeService);
-	}
-
 	public async findByEmail<T extends boolean = false>(
 		email: string,
 		withPassword?: T,
@@ -150,6 +146,18 @@ export class UserService extends BaseService {
 			if (!targetResult.is_profile_complete) {
 				return ServiceResponse.failure(
 					"User profile is not complete",
+					null,
+					StatusCodes.FORBIDDEN,
+				);
+			}
+
+			const isBlocked = await this.blockService.checkBlockExists(
+				requesterId,
+				targetUserId,
+			);
+			if (isBlocked) {
+				return ServiceResponse.failure(
+					"You have blocked this user",
 					null,
 					StatusCodes.FORBIDDEN,
 				);

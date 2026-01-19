@@ -219,6 +219,11 @@ export class BrowsingRepository extends BaseRepository implements IRepository {
 		);
 		values.push(currentUser.id);
 
+		whereConditions.push(
+			"NOT EXISTS (SELECT 1 FROM blocks WHERE ((blocks.blocker_id = ? AND blocks.blocked_id = users.id) OR (blocks.blocker_id = users.id AND blocks.blocked_id = ?)) AND blocks.deleted_at IS NULL)",
+		);
+		values.push(currentUser.id, currentUser.id);
+
 		const compatibleGenders = this.getCompatibleGenders(
 			currentUser.gender,
 			currentUser.orientation,

@@ -2,6 +2,7 @@ import { ETokens, IContainer, ServiceResponse } from "@/types";
 import { emptyPaginatedResponse } from "@/utils";
 import { BaseService } from "./base.service";
 import {
+	EWebSocketEvents,
 	GetMatchesResponseDto,
 	logger,
 	Match,
@@ -15,6 +16,81 @@ import {
 export class MatchService extends BaseService {
 	constructor(container: IContainer) {
 		super(container);
+	}
+
+	public async createMatch(
+		likerId: number,
+		likedId: number,
+	): Promise<ServiceResponse> {
+		try {
+			const match = await this.matchRepository.createMatch(
+				likerId,
+				likedId,
+			);
+
+			if (!match) {
+				return ServiceResponse.failure(
+					"Failed to create match",
+					null,
+					StatusCodes.INTERNAL_SERVER_ERROR,
+				);
+			}
+
+			const matchDetailed =
+				await this.matchRepository.getMatchByIdWithDetails(
+					match.id,
+					likerId,
+				);
+
+			const otherUserMatchDetailed =
+				await this.matchRepository.getMatchByIdWithDetails(
+					match.id,
+					likedId,
+				);
+
+			if (!matchDetailed || !otherUserMatchDetailed) {
+				await this.matchRepository.deleteMatch(match.id);
+				return ServiceResponse.failure(
+					"Failed to retrieve match details",
+					null,
+					StatusCodes.INTERNAL_SERVER_ERROR,
+				);
+			}
+
+			this.webSocketService.emitToUser(
+				likerId,
+				EWebSocketEvents.MatchCreated,
+				matchDetailed,
+			);
+			this.webSocketService.emitToUser(
+				likedId,
+				EWebSocketEvents.MatchCreated,
+				otherUserMatchDetailed,
+			);
+
+			return ServiceResponse.success(
+				"Match created successfully",
+				null,
+				StatusCodes.CREATED,
+			);
+		} catch (error) {
+			logger.error("Error in createMatch:", error);
+			return ServiceResponse.failure(
+				"An error occurred while creating the match",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR,
+			);
+		}
+	}
+
+	public async deleteMatchById(matchId: number): Promise<boolean> {
+		try {
+			const deleted = await this.matchRepository.deleteMatch(matchId);
+			return deleted;
+		} catch (error) {
+			logger.error("Error in deleteMatchById:", error);
+			return false;
+		}
 	}
 
 	public async getMatchByUsers(

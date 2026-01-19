@@ -17,6 +17,9 @@ import {
 } from "@/repositories";
 import { UserDeletionService } from "./user-deletion.service";
 import { ReportService } from "./report.service";
+import { BlockService } from "./block.service";
+import { LikeService } from "./like.service";
+import { MatchService } from "./match.service";
 
 export abstract class BaseService {
 	protected container: IContainer;
@@ -103,5 +106,17 @@ export abstract class BaseService {
 
 	protected get blockRepository(): BlockRepository {
 		return this.container.get<BlockRepository>(ETokens.BlockRepository);
+	}
+
+	protected get blockService(): BlockService {
+		return this.container.get<BlockService>(ETokens.BlockService);
+	}
+
+	protected get likeService(): LikeService {
+		return this.container.get<LikeService>(ETokens.LikeService);
+	}
+
+	protected get matchService(): MatchService {
+		return this.container.get<MatchService>(ETokens.MatchService);
 	}
 }

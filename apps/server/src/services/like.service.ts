@@ -46,6 +46,19 @@ export class LikeService extends BaseService {
 		try {
 			const { liked_id } = data;
 
+			const isBlocked = await this.blockService.checkBlockExists(
+				likerId,
+				liked_id,
+			);
+
+			if (isBlocked) {
+				return ServiceResponse.failure(
+					"Cannot like a user you have blocked or who has blocked you",
+					null,
+					StatusCodes.FORBIDDEN,
+				);
+			}
+
 			if (likerId === liked_id) {
 				return ServiceResponse.failure(
 					"Cannot like yourself",
@@ -86,52 +99,19 @@ export class LikeService extends BaseService {
 			);
 
 			if (isMatch) {
-				const match = await this.matchRepository.createMatch(
+				const matchResponse = await this.matchService.createMatch(
 					likerId,
 					liked_id,
 				);
 
-				if (!match) {
+				if (!this.isSuccess(matchResponse)) {
 					await this.likeRepository.deleteLike(like.id);
 					return ServiceResponse.failure(
-						"Failed to create match",
+						"Failed to create match after like",
 						null,
 						StatusCodes.INTERNAL_SERVER_ERROR,
 					);
 				}
-
-				const matchDetailed =
-					await this.matchRepository.getMatchByIdWithDetails(
-						match.id,
-						likerId,
-					);
-
-				const otherUserMatchDetailed =
-					await this.matchRepository.getMatchByIdWithDetails(
-						match.id,
-						liked_id,
-					);
-
-				if (!matchDetailed || !otherUserMatchDetailed) {
-					await this.matchRepository.deleteMatch(match.id);
-					await this.likeRepository.deleteLike(like.id);
-					return ServiceResponse.failure(
-						"Failed to retrieve match details",
-						null,
-						StatusCodes.INTERNAL_SERVER_ERROR,
-					);
-				}
-
-				this.webSocketService.emitToUser(
-					likerId,
-					EWebSocketEvents.MatchCreated,
-					matchDetailed,
-				);
-				this.webSocketService.emitToUser(
-					liked_id,
-					EWebSocketEvents.MatchCreated,
-					otherUserMatchDetailed,
-				);
 			}
 
 			return ServiceResponse.success(
@@ -167,18 +147,19 @@ export class LikeService extends BaseService {
 				);
 			}
 
-			const existingMatch = await this.matchRepository.getMatchByUsers(
+			const existingMatchRes = await this.matchService.getMatchByUsers(
 				likerId,
 				likedId,
 			);
 
-			if (existingMatch) {
+			if (this.isSuccess(existingMatchRes) && existingMatchRes.data) {
+				const existingMatch = existingMatchRes.data;
 				const reverseLike = await this.likeRepository.getLikeByUsers(
 					likedId,
 					likerId,
 				);
 
-				const matchDeleted = await this.matchRepository.deleteMatch(
+				const matchDeleted = await this.matchService.deleteMatchById(
 					existingMatch.id,
 				);
 
