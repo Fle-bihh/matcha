@@ -5,21 +5,12 @@ import { WebSocketService } from "./websocket.service";
 import { EmailVerificationService } from "./email-verification.service";
 import { PasswordResetService } from "./password-reset.service";
 import { UserService } from "./user.service";
-import {
-	BlockRepository,
-	EmailVerificationRepository,
-	LikeRepository,
-	MatchRepository,
-	PasswordResetRepository,
-	UserRepository,
-	UserStatusRepository,
-	VisitRepository,
-} from "@/repositories";
 import { UserDeletionService } from "./user-deletion.service";
 import { ReportService } from "./report.service";
 import { BlockService } from "./block.service";
 import { LikeService } from "./like.service";
 import { MatchService } from "./match.service";
+import { VisitService } from "./visit.service";
 
 export abstract class BaseService {
 	protected container: IContainer;
@@ -60,52 +51,14 @@ export abstract class BaseService {
 		);
 	}
 
-	protected get emailVerificationRepository(): EmailVerificationRepository {
-		return this.container.get<EmailVerificationRepository>(
-			ETokens.EmailVerificationRepository,
-		);
-	}
-
-	protected get likeRepository(): LikeRepository {
-		return this.container.get<LikeRepository>(ETokens.LikeRepository);
-	}
-
-	protected get matchRepository(): MatchRepository {
-		return this.container.get<MatchRepository>(ETokens.MatchRepository);
-	}
-
-	protected get passwordResetRepository(): PasswordResetRepository {
-		return this.container.get<PasswordResetRepository>(
-			ETokens.PasswordResetRepository,
-		);
-	}
-
-	protected get userRepository(): UserRepository {
-		return this.container.get<UserRepository>(ETokens.UserRepository);
-	}
-
-	protected get userStatusRepository(): UserStatusRepository {
-		return this.container.get<UserStatusRepository>(
-			ETokens.UserStatusRepository,
-		);
-	}
-
 	protected get userDeletionService(): UserDeletionService {
 		return this.container.get<UserDeletionService>(
 			ETokens.UserDeletionService,
 		);
 	}
 
-	protected get visitRepository(): VisitRepository {
-		return this.container.get<VisitRepository>(ETokens.VisitRepository);
-	}
-
 	protected get reportService(): ReportService {
 		return this.container.get<ReportService>(ETokens.ReportService);
-	}
-
-	protected get blockRepository(): BlockRepository {
-		return this.container.get<BlockRepository>(ETokens.BlockRepository);
 	}
 
 	protected get blockService(): BlockService {
@@ -118,5 +71,9 @@ export abstract class BaseService {
 
 	protected get matchService(): MatchService {
 		return this.container.get<MatchService>(ETokens.MatchService);
+	}
+
+	protected get visitService(): VisitService {
+		return this.container.get<VisitService>(ETokens.VisitService);
 	}
 }

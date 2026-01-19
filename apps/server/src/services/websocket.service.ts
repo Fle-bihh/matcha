@@ -17,7 +17,6 @@ import {
 	TWebSocketChannel,
 } from "@matcha/shared";
 import { authenticateSocket } from "@/middleware";
-import { UserStatusRepository } from "@/repositories";
 import { WebSocketConnectionManager } from "@/utils";
 
 export class WebSocketService extends BaseService implements IWebSocketService {
@@ -68,7 +67,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 		try {
 			const userId = socket.user.id;
 			this.connectionManager.add(userId, socket);
-			await this.userStatusRepository.setUserOnline(userId);
+			await this.userService.setUserOnline(userId);
 			logger.info(`User ${userId} connected with socket ${socket.id}`);
 		} catch (error) {
 			logger.error(`Error handling user connection: ${error}`);
@@ -81,7 +80,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 			const userId = socket.user.id;
 			this.cleanupSocketSubscriptions(socket.id);
 			this.connectionManager.remove(userId);
-			await this.userStatusRepository.setUserOffline(userId);
+			await this.userService.setUserOffline(userId);
 			logger.info(`User ${userId} disconnected`);
 		} catch (error) {
 			logger.error(`Error handling user disconnection: ${error}`);

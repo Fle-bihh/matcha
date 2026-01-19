@@ -8,6 +8,10 @@ export class UserDeletionService extends BaseService {
 		super(container);
 	}
 
+	private get userRepository(): UserRepository {
+		return this.container.get<UserRepository>(ETokens.UserRepository);
+	}
+
 	public async deleteUserAndRelatedData(userId: number): Promise<boolean> {
 		try {
 			logger.info(`Starting soft-delete for user ${userId}`);

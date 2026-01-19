@@ -11,6 +11,12 @@ export class EmailVerificationService extends BaseService {
 		super(container);
 	}
 
+	private get emailVerificationRepository(): EmailVerificationRepository {
+		return this.container.get<EmailVerificationRepository>(
+			ETokens.EmailVerificationRepository,
+		);
+	}
+
 	public async createVerificationToken(
 		userId: number,
 	): Promise<ServiceResponse<string | null>> {

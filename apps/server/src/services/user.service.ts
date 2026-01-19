@@ -1,7 +1,10 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
-import { UserRepository, UserStatusRepository } from "@/repositories";
-import { UserDeletionService } from "./user-deletion.service";
+import {
+	UserRepository,
+	UserStatusRepository,
+	BrowsingRepository,
+} from "@/repositories";
 import {
 	AuthUserWithPassword,
 	CreateUserDto,
@@ -19,11 +22,20 @@ import {
 	StatusCodes,
 } from "@matcha/shared";
 import { HashUtils, emptyPaginatedResponse } from "@/utils";
-import { LikeService } from "./like.service";
 
 export class UserService extends BaseService {
 	constructor(container: IContainer) {
 		super(container);
+	}
+
+	private get userRepository(): UserRepository {
+		return this.container.get<UserRepository>(ETokens.UserRepository);
+	}
+
+	private get userStatusRepository(): UserStatusRepository {
+		return this.container.get<UserStatusRepository>(
+			ETokens.UserStatusRepository,
+		);
 	}
 
 	public async findByEmail<T extends boolean = false>(
@@ -546,5 +558,13 @@ export class UserService extends BaseService {
 				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
+	}
+
+	public async setUserOnline(userId: number): Promise<void> {
+		await this.userStatusRepository.setUserOnline(userId);
+	}
+
+	public async setUserOffline(userId: number): Promise<void> {
+		await this.userStatusRepository.setUserOffline(userId);
 	}
 }

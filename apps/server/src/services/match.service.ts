@@ -1,6 +1,7 @@
 import { ETokens, IContainer, ServiceResponse } from "@/types";
 import { emptyPaginatedResponse } from "@/utils";
 import { BaseService } from "./base.service";
+import { MatchRepository } from "@/repositories";
 import {
 	EWebSocketEvents,
 	GetMatchesResponseDto,
@@ -16,6 +17,10 @@ import {
 export class MatchService extends BaseService {
 	constructor(container: IContainer) {
 		super(container);
+	}
+
+	private get matchRepository(): MatchRepository {
+		return this.container.get<MatchRepository>(ETokens.MatchRepository);
 	}
 
 	public async createMatch(

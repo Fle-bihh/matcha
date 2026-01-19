@@ -1,6 +1,6 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
-import { LikeRepository, MatchRepository } from "@/repositories";
+import { LikeRepository } from "@/repositories";
 import {
 	CreateLikeDto,
 	EWebSocketEvents,
@@ -12,6 +12,10 @@ import {
 export class LikeService extends BaseService {
 	constructor(container: IContainer) {
 		super(container);
+	}
+
+	private get likeRepository(): LikeRepository {
+		return this.container.get<LikeRepository>(ETokens.LikeRepository);
 	}
 
 	public async getLikingByUsers(
