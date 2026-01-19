@@ -43,6 +43,21 @@ export class BlockService extends BaseService {
 				);
 			}
 
+			const cleanupResponse =
+				await this.likeService.deleteAllLikesBetweenUsers(
+					blockerId,
+					blocked_id,
+					false,
+				);
+
+			if (!this.isSuccess(cleanupResponse)) {
+				return ServiceResponse.failure(
+					"Failed to clean up likes and matches",
+					null,
+					StatusCodes.INTERNAL_SERVER_ERROR,
+				);
+			}
+
 			const block = await this.blockRepository.createBlock(
 				blockerId,
 				blocked_id,
