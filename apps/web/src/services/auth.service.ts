@@ -72,10 +72,10 @@ export class AuthService extends BaseService {
 		}
 
 		if (user) {
+			this.webSocketService.connect();
 			this.dispatch(setAuthUser(user));
 			if (user.is_profile_complete) {
 				this.browsingService.loadBrowsingFilters();
-				this.webSocketService.connect();
 				this.matchService.getMatches({ page: 1, limit: 10 });
 			}
 		}

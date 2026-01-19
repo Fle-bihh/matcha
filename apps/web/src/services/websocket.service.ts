@@ -18,8 +18,8 @@ import {
 
 export class WebSocketService extends BaseService {
 	private socket: Socket | null = null;
-	private isConnected: boolean = false;
 	private handlers: BaseHandler[];
+	private readyPromise: Promise<void> | null = null;
 
 	constructor(container: IContainer) {
 		super(container);
@@ -33,8 +33,11 @@ export class WebSocketService extends BaseService {
 
 	public async connect(): Promise<void> {
 		if (this.socket?.connected) {
-			logger.debug("WebSocket already connected");
 			return;
+		}
+
+		if (this.readyPromise) {
+			return this.readyPromise;
 		}
 
 		const token = await this.storageService.getItem(
@@ -42,43 +45,57 @@ export class WebSocketService extends BaseService {
 		);
 
 		if (!token) {
-			logger.warn("No access token found, cannot connect to WebSocket");
-			return;
+			throw new Error("No access token available");
 		}
 
 		const serverUrl = config.apiUrl.replace("/api/v1", "");
 
 		this.socket = io(serverUrl, {
 			auth: { token },
-			autoConnect: true,
+			reconnection: true,
+			reconnectionAttempts: 5,
+			reconnectionDelay: 1000,
+			reconnectionDelayMax: 5000,
+			timeout: 20000,
+		});
+
+		this.readyPromise = new Promise((resolve, reject) => {
+			const onConnect = () => {
+				cleanup();
+				logger.info("WebSocket connected");
+				resolve();
+			};
+
+			const onError = (error: Error) => {
+				cleanup();
+				logger.error("WebSocket connection failed:", error);
+				reject(error);
+			};
+
+			const cleanup = () => {
+				this.socket?.off(EWebSocketEvents.Connect, onConnect);
+				this.socket?.off("connect_error", onError);
+			};
+
+			this.socket?.once(EWebSocketEvents.Connect, onConnect);
+			this.socket?.once("connect_error", onError);
 		});
 
 		this.setupEventHandlers();
+
+		return this.readyPromise;
 	}
 
 	private setupEventHandlers(): void {
 		if (!this.socket) return;
 
-		this.socket.on(EWebSocketEvents.Connect, () => {
-			this.isConnected = true;
-			logger.info("WebSocket connected");
-		});
-
 		this.socket.on(EWebSocketEvents.Disconnect, (reason) => {
-			this.isConnected = false;
-			if (reason !== "io server disconnect") {
-				logger.info(`WebSocket disconnected: ${reason}`);
-			}
+			logger.info(`WebSocket disconnected: ${reason}`);
+			this.readyPromise = null;
 		});
 
 		this.handlers.forEach((handler) => {
 			handler.register(this.socket!);
-		});
-
-		this.socket.on("connect_error", (error: Error) => {
-			if (!error.message.includes("xhr poll error")) {
-				logger.error("WebSocket connection error:", error);
-			}
 		});
 	}
 
@@ -89,39 +106,48 @@ export class WebSocketService extends BaseService {
 			);
 			this.socket.disconnect();
 			this.socket = null;
-			this.isConnected = false;
-			logger.info("WebSocket disconnected manually");
+			this.readyPromise = null;
 		}
 	}
 
-	public on<K extends keyof IWebSocketEventDtoMap>(
+	public async on<K extends keyof IWebSocketEventDtoMap>(
 		event: K,
 		callback: (data: IWebSocketEventDtoMap[K]) => void,
-	): void {
-		if (this.socket) {
-			this.socket.on(event as string, callback);
-		}
+	): Promise<void> {
+		await this.ensureReady();
+		this.socket!.on(event as string, callback);
 	}
 
-	public off<K extends keyof IWebSocketEventDtoMap>(
+	public async off<K extends keyof IWebSocketEventDtoMap>(
 		event: K,
 		callback?: (data: IWebSocketEventDtoMap[K]) => void,
-	): void {
-		if (this.socket) {
-			this.socket.off(event as string, callback);
-		}
+	): Promise<void> {
+		await this.ensureReady();
+		this.socket!.off(event as string, callback);
 	}
 
-	public emit<K extends keyof IWebSocketEventDtoMap>(
+	public async emit<K extends keyof IWebSocketEventDtoMap>(
 		event: K,
 		data: IWebSocketEventDtoMap[K],
-	): void {
-		if (this.socket?.connected) {
-			this.socket.emit(event as string, data);
-		}
+	): Promise<void> {
+		await this.ensureReady();
+		this.socket!.emit(event as string, data);
 	}
 
-	public getConnectionStatus(): boolean {
-		return this.isConnected;
+	public isConnected(): boolean {
+		return this.socket?.connected ?? false;
+	}
+
+	private async ensureReady(): Promise<void> {
+		if (this.socket?.connected) {
+			return;
+		}
+
+		if (this.readyPromise) {
+			await this.readyPromise;
+			return;
+		}
+
+		await this.connect();
 	}
 }

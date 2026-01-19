@@ -33,7 +33,7 @@ export class ApiService extends BaseService {
 		url: string,
 		options: RequestInit,
 	): Promise<ApiRequestResponse<T>> {
-		logger.debug("Request started:", { method: options.method, url });
+		// logger.debug("Request started:", { method: options.method, url });
 		const response: Response = await fetch(url, options);
 
 		const status = response.status || 200;
@@ -57,12 +57,12 @@ export class ApiService extends BaseService {
 			}
 		}
 
-		logger.debug("Request completed:", {
-			status,
-			method: options.method,
-			url,
-			data,
-		});
+		// logger.debug("Request completed:", {
+		// 	status,
+		// 	method: options.method,
+		// 	url,
+		// 	data,
+		// });
 		return { ...data, status };
 	}
 
