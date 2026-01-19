@@ -8,10 +8,6 @@ export class BlockService extends BaseService {
 		super(container);
 	}
 
-	private get blockRepository(): BlockRepository {
-		return this.container.get<BlockRepository>(ETokens.BlockRepository);
-	}
-
 	public async checkBlockExists(
 		blockerId: number,
 		blockedId: number,

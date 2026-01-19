@@ -6,6 +6,7 @@ import { EmailVerificationService } from "./email-verification.service";
 import { PasswordResetService } from "./password-reset.service";
 import { UserService } from "./user.service";
 import {
+	BlockRepository,
 	EmailVerificationRepository,
 	LikeRepository,
 	MatchRepository,
@@ -98,5 +99,9 @@ export abstract class BaseService {
 
 	protected get reportService(): ReportService {
 		return this.container.get<ReportService>(ETokens.ReportService);
+	}
+
+	protected get blockRepository(): BlockRepository {
+		return this.container.get<BlockRepository>(ETokens.BlockRepository);
 	}
 }
