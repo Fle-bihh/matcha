@@ -45,45 +45,54 @@ export class WebSocketService extends BaseService {
 		);
 
 		if (!token) {
-			throw new Error("No access token available");
+			logger.warn(
+				"WebSocket connection skipped: No access token available",
+			);
+			return;
 		}
 
-		const serverUrl = config.apiUrl.replace("/api/v1", "");
+		try {
+			const serverUrl = config.apiUrl.replace("/api/v1", "");
 
-		this.socket = io(serverUrl, {
-			auth: { token },
-			reconnection: true,
-			reconnectionAttempts: 5,
-			reconnectionDelay: 1000,
-			reconnectionDelayMax: 5000,
-			timeout: 20000,
-		});
+			this.socket = io(serverUrl, {
+				auth: { token },
+				reconnection: true,
+				reconnectionAttempts: 5,
+				reconnectionDelay: 1000,
+				reconnectionDelayMax: 5000,
+				timeout: 20000,
+			});
 
-		this.readyPromise = new Promise((resolve, reject) => {
-			const onConnect = () => {
-				cleanup();
-				logger.info("WebSocket connected");
-				resolve();
-			};
+			this.readyPromise = new Promise((resolve, reject) => {
+				const onConnect = () => {
+					cleanup();
+					logger.info("WebSocket connected");
+					resolve();
+				};
 
-			const onError = (error: Error) => {
-				cleanup();
-				logger.error("WebSocket connection failed:", error);
-				reject(error);
-			};
+				const onError = (error: Error) => {
+					cleanup();
+					logger.error("WebSocket connection failed:", error);
+					reject(error);
+				};
 
-			const cleanup = () => {
-				this.socket?.off(EWebSocketEvents.Connect, onConnect);
-				this.socket?.off("connect_error", onError);
-			};
+				const cleanup = () => {
+					this.socket?.off(EWebSocketEvents.Connect, onConnect);
+					this.socket?.off("connect_error", onError);
+				};
 
-			this.socket?.once(EWebSocketEvents.Connect, onConnect);
-			this.socket?.once("connect_error", onError);
-		});
+				this.socket?.once(EWebSocketEvents.Connect, onConnect);
+				this.socket?.once("connect_error", onError);
+			});
 
-		this.setupEventHandlers();
+			this.setupEventHandlers();
 
-		return this.readyPromise;
+			return this.readyPromise;
+		} catch (error) {
+			logger.error("WebSocket connection error:", error);
+			this.readyPromise = null;
+			throw error;
+		}
 	}
 
 	private setupEventHandlers(): void {
@@ -94,19 +103,46 @@ export class WebSocketService extends BaseService {
 			this.readyPromise = null;
 		});
 
+		this.socket.on("error", (error: Error) => {
+			logger.error("WebSocket error:", error);
+		});
+
+		this.socket.on("connect_error", (error: Error) => {
+			logger.error("WebSocket connection error:", error);
+		});
+
 		this.handlers.forEach((handler) => {
-			handler.register(this.socket!);
+			try {
+				handler.register(this.socket!);
+			} catch (error) {
+				logger.error(
+					`Failed to register handler ${handler.constructor.name}:`,
+					error,
+				);
+			}
 		});
 	}
 
 	public disconnect(): void {
-		if (this.socket) {
-			this.handlers.forEach((handler) =>
-				handler.unregister(this.socket!),
-			);
-			this.socket.disconnect();
-			this.socket = null;
-			this.readyPromise = null;
+		try {
+			if (this.socket) {
+				this.handlers.forEach((handler) => {
+					try {
+						handler.unregister(this.socket!);
+					} catch (error) {
+						logger.error(
+							`Failed to unregister handler ${handler.constructor.name}:`,
+							error,
+						);
+					}
+				});
+				this.socket.disconnect();
+				this.socket = null;
+				this.readyPromise = null;
+				logger.info("WebSocket disconnected");
+			}
+		} catch (error) {
+			logger.error("WebSocket disconnect error:", error);
 		}
 	}
 
@@ -114,24 +150,60 @@ export class WebSocketService extends BaseService {
 		event: K,
 		callback: (data: IWebSocketEventDtoMap[K]) => void,
 	): Promise<void> {
-		await this.ensureReady();
-		this.socket!.on(event as string, callback);
+		try {
+			await this.ensureReady();
+			if (!this.socket?.connected) {
+				logger.warn(
+					`Cannot attach listener for event ${String(event)}: Socket not connected`,
+				);
+				return;
+			}
+			this.socket.on(event as string, callback);
+		} catch (error) {
+			logger.warn(
+				`Failed to attach listener for event ${String(event)}:`,
+				error,
+			);
+		}
 	}
 
 	public async off<K extends keyof IWebSocketEventDtoMap>(
 		event: K,
 		callback?: (data: IWebSocketEventDtoMap[K]) => void,
 	): Promise<void> {
-		await this.ensureReady();
-		this.socket!.off(event as string, callback);
+		try {
+			await this.ensureReady();
+			if (!this.socket?.connected) {
+				logger.warn(
+					`Cannot remove listener for event ${String(event)}: Socket not connected`,
+				);
+				return;
+			}
+			this.socket.off(event as string, callback);
+		} catch (error) {
+			logger.warn(
+				`Failed to remove listener for event ${String(event)}:`,
+				error,
+			);
+		}
 	}
 
 	public async emit<K extends keyof IWebSocketEventDtoMap>(
 		event: K,
 		data: IWebSocketEventDtoMap[K],
 	): Promise<void> {
-		await this.ensureReady();
-		this.socket!.emit(event as string, data);
+		try {
+			await this.ensureReady();
+			if (!this.socket?.connected) {
+				logger.warn(
+					`Cannot emit event ${String(event)}: Socket not connected`,
+				);
+				return;
+			}
+			this.socket.emit(event as string, data);
+		} catch (error) {
+			logger.warn(`Failed to emit event ${String(event)}:`, error);
+		}
 	}
 
 	public isConnected(): boolean {
@@ -144,10 +216,18 @@ export class WebSocketService extends BaseService {
 		}
 
 		if (this.readyPromise) {
-			await this.readyPromise;
+			try {
+				await this.readyPromise;
+			} catch (error) {
+				logger.warn("WebSocket connection attempt failed:", error);
+			}
 			return;
 		}
 
-		await this.connect();
+		try {
+			await this.connect();
+		} catch (error) {
+			logger.warn("Failed to establish WebSocket connection:", error);
+		}
 	}
 }
