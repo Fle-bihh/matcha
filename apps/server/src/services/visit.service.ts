@@ -58,7 +58,7 @@ export class VisitService extends BaseService {
 
 			this.webSocketService.emitToUser(
 				visited_id,
-				EWebSocketEvents.NewVisit,
+				EWebSocketEvents.VisitCreated,
 				undefined,
 			);
 

@@ -40,15 +40,16 @@ export class MatchHandler extends BaseHandler {
 			}),
 		);
 		if (dto.unlike_id) {
+			const newEntity = {
+				is_liked: false,
+				is_matched: false,
+				has_liked_you: false,
+			};
 			this.dispatch(
 				patchEntity({
 					entityType: EEntityTypes.Users,
 					id: dto.unlike_id.toString(),
-					entity: {
-						is_liked: false,
-						is_matched: false,
-						has_liked_you: false,
-					},
+					entity: newEntity,
 				}),
 			);
 		}

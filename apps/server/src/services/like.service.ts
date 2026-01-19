@@ -116,6 +116,14 @@ export class LikeService extends BaseService {
 						StatusCodes.INTERNAL_SERVER_ERROR,
 					);
 				}
+			} else {
+				this.webSocketService.emitToUser(
+					liked_id,
+					EWebSocketEvents.LikeCreated,
+					{
+						liker_id: likerId,
+					},
+				);
 			}
 
 			return ServiceResponse.success(

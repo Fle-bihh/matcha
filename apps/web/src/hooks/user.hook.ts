@@ -42,24 +42,25 @@ export const useUser = (props: UserHookProps) => {
 
 		subscribeToUserStatus(userIdNum);
 
-		if (user && !visitTrackedRef.current) {
-			visitTrackedRef.current = true;
-			createVisit({ visited_id: userIdNum });
-			scrollToTop();
-		}
-
 		return () => {
 			unsubscribeFromUserStatus(userIdNum);
 		};
 	}, [
 		shouldTrackVisit,
 		userId,
-		user,
 		subscribeToUserStatus,
 		unsubscribeFromUserStatus,
-		createVisit,
-		scrollToTop,
 	]);
+
+	useEffect(() => {
+		if (!shouldTrackVisit || !userId || !user) return;
+
+		if (!visitTrackedRef.current) {
+			visitTrackedRef.current = true;
+			createVisit({ visited_id: parseInt(userId, 10) });
+			scrollToTop();
+		}
+	}, [shouldTrackVisit, userId, user, createVisit, scrollToTop]);
 
 	return user;
 };

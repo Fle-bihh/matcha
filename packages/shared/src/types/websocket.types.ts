@@ -4,6 +4,7 @@ import {
 	UnsubscribeChannelRequestDto,
 	SubscriptionConfirmationDto,
 	UserStatusUpdateDto,
+	LikeCreatedSocketDto,
 } from "../dto";
 import { Match, MatchWithDetails } from "../models";
 
@@ -12,7 +13,8 @@ export enum EWebSocketEvents {
 	Disconnect = "disconnect",
 	MatchCreated = "match:created",
 	MatchDeleted = "match:deleted",
-	NewVisit = "visit:created",
+	VisitCreated = "visit:created",
+	LikeCreated = "like:created",
 	Subscribe = "subscribe",
 	Unsubscribe = "unsubscribe",
 	SubscriptionConfirmed = "subscription:confirmed",
@@ -24,9 +26,10 @@ export interface IWebSocketEventDtoMap {
 	[EWebSocketEvents.Disconnect]: string;
 	[EWebSocketEvents.MatchCreated]: MatchWithDetails;
 	[EWebSocketEvents.MatchDeleted]: DeleteMatchSocketDto;
-	[EWebSocketEvents.NewVisit]: undefined;
+	[EWebSocketEvents.VisitCreated]: undefined;
 	[EWebSocketEvents.Subscribe]: SubscribeChannelRequestDto;
 	[EWebSocketEvents.Unsubscribe]: UnsubscribeChannelRequestDto;
 	[EWebSocketEvents.SubscriptionConfirmed]: SubscriptionConfirmationDto;
 	[EWebSocketEvents.UserStatusUpdate]: UserStatusUpdateDto;
+	[EWebSocketEvents.LikeCreated]: LikeCreatedSocketDto;
 }

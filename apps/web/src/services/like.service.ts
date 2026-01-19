@@ -15,7 +15,7 @@ export class LikeService extends BaseService {
 		const response = await this.apiService.post<CreateLikeResponseDto>(
 			getRoute(ERouteGroups.Like, "like"),
 			dto,
-			{ auth: true }
+			{ auth: true },
 		);
 
 		if (
@@ -27,7 +27,7 @@ export class LikeService extends BaseService {
 					entityType: EEntityTypes.Users,
 					id: dto.liked_id.toString(),
 					entity: { is_liked: true },
-				})
+				}),
 			);
 		}
 
@@ -41,11 +41,8 @@ export class LikeService extends BaseService {
 	@action({ showSuccessMessage: true, showErrorMessage: true })
 	async unlikeUser(dto: UnlikeUserDto): Promise<ServiceResponse> {
 		const response = await this.apiService.delete<void>(
-			`${getRoute(ERouteGroups.Like, "unlike").replace(
-				":id",
-				dto.id.toString()
-			)}`,
-			{ auth: true }
+			`${getRoute(ERouteGroups.Like, "unlike").replace(":id", dto.id.toString())}`,
+			{ auth: true },
 		);
 
 		if (this.isSuccess(response)) {
@@ -53,8 +50,12 @@ export class LikeService extends BaseService {
 				patchEntity({
 					entityType: EEntityTypes.Users,
 					id: dto.id.toString(),
-					entity: { is_liked: false },
-				})
+					entity: {
+						is_liked: false,
+						is_matched: false,
+						has_liked_you: false,
+					},
+				}),
 			);
 			return ServiceResponse.success(response.message);
 		} else {

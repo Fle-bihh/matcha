@@ -10,6 +10,7 @@ import { config } from "@/config";
 import { IContainer } from "@/types";
 import {
 	BaseHandler,
+	LikeHandler,
 	MatchHandler,
 	UserStatusHandler,
 	VisitHandler,
@@ -26,6 +27,7 @@ export class WebSocketService extends BaseService {
 			new MatchHandler(container),
 			new VisitHandler(container),
 			new UserStatusHandler(container),
+			new LikeHandler(container),
 		];
 	}
 

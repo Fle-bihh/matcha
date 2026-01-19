@@ -5,11 +5,11 @@ import { incrementReceivedCount } from "@/store";
 
 export class VisitHandler extends BaseHandler {
 	public register(socket: Socket): void {
-		socket.on(EWebSocketEvents.NewVisit, this.handleNewVisit);
+		socket.on(EWebSocketEvents.VisitCreated, this.handleNewVisit);
 	}
 
 	public unregister(socket: Socket): void {
-		socket.off(EWebSocketEvents.NewVisit, this.handleNewVisit);
+		socket.off(EWebSocketEvents.VisitCreated, this.handleNewVisit);
 	}
 
 	private handleNewVisit = (): void => {
