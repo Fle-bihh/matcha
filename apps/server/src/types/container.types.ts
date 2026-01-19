@@ -23,6 +23,8 @@ export enum ETokens {
 	UserStatusRepository = "UserStatusRepository",
 	ReportRepository = "ReportRepository",
 	ReportService = "ReportService",
+	BlockRepository = "BlockRepository",
+	BlockService = "BlockService",
 }
 
 export const REPOSITORY_TOKENS: ETokens[] = [
@@ -36,6 +38,7 @@ export const REPOSITORY_TOKENS: ETokens[] = [
 	ETokens.VisitRepository,
 	ETokens.UserStatusRepository,
 	ETokens.ReportRepository,
+	ETokens.BlockRepository,
 ];
 
 export interface IContainer {

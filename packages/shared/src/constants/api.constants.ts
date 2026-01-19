@@ -9,6 +9,7 @@ export enum ERouteGroups {
 	Match = "match",
 	Visit = "visit",
 	Report = "report",
+	Block = "block",
 }
 
 export const API_ROUTES = {
@@ -48,6 +49,9 @@ export const API_ROUTES = {
 	},
 	[ERouteGroups.Report]: {
 		report: "/",
+	},
+	[ERouteGroups.Block]: {
+		block: "/",
 	},
 } as const;
 

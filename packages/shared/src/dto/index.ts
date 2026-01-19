@@ -8,3 +8,4 @@ export * from "./match.dto";
 export * from "./visit.dto";
 export * from "./websocket.dto";
 export * from "./report.dto";
+export * from "./block.dto";

@@ -5,5 +5,6 @@ import "./match.controller";
 import "./user.controller";
 import "./visit.controller";
 import "./report.controller";
+import "./block.controller";
 
 export * from "./base.controller";

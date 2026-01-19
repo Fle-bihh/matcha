@@ -1,5 +1,6 @@
 import {
 	BaseRepository,
+	BlockRepository,
 	BrowsingRepository,
 	EmailVerificationRepository,
 	LikeRepository,
@@ -13,6 +14,7 @@ import {
 } from "@/repositories";
 import {
 	AuthService,
+	BlockService,
 	EmailVerificationService,
 	FileUploadService,
 	HealthService,
@@ -55,6 +57,8 @@ const serviceRegistry: Record<ETokens, ServiceConstructor> = {
 	[ETokens.VisitService]: VisitService,
 	[ETokens.ReportRepository]: ReportRepository,
 	[ETokens.ReportService]: ReportService,
+	[ETokens.BlockRepository]: BlockRepository,
+	[ETokens.BlockService]: BlockService,
 	[ETokens.UserStatusRepository]: UserStatusRepository,
 } as const;
 

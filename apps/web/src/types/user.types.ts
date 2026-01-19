@@ -7,4 +7,5 @@ export interface StoreUser extends User {
 	has_liked_you?: boolean;
 	is_matched?: boolean;
 	is_reported?: boolean;
+	is_blocked?: boolean;
 }

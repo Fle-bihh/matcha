@@ -9,3 +9,4 @@ export * from "./user-status.repository";
 export * from "./user.repository";
 export * from "./visit.repository";
 export * from "./report.repository";
+export * from "./block.repository";
