@@ -6,10 +6,8 @@ import {
 	Avatar,
 	Typography,
 } from "@mui/material";
-import { Match } from "@matcha/shared";
 import { useRouting } from "@/hooks";
 import { APP_ROUTES } from "@/constants";
-import { useAuthUser } from "@/hooks";
 import { StoreMatch } from "@/types";
 
 interface MatchItemProps {
@@ -17,13 +15,10 @@ interface MatchItemProps {
 }
 
 export function MatchItem({ match }: MatchItemProps) {
-	const { authUser } = useAuthUser();
 	const { push } = useRouting();
 
 	const handleClick = () => {
-		const otherUserId =
-			authUser?.id === match.user1_id ? match.user2_id : match.user1_id;
-		push(APP_ROUTES.user(otherUserId.toString()));
+		push(APP_ROUTES.chat(match.id.toString()));
 	};
 
 	return (

@@ -1,0 +1,62 @@
+import { useState } from "react";
+import { Box, TextField, IconButton } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
+import { useActionsData } from "@/hooks";
+import { EActionKeys } from "@/types";
+
+interface MessageInputProps {
+	onSendMessage: (content: string) => void;
+}
+
+export function MessageInput({ onSendMessage }: MessageInputProps) {
+	const [messageText, setMessageText] = useState("");
+
+	const { isLoading: isSending } = useActionsData([
+		EActionKeys.CreateMessage,
+	]);
+
+	const handleSendMessage = () => {
+		if (!messageText.trim()) return;
+
+		const messageContent = messageText.trim();
+		setMessageText("");
+		onSendMessage(messageContent);
+	};
+
+	const handleKeyPress = (e: React.KeyboardEvent) => {
+		if (e.key === "Enter" && !e.shiftKey) {
+			e.preventDefault();
+			handleSendMessage();
+		}
+	};
+
+	return (
+		<Box
+			sx={{
+				display: "flex",
+				gap: 1,
+				alignItems: "flex-end",
+			}}
+		>
+			<TextField
+				fullWidth
+				multiline
+				maxRows={4}
+				value={messageText}
+				onChange={(e) => setMessageText(e.target.value)}
+				onKeyPress={handleKeyPress}
+				placeholder="Type a message..."
+				disabled={isSending}
+				variant="outlined"
+			/>
+			<IconButton
+				color="primary"
+				onClick={handleSendMessage}
+				disabled={!messageText.trim() || isSending}
+				sx={{ mb: 1 }}
+			>
+				<SendIcon />
+			</IconButton>
+		</Box>
+	);
+}

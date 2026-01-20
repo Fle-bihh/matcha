@@ -15,6 +15,7 @@ import { ProfileInterestsPage } from "@/pages";
 import { ProfileLocationPage } from "@/pages";
 import { ProfileVisitsPage } from "@/pages";
 import { UserPage } from "@/pages";
+import { ChatPage } from "@/pages/chat.page";
 
 export function Router() {
 	return (
@@ -38,6 +39,7 @@ export function Router() {
 				<Route index element={<HomePage />} />
 				<Route path={APP_PAGES.user} element={<UserPage />} />
 				<Route path={APP_PAGES.matches} element={<MatchesPage />} />
+				<Route path={APP_PAGES.chat} element={<ChatPage />} />
 				<Route
 					path={APP_PAGES.profile}
 					element={withEmailVerified(ProfileLayout)()}
