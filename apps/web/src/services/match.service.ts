@@ -37,38 +37,33 @@ export class MatchService extends BaseService {
 				},
 			}),
 		);
+
+		if (last_message) {
+			this.dispatch(
+				patchEntity({
+					entityType: EEntityTypes.Messages,
+					id: last_message.id.toString(),
+					entity: last_message,
+				}),
+			);
+		}
 	}
 
-	@action({ showErrorMessage: false, showSuccessMessage: false })
-	async getMatches(params: MatchesParams): Promise<ServiceResponse> {
-		const response = await this.apiService.get<
-			PaginatedResponse<MatchWithDetails, GetMatchesResponseDto>
-		>(getRoute(ERouteGroups.Match, "get-matches"), { auth: true, params });
-
-		if (!this.isSuccess(response)) {
-			return ServiceResponse.failure(response.message);
-		}
-
+	private async handleMatchesWithDetails(
+		matches: MatchWithDetails[],
+	): Promise<void> {
 		const otherUsers: User[] = [];
-		const matches: StoreMatch[] = [];
+		const storeMatches: StoreMatch[] = [];
 		const messages: StoreMessage[] = [];
 
-		response.data.data.forEach((match) => {
+		matches.forEach((match) => {
 			const { other_user, last_message, ...matchData } = match;
 			otherUsers.push(other_user);
-			matches.push(matchData);
+			storeMatches.push(matchData);
 			if (last_message) {
 				messages.push(last_message);
 			}
 		});
-
-		this.handlePaginatedResponse(
-			{ data: matches, meta: response.data.meta },
-			EPagerKeys.Matches,
-			EEntityTypes.Matches,
-			params?.refresh !== true,
-			params?.refresh === true,
-		);
 
 		this.dispatch(
 			setEntities({
@@ -82,6 +77,29 @@ export class MatchService extends BaseService {
 				entityType: EEntityTypes.Messages,
 				entities: messages,
 			}),
+		);
+	}
+
+	@action({ showErrorMessage: false, showSuccessMessage: false })
+	async getMatches(params: MatchesParams): Promise<ServiceResponse> {
+		const response = await this.apiService.get<
+			PaginatedResponse<MatchWithDetails, GetMatchesResponseDto>
+		>(getRoute(ERouteGroups.Match, "get-matches"), { auth: true, params });
+
+		if (!this.isSuccess(response)) {
+			return ServiceResponse.failure(response.message);
+		}
+
+		const matches = response.data.data;
+
+		await this.handleMatchesWithDetails(matches);
+
+		this.handlePaginatedResponse(
+			{ data: matches, meta: response.data.meta },
+			EPagerKeys.Matches,
+			EEntityTypes.Matches,
+			params?.refresh !== true,
+			params?.refresh === true,
 		);
 
 		return ServiceResponse.success(response.message);
