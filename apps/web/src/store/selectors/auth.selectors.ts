@@ -6,10 +6,15 @@ const selectAuthUserState = (state: TRootState) => state.authUser;
 
 export const selectAuthUser = createSelector(
 	[selectAuthUserState],
-	(state): AuthUser | null => state.user
+	(state): AuthUser | null => state.user,
+);
+
+export const selectUnreadConversationsCount = createSelector(
+	[selectAuthUserState],
+	(state): number | undefined => state.unreadConversationsCount,
 );
 
 export const selectIsAuthInitialized = createSelector(
 	[selectAuthUserState],
-	(state): boolean => state.isInitialized
+	(state): boolean => state.isInitialized,
 );

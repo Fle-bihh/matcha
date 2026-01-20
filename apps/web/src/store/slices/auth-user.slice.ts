@@ -5,7 +5,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export interface IAuthUserState {
 	user: AuthUser | null;
 	isInitialized: boolean;
-	unreadMatchesCount?: number;
+	unreadConversationsCount?: number;
 }
 
 const initialState: IAuthUserState = {
@@ -36,9 +36,9 @@ const authUserSlice = createSlice({
 		},
 		setUnreadMatchesCount: (
 			state,
-			action: PayloadAction<number | undefined>
+			action: PayloadAction<number | undefined>,
 		) => {
-			state.unreadMatchesCount = action.payload;
+			state.unreadConversationsCount = action.payload;
 		},
 	},
 });

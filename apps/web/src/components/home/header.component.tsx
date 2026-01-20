@@ -50,10 +50,6 @@ export function HomeHeader() {
 		routing.push(APP_ROUTES.protected);
 	};
 
-	const handleAccountClick = () => {
-		routing.push(APP_ROUTES.profile);
-	};
-
 	const handleLogout = () => {
 		logout();
 	};
