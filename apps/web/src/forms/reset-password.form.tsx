@@ -2,12 +2,11 @@ import { Box, TextField, Button, Stack, Alert } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-	ForgotPasswordRequestSchema,
 	ForgotPasswordRequestDto,
+	ForgotPasswordRequestSchema,
 } from "@matcha/shared";
-import { useAuthUser } from "@/hooks/auth.hook";
-import { useActionsData } from "@/hooks/actions.hooks";
-import { EActionKeys } from "@/types/actions.types";
+import { useActionsData, useAuthUser } from "@/hooks";
+import { EActionKeys } from "@/types";
 
 interface ResetPasswordFormProps {
 	showError?: boolean;

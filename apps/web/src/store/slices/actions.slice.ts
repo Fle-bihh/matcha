@@ -1,5 +1,5 @@
 import { EStoreSlices } from "@/types";
-import { EActionKeys, IActionData } from "@/types/actions.types";
+import { EActionKeys, IActionData } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type ActionState = {
@@ -14,14 +14,14 @@ const actionsSlice = createSlice({
 	reducers: {
 		setAction: <T extends EActionKeys>(
 			state: ActionState,
-			action: PayloadAction<{ key: T; value: IActionData }>
+			action: PayloadAction<{ key: T; value: IActionData }>,
 		) => {
 			const { key, value } = action.payload;
 			state[key] = value;
 		},
 		clearAction: (
 			state: ActionState,
-			action: PayloadAction<{ key: EActionKeys }>
+			action: PayloadAction<{ key: EActionKeys }>,
 		) => {
 			const { key } = action.payload;
 			delete state[key];

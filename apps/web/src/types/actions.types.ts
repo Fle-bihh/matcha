@@ -12,7 +12,16 @@ import {
 	GeocodingResult,
 	BrowsingParams,
 	BrowsingFilters,
+	CreateLikeDto,
+	MatchesParams,
+	UnlikeUserDto,
+	CreateVisitDto,
+	SubscribeChannelRequestDto,
+	UnsubscribeChannelRequestDto,
+	CreateReportDto,
+	CreateBlockDto,
 } from "@matcha/shared";
+import { PaginationDto } from "./api.types";
 
 export enum EActionKeys {
 	Authenticate = "authenticate",
@@ -35,6 +44,16 @@ export enum EActionKeys {
 	ApplyBrowsingFilters = "applyBrowsingFilters",
 	ClearBrowsingFilters = "clearBrowsingFilters",
 	LoadBrowsingFilters = "loadBrowsingFilters",
+	CreateLike = "createLike",
+	UnlikeUser = "unlikeUser",
+	GetMatches = "getMatches",
+	GetUserById = "getUserById",
+	CreateVisit = "createVisit",
+	GetVisitsReceived = "getVisitsReceived",
+	SubscribeToChannel = "subscribeToChannel",
+	UnsubscribeFromChannel = "unsubscribeFromChannel",
+	CreateReport = "createReport",
+	CreateBlock = "createBlock",
 }
 
 export interface IActionDtoMap {
@@ -60,6 +79,16 @@ export interface IActionDtoMap {
 	};
 	[EActionKeys.ClearBrowsingFilters]: null;
 	[EActionKeys.LoadBrowsingFilters]: null;
+	[EActionKeys.CreateLike]: CreateLikeDto;
+	[EActionKeys.UnlikeUser]: UnlikeUserDto;
+	[EActionKeys.GetMatches]: MatchesParams;
+	[EActionKeys.GetUserById]: string;
+	[EActionKeys.CreateVisit]: CreateVisitDto;
+	[EActionKeys.GetVisitsReceived]: PaginationDto;
+	[EActionKeys.SubscribeToChannel]: SubscribeChannelRequestDto;
+	[EActionKeys.UnsubscribeFromChannel]: UnsubscribeChannelRequestDto;
+	[EActionKeys.CreateReport]: CreateReportDto;
+	[EActionKeys.CreateBlock]: CreateBlockDto;
 }
 
 export type ActionDto<K extends EActionKeys> = IActionDtoMap[K];

@@ -1,31 +1,31 @@
 import { useDispatch, useSelector } from "react-redux";
 import { setFlagger, resetFlagger } from "@/store";
 import { TRootState } from "@/types";
-import { EFlaggers, FlaggerData } from "@/constants/flaggers.constants";
+import { EFlaggers, FlaggerData } from "@/constants";
 
 interface UseFlaggerReturn<T extends EFlaggers> {
-  data: FlaggerData<T>;
-  setFlagger: (value: FlaggerData<T>) => void;
-  resetFlagger: () => void;
+	data: FlaggerData<T>;
+	setFlagger: (value: FlaggerData<T>) => void;
+	resetFlagger: () => void;
 }
 
 export function useFlagger<T extends EFlaggers>(
-  flagger: T
+	flagger: T,
 ): UseFlaggerReturn<T> {
-  const dispatch = useDispatch();
-  const data = useSelector((state: TRootState) => state.flaggers[flagger]);
+	const dispatch = useDispatch();
+	const data = useSelector((state: TRootState) => state.flaggers[flagger]);
 
-  const setFlaggerValue = (value: FlaggerData<T>) => {
-    dispatch(setFlagger({ key: flagger, value }));
-  };
+	const setFlaggerValue = (value: FlaggerData<T>) => {
+		dispatch(setFlagger({ key: flagger, value }));
+	};
 
-  const resetFlaggerValue = () => {
-    dispatch(resetFlagger(flagger));
-  };
+	const resetFlaggerValue = () => {
+		dispatch(resetFlagger(flagger));
+	};
 
-  return {
-    data,
-    setFlagger: setFlaggerValue,
-    resetFlagger: resetFlaggerValue,
-  };
+	return {
+		data,
+		setFlagger: setFlaggerValue,
+		resetFlagger: resetFlaggerValue,
+	};
 }

@@ -5,10 +5,11 @@ import {
 	logger,
 	getRoute,
 	RefreshTokenResponseDto,
+	ERouteGroups,
 } from "@matcha/shared";
-import { EStorageKeys } from "@/types/storage.constants";
+import { EStorageKeys } from "@/types";
 import { config } from "@/config";
-import { ApiRequestResponse } from "@/types/api.types";
+import { ApiRequestResponse } from "@/types";
 import { AuthService } from "./auth.service";
 
 interface RequestOptions {
@@ -30,9 +31,9 @@ export class ApiService extends BaseService {
 
 	private async fetch<T>(
 		url: string,
-		options: RequestInit
+		options: RequestInit,
 	): Promise<ApiRequestResponse<T>> {
-		logger.debug("Request started:", { method: options.method, url });
+		logger.debug(`Requesting: ${options.method} ${url}`);
 		const response: Response = await fetch(url, options);
 
 		const status = response.status || 200;
@@ -56,12 +57,12 @@ export class ApiService extends BaseService {
 			}
 		}
 
-		logger.debug("Request completed:", {
-			status,
-			method: options.method,
-			url,
-			data,
-		});
+		// logger.debug("Request completed:", {
+		// 	status,
+		// 	method: options.method,
+		// 	url,
+		// 	data,
+		// });
 		return { ...data, status };
 	}
 
@@ -82,7 +83,7 @@ export class ApiService extends BaseService {
 	}
 
 	private async getAuthHeaders(
-		options?: RequestOptions
+		options?: RequestOptions,
 	): Promise<HeadersInit> {
 		const headers: HeadersInit = {};
 
@@ -92,7 +93,7 @@ export class ApiService extends BaseService {
 
 		if (options?.auth) {
 			const accessToken = await this.storageService.getItem(
-				EStorageKeys.AccessToken
+				EStorageKeys.AccessToken,
 			);
 			if (accessToken) {
 				headers["Authorization"] = `Bearer ${accessToken}`;
@@ -105,7 +106,7 @@ export class ApiService extends BaseService {
 	private async handleAuthFailure(): Promise<void> {
 		await this.storageService.clear();
 		const authService = this.container.get<AuthService>(
-			ETokens.AuthService
+			ETokens.AuthService,
 		);
 		await authService.logout();
 		this.snackbar.warning("Your session has expired. Please log in again.");
@@ -120,7 +121,7 @@ export class ApiService extends BaseService {
 		this.refreshPromise = (async () => {
 			try {
 				const refreshToken = await this.storageService.getItem(
-					EStorageKeys.RefreshToken
+					EStorageKeys.RefreshToken,
 				);
 
 				if (!refreshToken) {
@@ -129,14 +130,14 @@ export class ApiService extends BaseService {
 				}
 
 				const response = await this.fetch<RefreshTokenResponseDto>(
-					`${this.baseUrl}${getRoute("auth", "refresh")}`,
+					`${this.baseUrl}${getRoute(ERouteGroups.Auth, "refresh")}`,
 					{
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
 						},
 						body: JSON.stringify({ refreshToken }),
-					}
+					},
 				);
 
 				if (response.status >= 400) {
@@ -147,11 +148,11 @@ export class ApiService extends BaseService {
 				if (this.isSuccess(response)) {
 					await this.storageService.setItem(
 						EStorageKeys.AccessToken,
-						response.data.accessToken
+						response.data.accessToken,
 					);
 					await this.storageService.setItem(
 						EStorageKeys.RefreshToken,
-						response.data.refreshToken
+						response.data.refreshToken,
 					);
 					return true;
 				}
@@ -175,7 +176,7 @@ export class ApiService extends BaseService {
 		method: string,
 		endpoint: string,
 		body?: any,
-		options?: RequestOptions
+		options?: RequestOptions,
 	): Promise<ApiRequestResponse<T>> {
 		const headers = await this.getAuthHeaders(options);
 		const url = this.buildUrl(endpoint, options?.params);
@@ -218,7 +219,7 @@ export class ApiService extends BaseService {
 
 	async get<T>(
 		endpoint: string,
-		options?: RequestOptions
+		options?: RequestOptions,
 	): Promise<ApiRequestResponse<T>> {
 		return this.request<T>("GET", endpoint, undefined, options);
 	}
@@ -226,7 +227,7 @@ export class ApiService extends BaseService {
 	async post<T>(
 		endpoint: string,
 		data?: any,
-		options?: RequestOptions
+		options?: RequestOptions,
 	): Promise<ApiRequestResponse<T>> {
 		return this.request<T>("POST", endpoint, data, options);
 	}
@@ -234,14 +235,14 @@ export class ApiService extends BaseService {
 	async patch<T>(
 		endpoint: string,
 		data?: any,
-		options?: RequestOptions
+		options?: RequestOptions,
 	): Promise<ApiRequestResponse<T>> {
 		return this.request<T>("PATCH", endpoint, data, options);
 	}
 
 	async delete<T>(
 		endpoint: string,
-		options?: RequestOptions
+		options?: RequestOptions,
 	): Promise<ApiRequestResponse<T>> {
 		return this.request<T>("DELETE", endpoint, undefined, options);
 	}
@@ -249,7 +250,7 @@ export class ApiService extends BaseService {
 	async put<T>(
 		endpoint: string,
 		data?: any,
-		options?: RequestOptions
+		options?: RequestOptions,
 	): Promise<ApiRequestResponse<T>> {
 		return this.request<T>("PUT", endpoint, data, options);
 	}

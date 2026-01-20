@@ -12,11 +12,39 @@ export enum ETokens {
 	FileUploadService = "FileUploadService",
 	BrowsingRepository = "BrowsingRepository",
 	UserDeletionService = "UserDeletionService",
+	LikeRepository = "LikeRepository",
+	LikeService = "LikeService",
+	MatchRepository = "MatchRepository",
+	MessageRepository = "MessageRepository",
+	WebSocketService = "WebSocketService",
+	MatchService = "MatchService",
+	VisitRepository = "VisitRepository",
+	VisitService = "VisitService",
+	UserStatusRepository = "UserStatusRepository",
+	ReportRepository = "ReportRepository",
+	ReportService = "ReportService",
+	BlockRepository = "BlockRepository",
+	BlockService = "BlockService",
 }
+
+export const REPOSITORY_TOKENS: ETokens[] = [
+	ETokens.UserRepository,
+	ETokens.EmailVerificationRepository,
+	ETokens.PasswordResetRepository,
+	ETokens.BrowsingRepository,
+	ETokens.LikeRepository,
+	ETokens.MatchRepository,
+	ETokens.MessageRepository,
+	ETokens.VisitRepository,
+	ETokens.UserStatusRepository,
+	ETokens.ReportRepository,
+	ETokens.BlockRepository,
+];
 
 export interface IContainer {
 	get<T>(token: ETokens): T;
 	has(token: ETokens): boolean;
 	getInstantiatedTokens(): ETokens[];
 	clear(): void;
+	getRepositories(): any[];
 }

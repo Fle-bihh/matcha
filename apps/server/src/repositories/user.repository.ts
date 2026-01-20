@@ -8,26 +8,21 @@ import {
 	PartialBaseEntity,
 	BrowsingFiltersDto,
 } from "@matcha/shared";
-import { ETokens, IContainer } from "@/types";
+import { ETokens, IContainer, IRepository, TableSchema } from "@/types";
 import { config } from "@/config";
-import { HashUtils } from "@/utils/hash.utils";
-import { generateRandomUsers } from "@/utils/seed-users.utils";
+import { HashUtils, generateRandomUsers } from "@/utils";
 import { BrowsingRepository } from "./browsing.repository";
 
-export class UserRepository extends BaseRepository {
+export class UserRepository extends BaseRepository implements IRepository {
 	private readonly tableName = "users";
 
 	constructor(container: IContainer) {
 		super(container);
-
-		this.initializeTable().catch((err) => {
-			logger.error("Error initializing UserRepository table:", err);
-		});
 	}
 
 	private get browsingRepository(): BrowsingRepository {
 		return this.container.get<BrowsingRepository>(
-			ETokens.BrowsingRepository
+			ETokens.BrowsingRepository,
 		);
 	}
 
@@ -60,10 +55,10 @@ export class UserRepository extends BaseRepository {
 		fame_score: 0,
 	};
 
-	private async initializeTable(): Promise<void> {
-		await this.createTableWithMetadata(
-			this.tableName,
-			`username VARCHAR(30) NOT NULL UNIQUE,
+	public loadTableSchema(): TableSchema {
+		return {
+			tableName: this.tableName,
+			fields: `username VARCHAR(30) NOT NULL UNIQUE,
 			 email VARCHAR(255) UNIQUE NOT NULL,
 			 first_name VARCHAR(50) NOT NULL,
 			 last_name VARCHAR(50) NOT NULL,
@@ -77,39 +72,38 @@ export class UserRepository extends BaseRepository {
        pictures_urls JSON,
        interests JSON,
        location JSON,
-       fame_score INTEGER NOT NULL DEFAULT 0`
-		);
-
-		await this.seedDatabaseIfEmpty();
+       fame_score INTEGER NOT NULL DEFAULT 0`,
+			constraints: "",
+		};
 	}
 
-	private async seedDatabaseIfEmpty(): Promise<void> {
+	public async seedDatabaseIfEmpty(): Promise<void> {
 		try {
 			const count = await this.countDocs(this.tableName);
 
 			if (count === 0) {
 				logger.info(
-					"Database is empty. Seeding with 50 random users..."
+					"Database is empty. Seeding with 50 random users...",
 				);
 				const randomUsers = generateRandomUsers(50);
 
 				for (const userData of randomUsers) {
 					const hashedPassword = await HashUtils.hashPassword(
-						userData.password
+						userData.password,
 					);
 					await this.createDocument<AuthUserWithPassword>(
 						this.tableName,
 						{
 							...userData,
 							password: hashedPassword,
-						}
+						},
 					);
 				}
 
 				logger.info("Successfully seeded database with 50 users");
 			} else {
 				logger.info(
-					`Database already has ${count} users. Skipping seed.`
+					`Database already has ${count} users. Skipping seed.`,
 				);
 			}
 		} catch (error) {
@@ -118,13 +112,13 @@ export class UserRepository extends BaseRepository {
 	}
 
 	private async sanitizeUserData(
-		data: AuthUserWithPassword
+		data: AuthUserWithPassword,
 	): Promise<AuthUserWithPassword> {
 		return data;
 	}
 
 	public async createUser(
-		data: CreateUserDto
+		data: CreateUserDto,
 	): Promise<AuthUserWithPassword> {
 		const userWithPassword =
 			await this.createDocument<AuthUserWithPassword>(this.tableName, {
@@ -135,12 +129,12 @@ export class UserRepository extends BaseRepository {
 	}
 
 	public async findUserById(
-		userId: number
+		userId: number,
 	): Promise<AuthUserWithPassword | null> {
 		try {
 			const user = await this.getDoc<AuthUserWithPassword>(
 				this.tableName,
-				userId
+				userId,
 			);
 			return user ? this.sanitizeUserData(user) : null;
 		} catch (error) {
@@ -150,7 +144,7 @@ export class UserRepository extends BaseRepository {
 	}
 
 	public async findUserByEmail(
-		email: string
+		email: string,
 	): Promise<AuthUserWithPassword | null> {
 		try {
 			const users = await this.getDocs<AuthUserWithPassword>(
@@ -158,7 +152,7 @@ export class UserRepository extends BaseRepository {
 				{
 					where: "email = ?",
 					values: [email],
-				}
+				},
 			);
 			if (users.length === 0) {
 				return null;
@@ -171,7 +165,7 @@ export class UserRepository extends BaseRepository {
 	}
 
 	public async findUserByUsername(
-		username: string
+		username: string,
 	): Promise<AuthUserWithPassword | null> {
 		try {
 			const users = await this.getDocs<AuthUserWithPassword>(
@@ -179,7 +173,7 @@ export class UserRepository extends BaseRepository {
 				{
 					where: "username = ?",
 					values: [username],
-				}
+				},
 			);
 			if (users.length === 0) {
 				return null;
@@ -193,13 +187,13 @@ export class UserRepository extends BaseRepository {
 
 	public async updateUser(
 		userId: number,
-		data: PartialBaseEntity<AuthUser>
+		data: PartialBaseEntity<AuthUser>,
 	): Promise<AuthUserWithPassword | null> {
 		try {
 			const updatedUser = await this.updateDoc<AuthUserWithPassword>(
 				this.tableName,
 				userId,
-				data
+				data,
 			);
 			return updatedUser ? this.sanitizeUserData(updatedUser) : null;
 		} catch (error) {
@@ -210,13 +204,13 @@ export class UserRepository extends BaseRepository {
 
 	public async updateUserPassword(
 		userId: number,
-		hashedPassword: string
+		hashedPassword: string,
 	): Promise<AuthUserWithPassword | null> {
 		try {
 			const updatedUser = await this.updateDoc<AuthUserWithPassword>(
 				this.tableName,
 				userId,
-				{ password: hashedPassword }
+				{ password: hashedPassword },
 			);
 			return updatedUser ? this.sanitizeUserData(updatedUser) : null;
 		} catch (error) {
@@ -229,7 +223,7 @@ export class UserRepository extends BaseRepository {
 		userId: number,
 		limit: number,
 		offset: number,
-		filters: BrowsingFiltersDto
+		filters: BrowsingFiltersDto,
 	): Promise<{ users: User[]; total: number }> {
 		try {
 			const queryOptions =
@@ -237,7 +231,7 @@ export class UserRepository extends BaseRepository {
 					userId,
 					limit,
 					offset,
-					filters
+					filters,
 				);
 			const [users, total] = await Promise.all([
 				this.getDocs<User>(this.tableName, queryOptions),
@@ -247,7 +241,7 @@ export class UserRepository extends BaseRepository {
 				}),
 			]);
 			const sanitizedUsers = users.map((user) =>
-				this.excludePrivateFields(user as AuthUserWithPassword)
+				this.excludePrivateFields(user as AuthUserWithPassword),
 			);
 			return { users: sanitizedUsers, total };
 		} catch (error) {

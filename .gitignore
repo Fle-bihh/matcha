@@ -15,3 +15,6 @@ package-lock.json
 
 # Visual Studio Code settings
 .vscode/
+
+# Local config files
+.local/

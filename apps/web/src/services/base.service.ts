@@ -1,4 +1,4 @@
-import { EEntityTypes, ETokens, IContainer } from "@/types";
+import { EEntityTypes, ETokens, IContainer, IEntityTypeMap } from "@/types";
 import { ApiService } from "./api.service";
 import { StorageService } from "./storage.service";
 import { AuthService } from "./auth.service";
@@ -6,16 +6,19 @@ import { RouterService } from "./router.service";
 import { SnackbarService } from "./snackbar.service";
 import { LocationService } from "./location.service";
 import {
-	addEntities,
 	appendToPager,
 	setEntities,
+	setEntitiesStrict,
 	setFlagger,
 	SetFlaggerPayload,
 	setPager,
 } from "@/store";
 import { ApiResponse, BaseEntity, PaginatedResponse } from "@matcha/shared";
-import { ApiRequestResponse } from "@/types/api.types";
+import { ApiRequestResponse } from "@/types";
 import { EPagerKeys } from "@/constants";
+import { BrowsingService } from "./browsing.service";
+import { MatchService } from "./match.service";
+import { WebSocketService } from "./websocket.service";
 
 export abstract class BaseService {
 	protected container: IContainer;
@@ -52,6 +55,18 @@ export abstract class BaseService {
 		return this.container.get<LocationService>(ETokens.LocationService);
 	}
 
+	protected get browsingService(): BrowsingService {
+		return this.container.get<BrowsingService>(ETokens.BrowsingService);
+	}
+
+	protected get matchService(): MatchService {
+		return this.container.get<MatchService>(ETokens.MatchService);
+	}
+
+	protected get webSocketService(): WebSocketService {
+		return this.container.get<WebSocketService>(ETokens.WebSocketService);
+	}
+
 	protected setFlagger(payload: SetFlaggerPayload) {
 		this.dispatch(setFlagger(payload));
 	}
@@ -60,43 +75,31 @@ export abstract class BaseService {
 		return response.status >= 200 && response.status < 300;
 	}
 
-	protected handlePaginatedResponse<T extends BaseEntity>(
-		response: PaginatedResponse<T>,
+	protected handlePaginatedResponse<T extends EEntityTypes>(
+		response: PaginatedResponse<IEntityTypeMap[T]>,
 		pagerKey: EPagerKeys,
-		entityType: EEntityTypes,
-		append?: boolean
+		entityType: T,
+		append?: boolean,
+		strict?: boolean,
 	) {
 		const { data, meta } = response;
 
+		const entitiesAction = strict ? setEntitiesStrict : setEntities;
+		this.dispatch(
+			entitiesAction({
+				entityType,
+				entities: data,
+			}),
+		);
+
 		const entityKeys = data.map((entity) => String(entity.id));
-		if (append) {
-			this.dispatch(
-				addEntities({
-					entityType,
-					entities: data,
-				})
-			);
-			this.dispatch(
-				appendToPager({
-					pagerKey,
-					meta,
-					entityKeys,
-				})
-			);
-		} else {
-			this.dispatch(
-				setEntities({
-					entityType,
-					entities: data,
-				})
-			);
-			this.dispatch(
-				setPager({
-					pagerKey,
-					meta,
-					entityKeys,
-				})
-			);
-		}
+		const pagerAction = append ? appendToPager : setPager;
+		this.dispatch(
+			pagerAction({
+				pagerKey,
+				meta,
+				entityKeys,
+			}),
+		);
 	}
 }

@@ -1,4 +1,4 @@
-import { getRoute } from "@matcha/shared";
+import { ERouteGroups, getRoute } from "@matcha/shared";
 import type {
 	PaginatedResponse,
 	User,
@@ -6,26 +6,30 @@ import type {
 	BrowsingFilters,
 	AuthUser,
 } from "@matcha/shared";
-import { ServiceResponse } from "@/types";
+import {
+	EEntityTypes,
+	EFilterKeys,
+	EStorageKeys,
+	ETokens,
+	ServiceResponse,
+	StoreUser,
+} from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
-import { setFilters, clearFilters } from "@/store/slices/filters.slice";
+import { setFilters, clearFilters } from "@/store";
 import { EPagerKeys } from "@/constants";
-import { EEntityTypes, ETokens } from "@/types";
-import { EFilterKeys } from "@/types/filters.types";
-import { EStorageKeys } from "@/types/storage.constants";
 import { StorageService } from "./storage.service";
 
 const FILTER_KEY = EFilterKeys.Browsing;
 
 export class BrowsingService extends BaseService {
 	private async updateBrowsingFilters(
-		filters: BrowsingFilters
+		filters: BrowsingFilters,
 	): Promise<ServiceResponse> {
 		this.dispatch(setFilters({ key: FILTER_KEY, filters }));
 		await this.storageService.setItem(
 			EStorageKeys.BrowsingFilters,
-			filters
+			filters,
 		);
 
 		return ServiceResponse.success("Filters updated");
@@ -33,12 +37,12 @@ export class BrowsingService extends BaseService {
 
 	async loadBrowsingFilters(): Promise<ServiceResponse> {
 		const savedFilters = await this.storageService.getItem(
-			EStorageKeys.BrowsingFilters
+			EStorageKeys.BrowsingFilters,
 		);
 
 		if (savedFilters) {
 			this.dispatch(
-				setFilters({ key: FILTER_KEY, filters: savedFilters })
+				setFilters({ key: FILTER_KEY, filters: savedFilters }),
 			);
 			this.resetBrowsing(savedFilters);
 			return ServiceResponse.success("Filters loaded");
@@ -62,19 +66,19 @@ export class BrowsingService extends BaseService {
 	@action({ showErrorMessage: false, showSuccessMessage: false })
 	async getUsers(params: BrowsingParams): Promise<ServiceResponse> {
 		const response = await this.apiService.get<PaginatedResponse<User>>(
-			getRoute("users", "get-users"),
-			{ auth: true, params }
+			getRoute(ERouteGroups.User, "get-users"),
+			{ auth: true, params },
 		);
 
 		if (!this.isSuccess(response)) {
 			return ServiceResponse.failure(response.message);
 		}
 
-		this.handlePaginatedResponse<User>(
+		this.handlePaginatedResponse(
 			response.data,
 			EPagerKeys.Users,
 			EEntityTypes.Users,
-			params?.refresh !== true
+			params?.refresh !== true,
 		);
 
 		return ServiceResponse.success(response.message);
@@ -84,7 +88,7 @@ export class BrowsingService extends BaseService {
 	async applyBrowsingFilters(
 		filters: BrowsingFilters & {
 			currentLimit: number;
-		}
+		},
 	): Promise<ServiceResponse> {
 		const { currentLimit, ...rest } = filters;
 		await this.updateBrowsingFilters({
@@ -105,7 +109,7 @@ export class BrowsingService extends BaseService {
 		const filtersToApply =
 			filters || this.container.store.getState().filters?.browsing || {};
 		const pager = this.container.store.getState().pagers?.users;
-		const currentLimit = pager?.meta?.limit ?? 10;
+		const currentLimit = pager?.meta?.limit ?? 12;
 		await this.getUsers({
 			page: 1,
 			limit: currentLimit,

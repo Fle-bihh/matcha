@@ -8,24 +8,24 @@ import {
 	useState,
 } from "react";
 import { useSelector } from "react-redux";
-import { usePager } from "@/hooks/pagination.hook";
-import { selectFilters } from "@/store/selectors/filters.selectors";
+import { usePager } from "@/hooks";
+import { selectFilters, selectBrowsingUsers } from "@/store";
 import { EPagerKeys } from "@/constants";
-import { EEntityTypes } from "@/types";
+import { EEntityTypes, StoreUser } from "@/types";
 import { User, BrowsingFilters, BrowsingParams } from "@matcha/shared";
-import { PaginationDto } from "@/types/api.types";
-import { useActionsData } from "@/hooks/actions.hooks";
-import { EActionKeys } from "@/types/actions.types";
-import { useBrowsing } from "@/hooks/browsing.hook";
-import { useAuthUser } from "@/hooks/auth.hook";
-import { EFilterKeys } from "@/types/filters.types";
+import { PaginationDto } from "@/types";
+import { useActionsData } from "@/hooks";
+import { EActionKeys } from "@/types";
+import { useBrowsing } from "@/hooks";
+import { useAuthUser } from "@/hooks";
+import { EFilterKeys } from "@/types";
 
 const FILTER_KEY = EFilterKeys.Browsing;
 
 type BrowsingContextType = ReturnType<typeof useBrowsingState>;
 
 const BrowsingContext = createContext<BrowsingContextType | undefined>(
-	undefined
+	undefined,
 );
 
 function useBrowsingState() {
@@ -33,18 +33,19 @@ function useBrowsingState() {
 		useBrowsing();
 	const filters = useSelector(selectFilters(FILTER_KEY));
 	const { isLoading } = useActionsData([EActionKeys.GetUsers]);
+	const browsingUsers = useSelector(selectBrowsingUsers);
 
 	const buildParams = useCallback(
 		(pagination: PaginationDto): BrowsingParams => ({
 			...pagination,
 			...(filters || {}),
+			limit: pagination.limit || 12,
 		}),
-		[filters]
+		[filters],
 	);
 
-	const pager = usePager<User, BrowsingParams>({
+	const pager = usePager(EEntityTypes.Users, {
 		pagerKey: EPagerKeys.Users,
-		entityType: EEntityTypes.Users,
 		fn: getUsers,
 		buildParams,
 		loadData: false,
@@ -53,14 +54,14 @@ function useBrowsingState() {
 	const applyFilters = useCallback(
 		(newFilters?: BrowsingFilters) => {
 			const filtersToApply = newFilters || filters || {};
-			const currentLimit = pager.meta?.limit ?? 10;
+			const currentLimit = pager.meta?.limit ?? 12;
 
 			applyBrowsingFilters({
 				...filtersToApply,
 				currentLimit,
 			});
 		},
-		[filters, pager.meta?.limit, applyBrowsingFilters]
+		[filters, pager.meta?.limit, applyBrowsingFilters],
 	);
 
 	const clearFiltersHandler = useCallback(() => {
@@ -68,7 +69,7 @@ function useBrowsingState() {
 	}, [clearBrowsingFilters]);
 
 	const refresh = useCallback(() => {
-		const currentLimit = pager.meta?.limit ?? 10;
+		const currentLimit = pager.meta?.limit ?? 12;
 
 		applyBrowsingFilters({
 			...(filters || {}),
@@ -90,11 +91,12 @@ function useBrowsingState() {
 			}
 			return false;
 		},
-		[filters]
+		[filters],
 	);
 
 	return {
 		...pager,
+		data: browsingUsers,
 		refresh,
 		filters: filters || {},
 		clearFilters: clearFiltersHandler,
@@ -118,7 +120,7 @@ export function useBrowsingContext() {
 	const context = useContext(BrowsingContext);
 	if (!context) {
 		throw new Error(
-			"useBrowsingContext must be used within BrowsingProvider"
+			"useBrowsingContext must be used within BrowsingProvider",
 		);
 	}
 	return context;

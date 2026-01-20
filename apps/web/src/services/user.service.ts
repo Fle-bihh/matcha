@@ -1,24 +1,20 @@
-import { AuthUser, getRoute } from "@matcha/shared";
+import { AuthUser, ERouteGroups, getRoute } from "@matcha/shared";
 import type {
 	UpdateProfileDto,
 	UpdateProfilePictureDto,
 	UpdateLocationDto,
+	User,
+	GetUserByIdResponseDto,
 } from "@matcha/shared";
-import { ServiceResponse } from "@/types";
+import { EEntityTypes, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
-import { resetLocationState, setAuthUser } from "@/store";
+import { resetLocationState, setAuthUser, setEntity } from "@/store";
 import { EFlaggers } from "@/constants";
-import { ETokens } from "@/types";
-import { BrowsingService } from "./browsing.service";
 
 export class UserService extends BaseService {
 	private setAuthUser(user: AuthUser) {
 		this.dispatch(setAuthUser(user));
-	}
-
-	private get browsingService(): BrowsingService {
-		return this.container.get<BrowsingService>(ETokens.BrowsingService);
 	}
 
 	private maybeResetBrowsing(user: AuthUser) {
@@ -30,9 +26,9 @@ export class UserService extends BaseService {
 	@action({ showSuccessMessage: true, showErrorMessage: true })
 	async updateProfile(dto: UpdateProfileDto): Promise<ServiceResponse> {
 		const response = await this.apiService.patch<AuthUser>(
-			getRoute("users", "update-profile"),
+			getRoute(ERouteGroups.User, "update-profile"),
 			dto,
-			{ auth: true }
+			{ auth: true },
 		);
 
 		if (this.isSuccess(response)) {
@@ -46,15 +42,15 @@ export class UserService extends BaseService {
 
 	@action({ showSuccessMessage: true, showErrorMessage: true })
 	async updateProfilePicture(
-		dto: UpdateProfilePictureDto
+		dto: UpdateProfilePictureDto,
 	): Promise<ServiceResponse> {
 		const response = await this.apiService.patch<AuthUser>(
-			getRoute("users", "update-profile-picture"),
+			getRoute(ERouteGroups.User, "update-profile-picture"),
 			{
 				picture: dto.file,
 				index: dto.index,
 			},
-			{ auth: true, formData: true }
+			{ auth: true, formData: true },
 		);
 
 		if (this.isSuccess(response)) {
@@ -68,9 +64,9 @@ export class UserService extends BaseService {
 	@action({ showSuccessMessage: true, showErrorMessage: true })
 	async updateLocation(dto: UpdateLocationDto): Promise<ServiceResponse> {
 		const response = await this.apiService.patch<AuthUser>(
-			getRoute("users", "update-location"),
+			getRoute(ERouteGroups.User, "update-location"),
 			dto,
-			{ auth: true }
+			{ auth: true },
 		);
 
 		if (this.isSuccess(response)) {
@@ -81,6 +77,37 @@ export class UserService extends BaseService {
 				value: { isOpen: false },
 			});
 			this.maybeResetBrowsing(response.data);
+			return ServiceResponse.success(response.message);
+		} else {
+			return ServiceResponse.failure(response.message);
+		}
+	}
+
+	@action({ showErrorMessage: true })
+	async getUserById(userId: string): Promise<ServiceResponse> {
+		const response = await this.apiService.get<GetUserByIdResponseDto>(
+			`${getRoute(ERouteGroups.User, "get-user-by-id").replace(
+				":id",
+				userId,
+			)}`,
+			{ auth: true },
+		);
+
+		if (this.isSuccess(response)) {
+			const { user, status, is_reported, ...likingDetails } =
+				response.data;
+			this.dispatch(
+				setEntity({
+					entityType: EEntityTypes.Users,
+					id: userId,
+					entity: {
+						...response.data.user,
+						...likingDetails,
+						is_reported,
+						status: response.data.status || undefined,
+					},
+				}),
+			);
 			return ServiceResponse.success(response.message);
 		} else {
 			return ServiceResponse.failure(response.message);

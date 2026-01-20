@@ -1,21 +1,34 @@
 import {
 	BaseRepository,
-	UserRepository,
-	EmailVerificationRepository,
-	PasswordResetRepository,
+	BlockRepository,
 	BrowsingRepository,
+	EmailVerificationRepository,
+	LikeRepository,
+	MatchRepository,
+	MessageRepository,
+	PasswordResetRepository,
+	ReportRepository,
+	UserRepository,
+	UserStatusRepository,
+	VisitRepository,
 } from "@/repositories";
 import {
-	HealthService,
-	UserService,
 	AuthService,
-	MailService,
+	BlockService,
 	EmailVerificationService,
-	PasswordResetService,
 	FileUploadService,
+	HealthService,
+	LikeService,
+	MailService,
+	MatchService,
+	PasswordResetService,
+	ReportService,
 	UserDeletionService,
+	UserService,
+	VisitService,
+	WebSocketService,
 } from "@/services";
-import { ETokens, IContainer } from "@/types";
+import { ETokens, IContainer, REPOSITORY_TOKENS, IRepository } from "@/types";
 import { logger } from "@matcha/shared";
 
 type ServiceConstructor = new (container: IContainer) => any;
@@ -34,6 +47,19 @@ const serviceRegistry: Record<ETokens, ServiceConstructor> = {
 	[ETokens.FileUploadService]: FileUploadService,
 	[ETokens.BrowsingRepository]: BrowsingRepository,
 	[ETokens.UserDeletionService]: UserDeletionService,
+	[ETokens.LikeRepository]: LikeRepository,
+	[ETokens.LikeService]: LikeService,
+	[ETokens.MatchRepository]: MatchRepository,
+	[ETokens.MessageRepository]: MessageRepository,
+	[ETokens.WebSocketService]: WebSocketService,
+	[ETokens.MatchService]: MatchService,
+	[ETokens.VisitRepository]: VisitRepository,
+	[ETokens.VisitService]: VisitService,
+	[ETokens.ReportRepository]: ReportRepository,
+	[ETokens.ReportService]: ReportService,
+	[ETokens.BlockRepository]: BlockRepository,
+	[ETokens.BlockService]: BlockService,
+	[ETokens.UserStatusRepository]: UserStatusRepository,
 } as const;
 
 export class Container implements IContainer {
@@ -66,6 +92,10 @@ export class Container implements IContainer {
 
 	public getInstantiatedTokens(): ETokens[] {
 		return Array.from(this.instances.keys());
+	}
+
+	public getRepositories(): IRepository[] {
+		return REPOSITORY_TOKENS.map((token) => this.get<IRepository>(token));
 	}
 
 	public clear(): void {

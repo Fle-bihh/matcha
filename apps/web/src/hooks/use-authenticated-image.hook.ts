@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { EStorageKeys } from "@/types/storage.constants";
+import { EStorageKeys } from "@/types";
 import { config } from "@/config";
 
 async function fetchAuthenticatedImage(
-	imageUrl: string
+	imageUrl: string,
 ): Promise<string | null> {
 	const token = localStorage.getItem(EStorageKeys.AccessToken);
 
@@ -15,7 +15,7 @@ async function fetchAuthenticatedImage(
 		headers: token
 			? {
 					Authorization: `Bearer ${token}`,
-			  }
+				}
 			: {},
 	});
 

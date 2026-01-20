@@ -6,3 +6,4 @@ export * from "./location.slice";
 export * from "./snackbar.slice";
 export * from "./flaggers.slice";
 export * from "./filters.slice";
+export * from "./visits.slice";

@@ -1,0 +1,431 @@
+import {
+	Box,
+	Typography,
+	Container,
+	Card,
+	CardMedia,
+	Stack,
+	Chip,
+	IconButton,
+	Button,
+} from "@mui/material";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import LinkOffIcon from "@mui/icons-material/LinkOff";
+import { useParams } from "react-router-dom";
+import { AuthImage, FameScore, UserStatus } from "@/components";
+import { useBlock, useLike, useReport, useRouting, useUser } from "@/hooks";
+import MockImage from "@/assets/imperial-stormtrooper-picture.png";
+
+export function UserPage() {
+	const { id } = useParams<{ id: string }>();
+	const { goBack } = useRouting();
+	const { createLike, unlikeUser } = useLike();
+	const { createReport } = useReport();
+	const { createBlock } = useBlock();
+
+	const user = useUser({
+		userId: id,
+		shouldTrackVisit: true,
+		shouldFetch: true,
+	});
+
+	if (!user) {
+		return (
+			<>
+				<IconButton
+					onClick={goBack}
+					sx={{
+						position: "fixed",
+						top: 80,
+						left: 16,
+						zIndex: 1000,
+						bgcolor: "background.paper",
+						boxShadow: 1,
+						"&:hover": {
+							bgcolor: "action.hover",
+						},
+					}}
+				>
+					<ArrowBackIcon />
+				</IconButton>
+				<Container maxWidth="xl" sx={{ py: 4, pb: 12 }}>
+					<Box
+						sx={{
+							display: "flex",
+							justifyContent: "center",
+							alignItems: "center",
+							height: "100%",
+						}}
+					>
+						<Typography variant="h6">User not found</Typography>
+					</Box>
+				</Container>
+			</>
+		);
+	}
+
+	const mainPicture = user.pictures_urls?.[0] ?? null;
+	const allPictures = user.pictures_urls ?? [];
+	const otherPictures = [
+		allPictures[1] ?? null,
+		allPictures[2] ?? null,
+		allPictures[3] ?? null,
+		allPictures[4] ?? null,
+	];
+	const displayName = `${user.first_name} ${user.last_name}`;
+
+	const handleLike = () => {
+		createLike({ liked_id: user.id });
+	};
+
+	const handleUnlike = () => {
+		unlikeUser({ id: user.id });
+	};
+
+	const handleReport = () => {
+		createReport({ reported_id: user.id, reason: "This user is fake" });
+	};
+
+	const handleBlock = () => {
+		createBlock({ blocked_id: user.id });
+	};
+
+	return (
+		<>
+			<IconButton
+				onClick={goBack}
+				sx={{
+					position: "fixed",
+					top: 80,
+					left: 16,
+					zIndex: 1000,
+					bgcolor: "background.paper",
+					boxShadow: 1,
+					"&:hover": {
+						bgcolor: "action.hover",
+					},
+				}}
+			>
+				<ArrowBackIcon />
+			</IconButton>
+			<Container maxWidth="md" sx={{ py: 4, pb: 12 }}>
+				<Box
+					sx={{
+						display: "flex",
+						flexDirection: { xs: "column", md: "row" },
+						gap: 3,
+						mb: 3,
+						alignItems: { xs: "center", md: "flex-start" },
+					}}
+				>
+					<Box
+						sx={{
+							flex: { xs: "1 1 auto", md: "0 0 50%" },
+							width: { xs: "100%", md: "50%" },
+						}}
+					>
+						<Card
+							sx={{
+								width: "100%",
+								aspectRatio: "1/1",
+								position: "relative",
+								overflow: "hidden",
+								borderRadius: 2,
+							}}
+						>
+							<AuthImage
+								src={mainPicture}
+								alt={displayName}
+								height="100%"
+								width="100%"
+								objectFit="contain"
+								fallback={
+									<CardMedia
+										component="img"
+										height="100%"
+										image={MockImage}
+										alt="Default profile"
+										sx={{ objectFit: "cover" }}
+									/>
+								}
+							/>
+							<Box
+								sx={{
+									position: "absolute",
+									top: 16,
+									right: 16,
+									zIndex: 2,
+								}}
+							>
+								<FameScore score={user.fame_score} />
+							</Box>
+						</Card>
+					</Box>
+
+					<Box
+						sx={{
+							flex: { xs: "1 1 auto", md: "1" },
+							width: { xs: "100%", md: "auto" },
+						}}
+					>
+						<Typography variant="h4" component="div" gutterBottom>
+							{displayName}
+							{user.age && (
+								<Typography
+									component="span"
+									variant="h4"
+									color="text.secondary"
+								>
+									, {user.age}
+								</Typography>
+							)}
+						</Typography>
+
+						<UserStatus status={user.status} />
+
+						{user.is_matched && (
+							<Box sx={{ mb: 2 }}>
+								<Chip
+									label="Connected"
+									color="success"
+									icon={<FavoriteIcon />}
+									size="medium"
+								/>
+							</Box>
+						)}
+
+						{user.has_liked_you && !user.is_matched && (
+							<Box sx={{ mb: 2 }}>
+								<Chip
+									label="Likes You"
+									color="error"
+									icon={<FavoriteIcon />}
+									variant="outlined"
+									size="medium"
+								/>
+							</Box>
+						)}
+
+						<Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+							{user.is_liked ? (
+								<Button
+									variant="contained"
+									color="error"
+									startIcon={
+										user.is_matched ? (
+											<LinkOffIcon />
+										) : (
+											<FavoriteIcon />
+										)
+									}
+									onClick={handleUnlike}
+									size="medium"
+								>
+									{user.is_matched ? "Disconnect" : "Unlike"}
+								</Button>
+							) : (
+								<Button
+									variant="contained"
+									color="error"
+									startIcon={<FavoriteBorderIcon />}
+									onClick={handleLike}
+									size="medium"
+								>
+									Like
+								</Button>
+							)}
+							{!user.is_reported && (
+								<Button
+									variant="outlined"
+									color="warning"
+									onClick={handleReport}
+									size="medium"
+								>
+									Report Fake
+								</Button>
+							)}
+							{user.is_reported && (
+								<Chip
+									label="Reported"
+									color="warning"
+									size="medium"
+								/>
+							)}
+
+							{!user.is_blocked && (
+								<Button
+									variant="outlined"
+									color="secondary"
+									onClick={handleBlock}
+									size="medium"
+								>
+									Block User
+								</Button>
+							)}
+							{user.is_blocked && (
+								<Chip
+									label="Blocked"
+									color="secondary"
+									size="medium"
+								/>
+							)}
+						</Stack>
+
+						<Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+							{user.gender && (
+								<Chip
+									label={
+										user.gender.charAt(0).toUpperCase() +
+										user.gender.slice(1)
+									}
+									size="small"
+									variant="outlined"
+								/>
+							)}
+							{user.orientation && (
+								<Chip
+									label={
+										user.orientation
+											.charAt(0)
+											.toUpperCase() +
+										user.orientation.slice(1)
+									}
+									size="small"
+									variant="outlined"
+								/>
+							)}
+						</Stack>
+
+						{user.location && (
+							<Box
+								sx={{
+									display: "flex",
+									alignItems: "center",
+									mb: 2,
+								}}
+							>
+								<LocationOnIcon
+									sx={{
+										mr: 0.5,
+										fontSize: 20,
+										color: "text.secondary",
+									}}
+								/>
+								<Typography
+									variant="body2"
+									color="text.secondary"
+								>
+									{user.location.city},{" "}
+									{user.location.country}
+								</Typography>
+							</Box>
+						)}
+
+						{user.interests && user.interests.length > 0 && (
+							<Box sx={{ mb: 2 }}>
+								<Stack
+									direction="row"
+									spacing={1}
+									flexWrap="wrap"
+									gap={1}
+								>
+									{user.interests.map((interest, index) => (
+										<Chip
+											key={index}
+											label={`#${interest}`}
+											size="small"
+											color="primary"
+											variant="outlined"
+										/>
+									))}
+								</Stack>
+							</Box>
+						)}
+
+						{user.bio && (
+							<Typography
+								variant="body1"
+								color="text.primary"
+								sx={{ mb: 3, mt: 2 }}
+							>
+								{user.bio}
+							</Typography>
+						)}
+					</Box>
+				</Box>
+
+				<Box sx={{ mb: 3 }}>
+					<Typography variant="h6" gutterBottom>
+						More Photos
+					</Typography>
+					<Box
+						sx={{
+							display: "grid",
+							gridTemplateColumns: {
+								xs: "1fr",
+								sm: "repeat(2, 1fr)",
+							},
+							gap: 2,
+						}}
+					>
+						{otherPictures.map((pictureUrl, index) => (
+							<Card
+								key={index}
+								sx={{
+									width: "100%",
+									aspectRatio: "1/1",
+									overflow: "hidden",
+									borderRadius: 2,
+									bgcolor: pictureUrl
+										? "transparent"
+										: "action.hover",
+								}}
+							>
+								{pictureUrl ? (
+									<AuthImage
+										src={pictureUrl}
+										alt={`${displayName} photo ${
+											index + 2
+										}`}
+										height="100%"
+										width="100%"
+										objectFit="cover"
+										fallback={
+											<CardMedia
+												component="img"
+												height="100%"
+												image={MockImage}
+												alt="Default photo"
+												sx={{ objectFit: "cover" }}
+											/>
+										}
+									/>
+								) : (
+									<Box
+										sx={{
+											width: "100%",
+											height: "100%",
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+										}}
+									>
+										<Typography
+											variant="body2"
+											color="text.disabled"
+										>
+											No photo
+										</Typography>
+									</Box>
+								)}
+							</Card>
+						))}
+					</Box>
+				</Box>
+			</Container>
+		</>
+	);
+}

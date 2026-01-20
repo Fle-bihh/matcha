@@ -9,6 +9,13 @@ export enum ETokens {
 	SnackbarService = "SnackbarService",
 	LocationService = "LocationService",
 	BrowsingService = "BrowsingService",
+	LikeService = "LikeService",
+	MatchService = "MatchService",
+	WebSocketService = "WebSocketService",
+	VisitService = "VisitService",
+	WebSocketSubscriptionService = "WebSocketSubscriptionService",
+	ReportService = "ReportService",
+	BlockService = "BlockService",
 }
 
 export interface IContainer {

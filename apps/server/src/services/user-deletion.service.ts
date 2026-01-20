@@ -33,58 +33,23 @@ export class UserDeletionService extends BaseService {
 				const success = await step.fn();
 				if (!success) {
 					logger.error(
-						`Failed to delete ${step.name} for user ${userId}`
+						`Failed to delete ${step.name} for user ${userId}`,
 					);
 					return false;
 				}
 				logger.debug(
-					`Successfully deleted ${step.name} for user ${userId}`
+					`Successfully deleted ${step.name} for user ${userId}`,
 				);
 			}
 
 			logger.info(
-				`Successfully completed soft-delete for user ${userId}`
+				`Successfully completed soft-delete for user ${userId}`,
 			);
 			return true;
 		} catch (error) {
 			logger.error(
 				`Error during user deletion for user ${userId}:`,
-				error
-			);
-			return false;
-		}
-	}
-
-	public async restoreUserAndRelatedData(userId: number): Promise<boolean> {
-		try {
-			logger.info(`Starting restore for user ${userId}`);
-
-			const restorationSteps = [
-				{
-					name: "user",
-					fn: () => this.userRepository.restoreUser(userId),
-				},
-			];
-
-			for (const step of restorationSteps) {
-				const success = await step.fn();
-				if (!success) {
-					logger.error(
-						`Failed to restore ${step.name} for user ${userId}`
-					);
-					return false;
-				}
-				logger.debug(
-					`Successfully restored ${step.name} for user ${userId}`
-				);
-			}
-
-			logger.info(`Successfully completed restore for user ${userId}`);
-			return true;
-		} catch (error) {
-			logger.error(
-				`Error during user restoration for user ${userId}:`,
-				error
+				error,
 			);
 			return false;
 		}

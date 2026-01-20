@@ -3,13 +3,29 @@ import {
 	BrowsingFiltersDto,
 	Gender,
 	Orientation,
+	logger,
+	PaginationParams,
+	User,
 } from "@matcha/shared";
-import { QueryOptions } from "@/types/db.types";
-import { ETokens } from "@/types";
+import {
+	QueryOptions,
+	ETokens,
+	IRepository,
+	TableSchema,
+	IContainer,
+} from "@/types";
 import { BaseRepository, UserRepository } from "@/repositories";
 
-export class BrowsingRepository extends BaseRepository {
+export class BrowsingRepository extends BaseRepository implements IRepository {
 	private readonly MAX_DISTANCE_KM = 999999;
+
+	public loadTableSchema(): TableSchema {
+		return {
+			tableName: "",
+			fields: "",
+			constraints: "",
+		};
+	}
 
 	private get userRepository(): UserRepository {
 		return this.container.get<UserRepository>(ETokens.UserRepository);
@@ -17,7 +33,7 @@ export class BrowsingRepository extends BaseRepository {
 
 	private getCompatibleGenders(
 		userGender: Gender | null,
-		userOrientation: Orientation | null
+		userOrientation: Orientation | null,
 	): Gender[] {
 		if (!userOrientation) {
 			return [Gender.Male, Gender.Female, Gender.Other];
@@ -62,7 +78,7 @@ export class BrowsingRepository extends BaseRepository {
 
 	private buildDistanceQuery(
 		userLat: number | null,
-		userLon: number | null
+		userLon: number | null,
 	): string {
 		if (userLat === null || userLon === null) {
 			return this.MAX_DISTANCE_KM.toString();
@@ -85,44 +101,44 @@ export class BrowsingRepository extends BaseRepository {
 	private applyAgeFilters(
 		whereConditions: string[],
 		values: any[],
-		filters: BrowsingFiltersDto
+		filters: BrowsingFiltersDto,
 	): void {
-		if (filters.ageMin !== undefined) {
+		if (filters.age_min !== undefined) {
 			whereConditions.push("age >= ?");
-			values.push(filters.ageMin);
+			values.push(filters.age_min);
 		}
-		if (filters.ageMax !== undefined) {
+		if (filters.age_max !== undefined) {
 			whereConditions.push("age <= ?");
-			values.push(filters.ageMax);
+			values.push(filters.age_max);
 		}
 	}
 
 	private applyFameFilters(
 		whereConditions: string[],
 		values: any[],
-		filters: BrowsingFiltersDto
+		filters: BrowsingFiltersDto,
 	): void {
-		if (filters.fameMin !== undefined) {
+		if (filters.fame_min !== undefined) {
 			whereConditions.push("fame_score >= ?");
-			values.push(filters.fameMin);
+			values.push(filters.fame_min);
 		}
-		if (filters.fameMax !== undefined) {
-			whereConditions.push("fame_score <= ?");
-			values.push(filters.fameMax);
+		if (filters.fame_max !== undefined) {
+			whereConditions.push("fame_score >= ?");
+			values.push(filters.fame_max);
 		}
 	}
 
 	private applyInterestsFilter(
 		whereConditions: string[],
 		values: any[],
-		filters: BrowsingFiltersDto
+		filters: BrowsingFiltersDto,
 	): void {
 		if (!filters.interests || filters.interests.length === 0) {
 			return;
 		}
 
 		const interestConditions = filters.interests.map(
-			() => "JSON_CONTAINS(interests, ?)"
+			() => "JSON_CONTAINS(interests, ?)",
 		);
 		whereConditions.push(`(${interestConditions.join(" OR ")})`);
 		filters.interests.forEach((interest) => {
@@ -135,10 +151,10 @@ export class BrowsingRepository extends BaseRepository {
 		values: any[],
 		filters: BrowsingFiltersDto,
 		userLat: number | null,
-		userLon: number | null
+		userLon: number | null,
 	): void {
 		if (
-			filters.distanceMax === undefined ||
+			filters.distance_max === undefined ||
 			userLat === null ||
 			userLon === null
 		) {
@@ -147,21 +163,21 @@ export class BrowsingRepository extends BaseRepository {
 
 		const distanceCalc = this.buildDistanceQuery(userLat, userLon);
 		whereConditions.push(`(${distanceCalc}) <= ?`);
-		values.push(filters.distanceMax);
+		values.push(filters.distance_max);
 	}
 
 	private buildOrderByClause(
 		filters: BrowsingFiltersDto,
 		distanceQuery: string,
-		sharedInterestsQuery: string
+		sharedInterestsQuery: string,
 	): string {
-		if (!filters.sortBy) {
+		if (!filters.sort_by) {
 			return this.getDefaultOrderBy(distanceQuery, sharedInterestsQuery);
 		}
 
-		const sortOrder = filters.sortOrder === "desc" ? "DESC" : "ASC";
+		const sortOrder = filters.sort_order === "desc" ? "DESC" : "ASC";
 
-		switch (filters.sortBy) {
+		switch (filters.sort_by) {
 			case "age":
 				return `age ${sortOrder}, id ASC`;
 			case "distance":
@@ -173,14 +189,14 @@ export class BrowsingRepository extends BaseRepository {
 			default:
 				return this.getDefaultOrderBy(
 					distanceQuery,
-					sharedInterestsQuery
+					sharedInterestsQuery,
 				);
 		}
 	}
 
 	private getDefaultOrderBy(
 		distanceQuery: string,
-		sharedInterestsQuery: string
+		sharedInterestsQuery: string,
 	): string {
 		return `
 			${distanceQuery} ASC,
@@ -193,14 +209,24 @@ export class BrowsingRepository extends BaseRepository {
 	private buildCompatibilityFilters(
 		currentUser: AuthUser,
 		whereConditions: string[],
-		values: any[]
+		values: any[],
 	): void {
 		whereConditions.push("id != ?");
 		values.push(currentUser.id);
 
+		whereConditions.push(
+			"NOT EXISTS (SELECT 1 FROM likes WHERE likes.liker_id = ? AND likes.liked_id = users.id AND likes.deleted_at IS NULL)",
+		);
+		values.push(currentUser.id);
+
+		whereConditions.push(
+			"NOT EXISTS (SELECT 1 FROM blocks WHERE ((blocks.blocker_id = ? AND blocks.blocked_id = users.id) OR (blocks.blocker_id = users.id AND blocks.blocked_id = ?)) AND blocks.deleted_at IS NULL)",
+		);
+		values.push(currentUser.id, currentUser.id);
+
 		const compatibleGenders = this.getCompatibleGenders(
 			currentUser.gender,
-			currentUser.orientation
+			currentUser.orientation,
 		);
 
 		if (compatibleGenders.length > 0) {
@@ -215,7 +241,7 @@ export class BrowsingRepository extends BaseRepository {
 			this.applyOrientationCompatibility(
 				currentUser.gender,
 				whereConditions,
-				values
+				values,
 			);
 		}
 
@@ -226,7 +252,7 @@ export class BrowsingRepository extends BaseRepository {
 	private applyOrientationCompatibility(
 		userGender: Gender,
 		whereConditions: string[],
-		values: any[]
+		values: any[],
 	): void {
 		const orientationConditions: string[] = [];
 
@@ -253,7 +279,7 @@ export class BrowsingRepository extends BaseRepository {
 		userId: number,
 		limit: number,
 		offset: number,
-		filters: BrowsingFiltersDto
+		filters: BrowsingFiltersDto,
 	): Promise<QueryOptions> {
 		const currentUser = await this.userRepository.findUserById(userId);
 		if (!currentUser) {
@@ -281,7 +307,7 @@ export class BrowsingRepository extends BaseRepository {
 			values,
 			filters,
 			userLat,
-			userLon
+			userLon,
 		);
 
 		const where = whereConditions.join(" AND ");
@@ -294,7 +320,7 @@ export class BrowsingRepository extends BaseRepository {
 		const orderBy = this.buildOrderByClause(
 			filters,
 			distanceQuery,
-			sharedInterestsQuery
+			sharedInterestsQuery,
 		)
 			.replace(/\s+/g, " ")
 			.trim();

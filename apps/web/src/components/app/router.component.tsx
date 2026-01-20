@@ -1,18 +1,20 @@
 import { APP_PAGES } from "@/constants";
 import { Route, Routes } from "react-router-dom";
 import { withEmailVerified, withLoggedIn, withLoggedOut } from "../utils";
-import { EntryPage, NotFoundPage, HomePage } from "@/pages";
+import { EntryPage, NotFoundPage, HomePage, MatchesPage } from "@/pages";
 import { EntryLayout, ProtectedLayout, ProfileLayout } from "@/layouts";
-import { RegisterPage, LoginPage, ForgotPasswordPage } from "@/pages/auth";
-import { ConfirmEmailPage } from "@/pages/auth/confirm-email.page";
-import { ConfirmEmailChangePage } from "@/pages/auth/confirm-email-change.page";
-import { ModifyPasswordPage } from "@/pages/auth/modify-password.page";
-import { ProfilePage } from "@/pages/profile/profile.page";
-import { ProfileSettingsPage } from "@/pages/profile/profile-settings.page";
-import { ProfilePreviewPage } from "@/pages/profile/profile-preview.page";
-import { ProfilePicturesPage } from "@/pages/profile/profile-pictures.page";
-import { ProfileInterestsPage } from "@/pages/profile/profile-interests.page";
-import { ProfileLocationPage } from "@/pages/profile/profile-location.page";
+import { RegisterPage, LoginPage, ForgotPasswordPage } from "@/pages";
+import { ConfirmEmailPage } from "@/pages";
+import { ConfirmEmailChangePage } from "@/pages";
+import { ModifyPasswordPage } from "@/pages";
+import { ProfilePage } from "@/pages";
+import { ProfileSettingsPage } from "@/pages";
+import { ProfilePreviewPage } from "@/pages";
+import { ProfilePicturesPage } from "@/pages";
+import { ProfileInterestsPage } from "@/pages";
+import { ProfileLocationPage } from "@/pages";
+import { ProfileVisitsPage } from "@/pages";
+import { UserPage } from "@/pages";
 
 export function Router() {
 	return (
@@ -34,6 +36,8 @@ export function Router() {
 				element={withLoggedIn(ProtectedLayout)()}
 			>
 				<Route index element={<HomePage />} />
+				<Route path={APP_PAGES.user} element={<UserPage />} />
+				<Route path={APP_PAGES.matches} element={<MatchesPage />} />
 				<Route
 					path={APP_PAGES.profile}
 					element={withEmailVerified(ProfileLayout)()}
@@ -58,6 +62,10 @@ export function Router() {
 					<Route
 						path={APP_PAGES.profileLocation}
 						element={<ProfileLocationPage />}
+					/>
+					<Route
+						path={APP_PAGES.profileVisits}
+						element={<ProfileVisitsPage />}
 					/>
 				</Route>
 			</Route>

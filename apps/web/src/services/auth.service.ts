@@ -12,9 +12,16 @@ import {
 	type SendChangeEmailVerificationRequestDto,
 	type ChangeEmailRequestDto,
 	ChangeEmailResponseDto,
+	ERouteGroups,
 } from "@matcha/shared";
 import { BaseService } from "./base.service";
-import { CrossTabEvent, ETokens, ServiceResponse } from "@/types";
+import {
+	CrossTabEvent,
+	EActionKeys,
+	EStorageKeys,
+	ETokens,
+	ServiceResponse,
+} from "@/types";
 import {
 	changeEmail,
 	clearAction,
@@ -23,12 +30,12 @@ import {
 	setAuthUser,
 	setEmailToVerified,
 } from "@/store";
-import { EStorageKeys } from "@/types/storage.constants";
 import { action } from "@/decorators";
-import { EActionKeys } from "@/types/actions.types";
-import { crossTab } from "@/utils/cross-tab.utils";
-import { EFlaggers } from "@/constants/flaggers.constants";
+import { crossTab } from "@/utils";
+import { EFlaggers } from "@/constants";
 import { BrowsingService } from "./browsing.service";
+import { MatchService } from "./match.service";
+import { WebSocketService } from "./websocket.service";
 
 type AuthData = Partial<RegisterResponseDto>;
 
@@ -47,31 +54,29 @@ export class AuthService extends BaseService {
 		EMAIL_CHANGED: "Email changed successfully",
 	} as const;
 
-	private get browsingService(): BrowsingService {
-		return this.container.get<BrowsingService>(ETokens.BrowsingService);
-	}
-
 	private async storeAuthData(data: AuthData): Promise<void> {
 		const { accessToken, refreshToken, user } = data;
 
 		if (accessToken) {
 			await this.storageService.setItem(
 				EStorageKeys.AccessToken,
-				accessToken
+				accessToken,
 			);
 		}
 
 		if (refreshToken) {
 			await this.storageService.setItem(
 				EStorageKeys.RefreshToken,
-				refreshToken
+				refreshToken,
 			);
 		}
 
 		if (user) {
+			this.webSocketService.connect();
 			this.dispatch(setAuthUser(user));
 			if (user.is_profile_complete) {
 				this.browsingService.loadBrowsingFilters();
+				this.matchService.getMatches({ page: 1, limit: 10 });
 			}
 		}
 	}
@@ -81,6 +86,7 @@ export class AuthService extends BaseService {
 		this.dispatch(setAuthUser(null));
 		this.dispatch(clearEntities());
 		this.dispatch(resetPagers());
+		this.webSocketService.disconnect();
 	}
 
 	private async hasValidAuthData(): Promise<boolean> {
@@ -92,8 +98,8 @@ export class AuthService extends BaseService {
 		return !!(accessToken && refreshToken);
 	}
 
-	private getAuthRoute(route: RouteKeys<"auth">): string {
-		return getRoute("auth", route);
+	private getAuthRoute(route: RouteKeys<ERouteGroups.Auth>): string {
+		return getRoute(ERouteGroups.Auth, route);
 	}
 
 	@action()
@@ -105,13 +111,13 @@ export class AuthService extends BaseService {
 				const authenticateResponse =
 					await this.apiService.get<AuthenticateResponseDto>(
 						this.getAuthRoute("authenticate"),
-						{ auth: true }
+						{ auth: true },
 					);
 
 				if (this.isSuccess(authenticateResponse)) {
-					this.storeAuthData(authenticateResponse.data);
+					await this.storeAuthData(authenticateResponse.data);
 					return ServiceResponse.success(
-						this.MESSAGES.AUTH_SUCCESSFUL
+						this.MESSAGES.AUTH_SUCCESSFUL,
 					);
 				}
 
@@ -131,7 +137,7 @@ export class AuthService extends BaseService {
 		this.dispatch(clearAction({ key: EActionKeys.Register }));
 		const response = await this.apiService.post<LoginResponseDto>(
 			this.getAuthRoute("login"),
-			dto
+			dto,
 		);
 
 		if (!this.isSuccess(response)) {
@@ -147,7 +153,7 @@ export class AuthService extends BaseService {
 		this.dispatch(clearAction({ key: EActionKeys.Login }));
 		const response = await this.apiService.post<RegisterResponseDto>(
 			this.getAuthRoute("register"),
-			dto
+			dto,
 		);
 
 		if (!this.isSuccess(response)) {
@@ -168,7 +174,7 @@ export class AuthService extends BaseService {
 	public async verifyEmail(dto: VerifyEmailRequestDto) {
 		const response = await this.apiService.post<null>(
 			this.getAuthRoute("verify-email"),
-			dto
+			dto,
 		);
 
 		if (!this.isSuccess(response)) {
@@ -186,7 +192,7 @@ export class AuthService extends BaseService {
 	public async resendVerificationEmail() {
 		const response = await this.apiService.get<null>(
 			this.getAuthRoute("resend-verification-email"),
-			{ auth: true }
+			{ auth: true },
 		);
 
 		if (!this.isSuccess(response)) {
@@ -200,7 +206,7 @@ export class AuthService extends BaseService {
 	public async forgotPassword(dto: ForgotPasswordRequestDto) {
 		const response = await this.apiService.post<null>(
 			this.getAuthRoute("forgot-password"),
-			dto
+			dto,
 		);
 
 		if (!this.isSuccess(response)) {
@@ -214,7 +220,7 @@ export class AuthService extends BaseService {
 	public async resetPassword(dto: ResetPasswordRequestDto) {
 		const response = await this.apiService.post<null>(
 			this.getAuthRoute("reset-password"),
-			dto
+			dto,
 		);
 
 		if (!this.isSuccess(response)) {
@@ -227,12 +233,12 @@ export class AuthService extends BaseService {
 
 	@action({ showSuccessMessage: true, showErrorMessage: true })
 	public async sendChangeEmailVerification(
-		dto: SendChangeEmailVerificationRequestDto
+		dto: SendChangeEmailVerificationRequestDto,
 	) {
 		const response = await this.apiService.post<null>(
 			this.getAuthRoute("send-change-email-verification"),
 			dto,
-			{ auth: true }
+			{ auth: true },
 		);
 
 		if (!this.isSuccess(response)) {
@@ -245,7 +251,7 @@ export class AuthService extends BaseService {
 		});
 
 		return ServiceResponse.success(
-			this.MESSAGES.EMAIL_CHANGE_VERIFICATION_SENT
+			this.MESSAGES.EMAIL_CHANGE_VERIFICATION_SENT,
 		);
 	}
 
@@ -254,16 +260,16 @@ export class AuthService extends BaseService {
 		const response = await this.apiService.post<ChangeEmailResponseDto>(
 			this.getAuthRoute("change-email"),
 			dto,
-			{ auth: true }
+			{ auth: true },
 		);
 
 		if (!this.isSuccess(response)) {
 			return ServiceResponse.failure(response.message);
 		}
 
-		this.dispatch(changeEmail(response.data.newEmail));
+		this.dispatch(changeEmail(response.data.new_email));
 
-		crossTab.broadcast(CrossTabEvent.EmailChanged, response.data.newEmail);
+		crossTab.broadcast(CrossTabEvent.EmailChanged, response.data.new_email);
 
 		return ServiceResponse.success(this.MESSAGES.EMAIL_CHANGED);
 	}

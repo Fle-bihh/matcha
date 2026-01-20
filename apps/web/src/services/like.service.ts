@@ -1,0 +1,65 @@
+import { ERouteGroups, getRoute, StatusCodes } from "@matcha/shared";
+import type {
+	CreateLikeDto,
+	CreateLikeResponseDto,
+	UnlikeUserDto,
+} from "@matcha/shared";
+import { EEntityTypes, ServiceResponse } from "@/types";
+import { BaseService } from "./base.service";
+import { action } from "@/decorators";
+import { patchEntity, setEntity } from "@/store";
+
+export class LikeService extends BaseService {
+	@action({ showSuccessMessage: true, showErrorMessage: true })
+	async createLike(dto: CreateLikeDto): Promise<ServiceResponse> {
+		const response = await this.apiService.post<CreateLikeResponseDto>(
+			getRoute(ERouteGroups.Like, "like"),
+			dto,
+			{ auth: true },
+		);
+
+		if (
+			this.isSuccess(response) ||
+			response.status === StatusCodes.CONFLICT
+		) {
+			this.dispatch(
+				patchEntity({
+					entityType: EEntityTypes.Users,
+					id: dto.liked_id.toString(),
+					entity: { is_liked: true },
+				}),
+			);
+		}
+
+		if (this.isSuccess(response)) {
+			return ServiceResponse.success(response.message);
+		} else {
+			return ServiceResponse.failure(response.message);
+		}
+	}
+
+	@action({ showSuccessMessage: true, showErrorMessage: true })
+	async unlikeUser(dto: UnlikeUserDto): Promise<ServiceResponse> {
+		const response = await this.apiService.delete<void>(
+			`${getRoute(ERouteGroups.Like, "unlike").replace(":id", dto.id.toString())}`,
+			{ auth: true },
+		);
+
+		if (this.isSuccess(response)) {
+			this.dispatch(
+				patchEntity({
+					entityType: EEntityTypes.Users,
+					id: dto.id.toString(),
+					entity: {
+						is_liked: false,
+						is_matched: false,
+						has_liked_you: false,
+					},
+				}),
+			);
+			return ServiceResponse.success(response.message);
+		} else {
+			return ServiceResponse.failure(response.message);
+		}
+	}
+}

@@ -15,13 +15,11 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import PicturesIcon from "@mui/icons-material/PhotoLibrary";
 import InterestsIcon from "@mui/icons-material/LocalOffer";
 import LocationIcon from "@mui/icons-material/LocationOn";
+import HistoryIcon from "@mui/icons-material/History";
 import { APP_ROUTES } from "@/constants";
-import { useRouting } from "@/hooks/routing.hooks";
-import {
-	useLayoutSizes,
-	useProfileDrawerRef,
-} from "@/contexts/layout-sizes.context";
-import { useWindow } from "@/hooks/window.hook";
+import { useRouting } from "@/hooks";
+import { useLayoutSizes, useProfileDrawerRef } from "@/contexts";
+import { useWindow } from "@/hooks";
 
 const menuItems = [
 	{
@@ -43,6 +41,11 @@ const menuItems = [
 		text: "Location",
 		Icon: LocationIcon,
 		path: APP_ROUTES.profileLocation,
+	},
+	{
+		text: "Visits",
+		Icon: HistoryIcon,
+		path: APP_ROUTES.profileVisits,
 	},
 	{
 		text: "Preview",

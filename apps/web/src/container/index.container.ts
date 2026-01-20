@@ -6,13 +6,20 @@ import {
 	UserService,
 	SnackbarService,
 	BrowsingService,
+	LikeService,
+	MatchService,
+	WebSocketService,
+	VisitService,
+	WebSocketSubscriptionService,
+	ReportService,
+	BlockService,
 } from "@/services";
-import { LocationService } from "@/services/location.service";
+import { LocationService } from "@/services";
 import { Store } from "@reduxjs/toolkit";
 import { TAppDispatch, TReduxStore, TRootState } from "@/types";
 import { createStore } from "@/store";
 import { logger } from "@matcha/shared";
-import { RouterService } from "@/services/router.service";
+import { RouterService } from "@/services";
 
 type ServiceConstructor = new (container: IContainer) => any;
 
@@ -25,6 +32,13 @@ const serviceConstructors: Record<ETokens, ServiceConstructor> = {
 	[ETokens.SnackbarService]: SnackbarService,
 	[ETokens.LocationService]: LocationService,
 	[ETokens.BrowsingService]: BrowsingService,
+	[ETokens.LikeService]: LikeService,
+	[ETokens.MatchService]: MatchService,
+	[ETokens.WebSocketService]: WebSocketService,
+	[ETokens.VisitService]: VisitService,
+	[ETokens.WebSocketSubscriptionService]: WebSocketSubscriptionService,
+	[ETokens.ReportService]: ReportService,
+	[ETokens.BlockService]: BlockService,
 } as const;
 
 export class Container implements IContainer {
@@ -32,7 +46,7 @@ export class Container implements IContainer {
 	public readonly store: TReduxStore;
 	private navigateFunc?: (
 		path: string,
-		options?: { replace?: boolean }
+		options?: { replace?: boolean },
 	) => void;
 
 	constructor() {
@@ -40,7 +54,7 @@ export class Container implements IContainer {
 	}
 
 	public setNavigate(
-		navigateFunc: (path: string, options?: { replace?: boolean }) => void
+		navigateFunc: (path: string, options?: { replace?: boolean }) => void,
 	): void {
 		this.navigateFunc = navigateFunc;
 	}

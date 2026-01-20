@@ -1,7 +1,10 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
-import { UserRepository } from "@/repositories";
-import { UserDeletionService } from "./user-deletion.service";
+import {
+	UserRepository,
+	UserStatusRepository,
+	BrowsingRepository,
+} from "@/repositories";
 import {
 	AuthUserWithPassword,
 	CreateUserDto,
@@ -15,9 +18,10 @@ import {
 	User,
 	BrowsingFilters,
 	BrowsingFiltersDto,
+	GetUserByIdResponseDto,
+	StatusCodes,
 } from "@matcha/shared";
-import { StatusCodes } from "http-status-codes";
-import { HashUtils } from "@/utils/hash.utils";
+import { HashUtils, emptyPaginatedResponse } from "@/utils";
 
 export class UserService extends BaseService {
 	constructor(container: IContainer) {
@@ -28,25 +32,24 @@ export class UserService extends BaseService {
 		return this.container.get<UserRepository>(ETokens.UserRepository);
 	}
 
-	private get userDeletionService(): UserDeletionService {
-		return this.container.get<UserDeletionService>(
-			ETokens.UserDeletionService
+	private get userStatusRepository(): UserStatusRepository {
+		return this.container.get<UserStatusRepository>(
+			ETokens.UserStatusRepository,
 		);
 	}
 
 	public async findByEmail<T extends boolean = false>(
 		email: string,
-		withPassword?: T
+		withPassword?: T,
 	): Promise<ServiceResponse<UserResult<T>>> {
 		try {
-			const userWithPassword = await this.userRepository.findUserByEmail(
-				email
-			);
+			const userWithPassword =
+				await this.userRepository.findUserByEmail(email);
 			if (!userWithPassword) {
 				return ServiceResponse.failure(
 					"User not found",
 					null,
-					StatusCodes.NOT_FOUND
+					StatusCodes.NOT_FOUND,
 				) as ServiceResponse<UserResult<T>>;
 			}
 
@@ -54,20 +57,20 @@ export class UserService extends BaseService {
 				"User found",
 				withPassword
 					? userWithPassword
-					: this.userRepository.excludePassword(userWithPassword)
+					: this.userRepository.excludePassword(userWithPassword),
 			) as ServiceResponse<UserResult<T>>;
 		} catch (error) {
 			return ServiceResponse.failure(
 				"Error finding user",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
 
 	public async findByUsername<T extends boolean = false>(
 		username: string,
-		withPassword?: T
+		withPassword?: T,
 	): Promise<ServiceResponse<UserResult<T>>> {
 		try {
 			const user = await this.userRepository.findUserByUsername(username);
@@ -75,26 +78,26 @@ export class UserService extends BaseService {
 				return ServiceResponse.failure(
 					"User not found",
 					null,
-					StatusCodes.NOT_FOUND
+					StatusCodes.NOT_FOUND,
 				) as ServiceResponse<UserResult<T>>;
 			}
 
 			return ServiceResponse.success(
 				"User found",
-				withPassword ? user : this.userRepository.excludePassword(user)
+				withPassword ? user : this.userRepository.excludePassword(user),
 			) as ServiceResponse<UserResult<T>>;
 		} catch (error) {
 			return ServiceResponse.failure(
 				"Error finding user",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
 
 	public async findById<T extends boolean = false>(
 		userId: number,
-		withPassword?: T
+		withPassword?: T,
 	): Promise<ServiceResponse<UserResult<T>>> {
 		try {
 			const user = await this.userRepository.findUserById(userId);
@@ -102,36 +105,122 @@ export class UserService extends BaseService {
 				return ServiceResponse.failure(
 					"User not found",
 					null,
-					StatusCodes.NOT_FOUND
+					StatusCodes.NOT_FOUND,
 				);
 			}
 
 			return ServiceResponse.success(
 				"User found",
-				withPassword ? user : this.userRepository.excludePassword(user)
+				withPassword ? user : this.userRepository.excludePassword(user),
 			) as ServiceResponse<UserResult<T>>;
 		} catch (error) {
 			return ServiceResponse.failure(
 				"Error finding user",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
+			);
+		}
+	}
+
+	public async getUserById(
+		requesterId: number,
+		targetUserId: number,
+	): Promise<ServiceResponse<GetUserByIdResponseDto | null>> {
+		try {
+			const requesterResult =
+				await this.userRepository.findUserById(requesterId);
+			if (!requesterResult) {
+				return ServiceResponse.failure(
+					"User not found",
+					null,
+					StatusCodes.NOT_FOUND,
+				);
+			}
+
+			if (!requesterResult.is_profile_complete) {
+				return ServiceResponse.failure(
+					"Requester profile is not complete",
+					null,
+					StatusCodes.FORBIDDEN,
+				);
+			}
+
+			const targetResult =
+				await this.userRepository.findUserById(targetUserId);
+			if (!targetResult) {
+				return ServiceResponse.failure(
+					"User not found",
+					null,
+					StatusCodes.NOT_FOUND,
+				);
+			}
+
+			if (!targetResult.is_profile_complete) {
+				return ServiceResponse.failure(
+					"User profile is not complete",
+					null,
+					StatusCodes.FORBIDDEN,
+				);
+			}
+
+			const isBlocked = await this.blockService.checkBlockExists(
+				requesterId,
+				targetUserId,
+			);
+			if (isBlocked) {
+				return ServiceResponse.failure(
+					"You have blocked this user or you are blocked by him",
+					null,
+					StatusCodes.FORBIDDEN,
+				);
+			}
+
+			const publicUser = this.userRepository.excludePrivateFields(
+				targetResult as AuthUserWithPassword,
+			);
+
+			const userStatus =
+				await this.userStatusRepository.getUserStatus(targetUserId);
+
+			const userLikingDetails = await this.likeService.getLikingByUsers(
+				requesterId,
+				targetUserId,
+			);
+
+			const isUserReported = await this.reportService.checkReportExists(
+				requesterId,
+				targetUserId,
+			);
+
+			return ServiceResponse.success("User found", {
+				user: { ...publicUser },
+				status: userStatus,
+				...userLikingDetails,
+				is_reported: isUserReported,
+			});
+		} catch (error) {
+			logger.error("Error in getUserById:", error);
+			return ServiceResponse.failure(
+				"Error retrieving user",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
 
 	public async createUser(
-		userData: CreateUserDto
+		userData: CreateUserDto,
 	): Promise<ServiceResponse<AuthUser | null>> {
 		try {
 			const existingUser = await this.userRepository.findUserByEmail(
-				userData.email
+				userData.email,
 			);
 
 			if (existingUser) {
 				return ServiceResponse.failure(
 					"Email already in use",
 					null,
-					StatusCodes.CONFLICT
+					StatusCodes.CONFLICT,
 				);
 			}
 
@@ -142,13 +231,13 @@ export class UserService extends BaseService {
 			return ServiceResponse.failure(
 				"Error creating user",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
 
 	private async mayberCompleteUserProfile(
-		user: AuthUserWithPassword
+		user: AuthUserWithPassword,
 	): Promise<AuthUserWithPassword> {
 		const requiredFields: (keyof AuthUser)[] = [
 			"first_name",
@@ -190,43 +279,42 @@ export class UserService extends BaseService {
 
 	public async updateUser(
 		userId: number,
-		userData: PartialBaseEntity<AuthUser>
+		userData: PartialBaseEntity<AuthUser>,
 	): Promise<ServiceResponse<AuthUser | null>> {
 		try {
 			const updatedUser = await this.userRepository.updateUser(
 				userId,
-				userData
+				userData,
 			);
 
 			if (!updatedUser) {
 				return ServiceResponse.failure(
 					"User not found",
 					null,
-					StatusCodes.NOT_FOUND
+					StatusCodes.NOT_FOUND,
 				);
 			}
 
-			const completedUser = await this.mayberCompleteUserProfile(
-				updatedUser
-			);
+			const completedUser =
+				await this.mayberCompleteUserProfile(updatedUser);
 
 			return ServiceResponse.success(
 				"User updated successfully",
-				this.userRepository.excludePassword(completedUser)
+				this.userRepository.excludePassword(completedUser),
 			);
 		} catch (error) {
 			logger.error("Error in updateUser:", error);
 			return ServiceResponse.failure(
 				"Error updating user",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
 
 	public async updateUserPassword(
 		userId: number,
-		newPassword: string
+		newPassword: string,
 	): Promise<ServiceResponse<AuthUser | null>> {
 		try {
 			const user = await this.userRepository.findUserById(userId);
@@ -234,7 +322,7 @@ export class UserService extends BaseService {
 				return ServiceResponse.failure(
 					"User not found",
 					null,
-					StatusCodes.NOT_FOUND
+					StatusCodes.NOT_FOUND,
 				);
 			}
 
@@ -242,7 +330,7 @@ export class UserService extends BaseService {
 				return ServiceResponse.failure(
 					"New password cannot be the same as the old password",
 					null,
-					StatusCodes.BAD_REQUEST
+					StatusCodes.BAD_REQUEST,
 				);
 			}
 
@@ -250,31 +338,30 @@ export class UserService extends BaseService {
 
 			const updatedUser = await this.userRepository.updateUserPassword(
 				userId,
-				hashedPassword
+				hashedPassword,
 			);
 
 			if (!updatedUser) {
 				return ServiceResponse.failure(
 					"User not found",
 					null,
-					StatusCodes.NOT_FOUND
+					StatusCodes.NOT_FOUND,
 				);
 			}
 
-			const completedUser = await this.mayberCompleteUserProfile(
-				updatedUser
-			);
+			const completedUser =
+				await this.mayberCompleteUserProfile(updatedUser);
 
 			return ServiceResponse.success(
 				"Password updated successfully",
-				this.userRepository.excludePassword(completedUser)
+				this.userRepository.excludePassword(completedUser),
 			);
 		} catch (error) {
 			logger.error("Error in updateUserPassword:", error);
 			return ServiceResponse.failure(
 				"Error updating password",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
@@ -292,7 +379,7 @@ export class UserService extends BaseService {
 	public async updateProfilePicture(
 		userId: number,
 		imageFile: Express.Multer.File,
-		index: number
+		index: number,
 	): Promise<ServiceResponse<AuthUser | null>> {
 		try {
 			const user = await this.userRepository.findUserById(userId);
@@ -301,21 +388,21 @@ export class UserService extends BaseService {
 				return ServiceResponse.failure(
 					"User not found",
 					null,
-					StatusCodes.NOT_FOUND
+					StatusCodes.NOT_FOUND,
 				);
 			}
 
 			const path = await this.fileUploadService.saveProfilePicture(
 				userId,
 				imageFile,
-				index
+				index,
 			);
 
 			if (!path) {
 				return ServiceResponse.failure(
 					"Error saving profile picture",
 					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
+					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
 
@@ -338,17 +425,16 @@ export class UserService extends BaseService {
 				return ServiceResponse.failure(
 					"Error updating profile picture",
 					null,
-					StatusCodes.NOT_FOUND
+					StatusCodes.NOT_FOUND,
 				);
 			}
 
-			const completedUser = await this.mayberCompleteUserProfile(
-				updatedUser
-			);
+			const completedUser =
+				await this.mayberCompleteUserProfile(updatedUser);
 
 			return ServiceResponse.success(
 				"Profile picture updated successfully",
-				this.userRepository.excludePassword(completedUser)
+				this.userRepository.excludePassword(completedUser),
 			);
 		} catch (error) {
 			logger.error("Error in uploadProfilePicture:", error);
@@ -356,14 +442,14 @@ export class UserService extends BaseService {
 			return ServiceResponse.failure(
 				"Error uploading profile picture",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
 
 	public async updateLocation(
 		userId: number,
-		dto: UpdateLocationDto
+		dto: UpdateLocationDto,
 	): Promise<ServiceResponse<AuthUser | null>> {
 		try {
 			const locationData = dto;
@@ -372,7 +458,7 @@ export class UserService extends BaseService {
 				return ServiceResponse.failure(
 					"User not found",
 					null,
-					StatusCodes.NOT_FOUND
+					StatusCodes.NOT_FOUND,
 				);
 			}
 
@@ -384,24 +470,23 @@ export class UserService extends BaseService {
 				return ServiceResponse.failure(
 					"Failed to update location",
 					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
+					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
 
-			const completedUser = await this.mayberCompleteUserProfile(
-				updatedUser
-			);
+			const completedUser =
+				await this.mayberCompleteUserProfile(updatedUser);
 
 			return ServiceResponse.success(
 				"Location updated successfully",
-				this.userRepository.excludePassword(completedUser)
+				this.userRepository.excludePassword(completedUser),
 			);
 		} catch (error) {
 			logger.error("Error in updateLocation:", error);
 			return ServiceResponse.failure(
 				"Error updating location",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
@@ -409,7 +494,7 @@ export class UserService extends BaseService {
 	public async getUsers(
 		userId: number,
 		paginationParams: PaginationParams,
-		browsingFilters: BrowsingFiltersDto
+		browsingFilters: BrowsingFiltersDto,
 	): Promise<ServiceResponse<PaginatedResponse<User>>> {
 		try {
 			const { page, limit } = paginationParams;
@@ -420,7 +505,7 @@ export class UserService extends BaseService {
 					userId,
 					paginationParams.limit,
 					offset,
-					browsingFilters
+					browsingFilters,
 				);
 
 			const totalPages = Math.ceil(total / paginationParams.limit);
@@ -431,32 +516,22 @@ export class UserService extends BaseService {
 					page: paginationParams.page,
 					limit: paginationParams.limit,
 					total,
-					totalPages,
-					hasNextPage: paginationParams.page < totalPages,
-					hasPreviousPage: paginationParams.page > 1,
+					total_pages: totalPages,
+					has_next_page: paginationParams.page < totalPages,
+					has_previous_page: paginationParams.page > 1,
 				},
 			};
 
 			return ServiceResponse.success(
 				"Users retrieved successfully",
-				paginatedResponse
+				paginatedResponse,
 			);
 		} catch (error) {
 			logger.error("Error in getUsers:", error);
 			return ServiceResponse.failure(
 				"Error retrieving users",
-				{
-					data: [],
-					meta: {
-						page: 1,
-						limit: 20,
-						total: 0,
-						totalPages: 0,
-						hasNextPage: false,
-						hasPreviousPage: false,
-					},
-				},
-				StatusCodes.INTERNAL_SERVER_ERROR
+				emptyPaginatedResponse<User>(paginationParams.limit),
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
@@ -470,7 +545,7 @@ export class UserService extends BaseService {
 				return ServiceResponse.failure(
 					"Failed to delete user",
 					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
+					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
 
@@ -480,34 +555,16 @@ export class UserService extends BaseService {
 			return ServiceResponse.failure(
 				"Error deleting user",
 				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
+				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}
 	}
 
-	public async restoreUser(userId: number): Promise<ServiceResponse<null>> {
-		try {
-			const success =
-				await this.userDeletionService.restoreUserAndRelatedData(
-					userId
-				);
+	public async setUserOnline(userId: number): Promise<void> {
+		await this.userStatusRepository.setUserOnline(userId);
+	}
 
-			if (!success) {
-				return ServiceResponse.failure(
-					"Failed to restore user",
-					null,
-					StatusCodes.INTERNAL_SERVER_ERROR
-				);
-			}
-
-			return ServiceResponse.success("User restored successfully", null);
-		} catch (error) {
-			logger.error("Error restoring user:", error);
-			return ServiceResponse.failure(
-				"Error restoring user",
-				null,
-				StatusCodes.INTERNAL_SERVER_ERROR
-			);
-		}
+	public async setUserOffline(userId: number): Promise<void> {
+		await this.userStatusRepository.setUserOffline(userId);
 	}
 }

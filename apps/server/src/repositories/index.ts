@@ -1,5 +1,12 @@
-export { BaseRepository } from "./base.repository";
-export { UserRepository } from "./user.repository";
-export { EmailVerificationRepository } from "./email-verification.repository";
-export { PasswordResetRepository } from "./password-reset.repository";
-export { BrowsingRepository } from "./browsing.repository";
+export * from "./base.repository";
+export * from "./browsing.repository";
+export * from "./email-verification.repository";
+export * from "./like.repository";
+export * from "./match.repository";
+export * from "./message.repository";
+export * from "./password-reset.repository";
+export * from "./user-status.repository";
+export * from "./user.repository";
+export * from "./visit.repository";
+export * from "./report.repository";
+export * from "./block.repository";

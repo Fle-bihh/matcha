@@ -20,10 +20,10 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import {
 	USER_INTERESTS,
 	BrowsingFilters,
-	SortBy,
+	BrowsingSortBy,
 	SortOrder,
 } from "@matcha/shared";
-import { useBrowsingContext } from "@/contexts/browsing.context";
+import { useBrowsingContext } from "@/contexts";
 
 export function BrowsingFiltersComponent() {
 	const {
@@ -35,7 +35,7 @@ export function BrowsingFiltersComponent() {
 	const [localFilters, setLocalFilters] = useState<BrowsingFilters>(filters);
 	const hasChanges = useMemo(
 		() => hasChangesCb(localFilters),
-		[hasChangesCb, localFilters]
+		[hasChangesCb, localFilters],
 	);
 
 	const handleChange = (key: keyof BrowsingFilters, value: any) => {
@@ -64,7 +64,7 @@ export function BrowsingFiltersComponent() {
 			value !== undefined &&
 			value !== null &&
 			value !== "" &&
-			(Array.isArray(value) ? value.length > 0 : true)
+			(Array.isArray(value) ? value.length > 0 : true),
 	);
 
 	useEffect(() => {
@@ -109,19 +109,19 @@ export function BrowsingFiltersComponent() {
 							<Box sx={{ p: 2 }}>
 								<Box>
 									<Typography gutterBottom fontWeight={500}>
-										Age Range: {localFilters.ageMin || 18} -{" "}
-										{localFilters.ageMax || 99}
+										Age Range: {localFilters.age_min || 18}{" "}
+										- {localFilters.age_max || 99}
 									</Typography>
 									<Slider
 										value={[
-											localFilters.ageMin || 18,
-											localFilters.ageMax || 99,
+											localFilters.age_min || 18,
+											localFilters.age_max || 99,
 										]}
 										onChange={(_, value) => {
 											const [min, max] =
 												value as number[];
-											handleChange("ageMin", min);
-											handleChange("ageMax", max);
+											handleChange("age_min", min);
+											handleChange("age_max", max);
 										}}
 										valueLabelDisplay="auto"
 										min={18}
@@ -139,12 +139,12 @@ export function BrowsingFiltersComponent() {
 								<Box>
 									<Typography gutterBottom fontWeight={500}>
 										Max Distance:{" "}
-										{localFilters.distanceMax || 100} km
+										{localFilters.distance_max || 100} km
 									</Typography>
 									<Slider
-										value={localFilters.distanceMax || 100}
+										value={localFilters.distance_max || 100}
 										onChange={(_, value) =>
-											handleChange("distanceMax", value)
+											handleChange("distance_max", value)
 										}
 										valueLabelDisplay="auto"
 										min={1}
@@ -161,19 +161,20 @@ export function BrowsingFiltersComponent() {
 							<Box sx={{ p: 2 }}>
 								<Box>
 									<Typography gutterBottom fontWeight={500}>
-										Fame Rating: {localFilters.fameMin || 0}{" "}
-										- {localFilters.fameMax || 100}
+										Fame Rating:{" "}
+										{localFilters.fame_min || 0} -{" "}
+										{localFilters.fame_max || 100}
 									</Typography>
 									<Slider
 										value={[
-											localFilters.fameMin || 0,
-											localFilters.fameMax || 100,
+											localFilters.fame_min || 0,
+											localFilters.fame_max || 100,
 										]}
 										onChange={(_, value) => {
 											const [min, max] =
 												value as number[];
-											handleChange("fameMin", min);
-											handleChange("fameMax", max);
+											handleChange("fame_min", min);
+											handleChange("fame_max", max);
 										}}
 										valueLabelDisplay="auto"
 										min={0}
@@ -192,28 +193,40 @@ export function BrowsingFiltersComponent() {
 									<FormControl size="small" fullWidth>
 										<InputLabel>Sort By</InputLabel>
 										<Select
-											value={localFilters.sortBy || ""}
+											value={localFilters.sort_by || ""}
 											label="Sort By"
 											onChange={(e) =>
 												handleChange(
-													"sortBy",
-													e.target.value
+													"sort_by",
+													e.target.value,
 												)
 											}
 										>
 											<MenuItem value="">
 												<em>None</em>
 											</MenuItem>
-											<MenuItem value={SortBy.Age}>
+											<MenuItem
+												value={BrowsingSortBy.Age}
+											>
 												Age
 											</MenuItem>
-											<MenuItem value={SortBy.Distance}>
+											<MenuItem
+												value={BrowsingSortBy.Distance}
+											>
 												Distance
 											</MenuItem>
-											<MenuItem value={SortBy.FameRating}>
+											<MenuItem
+												value={
+													BrowsingSortBy.FameRating
+												}
+											>
 												Fame Rating
 											</MenuItem>
-											<MenuItem value={SortBy.CommonTags}>
+											<MenuItem
+												value={
+													BrowsingSortBy.CommonTags
+												}
+											>
 												Common Tags
 											</MenuItem>
 										</Select>
@@ -223,17 +236,17 @@ export function BrowsingFiltersComponent() {
 										<InputLabel>Order</InputLabel>
 										<Select
 											value={
-												localFilters.sortOrder ||
+												localFilters.sort_order ||
 												SortOrder.Asc
 											}
 											label="Order"
 											onChange={(e) =>
 												handleChange(
-													"sortOrder",
-													e.target.value
+													"sort_order",
+													e.target.value,
 												)
 											}
-											disabled={!localFilters.sortBy}
+											disabled={!localFilters.sort_by}
 										>
 											<MenuItem value={SortOrder.Asc}>
 												Ascending
@@ -269,14 +282,14 @@ export function BrowsingFiltersComponent() {
 										}
 										color={
 											localFilters.interests?.includes(
-												interest
+												interest,
 											)
 												? "primary"
 												: "default"
 										}
 										variant={
 											localFilters.interests?.includes(
-												interest
+												interest,
 											)
 												? "filled"
 												: "outlined"
