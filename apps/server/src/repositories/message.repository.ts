@@ -17,7 +17,7 @@ export class MessageRepository extends BaseRepository implements IRepository {
 				match_id INTEGER NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
 				content TEXT,
 				system_type VARCHAR(50),
-				data JSONB
+				data JSON
 			`,
 			constraints: "",
 		};

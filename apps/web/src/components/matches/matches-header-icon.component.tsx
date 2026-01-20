@@ -15,6 +15,8 @@ export function MatchesHeaderIcon() {
 			color="inherit"
 			onClick={handleMatchesClick}
 			aria-label="matches"
-		/>
+		>
+			<ChatBubbleIcon />
+		</IconButton>
 	);
 }
