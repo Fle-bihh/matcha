@@ -10,7 +10,7 @@ import { EEntityTypes, ServiceResponse, StoreMatch } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
 import { EPagerKeys } from "@/constants";
-import { patchEntity, setEntities, setUnreadMatchesCount } from "@/store";
+import { patchEntity, setEntities } from "@/store";
 
 export class MatchService extends BaseService {
 	async handleMatchWithDetails(match: MatchWithDetails): Promise<void> {
@@ -71,14 +71,6 @@ export class MatchService extends BaseService {
 				entities: otherUsers,
 			}),
 		);
-
-		if (response.data.extra_data) {
-			this.dispatch(
-				setUnreadMatchesCount(
-					response.data.extra_data.unread_conversations_count,
-				),
-			);
-		}
 
 		return ServiceResponse.success(response.message);
 	}

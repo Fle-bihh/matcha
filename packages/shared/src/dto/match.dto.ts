@@ -1,14 +1,10 @@
 import { z } from "zod";
 
-export const MatchesFiltersDtoSchema = z.object({
-	unread_only: z.boolean().optional(),
-});
+export const MatchesFiltersDtoSchema = z.object({});
 
 export type MatchesFilterDto = z.infer<typeof MatchesFiltersDtoSchema>;
 
-export interface GetMatchesResponseDto {
-	unread_conversations_count: number;
-}
+export interface GetMatchesResponseDto {}
 
 export interface DeleteMatchSocketDto {
 	match_id: number;

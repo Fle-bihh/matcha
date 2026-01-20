@@ -1,6 +1,5 @@
 import { BaseRepository } from "./base.repository";
-import { Message, logger } from "@matcha/shared";
-import { ETokens, IContainer, IRepository, TableSchema } from "@/types";
+import { IContainer, IRepository, TableSchema } from "@/types";
 
 export class MessageRepository extends BaseRepository implements IRepository {
 	private readonly tableName = "messages";
@@ -13,10 +12,12 @@ export class MessageRepository extends BaseRepository implements IRepository {
 		return {
 			tableName: this.tableName,
 			fields: `
-				sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+				type VARCHAR(10) NOT NULL CHECK (type IN ('user', 'system')),
+				sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
 				match_id INTEGER NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
-				content TEXT NOT NULL,
-				is_read BOOLEAN DEFAULT FALSE NOT NULL
+				content TEXT,
+				system_type VARCHAR(50),
+				data JSONB
 			`,
 			constraints: "",
 		};

@@ -5,7 +5,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export interface IAuthUserState {
 	user: AuthUser | null;
 	isInitialized: boolean;
-	unreadConversationsCount?: number;
 }
 
 const initialState: IAuthUserState = {
@@ -34,12 +33,6 @@ const authUserSlice = createSlice({
 				state.user.email = action.payload;
 			}
 		},
-		setUnreadMatchesCount: (
-			state,
-			action: PayloadAction<number | undefined>,
-		) => {
-			state.unreadConversationsCount = action.payload;
-		},
 	},
 });
 
@@ -48,6 +41,5 @@ export const {
 	setAuthInitialized,
 	setEmailToVerified,
 	changeEmail,
-	setUnreadMatchesCount,
 } = authUserSlice.actions;
 export default authUserSlice.reducer;

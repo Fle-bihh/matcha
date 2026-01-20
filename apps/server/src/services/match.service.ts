@@ -142,7 +142,6 @@ export class MatchService extends BaseService {
 		> | null>
 	> {
 		try {
-			const unreadOnly = filters.unread_only ?? false;
 			const offset = (pagination.page - 1) * pagination.limit;
 
 			const [matches, totalCount] = await Promise.all([
@@ -150,15 +149,9 @@ export class MatchService extends BaseService {
 					userId,
 					pagination.limit,
 					offset,
-					unreadOnly,
 				),
-				this.matchRepository.countMatches(userId, unreadOnly),
+				this.matchRepository.countMatches(userId),
 			]);
-
-			const unreadCount = await this.matchRepository.countMatches(
-				userId,
-				true,
-			);
 
 			const totalPages = Math.ceil(totalCount / pagination.limit);
 
@@ -175,9 +168,7 @@ export class MatchService extends BaseService {
 					has_next_page: pagination.page < totalPages,
 					has_previous_page: pagination.page > 1,
 				},
-				extra_data: {
-					unread_conversations_count: unreadCount,
-				},
+				extra_data: {},
 			};
 
 			logger.info(

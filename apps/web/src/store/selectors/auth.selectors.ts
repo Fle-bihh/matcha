@@ -9,11 +9,6 @@ export const selectAuthUser = createSelector(
 	(state): AuthUser | null => state.user,
 );
 
-export const selectUnreadConversationsCount = createSelector(
-	[selectAuthUserState],
-	(state): number | undefined => state.unreadConversationsCount,
-);
-
 export const selectIsAuthInitialized = createSelector(
 	[selectAuthUserState],
 	(state): boolean => state.isInitialized,
