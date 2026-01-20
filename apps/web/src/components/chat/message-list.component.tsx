@@ -15,9 +15,7 @@ interface MessageListProps {
 }
 
 export function MessageList({ onScroll, matchId }: MessageListProps) {
-	const messages = useSelector((state: TRootState) =>
-		selectMessagesByMatchId(state, matchId),
-	);
+	const messages = useSelector(selectMessagesByMatchId(matchId));
 	const hasMoreMessages = useSelector(selectHasMoreMessages);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const messagesContainerRef = useRef<HTMLDivElement>(null);

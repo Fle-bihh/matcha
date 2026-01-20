@@ -10,7 +10,7 @@ export const APP_PAGES = {
 	profileVisits: "visits",
 	user: "user/:id",
 	matches: "matches",
-	chat: "chat/:id",
+	chat: "chat/:matchId",
 	notFound: "*",
 	register: "register",
 	login: "login",

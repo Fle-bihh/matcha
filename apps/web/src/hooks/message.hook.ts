@@ -23,7 +23,8 @@ export function useMessages(matchId: string, loadPagerData = true) {
 		pagerKey: EPagerKeys.Messages,
 		fn: getMessages,
 		buildParams,
-		loadData: loadPagerData,
+		// loadData: loadPagerData,
+		loadData: false,
 	});
 
 	return {
