@@ -20,6 +20,7 @@ import {
 	UnsubscribeChannelRequestDto,
 	CreateReportDto,
 	CreateBlockDto,
+	CreateUserMessageDto,
 } from "@matcha/shared";
 import { PaginationDto } from "./api.types";
 
@@ -54,6 +55,8 @@ export enum EActionKeys {
 	UnsubscribeFromChannel = "unsubscribeFromChannel",
 	CreateReport = "createReport",
 	CreateBlock = "createBlock",
+	GetMessages = "getMessages",
+	CreateMessage = "createMessage",
 }
 
 export interface IActionDtoMap {
@@ -89,6 +92,8 @@ export interface IActionDtoMap {
 	[EActionKeys.UnsubscribeFromChannel]: UnsubscribeChannelRequestDto;
 	[EActionKeys.CreateReport]: CreateReportDto;
 	[EActionKeys.CreateBlock]: CreateBlockDto;
+	[EActionKeys.GetMessages]: { matchId: string } & PaginationDto;
+	[EActionKeys.CreateMessage]: CreateUserMessageDto;
 }
 
 export type ActionDto<K extends EActionKeys> = IActionDtoMap[K];

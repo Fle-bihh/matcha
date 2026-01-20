@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Message } from "../models";
+import { Message, UserMessage } from "../models";
 import { PaginatedResponse } from "../types";
 
 export const CreateUserMessageDtoSchema = z.object({
@@ -21,7 +21,9 @@ export const MatchIdParamsDtoSchema = z.object({
 
 export type MatchIdParamsDto = z.infer<typeof MatchIdParamsDtoSchema>;
 
-export interface CreateUserMessageResponseDto {}
+export interface CreateUserMessageResponseDto {
+	message: UserMessage;
+}
 
 export interface GetMessagesResponseDto {
 	messages: PaginatedResponse<Message>;

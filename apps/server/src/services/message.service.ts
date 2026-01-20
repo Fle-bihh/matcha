@@ -10,6 +10,7 @@ import {
 	StatusCodes,
 	SystemMessageType,
 	SystemMessageDataMap,
+	CreateUserMessageResponseDto,
 } from "@matcha/shared";
 
 export class MessageService extends BaseService {
@@ -24,7 +25,7 @@ export class MessageService extends BaseService {
 	public async createUserMessage(
 		senderId: number,
 		data: CreateUserMessageDto,
-	): Promise<ServiceResponse> {
+	): Promise<ServiceResponse<CreateUserMessageResponseDto | null>> {
 		try {
 			const { match_id, content } = data;
 
@@ -55,7 +56,9 @@ export class MessageService extends BaseService {
 				);
 			}
 
-			return ServiceResponse.success("Message sent successfully", null);
+			return ServiceResponse.success("Message sent successfully", {
+				message,
+			});
 		} catch (error) {
 			logger.error("Error creating user message:", error);
 			return ServiceResponse.failure(

@@ -14,3 +14,4 @@ export * from "./router.service";
 export * from "./location.service";
 export * from "./report.service";
 export * from "./block.service";
+export * from "./message.service";
