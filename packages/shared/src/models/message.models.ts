@@ -32,6 +32,6 @@ export type SystemMessageDataMap = {
 };
 
 export interface SystemMessage extends BaseMessage {
-	systemType: SystemMessageType;
+	system_type: SystemMessageType;
 	data: SystemMessageDataMap[SystemMessageType];
 }
