@@ -1,94 +1,102 @@
 import {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect,
-  useRef,
+	createContext,
+	useContext,
+	useState,
+	ReactNode,
+	useEffect,
+	useRef,
+	useMemo,
 } from "react";
 
 interface LayoutSizesContextType {
-  headerHeight: number;
-  setHeaderHeight: (height: number) => void;
-  profileDrawerWidth: number;
-  setProfileDrawerWidth: (width: number) => void;
+	headerHeight: number;
+	contentHeight: string;
+	setHeaderHeight: (height: number) => void;
+	profileDrawerWidth: number;
+	setProfileDrawerWidth: (width: number) => void;
 }
 
 const LayoutSizesContext = createContext<LayoutSizesContextType | undefined>(
-  undefined
+	undefined,
 );
 
 interface LayoutSizesProviderProps {
-  children: ReactNode;
+	children: ReactNode;
 }
 
 export function LayoutSizesProvider({ children }: LayoutSizesProviderProps) {
-  const [headerHeight, setHeaderHeight] = useState(0);
-  const [profileDrawerWidth, setProfileDrawerWidth] = useState(0);
-  return (
-    <LayoutSizesContext.Provider
-      value={{
-        headerHeight,
-        setHeaderHeight,
-        profileDrawerWidth,
-        setProfileDrawerWidth,
-      }}
-    >
-      {children}
-    </LayoutSizesContext.Provider>
-  );
+	const [headerHeight, setHeaderHeight] = useState(0);
+	const [profileDrawerWidth, setProfileDrawerWidth] = useState(0);
+	const contentHeight = useMemo(() => {
+		return `calc(100vh - ${headerHeight}px)`;
+	}, [headerHeight]);
+	return (
+		<LayoutSizesContext.Provider
+			value={{
+				headerHeight,
+				contentHeight,
+				setHeaderHeight,
+				profileDrawerWidth,
+				setProfileDrawerWidth,
+			}}
+		>
+			{children}
+		</LayoutSizesContext.Provider>
+	);
 }
 
 export function useLayoutSizes() {
-  const context = useContext(LayoutSizesContext);
-  if (context === undefined) {
-    throw new Error("useLayoutSizes must be used within a LayoutSizesProvider");
-  }
-  return context;
+	const context = useContext(LayoutSizesContext);
+	if (context === undefined) {
+		throw new Error(
+			"useLayoutSizes must be used within a LayoutSizesProvider",
+		);
+	}
+	return context;
 }
 
 export function useHeaderRef<T extends HTMLElement>() {
-  const { setHeaderHeight } = useLayoutSizes();
-  const elementRef = useRef<T>(null);
+	const { setHeaderHeight } = useLayoutSizes();
+	const elementRef = useRef<T>(null);
 
-  useEffect(() => {
-    if (!elementRef.current) return;
+	useEffect(() => {
+		if (!elementRef.current) return;
 
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setHeaderHeight(entry.target.clientHeight);
-      }
-    });
+		const resizeObserver = new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				setHeaderHeight(entry.target.clientHeight);
+			}
+		});
 
-    resizeObserver.observe(elementRef.current);
+		resizeObserver.observe(elementRef.current);
 
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [setHeaderHeight]);
+		return () => {
+			resizeObserver.disconnect();
+		};
+	}, [setHeaderHeight]);
 
-  return elementRef;
+	return elementRef;
 }
 
 export function useProfileDrawerRef<T extends HTMLElement>() {
-  const { setProfileDrawerWidth } = useLayoutSizes();
-  const elementRef = useRef<T>(null);
+	const { setProfileDrawerWidth } = useLayoutSizes();
+	const elementRef = useRef<T>(null);
 
-  useEffect(() => {
-    if (!elementRef.current) return;
+	useEffect(() => {
+		if (!elementRef.current) return;
 
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setProfileDrawerWidth(entry.target.clientWidth);
-      }
-    });
+		const resizeObserver = new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				setProfileDrawerWidth(entry.target.clientWidth);
+			}
+		});
 
-    resizeObserver.observe(elementRef.current);
+		resizeObserver.observe(elementRef.current);
 
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [setProfileDrawerWidth]);
+		return () => {
+			resizeObserver.disconnect();
+		};
+	}, [setProfileDrawerWidth]);
 
-  return elementRef;
+	return elementRef;
 }
