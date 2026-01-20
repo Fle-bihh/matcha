@@ -80,6 +80,7 @@ export class MessageRepository extends BaseRepository implements IRepository {
 				orderBy: "created_at DESC",
 				limit,
 				offset,
+				includeDeleted: true,
 			});
 
 			const total = await this.countDocs(this.tableName, {
