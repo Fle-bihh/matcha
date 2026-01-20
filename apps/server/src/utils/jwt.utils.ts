@@ -12,6 +12,7 @@ export class JwtUtils {
 	static generateTokens(user: AuthUser): TokenPair {
 		const payload: JwtPayload = {
 			user_id: user.id,
+			created_at: user.created_at,
 		};
 
 		const accessToken = jwt.sign(payload, config.jwtSecret, {
