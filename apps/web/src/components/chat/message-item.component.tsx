@@ -1,5 +1,11 @@
-import { Box, Paper, Typography } from "@mui/material";
-import { Message, MessageType, UserMessage } from "@matcha/shared";
+import {
+	Message,
+	MessageType,
+	SystemMessage,
+	UserMessage,
+} from "@matcha/shared";
+import { UserMessageComponent } from "./user-message.component";
+import { SystemMessageComponent } from "./system-message.component";
 
 interface MessageItemProps {
 	message: Message;
@@ -7,48 +13,8 @@ interface MessageItemProps {
 
 export function MessageItem({ message }: MessageItemProps) {
 	if (message.type === MessageType.User) {
-		const userMessage = message as UserMessage;
-		return (
-			<Box
-				sx={{
-					mb: 2,
-					display: "flex",
-					justifyContent: "flex-start",
-				}}
-			>
-				<Paper
-					sx={{
-						p: 2,
-						maxWidth: "70%",
-						bgcolor: "background.paper",
-					}}
-				>
-					<Typography variant="body1">
-						{userMessage.content}
-					</Typography>
-					<Typography
-						variant="caption"
-						color="text.secondary"
-						sx={{ mt: 0.5, display: "block" }}
-					>
-						{new Date(message.created_at).toLocaleString()}
-					</Typography>
-				</Paper>
-			</Box>
-		);
+		return <UserMessageComponent message={message as UserMessage} />;
 	}
 
-	return (
-		<Box
-			sx={{
-				mb: 2,
-				display: "flex",
-				justifyContent: "center",
-			}}
-		>
-			<Typography variant="caption" color="text.secondary">
-				{message.type === MessageType.System && "System message"}
-			</Typography>
-		</Box>
-	);
+	return <SystemMessageComponent message={message as SystemMessage} />;
 }
