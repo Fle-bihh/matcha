@@ -6,6 +6,7 @@ import {
 	UserStatusUpdateDto,
 	LikeCreatedSocketDto,
 	LikeDeletedSocketDto,
+	BlockCreatedSocketDto,
 } from "../dto";
 import { Match, MatchWithDetails } from "../models";
 
@@ -21,6 +22,7 @@ export enum EWebSocketEvents {
 	Unsubscribe = "unsubscribe",
 	SubscriptionConfirmed = "subscription:confirmed",
 	UserStatusUpdate = "user:status:update",
+	BlockCreated = "block:created",
 }
 
 export interface IWebSocketEventDtoMap {
@@ -35,4 +37,5 @@ export interface IWebSocketEventDtoMap {
 	[EWebSocketEvents.UserStatusUpdate]: UserStatusUpdateDto;
 	[EWebSocketEvents.LikeCreated]: LikeCreatedSocketDto;
 	[EWebSocketEvents.LikeDeleted]: LikeDeletedSocketDto;
+	[EWebSocketEvents.BlockCreated]: BlockCreatedSocketDto;
 }

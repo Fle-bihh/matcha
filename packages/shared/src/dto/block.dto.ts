@@ -10,3 +10,7 @@ export const CreateBlockDtoSchema = z.object({
 export type CreateBlockDto = z.infer<typeof CreateBlockDtoSchema>;
 
 export interface CreateBlockResponseDto {}
+
+export interface BlockCreatedSocketDto {
+	blocker_id: number;
+}

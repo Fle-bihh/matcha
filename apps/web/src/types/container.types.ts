@@ -15,6 +15,7 @@ export enum ETokens {
 	VisitService = "VisitService",
 	WebSocketSubscriptionService = "WebSocketSubscriptionService",
 	ReportService = "ReportService",
+	BlockService = "BlockService",
 }
 
 export interface IContainer {

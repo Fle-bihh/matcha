@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { selectEntityById } from "@/store";
-import { EEntityTypes, StoreUser } from "@/types";
+import { selectUserById } from "@/store";
+import { TRootState } from "@/types";
 import { useAuthUser } from "./auth.hook";
 import { useVisits } from "./visit.hook";
 import { useScroll } from "./scroll.hooks";
@@ -14,10 +14,11 @@ interface UserHookProps {
 }
 export const useUser = (props: UserHookProps) => {
 	const { userId, shouldTrackVisit = false, shouldFetch = false } = props;
-	const user = useSelector(
-		selectEntityById(EEntityTypes.Users, userId ?? ""),
+	const userSelector = useCallback(
+		(state: TRootState) => selectUserById(state, userId),
+		[userId],
 	);
-
+	const user = useSelector(userSelector);
 	const { scrollToTop } = useScroll();
 
 	const { getUserById } = useAuthUser();

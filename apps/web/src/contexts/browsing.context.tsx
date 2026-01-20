@@ -9,7 +9,7 @@ import {
 } from "react";
 import { useSelector } from "react-redux";
 import { usePager } from "@/hooks";
-import { selectFilters } from "@/store";
+import { selectFilters, selectBrowsingUsers } from "@/store";
 import { EPagerKeys } from "@/constants";
 import { EEntityTypes, StoreUser } from "@/types";
 import { User, BrowsingFilters, BrowsingParams } from "@matcha/shared";
@@ -33,6 +33,7 @@ function useBrowsingState() {
 		useBrowsing();
 	const filters = useSelector(selectFilters(FILTER_KEY));
 	const { isLoading } = useActionsData([EActionKeys.GetUsers]);
+	const browsingUsers = useSelector(selectBrowsingUsers);
 
 	const buildParams = useCallback(
 		(pagination: PaginationDto): BrowsingParams => ({
@@ -95,6 +96,7 @@ function useBrowsingState() {
 
 	return {
 		...pager,
+		data: browsingUsers,
 		refresh,
 		filters: filters || {},
 		clearFilters: clearFiltersHandler,

@@ -16,7 +16,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import LinkOffIcon from "@mui/icons-material/LinkOff";
 import { useParams } from "react-router-dom";
 import { AuthImage, FameScore, UserStatus } from "@/components";
-import { useLike, useReport, useRouting, useUser } from "@/hooks";
+import { useBlock, useLike, useReport, useRouting, useUser } from "@/hooks";
 import MockImage from "@/assets/imperial-stormtrooper-picture.png";
 
 export function UserPage() {
@@ -24,6 +24,7 @@ export function UserPage() {
 	const { goBack } = useRouting();
 	const { createLike, unlikeUser } = useLike();
 	const { createReport } = useReport();
+	const { createBlock } = useBlock();
 
 	const user = useUser({
 		userId: id,
@@ -59,9 +60,7 @@ export function UserPage() {
 							height: "100%",
 						}}
 					>
-						<Typography variant="h6">
-							User not found in store
-						</Typography>
+						<Typography variant="h6">User not found</Typography>
 					</Box>
 				</Container>
 			</>
@@ -88,6 +87,10 @@ export function UserPage() {
 
 	const handleReport = () => {
 		createReport({ reported_id: user.id, reason: "This user is fake" });
+	};
+
+	const handleBlock = () => {
+		createBlock({ blocked_id: user.id });
 	};
 
 	return (
@@ -248,6 +251,24 @@ export function UserPage() {
 								<Chip
 									label="Reported"
 									color="warning"
+									size="medium"
+								/>
+							)}
+
+							{!user.is_blocked && (
+								<Button
+									variant="outlined"
+									color="secondary"
+									onClick={handleBlock}
+									size="medium"
+								>
+									Block User
+								</Button>
+							)}
+							{user.is_blocked && (
+								<Chip
+									label="Blocked"
+									color="secondary"
 									size="medium"
 								/>
 							)}

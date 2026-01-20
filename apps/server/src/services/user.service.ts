@@ -169,7 +169,7 @@ export class UserService extends BaseService {
 			);
 			if (isBlocked) {
 				return ServiceResponse.failure(
-					"You have blocked this user",
+					"You have blocked this user or you are blocked by him",
 					null,
 					StatusCodes.FORBIDDEN,
 				);

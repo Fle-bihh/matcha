@@ -15,3 +15,4 @@ export * from "./visit.hook";
 export * from "./websocket-subscription.hook";
 export * from "./window.hook";
 export * from "./report.hook";
+export * from "./block.hook";

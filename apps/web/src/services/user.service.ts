@@ -93,9 +93,9 @@ export class UserService extends BaseService {
 			{ auth: true },
 		);
 
-		const { user, status, is_reported, ...likingDetails } = response.data;
-
 		if (this.isSuccess(response)) {
+			const { user, status, is_reported, ...likingDetails } =
+				response.data;
 			this.dispatch(
 				setEntity({
 					entityType: EEntityTypes.Users,

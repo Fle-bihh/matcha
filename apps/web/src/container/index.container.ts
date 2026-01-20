@@ -12,6 +12,7 @@ import {
 	VisitService,
 	WebSocketSubscriptionService,
 	ReportService,
+	BlockService,
 } from "@/services";
 import { LocationService } from "@/services";
 import { Store } from "@reduxjs/toolkit";
@@ -37,6 +38,7 @@ const serviceConstructors: Record<ETokens, ServiceConstructor> = {
 	[ETokens.VisitService]: VisitService,
 	[ETokens.WebSocketSubscriptionService]: WebSocketSubscriptionService,
 	[ETokens.ReportService]: ReportService,
+	[ETokens.BlockService]: BlockService,
 } as const;
 
 export class Container implements IContainer {

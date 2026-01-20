@@ -1,7 +1,12 @@
 import { IContainer, ETokens, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { BlockRepository } from "@/repositories";
-import { CreateBlockDto, StatusCodes, logger } from "@matcha/shared";
+import {
+	CreateBlockDto,
+	EWebSocketEvents,
+	StatusCodes,
+	logger,
+} from "@matcha/shared";
 
 export class BlockService extends BaseService {
 	constructor(container: IContainer) {
@@ -13,10 +18,18 @@ export class BlockService extends BaseService {
 	}
 
 	public async checkBlockExists(
-		blockerId: number,
-		blockedId: number,
+		userIdA: number,
+		UserIdB: number,
 	): Promise<boolean> {
-		return this.blockRepository.checkBlockExists(blockerId, blockedId);
+		const aBlockedB = await this.blockRepository.checkBlockExists(
+			userIdA,
+			UserIdB,
+		);
+		const bBlockedA = await this.blockRepository.checkBlockExists(
+			UserIdB,
+			userIdA,
+		);
+		return aBlockedB || bBlockedA;
 	}
 
 	public async createBlock(
@@ -51,7 +64,7 @@ export class BlockService extends BaseService {
 				await this.likeService.deleteAllLikesBetweenUsers(
 					blockerId,
 					blocked_id,
-					false,
+					"A match was canceled.",
 				);
 
 			if (!this.isSuccess(cleanupResponse)) {
@@ -74,6 +87,14 @@ export class BlockService extends BaseService {
 					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
+
+			this.webSocketService.emitToUser(
+				blocked_id,
+				EWebSocketEvents.BlockCreated,
+				{
+					blocker_id: blockerId,
+				},
+			);
 
 			return ServiceResponse.success(
 				"Block created successfully",

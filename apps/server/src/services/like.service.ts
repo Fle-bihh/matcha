@@ -144,7 +144,7 @@ export class LikeService extends BaseService {
 	public async deleteAllLikesBetweenUsers(
 		userAId: number,
 		userBId: number,
-		emitWebSocketEvents: boolean = false,
+		webSocketEventMessage: string = "The user has unliked you, match deleted.",
 	): Promise<ServiceResponse<{ match_deleted: boolean } | null>> {
 		try {
 			let hasDeletedMatch = false;
@@ -175,24 +175,22 @@ export class LikeService extends BaseService {
 
 				hasDeletedMatch = true;
 
-				if (emitWebSocketEvents) {
-					this.webSocketService.emitToUser(
-						userAId,
-						EWebSocketEvents.MatchDeleted,
-						{
-							match_id: existingMatch.id,
-						},
-					);
-					this.webSocketService.emitToUser(
-						userBId,
-						EWebSocketEvents.MatchDeleted,
-						{
-							match_id: existingMatch.id,
-							unlike_id: userAId,
-							message: "The user has unliked you, match deleted.",
-						},
-					);
-				}
+				this.webSocketService.emitToUser(
+					userAId,
+					EWebSocketEvents.MatchDeleted,
+					{
+						match_id: existingMatch.id,
+					},
+				);
+				this.webSocketService.emitToUser(
+					userBId,
+					EWebSocketEvents.MatchDeleted,
+					{
+						match_id: existingMatch.id,
+						unlike_id: userAId,
+						message: webSocketEventMessage,
+					},
+				);
 			}
 
 			const deletions = await Promise.all([
@@ -243,11 +241,7 @@ export class LikeService extends BaseService {
 				);
 			}
 
-			const res = await this.deleteAllLikesBetweenUsers(
-				likerId,
-				likedId,
-				true,
-			);
+			const res = await this.deleteAllLikesBetweenUsers(likerId, likedId);
 
 			if (!this.isSuccess(res) || !res.data) {
 				return ServiceResponse.failure(
