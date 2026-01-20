@@ -9,7 +9,7 @@ import { EEntityTypes, ServiceResponse } from "@/types";
 import type { PaginationDto } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
-import { EPagerKeys } from "@/constants";
+import { EPagerKeys, getMessagesPagerKey } from "@/constants";
 import { setEntity } from "@/store";
 
 export class MessageService extends BaseService {
@@ -35,7 +35,7 @@ export class MessageService extends BaseService {
 
 		this.handlePaginatedResponse(
 			{ data: messages.data, meta: messages.meta },
-			EPagerKeys.Messages,
+			getMessagesPagerKey(matchId),
 			EEntityTypes.Messages,
 			params?.refresh !== true,
 		);

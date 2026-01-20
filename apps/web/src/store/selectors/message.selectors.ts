@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { EPagerKeys } from "@/constants";
+import { EPagerKeys, getMessagesPagerKey } from "@/constants";
 import { EEntityTypes, TRootState } from "@/types";
 import { selectPagerMeta } from "./pagination.selectors";
 import { selectEntitiesByType } from "./entity.selectors";
@@ -35,10 +35,13 @@ export const selectLastMessageByMatchId = (matchId?: string | number) =>
 		},
 	);
 
-export const selectHasMoreMessages = createSelector(
-	[selectPagerMeta(EPagerKeys.Messages)],
-	(meta) => {
+export const selectHasMoreMessages = (matchId?: string) => {
+	if (!matchId) {
+		return () => false;
+	}
+	const pagerKey = getMessagesPagerKey(matchId);
+	return createSelector([selectPagerMeta(pagerKey)], (meta) => {
 		if (!meta) return false;
 		return meta.has_next_page;
-	},
-);
+	});
+};

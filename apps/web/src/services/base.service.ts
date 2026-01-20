@@ -15,7 +15,7 @@ import {
 } from "@/store";
 import { ApiResponse, BaseEntity, PaginatedResponse } from "@matcha/shared";
 import { ApiRequestResponse } from "@/types";
-import { EPagerKeys } from "@/constants";
+import { EPagerKeys, TPagerKey } from "@/constants";
 import { BrowsingService } from "./browsing.service";
 import { MatchService } from "./match.service";
 import { WebSocketService } from "./websocket.service";
@@ -77,7 +77,7 @@ export abstract class BaseService {
 
 	protected handlePaginatedResponse<T extends EEntityTypes>(
 		response: PaginatedResponse<IEntityTypeMap[T]>,
-		pagerKey: EPagerKeys,
+		pagerKey: TPagerKey,
 		entityType: T,
 		append?: boolean,
 		strict?: boolean,

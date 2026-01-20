@@ -1,12 +1,12 @@
 import { useSelector } from "react-redux";
 import { selectPaginatedEntities, selectPagerMeta } from "@/store";
-import { EPagerKeys } from "@/constants";
+import { TPagerKey } from "@/constants";
 import { EEntityTypes, IEntityTypeMap } from "@/types";
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import { PaginationDto } from "@/types";
 
 interface IPagerHookOptions<TParams = PaginationDto> {
-	pagerKey: EPagerKeys;
+	pagerKey: TPagerKey;
 	fn: (params: TParams) => void;
 	loadData?: boolean;
 	defaultLimit?: number;

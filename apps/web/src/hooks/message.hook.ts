@@ -1,8 +1,8 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { usePager } from "./pagination.hook";
 import { useDispatchActions } from "./actions.hooks";
 import { MessageActions } from "@/store";
-import { EPagerKeys } from "@/constants";
+import { getMessagesPagerKey } from "@/constants";
 import { EEntityTypes } from "@/types";
 import type { PaginationDto } from "@/types";
 
@@ -10,6 +10,8 @@ export function useMessages(matchId: string, loadPagerData = false) {
 	const { getMessages, createMessage } = useDispatchActions({
 		...MessageActions,
 	});
+
+	const pagerKey = useMemo(() => getMessagesPagerKey(matchId), [matchId]);
 
 	const buildParams = useCallback(
 		(pagination: PaginationDto): { matchId: string } & PaginationDto => ({
@@ -20,7 +22,7 @@ export function useMessages(matchId: string, loadPagerData = false) {
 	);
 
 	const pager = usePager(EEntityTypes.Messages, {
-		pagerKey: EPagerKeys.Messages,
+		pagerKey,
 		fn: getMessages,
 		buildParams,
 		loadData: loadPagerData,

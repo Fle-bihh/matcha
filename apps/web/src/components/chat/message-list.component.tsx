@@ -16,7 +16,7 @@ interface MessageListProps {
 
 export function MessageList({ onScroll, matchId }: MessageListProps) {
 	const messages = useSelector(selectMessagesByMatchId(matchId));
-	const hasMoreMessages = useSelector(selectHasMoreMessages);
+	const hasMoreMessages = useSelector(selectHasMoreMessages(matchId));
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const messagesContainerRef = useRef<HTMLDivElement>(null);
 	const previousMessagesRef = useRef<typeof messages>([]);
