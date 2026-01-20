@@ -58,7 +58,11 @@ const entitiesSlice = createSlice({
 			const sanitizedEntities = sanitizeEntities(entities);
 			sanitizedEntities.forEach((entity) => {
 				if (entity && typeof entity === "object" && "id" in entity) {
-					state[entityType][entity.id] = entity;
+					const existingEntity = state[entityType][entity.id] || {};
+					state[entityType][entity.id] = {
+						...existingEntity,
+						...entity,
+					};
 				}
 			});
 		},
