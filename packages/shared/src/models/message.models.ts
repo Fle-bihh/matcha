@@ -22,8 +22,8 @@ export enum SystemMessageType {
 }
 
 export interface MatchStartedSystemMessageData {
-	username_1: string;
-	username_2: string;
+	first_name_1: string;
+	first_name_2: string;
 	started_at: string;
 }
 

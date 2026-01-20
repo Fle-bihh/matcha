@@ -12,6 +12,7 @@ import {
 	PaginatedResponse,
 	PaginationParams,
 	StatusCodes,
+	SystemMessageType,
 } from "@matcha/shared";
 
 export class MatchService extends BaseService {
@@ -62,15 +63,25 @@ export class MatchService extends BaseService {
 				);
 			}
 
+			const lastMessage = await this.messageService.createSystemMessage(
+				match.id,
+				SystemMessageType.MatchStarted,
+				{
+					first_name_1: matchDetailed.other_user.first_name,
+					first_name_2: otherUserMatchDetailed.other_user.first_name,
+					started_at: match.created_at,
+				},
+			);
+
 			this.webSocketService.emitToUser(
 				likerId,
 				EWebSocketEvents.MatchCreated,
-				matchDetailed,
+				{ ...matchDetailed, last_message: lastMessage },
 			);
 			this.webSocketService.emitToUser(
 				likedId,
 				EWebSocketEvents.MatchCreated,
-				otherUserMatchDetailed,
+				{ ...otherUserMatchDetailed, last_message: lastMessage },
 			);
 
 			return ServiceResponse.success(
