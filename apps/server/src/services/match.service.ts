@@ -131,6 +131,47 @@ export class MatchService extends BaseService {
 		}
 	}
 
+	public async verifyUserInMatch(
+		userId: number,
+		matchId: number,
+	): Promise<ServiceResponse<Match | null>> {
+		try {
+			const match = await this.matchRepository.getDoc<Match>(
+				"matches",
+				matchId,
+			);
+
+			if (!match) {
+				return ServiceResponse.failure<Match | null>(
+					"Match not found",
+					null,
+					StatusCodes.NOT_FOUND,
+				);
+			}
+
+			if (match.user1_id !== userId && match.user2_id !== userId) {
+				return ServiceResponse.failure<Match | null>(
+					"You are not part of this match",
+					null,
+					StatusCodes.FORBIDDEN,
+				);
+			}
+
+			return ServiceResponse.success<Match | null>(
+				"User verified in match",
+				match,
+				StatusCodes.OK,
+			);
+		} catch (error) {
+			logger.error("Error in verifyUserInMatch:", error);
+			return ServiceResponse.failure<Match | null>(
+				"An error occurred while verifying match access",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR,
+			);
+		}
+	}
+
 	public async getMatches(
 		userId: number,
 		pagination: PaginationParams,

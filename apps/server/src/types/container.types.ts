@@ -25,6 +25,7 @@ export enum ETokens {
 	ReportService = "ReportService",
 	BlockRepository = "BlockRepository",
 	BlockService = "BlockService",
+	MessageService = "MessageService",
 }
 
 export const REPOSITORY_TOKENS: ETokens[] = [

@@ -276,16 +276,18 @@ export class MatchRepository extends BaseRepository implements IRepository {
 		if (row.last_message_type === "user") {
 			return {
 				...baseMessage,
+				type: row.last_message_type,
 				sender_id: row.last_message_sender_id,
 				content: row.last_message_content,
 			};
-		} else {
-			return {
-				...baseMessage,
-				systemType: row.last_message_system_type,
-				data: row.last_message_data,
-			};
 		}
+
+		return {
+			...baseMessage,
+			type: row.last_message_type,
+			system_type: row.last_message_system_type,
+			data: row.last_message_data,
+		};
 	}
 
 	public async countMatches(userId: number): Promise<number> {
