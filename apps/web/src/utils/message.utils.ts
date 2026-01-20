@@ -2,6 +2,8 @@ import {
 	SystemMessage,
 	SystemMessageType,
 	MatchStartedSystemMessageData,
+	Message,
+	MessageType,
 } from "@matcha/shared";
 
 function generateMatchStartedContent(
@@ -20,4 +22,20 @@ export function getSystemMessageContent(message: SystemMessage): string {
 		return "System message";
 	}
 	return generator(message.data as never);
+}
+
+export function getMessagePreview(message: Message, maxLength = 50): string {
+	if (message.type === MessageType.User) {
+		const userMessage = message as Message & { content: string };
+		const preview = userMessage.content.trim();
+		return preview.length > maxLength
+			? `${preview.substring(0, maxLength)}...`
+			: preview;
+	} else {
+		const systemMessage = message as SystemMessage;
+		const systemContent = getSystemMessageContent(systemMessage);
+		return systemContent.length > maxLength
+			? `${systemContent.substring(0, maxLength)}...`
+			: systemContent;
+	}
 }

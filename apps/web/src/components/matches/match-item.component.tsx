@@ -9,6 +9,7 @@ import {
 import { useRouting } from "@/hooks";
 import { APP_ROUTES } from "@/constants";
 import { StoreMatch } from "@/types";
+import { LastMessageInfo } from "./last-message-info.component";
 
 interface MatchItemProps {
 	match: StoreMatch;
@@ -65,18 +66,7 @@ export function MatchItem({ match }: MatchItemProps) {
 				}
 				sx={{ pr: 2 }}
 			/>
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "flex-end",
-					minWidth: 80,
-				}}
-			>
-				<Typography variant="caption" color="text.secondary">
-					Placeholder
-				</Typography>
-			</Box>
+			<LastMessageInfo matchId={match.id} />
 		</ListItem>
 	);
 }

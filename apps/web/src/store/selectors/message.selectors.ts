@@ -16,6 +16,25 @@ export const selectMessagesByMatchId = (matchId?: string) =>
 		},
 	);
 
+export const selectLastMessageByMatchId = (matchId?: string | number) =>
+	createSelector(
+		[selectEntitiesByType(EEntityTypes.Messages)],
+		(messages) => {
+			if (!matchId) return undefined;
+			const matchMessages = Object.values(messages).filter(
+				(message) =>
+					message &&
+					message.match_id === parseInt(matchId.toString(), 10),
+			);
+			if (matchMessages.length === 0) return undefined;
+			return matchMessages.reduce((latest, current) =>
+				new Date(current.created_at) > new Date(latest.created_at)
+					? current
+					: latest,
+			);
+		},
+	);
+
 export const selectHasMoreMessages = createSelector(
 	[selectPagerMeta(EPagerKeys.Messages)],
 	(meta) => {
