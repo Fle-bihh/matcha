@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Box, TextField, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { useActionsData } from "@/hooks";
@@ -10,25 +10,33 @@ interface MessageInputProps {
 
 export function MessageInput({ onSendMessage }: MessageInputProps) {
 	const [messageText, setMessageText] = useState("");
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	const { isLoading: isSending } = useActionsData([
 		EActionKeys.CreateMessage,
 	]);
 
-	const handleSendMessage = () => {
+	const handleSendMessage = useCallback(() => {
 		if (!messageText.trim()) return;
 
 		const messageContent = messageText.trim();
 		setMessageText("");
 		onSendMessage(messageContent);
-	};
 
-	const handleKeyPress = (e: React.KeyboardEvent) => {
-		if (e.key === "Enter" && !e.shiftKey) {
-			e.preventDefault();
-			handleSendMessage();
-		}
-	};
+		setTimeout(() => {
+			inputRef.current?.focus();
+		}, 0);
+	}, [messageText, onSendMessage]);
+
+	const handleKeyPress = useCallback(
+		(e: React.KeyboardEvent) => {
+			if (e.key === "Enter" && !e.shiftKey) {
+				e.preventDefault();
+				handleSendMessage();
+			}
+		},
+		[handleSendMessage],
+	);
 
 	return (
 		<Box
@@ -48,6 +56,7 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
 				placeholder="Type a message..."
 				disabled={isSending}
 				variant="outlined"
+				inputRef={inputRef}
 			/>
 			<IconButton
 				color="primary"

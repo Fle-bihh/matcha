@@ -19,14 +19,29 @@ export function MessageList({ onScroll, matchId }: MessageListProps) {
 	const hasMoreMessages = useSelector(selectHasMoreMessages);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const messagesContainerRef = useRef<HTMLDivElement>(null);
+	const previousMessagesRef = useRef<typeof messages>([]);
 
 	const { isLoading: isLoadingMessages } = useActionsData([
 		EActionKeys.GetMessages,
 	]);
 
 	useEffect(() => {
-		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages?.length]);
+		const previousMessages = previousMessagesRef.current;
+
+		if (messages.length > 0 && previousMessages.length > 0) {
+			const lastPreviousMessage =
+				previousMessages[previousMessages.length - 1];
+			const lastCurrentMessage = messages[messages.length - 1];
+
+			if (lastPreviousMessage?.id !== lastCurrentMessage?.id) {
+				messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+			}
+		} else if (previousMessages.length === 0 && messages.length > 0) {
+			messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+		}
+
+		previousMessagesRef.current = messages;
+	}, [messages]);
 
 	const handleScroll = () => {
 		if (!messagesContainerRef.current) return;

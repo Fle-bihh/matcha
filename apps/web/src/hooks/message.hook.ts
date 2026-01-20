@@ -6,7 +6,7 @@ import { EPagerKeys } from "@/constants";
 import { EEntityTypes } from "@/types";
 import type { PaginationDto } from "@/types";
 
-export function useMessages(matchId: string, loadPagerData = true) {
+export function useMessages(matchId: string, loadPagerData = false) {
 	const { getMessages, createMessage } = useDispatchActions({
 		...MessageActions,
 	});

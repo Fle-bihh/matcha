@@ -15,7 +15,6 @@ export class MessageHandler extends BaseHandler {
 
 	private handleNewMessage = (dto: MessageCreatedSocketDto): void => {
 		const { message } = dto;
-		console.log("Received new message via WebSocket:", message);
 		this.dispatch(
 			patchEntity({
 				entityType: EEntityTypes.Messages,
