@@ -1,12 +1,19 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { EPagerKeys } from "@/constants";
-import { EEntityTypes } from "@/types";
-import { selectPaginatedData, selectPagerMeta } from "./pagination.selectors";
+import { EEntityTypes, TRootState } from "@/types";
+import { selectPagerMeta } from "./pagination.selectors";
+import { selectEntitiesByType } from "./entity.selectors";
 
-export const selectMessages = createSelector(
-	[selectPaginatedData(EPagerKeys.Messages, EEntityTypes.Messages)],
-	({ data }) => data,
-);
+export const selectMessagesByMatchId = (
+	state: TRootState,
+	matchId?: string,
+) => {
+	if (!matchId) return [];
+	const messages = selectEntitiesByType(EEntityTypes.Messages)(state);
+	return Object.values(messages).filter(
+		(message) => message && message.match_id === parseInt(matchId, 10),
+	);
+};
 
 export const selectMessagesMeta = createSelector(
 	[selectPagerMeta(EPagerKeys.Messages)],

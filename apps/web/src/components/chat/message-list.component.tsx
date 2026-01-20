@@ -3,18 +3,21 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { MessageItem } from "./message-item.component";
 import {
-	selectMessages,
+	selectMessagesByMatchId,
 	selectHasMoreMessages,
 } from "@/store/selectors/message.selectors";
 import { useActionsData } from "@/hooks";
-import { EActionKeys } from "@/types";
+import { EActionKeys, TRootState } from "@/types";
 
 interface MessageListProps {
 	onScroll: () => void;
+	matchId?: string;
 }
 
-export function MessageList({ onScroll }: MessageListProps) {
-	const messages = useSelector(selectMessages);
+export function MessageList({ onScroll, matchId }: MessageListProps) {
+	const messages = useSelector((state: TRootState) =>
+		selectMessagesByMatchId(state, matchId),
+	);
 	const hasMoreMessages = useSelector(selectHasMoreMessages);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -25,7 +28,7 @@ export function MessageList({ onScroll }: MessageListProps) {
 
 	useEffect(() => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages.length]);
+	}, [messages?.length]);
 
 	const handleScroll = () => {
 		if (!messagesContainerRef.current) return;

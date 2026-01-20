@@ -28,7 +28,7 @@ export function ChatPage() {
 			}}
 		>
 			<ChatHeader />
-			<MessageList onScroll={fetchNextPage} />
+			<MessageList onScroll={fetchNextPage} matchId={matchId} />
 			<MessageInput onSendMessage={handleSendMessage} />
 		</Container>
 	);
