@@ -6,10 +6,12 @@ import {
 	Avatar,
 	Typography,
 } from "@mui/material";
+import { useSelector } from "react-redux";
 import { useRouting } from "@/hooks";
 import { APP_ROUTES } from "@/constants";
-import { StoreMatch } from "@/types";
+import { StoreMatch, TRootState } from "@/types";
 import { LastMessageInfo } from "./last-message-info.component";
+import { selectOtherUserInMatch } from "@/store";
 
 interface MatchItemProps {
 	match: StoreMatch;
@@ -17,10 +19,18 @@ interface MatchItemProps {
 
 export function MatchItem({ match }: MatchItemProps) {
 	const { push } = useRouting();
+	const otherUser = useSelector((state: TRootState) =>
+		selectOtherUserInMatch(state, match),
+	);
 
 	const handleClick = () => {
 		push(APP_ROUTES.chat(match.id.toString()));
 	};
+
+	const displayName = otherUser
+		? `${otherUser.first_name} ${otherUser.last_name}`
+		: "Unknown User";
+	const profilePicture = otherUser?.pictures_urls?.[0];
 
 	return (
 		<ListItem
@@ -37,32 +47,33 @@ export function MatchItem({ match }: MatchItemProps) {
 		>
 			<ListItemAvatar>
 				<Avatar
+					src={profilePicture}
 					sx={{
 						width: 56,
 						height: 56,
 						mr: 2,
 					}}
 				>
-					{match.user1_id}
+					{otherUser?.first_name?.[0] || "?"}
 				</Avatar>
 			</ListItemAvatar>
 			<ListItemText
 				primary={
-					<Typography variant="subtitle1">
-						Match #{match.id}
-					</Typography>
+					<Typography variant="subtitle1">{displayName}</Typography>
 				}
 				secondary={
-					<Typography
-						variant="body2"
-						color="text.secondary"
-						noWrap
-						sx={{
-							maxWidth: "calc(100% - 80px)",
-						}}
-					>
-						Users: {match.user1_id} & {match.user2_id}
-					</Typography>
+					otherUser?.age && (
+						<Typography
+							variant="body2"
+							color="text.secondary"
+							noWrap
+							sx={{
+								maxWidth: "calc(100% - 80px)",
+							}}
+						>
+							{otherUser.age} years old
+						</Typography>
+					)
 				}
 				sx={{ pr: 2 }}
 			/>
