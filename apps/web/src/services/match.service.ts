@@ -11,6 +11,7 @@ import { BaseService } from "./base.service";
 import { action } from "@/decorators";
 import { EPagerKeys } from "@/constants";
 import { patchEntity, setEntities } from "@/store";
+import { StoreMessage } from "@/types/message.types";
 
 export class MatchService extends BaseService {
 	async handleMatchWithDetails(match: MatchWithDetails): Promise<void> {
@@ -50,11 +51,15 @@ export class MatchService extends BaseService {
 
 		const otherUsers: User[] = [];
 		const matches: StoreMatch[] = [];
+		const messages: StoreMessage[] = [];
 
 		response.data.data.forEach((match) => {
-			const { other_user, ...matchData } = match;
+			const { other_user, last_message, ...matchData } = match;
 			otherUsers.push(other_user);
 			matches.push(matchData);
+			if (last_message) {
+				messages.push(last_message);
+			}
 		});
 
 		this.handlePaginatedResponse(
@@ -69,6 +74,13 @@ export class MatchService extends BaseService {
 			setEntities({
 				entityType: EEntityTypes.Users,
 				entities: otherUsers,
+			}),
+		);
+
+		this.dispatch(
+			setEntities({
+				entityType: EEntityTypes.Messages,
+				entities: messages,
 			}),
 		);
 
