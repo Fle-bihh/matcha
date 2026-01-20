@@ -65,7 +65,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 
 	private async onConnect(socket: AuthenticatedSocket): Promise<void> {
 		try {
-			const userId = socket.user.id;
+			const userId = socket.user.user_id;
 			this.connectionManager.add(userId, socket);
 			await this.userService.setUserOnline(userId);
 			logger.info(`User ${userId} connected with socket ${socket.id}`);
@@ -77,7 +77,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 
 	private async onDisconnect(socket: AuthenticatedSocket): Promise<void> {
 		try {
-			const userId = socket.user.id;
+			const userId = socket.user.user_id;
 			this.cleanupSocketSubscriptions(socket.id);
 			this.connectionManager.remove(userId);
 			await this.userService.setUserOffline(userId);

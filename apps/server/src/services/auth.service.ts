@@ -184,9 +184,9 @@ export class AuthService extends BaseService {
 		dto: RefreshTokenRequestDto,
 	): Promise<ServiceResponse<RefreshTokenResponseDto | null>> {
 		try {
-			const { userId } = JwtUtils.verifyRefreshToken(dto.refreshToken);
+			const { user_id } = JwtUtils.verifyRefreshToken(dto.refreshToken);
 
-			const userResponse = await this.userService.findById(userId);
+			const userResponse = await this.userService.findById(user_id);
 
 			if (!this.isSuccess(userResponse) || !userResponse.data) {
 				return ServiceResponse.failure(

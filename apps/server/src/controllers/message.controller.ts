@@ -17,9 +17,9 @@ export class MessageController extends BaseController {
 	@validate(CreateUserMessageDtoSchema, "body")
 	@route("POST", "create-message")
 	private async createMessage(req: Request, res: Response): Promise<void> {
-		const { id } = req.user!;
+		const { user_id } = req.user!;
 		const result = await this.messageService.createUserMessage(
-			id,
+			user_id,
 			req.validated?.body,
 		);
 		this.sendResult(res, result);
@@ -30,10 +30,10 @@ export class MessageController extends BaseController {
 	@validate(MatchIdParamsDtoSchema, "params")
 	@route("GET", "get-messages")
 	private async getMessages(req: Request, res: Response): Promise<void> {
-		const { id } = req.user!;
+		const { user_id } = req.user!;
 		const { id: matchId } = req.validated!.params;
 		const result = await this.messageService.getMessages(
-			id,
+			user_id,
 			matchId,
 			req.pagination!,
 		);

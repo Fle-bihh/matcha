@@ -18,9 +18,9 @@ export class LikeController extends BaseController {
 	@validate(CreateLikeDtoSchema, "body")
 	@route("POST", "like")
 	private async createLike(req: Request, res: Response): Promise<void> {
-		const { id } = req.user!;
+		const { user_id } = req.user!;
 		const result = await this.likeService.createLike(
-			id,
+			user_id,
 			req.validated?.body,
 		);
 		this.sendResult(res, result);
@@ -30,9 +30,9 @@ export class LikeController extends BaseController {
 	@validate(UserIdParamsDtoSchema, "params")
 	@route("DELETE", "unlike")
 	private async unlikeUser(req: Request, res: Response): Promise<void> {
-		const { id } = req.user!;
+		const { user_id } = req.user!;
 		const { id: liked_id } = req.validated!.params;
-		const result = await this.likeService.unlikeUser(id, liked_id);
+		const result = await this.likeService.unlikeUser(user_id, liked_id);
 		this.sendResult(res, result);
 	}
 }

@@ -223,14 +223,6 @@ export class MatchService extends BaseService {
 				extra_data: {},
 			};
 
-			logger.info(
-				`Retrieved ${
-					matches.length
-				} matches for user ID ${userId}. Details: ${JSON.stringify(
-					response.data,
-				)}`,
-			);
-
 			return ServiceResponse.success(
 				"Matches retrieved successfully",
 				response,

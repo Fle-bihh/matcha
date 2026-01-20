@@ -14,9 +14,9 @@ export class ReportController extends BaseController {
 	@validate(CreateReportDtoSchema, "body")
 	@route("POST", "report")
 	private async createReport(req: Request, res: Response): Promise<void> {
-		const { id } = req.user!;
+		const { user_id } = req.user!;
 		const result = await this.reportService.createReport(
-			id,
+			user_id,
 			req.validated?.body,
 		);
 		this.sendResult(res, result);

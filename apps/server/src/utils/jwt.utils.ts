@@ -11,23 +11,16 @@ export interface TokenPair {
 export class JwtUtils {
 	static generateTokens(user: AuthUser): TokenPair {
 		const payload: JwtPayload = {
-			id: user.id,
-			username: user.username,
-			email: user.email,
+			user_id: user.id,
 		};
 
 		const accessToken = jwt.sign(payload, config.jwtSecret, {
 			expiresIn: config.jwtExpiresIn as SignOptions["expiresIn"],
 		});
 
-		const refreshToken = jwt.sign(
-			{ userId: user.id },
-			config.jwtRefreshSecret,
-			{
-				expiresIn:
-					config.jwtRefreshExpiresIn as SignOptions["expiresIn"],
-			}
-		);
+		const refreshToken = jwt.sign(payload, config.jwtRefreshSecret, {
+			expiresIn: config.jwtRefreshExpiresIn as SignOptions["expiresIn"],
+		});
 
 		return { accessToken, refreshToken };
 	}
@@ -36,8 +29,8 @@ export class JwtUtils {
 		return jwt.verify(token, config.jwtSecret) as JwtPayload;
 	}
 
-	static verifyRefreshToken(token: string): { userId: number } {
-		return jwt.verify(token, config.jwtRefreshSecret) as { userId: number };
+	static verifyRefreshToken(token: string): JwtPayload {
+		return jwt.verify(token, config.jwtRefreshSecret) as JwtPayload;
 	}
 
 	static decodeToken(token: string): JwtPayload | null {

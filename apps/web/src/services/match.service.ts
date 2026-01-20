@@ -14,7 +14,7 @@ import { patchEntity, setEntities } from "@/store";
 
 export class MatchService extends BaseService {
 	async handleMatchWithDetails(match: MatchWithDetails): Promise<void> {
-		const { other_user, ...matchData } = match;
+		const { last_message, other_user, ...matchData } = match;
 
 		this.dispatch(
 			patchEntity({

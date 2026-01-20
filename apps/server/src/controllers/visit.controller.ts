@@ -14,9 +14,9 @@ export class VisitController extends BaseController {
 	@validate(CreateVisitDtoSchema, "body")
 	@route("POST", "create-visit")
 	private async createVisit(req: Request, res: Response): Promise<void> {
-		const { id } = req.user!;
+		const { user_id } = req.user!;
 		const result = await this.visitService.createVisit(
-			id,
+			user_id,
 			req.validated?.body,
 		);
 		this.sendResult(res, result);
@@ -29,10 +29,10 @@ export class VisitController extends BaseController {
 		req: Request,
 		res: Response,
 	): Promise<void> {
-		const { id } = req.user!;
+		const { user_id } = req.user!;
 		const { page, limit } = req.pagination!;
 		const result = await this.visitService.getVisitsReceived(
-			id,
+			user_id,
 			page,
 			limit,
 		);

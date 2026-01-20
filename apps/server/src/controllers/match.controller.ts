@@ -16,7 +16,7 @@ export class MatchController extends BaseController {
 	@route("GET", "get-matches")
 	private async getMatches(req: Request, res: Response): Promise<void> {
 		const result = await this.matchService.getMatches(
-			req.user?.id!,
+			req.user?.user_id!,
 			req.pagination!,
 			req.validated?.query!,
 		);

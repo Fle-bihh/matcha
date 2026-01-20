@@ -14,9 +14,9 @@ export class BlockController extends BaseController {
 	@validate(CreateBlockDtoSchema, "body")
 	@route("POST", "block")
 	private async createBlock(req: Request, res: Response): Promise<void> {
-		const { id } = req.user!;
+		const { user_id } = req.user!;
 		const result = await this.blockService.createBlock(
-			id,
+			user_id,
 			req.validated?.body,
 		);
 		this.sendResult(res, result);
