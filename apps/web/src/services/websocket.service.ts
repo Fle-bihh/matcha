@@ -16,6 +16,7 @@ import {
 	UserStatusHandler,
 	VisitHandler,
 } from "@/handlers";
+import { MessageHandler } from "@/handlers/message.handler";
 
 export class WebSocketService extends BaseService {
 	private socket: Socket | null = null;
@@ -30,6 +31,7 @@ export class WebSocketService extends BaseService {
 			new UserStatusHandler(container),
 			new LikeHandler(container),
 			new BlockHandler(container),
+			new MessageHandler(container),
 		];
 	}
 

@@ -142,6 +142,38 @@ export class MatchService extends BaseService {
 		}
 	}
 
+	public async getMatchById(
+		matchId: number,
+	): Promise<ServiceResponse<Match | null>> {
+		try {
+			const match = await this.matchRepository.getDoc<Match>(
+				"matches",
+				matchId,
+			);
+
+			if (!match) {
+				return ServiceResponse.failure<Match | null>(
+					"Match not found",
+					null,
+					StatusCodes.NOT_FOUND,
+				);
+			}
+
+			return ServiceResponse.success(
+				"Match retrieved successfully",
+				match,
+				StatusCodes.OK,
+			);
+		} catch (error) {
+			logger.error("Error in getMatchById:", error);
+			return ServiceResponse.failure(
+				"An error occurred while retrieving the match",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR,
+			);
+		}
+	}
+
 	public async verifyUserInMatch(
 		userId: number,
 		matchId: number,

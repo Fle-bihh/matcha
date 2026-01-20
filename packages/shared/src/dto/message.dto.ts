@@ -28,3 +28,7 @@ export interface CreateUserMessageResponseDto {
 export interface GetMessagesResponseDto {
 	messages: PaginatedResponse<Message>;
 }
+
+export interface MessageCreatedSocketDto {
+	message: Message;
+}

@@ -11,6 +11,7 @@ import {
 	SystemMessageType,
 	SystemMessageDataMap,
 	CreateUserMessageResponseDto,
+	EWebSocketEvents,
 } from "@matcha/shared";
 
 export class MessageService extends BaseService {
@@ -55,6 +56,19 @@ export class MessageService extends BaseService {
 					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 			}
+
+			const otherUserId =
+				matchResponse.data.user1_id === senderId
+					? matchResponse.data.user2_id
+					: matchResponse.data.user1_id;
+
+			this.webSocketService.emitToUser(
+				otherUserId,
+				EWebSocketEvents.MessageCreated,
+				{
+					message,
+				},
+			);
 
 			return ServiceResponse.success("Message sent successfully", {
 				message,
@@ -154,11 +168,44 @@ export class MessageService extends BaseService {
 		matchId: number,
 		systemType: T,
 		data: SystemMessageDataMap[T],
+		emitToUsers = false,
 	): Promise<Message | null> {
-		return this.messageRepository.createSystemMessage(
-			matchId,
-			systemType,
-			data,
-		);
+		try {
+			const message = await this.messageRepository.createSystemMessage(
+				matchId,
+				systemType,
+				data,
+			);
+
+			if (emitToUsers && message) {
+				const matchResponse =
+					await this.matchService.getMatchById(matchId);
+
+				if (this.isSuccess(matchResponse) && matchResponse.data) {
+					const { user1_id, user2_id } = matchResponse.data;
+
+					this.webSocketService.emitToUser(
+						user1_id,
+						EWebSocketEvents.MessageCreated,
+						{
+							message,
+						},
+					);
+
+					this.webSocketService.emitToUser(
+						user2_id,
+						EWebSocketEvents.MessageCreated,
+						{
+							message,
+						},
+					);
+				}
+			}
+
+			return message;
+		} catch (error) {
+			logger.error("Error creating system message:", error);
+			return null;
+		}
 	}
 }
