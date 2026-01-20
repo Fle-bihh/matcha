@@ -106,7 +106,18 @@ export class MatchRepository extends BaseRepository implements IRepository {
 				LEFT JOIN users u ON u.id = m.user2_id AND m.user1_id = ${otherUserId}
 				LEFT JOIN users u2 ON u2.id = m.user1_id AND m.user2_id = ${otherUserId}
 				LEFT JOIN LATERAL (
-					SELECT id, sender_id, match_id, content, is_read, created_at, updated_at, deleted_at
+				SELECT 
+					id, 
+					sender_id, 
+					match_id, 
+					type,
+					content, 
+					status,
+					received_at,
+					read_at,
+					created_at, 
+					updated_at, 
+					deleted_at
 					FROM messages
 					WHERE match_id = m.id AND deleted_at IS NULL
 					ORDER BY created_at DESC
@@ -197,8 +208,11 @@ export class MatchRepository extends BaseRepository implements IRepository {
 				msg.id as last_message_id,
 				msg.sender_id as last_message_sender_id,
 				msg.match_id as last_message_match_id,
+				msg.type as last_message_type,
 				msg.content as last_message_content,
-				msg.is_read as last_message_is_read,
+				msg.status as last_message_status,
+				msg.received_at as last_message_received_at,
+				msg.read_at as last_message_read_at,
 				msg.created_at as last_message_created_at,
 				msg.updated_at as last_message_updated_at,
 				msg.deleted_at as last_message_deleted_at
@@ -206,7 +220,18 @@ export class MatchRepository extends BaseRepository implements IRepository {
 			LEFT JOIN users u ON u.id = m.user2_id AND m.user1_id = ${userId}
 			LEFT JOIN users u2 ON u2.id = m.user1_id AND m.user2_id = ${userId}
 			LEFT JOIN LATERAL (
-				SELECT id, sender_id, match_id, content, is_read, created_at, updated_at, deleted_at
+				SELECT 
+					id, 
+					sender_id, 
+					match_id, 
+					type,
+					content, 
+					status,
+					received_at,
+					read_at,
+					created_at, 
+					updated_at, 
+					deleted_at
 				FROM messages
 				WHERE match_id = m.id AND deleted_at IS NULL
 				ORDER BY created_at DESC
@@ -272,8 +297,11 @@ export class MatchRepository extends BaseRepository implements IRepository {
 			id: row.last_message_id,
 			sender_id: row.last_message_sender_id,
 			match_id: row.last_message_match_id,
+			type: row.last_message_type,
 			content: row.last_message_content,
-			is_read: row.last_message_is_read,
+			status: row.last_message_status,
+			received_at: row.last_message_received_at,
+			read_at: row.last_message_read_at,
 			created_at: row.last_message_created_at,
 			updated_at: row.last_message_updated_at,
 			deleted_at: row.last_message_deleted_at,
