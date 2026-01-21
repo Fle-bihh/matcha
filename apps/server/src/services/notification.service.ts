@@ -28,7 +28,7 @@ export class NotificationService extends BaseService {
 		userId: number,
 		type: T,
 		data: NotificationDataMap[T],
-	): Promise<ServiceResponse<Notification | null>> {
+	): Promise<Notification | null> {
 		try {
 			const notification =
 				await this.notificationRepository.createNotification(
@@ -37,17 +37,10 @@ export class NotificationService extends BaseService {
 					data,
 				);
 
-			return ServiceResponse.success(
-				"Notification created successfully",
-				notification,
-			);
+			return notification;
 		} catch (error) {
 			logger.error("Error creating notification:", error);
-			return ServiceResponse.failure(
-				"An error occurred while creating notification",
-				null,
-				StatusCodes.INTERNAL_SERVER_ERROR,
-			);
+			return null;
 		}
 	}
 

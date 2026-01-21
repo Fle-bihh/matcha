@@ -8,6 +8,7 @@ import {
 	StatusCodes,
 	logger,
 	CreateLikeResponseDto,
+	NotificationType,
 } from "@matcha/shared";
 
 export class LikeService extends BaseService {
@@ -124,11 +125,26 @@ export class LikeService extends BaseService {
 					StatusCodes.CREATED,
 				);
 			} else {
+				const userFirstName =
+					await this.userService.getUserFirstName(likerId);
+
+				const notification =
+					(userFirstName
+						? await this.notificationService.createNotification(
+								liked_id,
+								NotificationType.LikeReceived,
+								{
+									liker_first_name: userFirstName,
+								},
+							)
+						: undefined) || undefined;
+
 				this.webSocketService.emitToUser(
 					liked_id,
 					WebSocketEvents.LikeCreated,
 					{
 						liker_id: likerId,
+						notification,
 					},
 				);
 			}

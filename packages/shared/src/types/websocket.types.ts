@@ -9,7 +9,7 @@ import {
 	BlockCreatedSocketDto,
 	MessageCreatedSocketDto,
 } from "../dto";
-import { MatchWithDetails } from "../models";
+import { MatchWithDetails, Notification } from "../models";
 
 export enum WebSocketEvents {
 	Connect = "connect",
@@ -28,7 +28,7 @@ export enum WebSocketEvents {
 }
 
 export interface NotificationSocketDto {
-	notification?: string;
+	notification?: Notification;
 }
 
 export interface WebSocketEventDtoMap {

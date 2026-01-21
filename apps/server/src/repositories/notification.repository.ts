@@ -23,8 +23,7 @@ export class NotificationRepository
 			fields: `
                 user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
                 type VARCHAR(50) NOT NULL,
-				data JSON NOT NULL,
-				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+				data JSON NOT NULL
             `,
 			constraints: ``,
 		};
