@@ -17,7 +17,7 @@ export const UnlikeUserDtoSchema = z.object({
 export type UnlikeUserDto = z.infer<typeof UnlikeUserDtoSchema>;
 
 export interface CreateLikeResponseDto {
-	match?: MatchWithDetails;
+	is_matched: boolean;
 }
 
 export interface LikeCreatedSocketDto {

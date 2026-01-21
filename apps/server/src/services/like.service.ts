@@ -121,7 +121,7 @@ export class LikeService extends BaseService {
 
 				return ServiceResponse.success(
 					"User liked successfully, it's a match!",
-					{ match: matchResponse.data },
+					{ is_matched: true },
 					StatusCodes.CREATED,
 				);
 			} else {
@@ -150,7 +150,7 @@ export class LikeService extends BaseService {
 
 			return ServiceResponse.success(
 				"User liked successfully",
-				{},
+				{ is_matched: false },
 				StatusCodes.CREATED,
 			);
 		} catch (error) {

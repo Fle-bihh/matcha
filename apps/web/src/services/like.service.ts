@@ -10,7 +10,7 @@ import { action } from "@/decorators";
 import { patchEntity } from "@/store";
 
 export class LikeService extends BaseService {
-	@action({ showSuccessMessage: true, showErrorMessage: true })
+	@action({ showSuccessMessage: false, showErrorMessage: true })
 	async createLike(dto: CreateLikeDto): Promise<ServiceResponse> {
 		const response = await this.apiService.post<CreateLikeResponseDto>(
 			getRoute(ERouteGroups.Like, "like"),
@@ -30,8 +30,8 @@ export class LikeService extends BaseService {
 				}),
 			);
 
-			if (response.data.match) {
-				this.matchService.handleMatchWithDetails(response.data.match);
+			if (!response.data.is_matched) {
+				this.snackbar.success(response.message);
 			}
 
 			return ServiceResponse.success(response.message);

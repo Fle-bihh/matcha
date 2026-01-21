@@ -74,12 +74,26 @@ export class MatchService extends BaseService {
 				},
 			);
 
-			const matchInformations: MatchWithDetails = {
-				...matchDetailed,
-				last_message: lastMessage,
-			};
-
 			const notification =
+				await this.notificationService.createNotification(
+					likerId,
+					NotificationType.NewMatch,
+					{
+						match_first_name: matchDetailed.other_user.first_name,
+					},
+				);
+
+			this.webSocketService.emitToUser(
+				likerId,
+				WebSocketEvents.MatchCreated,
+				{
+					...matchDetailed,
+					last_message: lastMessage,
+					notification: notification,
+				},
+			);
+
+			const otherNotification =
 				await this.notificationService.createNotification(
 					likedId,
 					NotificationType.NewMatch,
@@ -94,9 +108,14 @@ export class MatchService extends BaseService {
 				{
 					...otherUserMatchDetailed,
 					last_message: lastMessage,
-					notification,
+					notification: otherNotification,
 				},
 			);
+
+			const matchInformations: MatchWithDetails = {
+				...matchDetailed,
+				last_message: lastMessage,
+			};
 
 			return ServiceResponse.success(
 				"Match created successfully",
