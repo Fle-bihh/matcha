@@ -1,4 +1,8 @@
-import { NotificationActions, selectAllEntities } from "@/store";
+import {
+	NotificationActions,
+	selectAllEntities,
+	selectNotifications,
+} from "@/store";
 import { EEntityTypes } from "@/types";
 import { useSelector } from "react-redux";
 import { useDispatchActions } from "./actions.hooks";
@@ -8,9 +12,7 @@ import { EPagerKeys } from "@/constants";
 export const useNotification = () => {
 	const { getNotifications } = useDispatchActions(NotificationActions);
 
-	const notifications = useSelector(
-		selectAllEntities(EEntityTypes.Notifications),
-	);
+	const notifications = useSelector(selectNotifications);
 
 	const { hasNextPage, refresh, fetchNextPage } = usePager(
 		EEntityTypes.Notifications,

@@ -6,3 +6,4 @@ export * from "./visits.selectors";
 export * from "./filters.selectors";
 export * from "./user.selectors";
 export * from "./message.selectors";
+export * from "./notification.selectors";
