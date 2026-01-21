@@ -6,7 +6,8 @@ import {
 	selectMessagesByMatchId,
 	selectHasMoreMessages,
 } from "@/store/selectors/message.selectors";
-import { useActionsData } from "@/hooks";
+import { selectAuthUser } from "@/store/selectors/auth.selectors";
+import { useActionsData, useAuthUser } from "@/hooks";
 import { EActionKeys, TRootState } from "@/types";
 
 interface MessageListProps {
@@ -17,9 +18,11 @@ interface MessageListProps {
 export function MessageList({ onScroll, matchId }: MessageListProps) {
 	const messages = useSelector(selectMessagesByMatchId(matchId));
 	const hasMoreMessages = useSelector(selectHasMoreMessages(matchId));
+	const { authUser } = useAuthUser();
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const messagesContainerRef = useRef<HTMLDivElement>(null);
 	const previousMessagesRef = useRef<typeof messages>([]);
+	const previousScrollHeightRef = useRef(0);
 
 	const { isLoading: isLoadingMessages } = useActionsData([
 		EActionKeys.GetMessages,
@@ -27,20 +30,39 @@ export function MessageList({ onScroll, matchId }: MessageListProps) {
 
 	useEffect(() => {
 		const previousMessages = previousMessagesRef.current;
+		const container = messagesContainerRef.current;
+
+		if (!container) return;
 
 		if (messages.length > 0 && previousMessages.length > 0) {
 			const lastPreviousMessage =
 				previousMessages[previousMessages.length - 1];
 			const lastCurrentMessage = messages[messages.length - 1];
+			const firstPreviousMessage = previousMessages[0];
+			const firstCurrentMessage = messages[0];
 
-			if (lastPreviousMessage?.id !== lastCurrentMessage?.id) {
+			if (
+				lastPreviousMessage?.id !== lastCurrentMessage?.id &&
+				lastCurrentMessage?.type === "user" &&
+				"sender_id" in lastCurrentMessage &&
+				lastCurrentMessage.sender_id === authUser?.id
+			) {
 				messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+			} else if (
+				firstPreviousMessage?.id !== firstCurrentMessage?.id &&
+				messages.length > previousMessages.length
+			) {
+				const previousScrollHeight = previousScrollHeightRef.current;
+				const newScrollHeight = container.scrollHeight;
+				const scrollDiff = newScrollHeight - previousScrollHeight;
+				container.scrollTop = scrollDiff;
 			}
 		} else if (previousMessages.length === 0 && messages.length > 0) {
-			messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+			messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
 		}
 
 		previousMessagesRef.current = messages;
+		previousScrollHeightRef.current = container.scrollHeight;
 	}, [messages]);
 
 	const handleScroll = () => {
