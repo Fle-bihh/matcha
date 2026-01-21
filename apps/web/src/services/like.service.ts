@@ -7,7 +7,7 @@ import type {
 import { EEntityTypes, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
-import { patchEntity, setEntity } from "@/store";
+import { patchEntity } from "@/store";
 
 export class LikeService extends BaseService {
 	@action({ showSuccessMessage: true, showErrorMessage: true })
@@ -29,6 +29,10 @@ export class LikeService extends BaseService {
 					entity: { is_liked: true },
 				}),
 			);
+
+			if (response.data.match) {
+				this.matchService.handleMatchWithDetails(response.data.match);
+			}
 
 			return ServiceResponse.success(response.message);
 		} else {

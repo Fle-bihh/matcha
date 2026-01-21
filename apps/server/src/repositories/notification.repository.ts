@@ -17,7 +17,7 @@ export class NotificationRepository
 			tableName: this.tableName,
 			fields: `
                 user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-                content TEXT NOT NULL,
+                content TEXT NOT NULL
             `,
 			constraints: ``,
 		};

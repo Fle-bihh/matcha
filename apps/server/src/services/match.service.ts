@@ -27,7 +27,7 @@ export class MatchService extends BaseService {
 	public async createMatch(
 		likerId: number,
 		likedId: number,
-	): Promise<ServiceResponse> {
+	): Promise<ServiceResponse<MatchWithDetails | null>> {
 		try {
 			const match = await this.matchRepository.createMatch(
 				likerId,
@@ -73,11 +73,11 @@ export class MatchService extends BaseService {
 				},
 			);
 
-			this.webSocketService.emitToUser(
-				likerId,
-				WebSocketEvents.MatchCreated,
-				{ ...matchDetailed, last_message: lastMessage },
-			);
+			const matchInformations: MatchWithDetails = {
+				...matchDetailed,
+				last_message: lastMessage,
+			};
+
 			this.webSocketService.emitToUser(
 				likedId,
 				WebSocketEvents.MatchCreated,
@@ -86,7 +86,7 @@ export class MatchService extends BaseService {
 
 			return ServiceResponse.success(
 				"Match created successfully",
-				null,
+				matchInformations,
 				StatusCodes.CREATED,
 			);
 		} catch (error) {

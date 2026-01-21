@@ -7,6 +7,7 @@ import {
 	Like,
 	StatusCodes,
 	logger,
+	CreateLikeResponseDto,
 } from "@matcha/shared";
 
 export class LikeService extends BaseService {
@@ -46,7 +47,7 @@ export class LikeService extends BaseService {
 	public async createLike(
 		likerId: number,
 		data: CreateLikeDto,
-	): Promise<ServiceResponse> {
+	): Promise<ServiceResponse<CreateLikeResponseDto | null>> {
 		try {
 			const { liked_id } = data;
 
@@ -108,7 +109,7 @@ export class LikeService extends BaseService {
 					liked_id,
 				);
 
-				if (!this.isSuccess(matchResponse)) {
+				if (!this.isSuccess(matchResponse) || !matchResponse.data) {
 					await this.likeRepository.deleteLike(like.id);
 					return ServiceResponse.failure(
 						"Failed to create match after like",
@@ -116,6 +117,12 @@ export class LikeService extends BaseService {
 						StatusCodes.INTERNAL_SERVER_ERROR,
 					);
 				}
+
+				return ServiceResponse.success(
+					"User liked successfully, it's a match!",
+					{ match: matchResponse.data },
+					StatusCodes.CREATED,
+				);
 			} else {
 				this.webSocketService.emitToUser(
 					liked_id,
@@ -128,7 +135,7 @@ export class LikeService extends BaseService {
 
 			return ServiceResponse.success(
 				"User liked successfully",
-				null,
+				{},
 				StatusCodes.CREATED,
 			);
 		} catch (error) {
