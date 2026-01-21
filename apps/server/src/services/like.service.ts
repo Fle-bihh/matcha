@@ -210,9 +210,9 @@ export class LikeService extends BaseService {
 				const notification = first_name
 					? await this.notificationService.createNotification(
 							userBId,
-							NotificationType.ProfileViewed,
+							NotificationType.MatchCanceled,
 							{
-								viewer_first_name: first_name,
+								match_first_name: first_name,
 							},
 						)
 					: null;

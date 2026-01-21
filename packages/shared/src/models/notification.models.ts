@@ -5,7 +5,7 @@ export enum NotificationType {
 	ProfileViewed = "profile_viewed",
 	MessageReceived = "message_received",
 	NewMatch = "new_match",
-	UnlikeReceived = "unlike_received",
+	MatchCanceled = "match_canceled",
 }
 
 export interface LikeReceivedNotificationData {
@@ -25,8 +25,8 @@ export interface NewMatchNotificationData {
 	match_first_name: string;
 }
 
-export interface UnlikeReceivedNotificationData {
-	unliker_first_name: string;
+export interface MatchCanceledNotificationData {
+	match_first_name: string;
 }
 
 export type NotificationDataMap = {
@@ -34,7 +34,7 @@ export type NotificationDataMap = {
 	[NotificationType.ProfileViewed]: ProfileViewedNotificationData;
 	[NotificationType.MessageReceived]: MessageReceivedNotificationData;
 	[NotificationType.NewMatch]: NewMatchNotificationData;
-	[NotificationType.UnlikeReceived]: UnlikeReceivedNotificationData;
+	[NotificationType.MatchCanceled]: MatchCanceledNotificationData;
 };
 
 export interface Notification extends BaseEntity {
