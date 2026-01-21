@@ -2,7 +2,7 @@ import { ETokens, IRepository, TableSchema } from "@/types";
 import { BaseRepository } from "./base.repository";
 import {
 	EWebSocketChannels,
-	EWebSocketEvents,
+	WebSocketEvents,
 	UserStatus,
 } from "@matcha/shared";
 import { mysqlTimestamp } from "@/utils";
@@ -68,7 +68,7 @@ export class UserStatusRepository
 		const channel = EWebSocketChannels.UserStatus(userId);
 		this.WebSocketService.emitToChannel(
 			channel,
-			EWebSocketEvents.UserStatusUpdate,
+			WebSocketEvents.UserStatusUpdate,
 			{
 				user_id: userId,
 				status,

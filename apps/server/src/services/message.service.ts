@@ -11,7 +11,7 @@ import {
 	SystemMessageType,
 	SystemMessageDataMap,
 	CreateUserMessageResponseDto,
-	EWebSocketEvents,
+	WebSocketEvents,
 } from "@matcha/shared";
 
 export class MessageService extends BaseService {
@@ -64,7 +64,7 @@ export class MessageService extends BaseService {
 
 			this.webSocketService.emitToUser(
 				otherUserId,
-				EWebSocketEvents.MessageCreated,
+				WebSocketEvents.MessageCreated,
 				{
 					message,
 				},
@@ -186,7 +186,7 @@ export class MessageService extends BaseService {
 
 					this.webSocketService.emitToUser(
 						user1_id,
-						EWebSocketEvents.MessageCreated,
+						WebSocketEvents.MessageCreated,
 						{
 							message,
 						},
@@ -194,7 +194,7 @@ export class MessageService extends BaseService {
 
 					this.webSocketService.emitToUser(
 						user2_id,
-						EWebSocketEvents.MessageCreated,
+						WebSocketEvents.MessageCreated,
 						{
 							message,
 						},

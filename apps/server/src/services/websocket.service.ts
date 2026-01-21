@@ -9,8 +9,8 @@ import {
 import { BaseService } from "./base.service";
 import {
 	logger,
-	EWebSocketEvents,
-	IWebSocketEventDtoMap,
+	WebSocketEvents,
+	WebSocketEventDtoMap,
 	SubscribeChannelRequestDto,
 	UnsubscribeChannelRequestDto,
 	EWebSocketChannels,
@@ -39,25 +39,25 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 	private setupEventHandlers(): void {
 		if (!this.io) return;
 
-		this.io.on(EWebSocketEvents.Connect, (socket) => {
+		this.io.on(WebSocketEvents.Connect, (socket) => {
 			const authSocket = socket as AuthenticatedSocket;
 			this.onConnect(authSocket);
 
 			authSocket.on(
-				EWebSocketEvents.Subscribe,
+				WebSocketEvents.Subscribe,
 				(data: SubscribeChannelRequestDto) => {
 					this.handleSubscribe(authSocket, data);
 				},
 			);
 
 			authSocket.on(
-				EWebSocketEvents.Unsubscribe,
+				WebSocketEvents.Unsubscribe,
 				(data: UnsubscribeChannelRequestDto) => {
 					this.handleUnsubscribe(authSocket, data);
 				},
 			);
 
-			authSocket.on(EWebSocketEvents.Disconnect, () => {
+			authSocket.on(WebSocketEvents.Disconnect, () => {
 				this.onDisconnect(authSocket);
 			});
 		});
@@ -100,7 +100,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 
 			this.channelSubscriptions.get(channel)!.add(socket.id);
 
-			socket.emit(EWebSocketEvents.SubscriptionConfirmed, {
+			socket.emit(WebSocketEvents.SubscriptionConfirmed, {
 				channel,
 				subscribed: true,
 			});
@@ -128,7 +128,7 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 				}
 			}
 
-			socket.emit(EWebSocketEvents.SubscriptionConfirmed, {
+			socket.emit(WebSocketEvents.SubscriptionConfirmed, {
 				channel,
 				subscribed: false,
 			});
@@ -153,10 +153,10 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 		}
 	}
 
-	public emitToUser<K extends keyof IWebSocketEventDtoMap>(
+	public emitToUser<K extends keyof WebSocketEventDtoMap>(
 		userId: number,
 		event: K,
-		data: IWebSocketEventDtoMap[K],
+		data: WebSocketEventDtoMap[K],
 	): void {
 		try {
 			logger.debug(
@@ -174,9 +174,9 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 		}
 	}
 
-	public emitToAll<K extends keyof IWebSocketEventDtoMap>(
+	public emitToAll<K extends keyof WebSocketEventDtoMap>(
 		event: K,
-		data: IWebSocketEventDtoMap[K],
+		data: WebSocketEventDtoMap[K],
 	): void {
 		try {
 			if (this.io) {
@@ -197,10 +197,10 @@ export class WebSocketService extends BaseService implements IWebSocketService {
 		return this.connectionManager.has(userId);
 	}
 
-	public emitToChannel<K extends keyof IWebSocketEventDtoMap>(
+	public emitToChannel<K extends keyof WebSocketEventDtoMap>(
 		channel: TWebSocketChannel,
 		event: K,
-		data: IWebSocketEventDtoMap[K],
+		data: WebSocketEventDtoMap[K],
 	): void {
 		try {
 			const subscribers = this.channelSubscriptions.get(channel);

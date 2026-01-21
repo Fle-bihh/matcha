@@ -1,22 +1,22 @@
 import { BaseHandler } from "./base.handler";
 import { Socket } from "socket.io-client";
-import { EWebSocketEvents, IWebSocketEventDtoMap } from "@matcha/shared";
+import { WebSocketEvents, WebSocketEventDtoMap } from "@matcha/shared";
 import { deleteEntity, patchEntity } from "@/store";
 import { EEntityTypes, ETokens } from "@/types";
 import { MatchService } from "@/services";
 
-type MatchCreatedDto = IWebSocketEventDtoMap[EWebSocketEvents.MatchCreated];
-type MatchDeletedDto = IWebSocketEventDtoMap[EWebSocketEvents.MatchDeleted];
+type MatchCreatedDto = WebSocketEventDtoMap[WebSocketEvents.MatchCreated];
+type MatchDeletedDto = WebSocketEventDtoMap[WebSocketEvents.MatchDeleted];
 
 export class MatchHandler extends BaseHandler {
 	public register(socket: Socket): void {
-		socket.on(EWebSocketEvents.MatchCreated, this.handleMatchCreated);
-		socket.on(EWebSocketEvents.MatchDeleted, this.handleMatchDeleted);
+		socket.on(WebSocketEvents.MatchCreated, this.handleMatchCreated);
+		socket.on(WebSocketEvents.MatchDeleted, this.handleMatchDeleted);
 	}
 
 	public unregister(socket: Socket): void {
-		socket.off(EWebSocketEvents.MatchCreated, this.handleMatchCreated);
-		socket.off(EWebSocketEvents.MatchDeleted, this.handleMatchDeleted);
+		socket.off(WebSocketEvents.MatchCreated, this.handleMatchCreated);
+		socket.off(WebSocketEvents.MatchDeleted, this.handleMatchDeleted);
 	}
 
 	protected get matchService(): MatchService {

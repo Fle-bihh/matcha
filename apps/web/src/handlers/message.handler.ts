@@ -1,19 +1,21 @@
 import { BaseHandler } from "./base.handler";
 import { Socket } from "socket.io-client";
-import { EWebSocketEvents, MessageCreatedSocketDto } from "@matcha/shared";
+import { WebSocketEvents, WebSocketEventDtoMap } from "@matcha/shared";
 import { patchEntity } from "@/store";
 import { EEntityTypes } from "@/types";
 
+type MessageCreatedDto = WebSocketEventDtoMap[WebSocketEvents.MessageCreated];
+
 export class MessageHandler extends BaseHandler {
 	public register(socket: Socket): void {
-		socket.on(EWebSocketEvents.MessageCreated, this.handleNewMessage);
+		socket.on(WebSocketEvents.MessageCreated, this.handleNewMessage);
 	}
 
 	public unregister(socket: Socket): void {
-		socket.off(EWebSocketEvents.MessageCreated, this.handleNewMessage);
+		socket.off(WebSocketEvents.MessageCreated, this.handleNewMessage);
 	}
 
-	private handleNewMessage = (dto: MessageCreatedSocketDto): void => {
+	private handleNewMessage = (dto: MessageCreatedDto): void => {
 		const { message } = dto;
 		this.dispatch(
 			patchEntity({

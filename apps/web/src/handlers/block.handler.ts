@@ -1,19 +1,21 @@
 import { BaseHandler } from "./base.handler";
 import { Socket } from "socket.io-client";
-import { BlockCreatedSocketDto, EWebSocketEvents } from "@matcha/shared";
+import { WebSocketEventDtoMap, WebSocketEvents } from "@matcha/shared";
 import { deleteEntity } from "@/store";
 import { EEntityTypes } from "@/types";
 
+type BlockCreatedDto = WebSocketEventDtoMap[WebSocketEvents.BlockCreated];
+
 export class BlockHandler extends BaseHandler {
 	public register(socket: Socket): void {
-		socket.on(EWebSocketEvents.BlockCreated, this.handleBlockCreated);
+		socket.on(WebSocketEvents.BlockCreated, this.handleBlockCreated);
 	}
 
 	public unregister(socket: Socket): void {
-		socket.off(EWebSocketEvents.BlockCreated, this.handleBlockCreated);
+		socket.off(WebSocketEvents.BlockCreated, this.handleBlockCreated);
 	}
 
-	private handleBlockCreated = (dto: BlockCreatedSocketDto): void => {
+	private handleBlockCreated = (dto: BlockCreatedDto): void => {
 		this.dispatch(
 			deleteEntity({
 				entityType: EEntityTypes.Users,

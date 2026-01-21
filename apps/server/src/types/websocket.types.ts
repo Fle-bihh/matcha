@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import {
-	EWebSocketEvents,
-	IWebSocketEventDtoMap,
+	WebSocketEvents,
+	WebSocketEventDtoMap,
 	TWebSocketChannel,
 } from "@matcha/shared";
 import { JwtPayload } from "./auth.types";
@@ -16,26 +16,26 @@ export interface ConnectedUser {
 	socket: AuthenticatedSocket;
 }
 
-export type WebSocketEventHandler<K extends keyof IWebSocketEventDtoMap> = (
+export type WebSocketEventHandler<K extends keyof WebSocketEventDtoMap> = (
 	socket: AuthenticatedSocket,
-	data: IWebSocketEventDtoMap[K]
+	data: WebSocketEventDtoMap[K],
 ) => void | Promise<void>;
 
 export interface IWebSocketService {
 	initialize(io: any): void;
-	emitToUser<K extends keyof IWebSocketEventDtoMap>(
+	emitToUser<K extends keyof WebSocketEventDtoMap>(
 		userId: number,
 		event: K,
-		data: IWebSocketEventDtoMap[K]
+		data: WebSocketEventDtoMap[K],
 	): void;
-	emitToAll<K extends keyof IWebSocketEventDtoMap>(
+	emitToAll<K extends keyof WebSocketEventDtoMap>(
 		event: K,
-		data: IWebSocketEventDtoMap[K]
+		data: WebSocketEventDtoMap[K],
 	): void;
-	emitToChannel<K extends keyof IWebSocketEventDtoMap>(
+	emitToChannel<K extends keyof WebSocketEventDtoMap>(
 		channel: TWebSocketChannel,
 		event: K,
-		data: IWebSocketEventDtoMap[K]
+		data: WebSocketEventDtoMap[K],
 	): void;
 	getConnectedUsers(): Map<number, ConnectedUser>;
 	isUserConnected(userId: number): boolean;

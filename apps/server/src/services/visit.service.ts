@@ -3,7 +3,7 @@ import { BaseService } from "./base.service";
 import { VisitRepository } from "@/repositories";
 import {
 	CreateVisitDto,
-	EWebSocketEvents,
+	WebSocketEvents,
 	PaginatedResponse,
 	StatusCodes,
 	VisitWithVisitedUser,
@@ -58,7 +58,7 @@ export class VisitService extends BaseService {
 
 			this.webSocketService.emitToUser(
 				visited_id,
-				EWebSocketEvents.VisitCreated,
+				WebSocketEvents.VisitCreated,
 				undefined,
 			);
 

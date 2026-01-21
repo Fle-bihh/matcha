@@ -3,7 +3,7 @@ import { BaseService } from "./base.service";
 import { LikeRepository } from "@/repositories";
 import {
 	CreateLikeDto,
-	EWebSocketEvents,
+	WebSocketEvents,
 	Like,
 	StatusCodes,
 	logger,
@@ -119,7 +119,7 @@ export class LikeService extends BaseService {
 			} else {
 				this.webSocketService.emitToUser(
 					liked_id,
-					EWebSocketEvents.LikeCreated,
+					WebSocketEvents.LikeCreated,
 					{
 						liker_id: likerId,
 					},
@@ -177,14 +177,14 @@ export class LikeService extends BaseService {
 
 				this.webSocketService.emitToUser(
 					userAId,
-					EWebSocketEvents.MatchDeleted,
+					WebSocketEvents.MatchDeleted,
 					{
 						match_id: existingMatch.id,
 					},
 				);
 				this.webSocketService.emitToUser(
 					userBId,
-					EWebSocketEvents.MatchDeleted,
+					WebSocketEvents.MatchDeleted,
 					{
 						match_id: existingMatch.id,
 						unlike_id: userAId,
@@ -254,7 +254,7 @@ export class LikeService extends BaseService {
 			if (!res.data.match_deleted) {
 				this.webSocketService.emitToUser(
 					likedId,
-					EWebSocketEvents.LikeDeleted,
+					WebSocketEvents.LikeDeleted,
 					{
 						liker_id: likerId,
 					},

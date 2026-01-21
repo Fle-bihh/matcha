@@ -1,11 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import { BaseService } from "./base.service";
 import { EStorageKeys } from "@/types";
-import {
-	logger,
-	EWebSocketEvents,
-	IWebSocketEventDtoMap,
-} from "@matcha/shared";
+import { logger, WebSocketEvents, WebSocketEventDtoMap } from "@matcha/shared";
 import { config } from "@/config";
 import { IContainer } from "@/types";
 import {
@@ -81,11 +77,11 @@ export class WebSocketService extends BaseService {
 				};
 
 				const cleanup = () => {
-					this.socket?.off(EWebSocketEvents.Connect, onConnect);
+					this.socket?.off(WebSocketEvents.Connect, onConnect);
 					this.socket?.off("connect_error", onError);
 				};
 
-				this.socket?.once(EWebSocketEvents.Connect, onConnect);
+				this.socket?.once(WebSocketEvents.Connect, onConnect);
 				this.socket?.once("connect_error", onError);
 			});
 
@@ -102,7 +98,7 @@ export class WebSocketService extends BaseService {
 	private setupEventHandlers(): void {
 		if (!this.socket) return;
 
-		this.socket.on(EWebSocketEvents.Disconnect, (reason) => {
+		this.socket.on(WebSocketEvents.Disconnect, (reason) => {
 			logger.info(`WebSocket disconnected: ${reason}`);
 			this.readyPromise = null;
 		});
@@ -167,9 +163,9 @@ export class WebSocketService extends BaseService {
 		}
 	}
 
-	public async on<K extends keyof IWebSocketEventDtoMap>(
+	public async on<K extends keyof WebSocketEventDtoMap>(
 		event: K,
-		callback: (data: IWebSocketEventDtoMap[K]) => void,
+		callback: (data: WebSocketEventDtoMap[K]) => void,
 	): Promise<void> {
 		try {
 			await this.ensureReady();
@@ -188,9 +184,9 @@ export class WebSocketService extends BaseService {
 		}
 	}
 
-	public async off<K extends keyof IWebSocketEventDtoMap>(
+	public async off<K extends keyof WebSocketEventDtoMap>(
 		event: K,
-		callback?: (data: IWebSocketEventDtoMap[K]) => void,
+		callback?: (data: WebSocketEventDtoMap[K]) => void,
 	): Promise<void> {
 		try {
 			await this.ensureReady();
@@ -209,9 +205,9 @@ export class WebSocketService extends BaseService {
 		}
 	}
 
-	public async emit<K extends keyof IWebSocketEventDtoMap>(
+	public async emit<K extends keyof WebSocketEventDtoMap>(
 		event: K,
-		data: IWebSocketEventDtoMap[K],
+		data: WebSocketEventDtoMap[K],
 	): Promise<void> {
 		try {
 			await this.ensureReady();

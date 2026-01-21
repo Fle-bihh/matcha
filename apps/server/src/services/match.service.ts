@@ -3,7 +3,7 @@ import { emptyPaginatedResponse } from "@/utils";
 import { BaseService } from "./base.service";
 import { MatchRepository } from "@/repositories";
 import {
-	EWebSocketEvents,
+	WebSocketEvents,
 	GetMatchesResponseDto,
 	logger,
 	Match,
@@ -75,12 +75,12 @@ export class MatchService extends BaseService {
 
 			this.webSocketService.emitToUser(
 				likerId,
-				EWebSocketEvents.MatchCreated,
+				WebSocketEvents.MatchCreated,
 				{ ...matchDetailed, last_message: lastMessage },
 			);
 			this.webSocketService.emitToUser(
 				likedId,
-				EWebSocketEvents.MatchCreated,
+				WebSocketEvents.MatchCreated,
 				{ ...otherUserMatchDetailed, last_message: lastMessage },
 			);
 
