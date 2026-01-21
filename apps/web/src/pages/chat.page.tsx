@@ -7,7 +7,7 @@ import { useLayoutSizes } from "@/contexts";
 export function ChatPage() {
 	const { matchId } = useParams<{ matchId: string }>();
 
-	const { createMessage, fetchNextPage } = useMessages(matchId || "");
+	const { createMessage, fetchNextPage } = useMessages(matchId || "", true);
 	const { contentHeight } = useLayoutSizes();
 
 	const handleSendMessage = async (content: string) => {
@@ -29,7 +29,7 @@ export function ChatPage() {
 				py: 2,
 			}}
 		>
-			<ChatHeader />
+			<ChatHeader matchId={matchId} />
 			<MessageList onScroll={fetchNextPage} matchId={matchId} />
 			<MessageInput onSendMessage={handleSendMessage} />
 		</Container>

@@ -45,3 +45,26 @@ export const selectHasMoreMessages = (matchId?: string) => {
 		return meta.has_next_page;
 	});
 };
+
+export const selectOtherUserByMatchId = (
+	authUserId?: string,
+	matchId?: string,
+) =>
+	createSelector(
+		[
+			selectEntitiesByType(EEntityTypes.Matches),
+			selectEntitiesByType(EEntityTypes.Users),
+		],
+		(matches, users) => {
+			if (!authUserId || !matchId) return undefined;
+			const match = Object.values(matches).find(
+				(m) => m && m.id === parseInt(matchId, 10),
+			);
+			if (!match) return undefined;
+			const otherUserId =
+				match.user1_id.toString() === authUserId
+					? match.user2_id
+					: match.user1_id;
+			return users[otherUserId];
+		},
+	);

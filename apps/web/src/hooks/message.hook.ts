@@ -1,17 +1,24 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { usePager } from "./pagination.hook";
 import { useDispatchActions } from "./actions.hooks";
-import { MessageActions } from "@/store";
+import { MessageActions, selectOtherUserByMatchId } from "@/store";
 import { getMessagesPagerKey } from "@/constants";
 import { EEntityTypes } from "@/types";
 import type { PaginationDto } from "@/types";
+import { useSelector } from "react-redux";
+import { useAuthUser } from "./auth.hook";
 
-export function useMessages(matchId: string) {
+export function useMessages(matchId: string, loadData = false) {
+	const { authUser } = useAuthUser();
 	const { getMessages, createMessage } = useDispatchActions({
 		...MessageActions,
 	});
 
 	const pagerKey = useMemo(() => getMessagesPagerKey(matchId), [matchId]);
+
+	const otherUser = useSelector(
+		selectOtherUserByMatchId(authUser?.id.toString(), matchId),
+	);
 
 	const hadLoadedRef = useRef(false);
 
@@ -31,11 +38,16 @@ export function useMessages(matchId: string) {
 	});
 
 	useEffect(() => {
-		if (matchId && !hadLoadedRef.current && !pager.pagerExists) {
+		if (
+			matchId &&
+			!hadLoadedRef.current &&
+			!pager.pagerExists &&
+			loadData
+		) {
 			hadLoadedRef.current = true;
 			pager.refresh();
 		}
-	}, [pager.pagerExists, matchId, pager.refresh]);
+	}, [pager.pagerExists, matchId, pager.refresh, loadData]);
 
 	return {
 		createMessage,
@@ -43,5 +55,6 @@ export function useMessages(matchId: string) {
 		refresh: pager.refresh,
 		hasNextPage: pager.hasNextPage,
 		messages: pager.data,
+		otherUser,
 	};
 }
