@@ -3,8 +3,10 @@ import { Container } from "@mui/material";
 import { useMessages } from "@/hooks";
 import { ChatHeader, MessageList, MessageInput } from "@/components/chat";
 import { useLayoutSizes } from "@/contexts";
+import { withMatchExists } from "@/components";
+import { useMemo } from "react";
 
-export function ChatPage() {
+function ChatPageComp() {
 	const { matchId } = useParams<{ matchId: string }>();
 
 	const { createMessage, fetchNextPage } = useMessages(matchId || "", true);
@@ -34,4 +36,14 @@ export function ChatPage() {
 			<MessageInput onSendMessage={handleSendMessage} />
 		</Container>
 	);
+}
+
+export function ChatPage() {
+	const { matchId } = useParams<{ matchId: string }>();
+	const matchIdNum = useMemo(
+		() => (matchId ? parseInt(matchId, 10) : null),
+		[matchId],
+	);
+
+	return withMatchExists(ChatPageComp, matchIdNum)();
 }

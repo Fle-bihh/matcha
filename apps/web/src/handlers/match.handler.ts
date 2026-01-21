@@ -3,7 +3,7 @@ import { Socket } from "socket.io-client";
 import { WebSocketEvents, WebSocketEventDtoMap } from "@matcha/shared";
 import { deleteEntity, patchEntity } from "@/store";
 import { EEntityTypes, ETokens } from "@/types";
-import { MatchService } from "@/services";
+import { MatchService, MessageService } from "@/services";
 
 type MatchCreatedDto = WebSocketEventDtoMap[WebSocketEvents.MatchCreated];
 type MatchDeletedDto = WebSocketEventDtoMap[WebSocketEvents.MatchDeleted];
@@ -23,6 +23,10 @@ export class MatchHandler extends BaseHandler {
 		return this.container.get<MatchService>(ETokens.MatchService);
 	}
 
+	protected get messageService(): MessageService {
+		return this.container.get<MessageService>(ETokens.MessageService);
+	}
+
 	private handleMatchCreated = (dto: MatchCreatedDto): void => {
 		this.matchService.handleMatchWithDetails(dto);
 	};
@@ -34,12 +38,16 @@ export class MatchHandler extends BaseHandler {
 				id: dto.match_id.toString(),
 			}),
 		);
+
+		this.messageService.deleteMessagesByMatchId(dto.match_id);
+
 		if (dto.unlike_id) {
 			const newEntity = {
 				is_liked: false,
 				is_matched: false,
 				has_liked_you: false,
 			};
+
 			this.dispatch(
 				patchEntity({
 					entityType: EEntityTypes.Users,

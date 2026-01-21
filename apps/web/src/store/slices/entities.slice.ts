@@ -99,6 +99,23 @@ const entitiesSlice = createSlice({
 				delete entities[id];
 			}
 		},
+		deleteEntities: (
+			state: EntityState,
+			action: PayloadAction<{
+				entityType: EEntityTypes;
+				ids: string[];
+			}>,
+		) => {
+			const { entityType, ids } = action.payload;
+			const entities = state[entityType];
+			if (entities) {
+				ids.forEach((id) => {
+					if (entities[id]) {
+						delete entities[id];
+					}
+				});
+			}
+		},
 		clearEntities: (state: EntityState) => {
 			Object.keys(state).forEach((key) => {
 				state[key] = {};
@@ -114,5 +131,6 @@ export const {
 	patchEntity,
 	deleteEntity,
 	setEntitiesStrict,
+	deleteEntities,
 } = entitiesSlice.actions;
 export default entitiesSlice.reducer;

@@ -6,6 +6,7 @@ import {
 	WebSocketEvents,
 	WebSocketEventDtoMap,
 	Notification,
+	getNotificationContent,
 } from "@matcha/shared";
 import { config } from "@/config";
 import { IContainer } from "@/types";
@@ -132,6 +133,7 @@ export class WebSocketService extends BaseService {
 						id: notification.id.toString(),
 					}),
 				);
+				this.snackbar.info(getNotificationContent(notification));
 			} else if (dto) {
 				logger.debug(
 					`WebSocket event received with dto only: ${event}`,

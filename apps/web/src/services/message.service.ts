@@ -10,7 +10,12 @@ import type { PaginationDto } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
 import { EPagerKeys, getMessagesPagerKey } from "@/constants";
-import { setEntity } from "@/store";
+import {
+	clearPager,
+	deleteEntities,
+	selectMessagesByMatchId,
+	setEntity,
+} from "@/store";
 
 export class MessageService extends BaseService {
 	@action({ showErrorMessage: false, showSuccessMessage: false })
@@ -64,5 +69,19 @@ export class MessageService extends BaseService {
 		} else {
 			return ServiceResponse.failure(response.message);
 		}
+	}
+
+	public async deleteMessagesByMatchId(matchId: number): Promise<void> {
+		this.dispatch(clearPager(getMessagesPagerKey(matchId.toString())));
+		const state = this.container.store.getState();
+		const messagesIds = selectMessagesByMatchId(matchId.toString())(
+			state,
+		).map((message: Message) => message.id.toString());
+		this.dispatch(
+			deleteEntities({
+				entityType: EEntityTypes.Messages,
+				ids: messagesIds,
+			}),
+		);
 	}
 }

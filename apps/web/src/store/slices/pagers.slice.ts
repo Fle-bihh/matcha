@@ -73,7 +73,7 @@ const pagersSlice = createSlice({
 				};
 			}
 		},
-		clearPager: (state, action: PayloadAction<string>) => {
+		clearPager: (state, action: PayloadAction<TPagerKey>) => {
 			delete state[action.payload];
 		},
 		resetPagers: () => initialState,
