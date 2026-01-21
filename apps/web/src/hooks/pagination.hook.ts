@@ -75,6 +75,8 @@ export function usePager<T extends EEntityTypes, TParams = PaginationDto>(
 		[fn, paramBuilder],
 	);
 
+	const pagerExists = useMemo(() => !!meta, [meta]);
+
 	return {
 		data: data as IEntityTypeMap[T][],
 		meta,
@@ -85,5 +87,6 @@ export function usePager<T extends EEntityTypes, TParams = PaginationDto>(
 		setLimit,
 		hasNextPage: meta?.has_next_page ?? false,
 		hasPreviousPage: meta?.has_previous_page ?? false,
+		pagerExists,
 	};
 }

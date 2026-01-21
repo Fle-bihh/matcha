@@ -7,7 +7,7 @@ import { useLayoutSizes } from "@/contexts";
 export function ChatPage() {
 	const { matchId } = useParams<{ matchId: string }>();
 
-	const { createMessage, fetchNextPage } = useMessages(matchId || "", true);
+	const { createMessage, fetchNextPage } = useMessages(matchId || "");
 	const { contentHeight } = useLayoutSizes();
 
 	const handleSendMessage = async (content: string) => {

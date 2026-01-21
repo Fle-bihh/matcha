@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { usePager } from "./pagination.hook";
 import { useDispatchActions } from "./actions.hooks";
 import { MessageActions } from "@/store";
@@ -6,12 +6,14 @@ import { getMessagesPagerKey } from "@/constants";
 import { EEntityTypes } from "@/types";
 import type { PaginationDto } from "@/types";
 
-export function useMessages(matchId: string, loadPagerData = false) {
+export function useMessages(matchId: string) {
 	const { getMessages, createMessage } = useDispatchActions({
 		...MessageActions,
 	});
 
 	const pagerKey = useMemo(() => getMessagesPagerKey(matchId), [matchId]);
+
+	const hadLoadedRef = useRef(false);
 
 	const buildParams = useCallback(
 		(pagination: PaginationDto): { matchId: string } & PaginationDto => ({
@@ -25,8 +27,15 @@ export function useMessages(matchId: string, loadPagerData = false) {
 		pagerKey,
 		fn: getMessages,
 		buildParams,
-		loadData: loadPagerData,
+		loadData: false,
 	});
+
+	useEffect(() => {
+		if (matchId && !hadLoadedRef.current && !pager.pagerExists) {
+			hadLoadedRef.current = true;
+			pager.refresh();
+		}
+	}, [pager.pagerExists, matchId, pager.refresh]);
 
 	return {
 		createMessage,
