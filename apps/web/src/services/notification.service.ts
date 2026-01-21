@@ -26,6 +26,7 @@ export class NotificationService extends BaseService {
 			EPagerKeys.Notifications,
 			EEntityTypes.Notifications,
 			params?.refresh !== true,
+			params.refresh === true,
 		);
 
 		return ServiceResponse.success(response.message);
