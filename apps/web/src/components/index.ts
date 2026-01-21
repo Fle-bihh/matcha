@@ -4,5 +4,6 @@ export * from "./chat";
 export * from "./home";
 export * from "./loading";
 export * from "./matches";
+export * from "./notifications";
 export * from "./profile";
 export * from "./utils";

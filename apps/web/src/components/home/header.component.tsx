@@ -8,6 +8,7 @@ import { useHeaderRef } from "@/contexts";
 import { useRouting } from "@/hooks";
 import { withEmailVerifiedComponent } from "@/utils";
 import { MatchesHeaderIcon } from "../matches";
+import { NotificationsHeaderIcon } from "../notifications";
 
 const ProtectedButtons = () => {
 	const routing = useRouting();
@@ -17,6 +18,7 @@ const ProtectedButtons = () => {
 
 	return (
 		<>
+			<NotificationsHeaderIcon />
 			<MatchesHeaderIcon />
 			<IconButton
 				color="inherit"

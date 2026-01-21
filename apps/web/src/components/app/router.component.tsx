@@ -1,7 +1,13 @@
 import { APP_PAGES } from "@/constants";
 import { Route, Routes } from "react-router-dom";
 import { withEmailVerified, withLoggedIn, withLoggedOut } from "../utils";
-import { EntryPage, NotFoundPage, HomePage, MatchesPage } from "@/pages";
+import {
+	EntryPage,
+	NotFoundPage,
+	HomePage,
+	MatchesPage,
+	NotificationsPage,
+} from "@/pages";
 import { EntryLayout, ProtectedLayout, ProfileLayout } from "@/layouts";
 import { RegisterPage, LoginPage, ForgotPasswordPage } from "@/pages";
 import { ConfirmEmailPage } from "@/pages";
@@ -39,6 +45,10 @@ export function Router() {
 				<Route index element={<HomePage />} />
 				<Route path={APP_PAGES.user} element={<UserPage />} />
 				<Route path={APP_PAGES.matches} element={<MatchesPage />} />
+				<Route
+					path={APP_PAGES.notifications}
+					element={<NotificationsPage />}
+				/>
 				<Route path={APP_PAGES.chat} element={<ChatPage />} />
 				<Route
 					path={APP_PAGES.profile}

@@ -5,6 +5,7 @@ export * from "./cross-tab.hook";
 export * from "./flaggers.hook";
 export * from "./like.hook";
 export * from "./matches.hook";
+export * from "./notification.hook";
 export * from "./pagination.hook";
 export * from "./routing.hooks";
 export * from "./scroll.hooks";
