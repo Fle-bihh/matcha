@@ -132,7 +132,7 @@ export class AuthService extends BaseService {
 		}
 	}
 
-	@action({ showSuccessMessage: true })
+	@action()
 	public async login(dto: LoginRequestDto) {
 		this.dispatch(clearAction({ key: EActionKeys.Register }));
 		const response = await this.apiService.post<LoginResponseDto>(

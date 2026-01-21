@@ -29,9 +29,7 @@ export class LikeService extends BaseService {
 					entity: { is_liked: true },
 				}),
 			);
-		}
 
-		if (this.isSuccess(response)) {
 			return ServiceResponse.success(response.message);
 		} else {
 			return ServiceResponse.failure(response.message);

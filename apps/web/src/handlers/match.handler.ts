@@ -1,11 +1,7 @@
 import { BaseHandler } from "./base.handler";
 import { Socket } from "socket.io-client";
-import {
-	EWebSocketEvents,
-	IWebSocketEventDtoMap,
-	logger,
-} from "@matcha/shared";
-import { deleteEntity, patchEntity, setEntity } from "@/store";
+import { EWebSocketEvents, IWebSocketEventDtoMap } from "@matcha/shared";
+import { deleteEntity, patchEntity } from "@/store";
 import { EEntityTypes, ETokens } from "@/types";
 import { MatchService } from "@/services";
 

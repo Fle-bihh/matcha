@@ -5,6 +5,7 @@ import {
 	ListItemText,
 	Avatar,
 	Typography,
+	CardMedia,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useRouting } from "@/hooks";
@@ -12,6 +13,8 @@ import { APP_ROUTES } from "@/constants";
 import { StoreMatch, TRootState } from "@/types";
 import { LastMessageInfo } from "./last-message-info.component";
 import { selectOtherUserInMatch } from "@/store";
+import { AuthImage } from "../utils";
+import MockImage from "@/assets/imperial-stormtrooper-picture.png";
 
 interface MatchItemProps {
 	match: StoreMatch;
@@ -42,20 +45,27 @@ export function MatchItem({ match }: MatchItemProps) {
 				"&:hover": {
 					bgcolor: "action.hover",
 				},
+				gap: 2,
 			}}
 			onClick={handleClick}
 		>
 			<ListItemAvatar>
-				<Avatar
+				<AuthImage
 					src={profilePicture}
-					sx={{
-						width: 56,
-						height: 56,
-						mr: 2,
-					}}
-				>
-					{otherUser?.first_name?.[0] || "?"}
-				</Avatar>
+					alt={displayName}
+					width={56}
+					height={56}
+					sx={{ borderRadius: "50%" }}
+					fallback={
+						<CardMedia
+							component="img"
+							height="56"
+							image={MockImage}
+							alt="Fallback Image"
+							sx={{ borderRadius: "50%" }}
+						/>
+					}
+				/>
 			</ListItemAvatar>
 			<ListItemText
 				primary={

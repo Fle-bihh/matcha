@@ -21,7 +21,7 @@ export function ChatPage() {
 
 	return (
 		<Container
-			maxWidth="md"
+			maxWidth="xl"
 			sx={{
 				height: contentHeight,
 				display: "flex",

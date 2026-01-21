@@ -115,6 +115,23 @@ export class WebSocketService extends BaseService {
 			logger.error("WebSocket connection error:", error);
 		});
 
+		this.socket.onAny((event: string, ...args: any[]) => {
+			const dto = args[0];
+			if (dto && "notification" in dto) {
+				logger.debug(
+					`WebSocket event received with notification: ${event}`,
+					dto.notification,
+				);
+			} else if (dto) {
+				logger.debug(
+					`WebSocket event received with dto only: ${event}`,
+					dto,
+				);
+			} else {
+				logger.debug(`WebSocket event received: ${event}`);
+			}
+		});
+
 		this.handlers.forEach((handler) => {
 			try {
 				handler.register(this.socket!);

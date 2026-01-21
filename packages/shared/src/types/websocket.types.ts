@@ -9,7 +9,7 @@ import {
 	BlockCreatedSocketDto,
 	MessageCreatedSocketDto,
 } from "../dto";
-import { Match, MatchWithDetails } from "../models";
+import { MatchWithDetails } from "../models";
 
 export enum EWebSocketEvents {
 	Connect = "connect",
