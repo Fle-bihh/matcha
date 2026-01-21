@@ -17,3 +17,4 @@ export * from "./window.hook";
 export * from "./report.hook";
 export * from "./block.hook";
 export * from "./message.hook";
+export * from "./use-message-list-scroll.hook";
