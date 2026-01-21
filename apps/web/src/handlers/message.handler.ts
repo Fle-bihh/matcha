@@ -24,7 +24,5 @@ export class MessageHandler extends BaseHandler {
 				entity: message,
 			}),
 		);
-
-		this.snackbar.info("You have a new message!");
 	};
 }

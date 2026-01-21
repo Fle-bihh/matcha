@@ -17,6 +17,5 @@ export class VisitHandler extends BaseHandler {
 	private handleNewVisit = (dto: VisitCreatedDto): void => {
 		const {} = dto;
 		this.dispatch(incrementReceivedCount());
-		this.snackbar.success("Your profile was visited!");
 	};
 }

@@ -26,7 +26,6 @@ export class LikeHandler extends BaseHandler {
 				entity: { has_liked_you: true },
 			}),
 		);
-		this.snackbar.success("You have a new like!");
 	};
 
 	private handleLikeDeleted = (dto: LikeDeletedDto): void => {

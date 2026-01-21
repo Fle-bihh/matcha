@@ -25,7 +25,6 @@ export class MatchHandler extends BaseHandler {
 
 	private handleMatchCreated = (dto: MatchCreatedDto): void => {
 		this.matchService.handleMatchWithDetails(dto);
-		this.snackbar.success("You have a new match!");
 	};
 
 	private handleMatchDeleted = (dto: MatchDeletedDto): void => {
@@ -48,9 +47,6 @@ export class MatchHandler extends BaseHandler {
 					entity: newEntity,
 				}),
 			);
-		}
-		if (dto.message) {
-			this.snackbar.warning(dto.message);
 		}
 	};
 }

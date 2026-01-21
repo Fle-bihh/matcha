@@ -223,7 +223,6 @@ export class LikeService extends BaseService {
 					{
 						match_id: existingMatch.id,
 						unlike_id: userAId,
-						message: webSocketEventMessage,
 						notification,
 					},
 				);

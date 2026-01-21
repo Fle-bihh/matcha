@@ -8,6 +8,5 @@ export interface GetMatchesResponseDto {}
 
 export interface DeleteMatchSocketDto {
 	match_id: number;
-	message?: string;
 	unlike_id?: number;
 }
