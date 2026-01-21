@@ -13,6 +13,7 @@ import {
 	PaginationParams,
 	StatusCodes,
 	SystemMessageType,
+	NotificationType,
 } from "@matcha/shared";
 
 export class MatchService extends BaseService {
@@ -78,10 +79,23 @@ export class MatchService extends BaseService {
 				last_message: lastMessage,
 			};
 
+			const notification =
+				await this.notificationService.createNotification(
+					likedId,
+					NotificationType.NewMatch,
+					{
+						match_first_name: matchDetailed.other_user.first_name,
+					},
+				);
+
 			this.webSocketService.emitToUser(
 				likedId,
 				WebSocketEvents.MatchCreated,
-				{ ...otherUserMatchDetailed, last_message: lastMessage },
+				{
+					...otherUserMatchDetailed,
+					last_message: lastMessage,
+					notification,
+				},
 			);
 
 			return ServiceResponse.success(

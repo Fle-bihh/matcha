@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { selectLastMessageByMatchId } from "@/store/selectors/message.selectors";
-import { getMessagePreview } from "@/utils";
+import { getMessagePreview } from "@matcha/shared";
 import { formatDistanceToNow } from "date-fns";
 
 interface LastMessageInfoProps {

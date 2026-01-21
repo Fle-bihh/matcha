@@ -17,7 +17,7 @@ export interface ProfileViewedNotificationData {
 }
 
 export interface MessageReceivedNotificationData {
-	sender_first_name: string;
+	sender_first_name?: string;
 	message_preview: string;
 }
 

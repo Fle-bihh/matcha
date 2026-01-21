@@ -12,6 +12,8 @@ import {
 	SystemMessageDataMap,
 	CreateUserMessageResponseDto,
 	WebSocketEvents,
+	NotificationType,
+	getSystemMessageContent,
 } from "@matcha/shared";
 
 export class MessageService extends BaseService {
@@ -62,11 +64,27 @@ export class MessageService extends BaseService {
 					? matchResponse.data.user2_id
 					: matchResponse.data.user1_id;
 
+			const first_name =
+				await this.userService.getUserFirstName(senderId);
+			const notification = first_name
+				? await this.notificationService.createNotification(
+						otherUserId,
+						NotificationType.MessageReceived,
+						{
+							sender_first_name: first_name,
+							message_preview:
+								content.slice(0, 25) +
+								(content.length > 25 ? "..." : ""),
+						},
+					)
+				: null;
+
 			this.webSocketService.emitToUser(
 				otherUserId,
 				WebSocketEvents.MessageCreated,
 				{
 					message,
+					notification,
 				},
 			);
 
@@ -184,11 +202,22 @@ export class MessageService extends BaseService {
 				if (this.isSuccess(matchResponse) && matchResponse.data) {
 					const { user1_id, user2_id } = matchResponse.data;
 
+					const user1Notification =
+						await this.notificationService.createNotification(
+							user1_id,
+							NotificationType.MessageReceived,
+							{
+								message_preview:
+									getSystemMessageContent(message),
+							},
+						);
+
 					this.webSocketService.emitToUser(
 						user1_id,
 						WebSocketEvents.MessageCreated,
 						{
 							message,
+							notification: user1Notification,
 						},
 					);
 
@@ -197,6 +226,7 @@ export class MessageService extends BaseService {
 						WebSocketEvents.MessageCreated,
 						{
 							message,
+							notification: user1Notification,
 						},
 					);
 				}

@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { SystemMessage } from "@matcha/shared";
-import { getSystemMessageContent } from "@/utils";
+import { getSystemMessageContent } from "@matcha/shared";
 
 interface SystemMessageProps {
 	message: SystemMessage;

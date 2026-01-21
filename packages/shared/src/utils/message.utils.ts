@@ -1,10 +1,10 @@
 import {
-	SystemMessage,
-	SystemMessageType,
 	MatchStartedSystemMessageData,
 	Message,
 	MessageType,
-} from "@matcha/shared";
+	SystemMessage,
+	SystemMessageType,
+} from "../models";
 
 function generateMatchStartedContent(
 	data: MatchStartedSystemMessageData,
