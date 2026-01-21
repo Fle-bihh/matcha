@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom";
 import { Container } from "@mui/material";
-import { useMessages } from "@/hooks";
+import { useMessages, useScroll } from "@/hooks";
 import { ChatHeader, MessageList, MessageInput } from "@/components/chat";
 import { useLayoutSizes } from "@/contexts";
 import { withMatchExists } from "@/components";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 function ChatPageComp() {
 	const { matchId } = useParams<{ matchId: string }>();
@@ -20,6 +20,12 @@ function ChatPageComp() {
 			content,
 		});
 	};
+
+	const { scrollToTop, scrollToBottom } = useScroll();
+	useEffect(() => {
+		scrollToTop();
+		console.log("Scroll to bottom on chat load");
+	}, [scrollToTop]);
 
 	return (
 		<Container

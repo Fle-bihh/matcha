@@ -3,5 +3,12 @@ export function useScroll() {
 		window.scrollTo({ top: 0, behavior: "instant" });
 	}
 
-	return { scrollToTop };
+	function scrollToBottom() {
+		window.scrollTo({
+			top: document.body.scrollHeight,
+			behavior: "smooth",
+		});
+	}
+
+	return { scrollToTop, scrollToBottom };
 }

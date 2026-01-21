@@ -16,8 +16,16 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import LinkOffIcon from "@mui/icons-material/LinkOff";
 import { useParams } from "react-router-dom";
 import { AuthImage, FameScore, UserStatus } from "@/components";
-import { useBlock, useLike, useReport, useRouting, useUser } from "@/hooks";
+import {
+	useBlock,
+	useLike,
+	useReport,
+	useRouting,
+	useScroll,
+	useUser,
+} from "@/hooks";
 import MockImage from "@/assets/imperial-stormtrooper-picture.png";
+import { useEffect } from "react";
 
 export function UserPage() {
 	const { id } = useParams<{ id: string }>();
