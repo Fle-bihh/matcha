@@ -2,6 +2,7 @@ export enum EPagerKeys {
 	Users = "users",
 	Matches = "matches",
 	Visits = "visits",
+	Notifications = "notifications",
 }
 
 type TMessagesPagerKey = `messages-${string}`;

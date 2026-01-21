@@ -33,9 +33,6 @@ import {
 import { action } from "@/decorators";
 import { crossTab } from "@/utils";
 import { EFlaggers } from "@/constants";
-import { BrowsingService } from "./browsing.service";
-import { MatchService } from "./match.service";
-import { WebSocketService } from "./websocket.service";
 
 type AuthData = Partial<RegisterResponseDto>;
 
@@ -53,6 +50,12 @@ export class AuthService extends BaseService {
 			"Verification link sent to your new email",
 		EMAIL_CHANGED: "Email changed successfully",
 	} as const;
+
+	private loadAuthData() {
+		this.browsingService.loadBrowsingFilters();
+		this.matchService.getMatches({ page: 1, limit: 10 });
+		this.notificationService.getNotifications({ page: 1, limit: 10 });
+	}
 
 	private async storeAuthData(data: AuthData): Promise<void> {
 		const { accessToken, refreshToken, user } = data;
@@ -75,8 +78,7 @@ export class AuthService extends BaseService {
 			this.webSocketService.connect();
 			this.dispatch(setAuthUser(user));
 			if (user.is_profile_complete) {
-				this.browsingService.loadBrowsingFilters();
-				this.matchService.getMatches({ page: 1, limit: 10 });
+				this.loadAuthData();
 			}
 		}
 	}

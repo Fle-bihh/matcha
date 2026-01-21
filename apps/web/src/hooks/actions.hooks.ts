@@ -35,16 +35,6 @@ export const useActionsData = <T extends EActionKeys>(actions: T[]) => {
 	}, [actionData]);
 };
 
-export const useDispatchAction = () => {
-	const dispatch = useDispatch();
-	return useCallback(
-		<T extends any[]>(action: (...args: T) => any) =>
-			(...args: T) =>
-				dispatch(action(...args)),
-		[dispatch],
-	);
-};
-
 export const useDispatchActions = <
 	T extends Record<string, (...args: any[]) => any>,
 >(

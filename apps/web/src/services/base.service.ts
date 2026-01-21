@@ -19,6 +19,7 @@ import { EPagerKeys, TPagerKey } from "@/constants";
 import { BrowsingService } from "./browsing.service";
 import { MatchService } from "./match.service";
 import { WebSocketService } from "./websocket.service";
+import { NotificationService } from "./notification.service";
 
 export abstract class BaseService {
 	protected container: IContainer;
@@ -65,6 +66,12 @@ export abstract class BaseService {
 
 	protected get webSocketService(): WebSocketService {
 		return this.container.get<WebSocketService>(ETokens.WebSocketService);
+	}
+
+	protected get notificationService(): NotificationService {
+		return this.container.get<NotificationService>(
+			ETokens.NotificationService,
+		);
 	}
 
 	protected setFlagger(payload: SetFlaggerPayload) {

@@ -17,6 +17,7 @@ export enum ETokens {
 	ReportService = "ReportService",
 	BlockService = "BlockService",
 	MessageService = "MessageService",
+	NotificationService = "NotificationService ",
 }
 
 export interface IContainer {

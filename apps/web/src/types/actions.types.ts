@@ -57,6 +57,7 @@ export enum EActionKeys {
 	CreateBlock = "createBlock",
 	GetMessages = "getMessages",
 	CreateMessage = "createMessage",
+	GetNotifications = "getNotifications",
 }
 
 export interface IActionDtoMap {
@@ -94,6 +95,7 @@ export interface IActionDtoMap {
 	[EActionKeys.CreateBlock]: CreateBlockDto;
 	[EActionKeys.GetMessages]: { matchId: string } & PaginationDto;
 	[EActionKeys.CreateMessage]: CreateUserMessageDto;
+	[EActionKeys.GetNotifications]: PaginationDto;
 }
 
 export type ActionDto<K extends EActionKeys> = IActionDtoMap[K];
