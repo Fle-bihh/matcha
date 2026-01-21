@@ -10,3 +10,4 @@ export * from "./user.repository";
 export * from "./visit.repository";
 export * from "./report.repository";
 export * from "./block.repository";
+export * from "./notification.repository";
