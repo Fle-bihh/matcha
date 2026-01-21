@@ -128,16 +128,15 @@ export class LikeService extends BaseService {
 				const userFirstName =
 					await this.userService.getUserFirstName(likerId);
 
-				const notification =
-					(userFirstName
-						? await this.notificationService.createNotification(
-								liked_id,
-								NotificationType.LikeReceived,
-								{
-									liker_first_name: userFirstName,
-								},
-							)
-						: undefined) || undefined;
+				const notification = userFirstName
+					? await this.notificationService.createNotification(
+							liked_id,
+							NotificationType.LikeReceived,
+							{
+								liker_first_name: userFirstName,
+							},
+						)
+					: null;
 
 				this.webSocketService.emitToUser(
 					liked_id,
@@ -205,6 +204,19 @@ export class LikeService extends BaseService {
 						match_id: existingMatch.id,
 					},
 				);
+
+				const first_name =
+					await this.userService.getUserFirstName(userAId);
+				const notification = first_name
+					? await this.notificationService.createNotification(
+							userBId,
+							NotificationType.ProfileViewed,
+							{
+								viewer_first_name: first_name,
+							},
+						)
+					: null;
+
 				this.webSocketService.emitToUser(
 					userBId,
 					WebSocketEvents.MatchDeleted,
@@ -212,6 +224,7 @@ export class LikeService extends BaseService {
 						match_id: existingMatch.id,
 						unlike_id: userAId,
 						message: webSocketEventMessage,
+						notification,
 					},
 				);
 			}

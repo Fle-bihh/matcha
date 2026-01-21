@@ -9,6 +9,7 @@ import {
 	VisitWithVisitedUser,
 	VisitsMadeResponseDto,
 	logger,
+	NotificationType,
 } from "@matcha/shared";
 import { emptyPaginatedResponse } from "@/utils";
 
@@ -56,10 +57,22 @@ export class VisitService extends BaseService {
 				);
 			}
 
+			const first_name =
+				await this.userService.getUserFirstName(visitorId);
+			const notification = first_name
+				? await this.notificationService.createNotification(
+						visited_id,
+						NotificationType.ProfileViewed,
+						{
+							viewer_first_name: first_name,
+						},
+					)
+				: null;
+
 			this.webSocketService.emitToUser(
 				visited_id,
 				WebSocketEvents.VisitCreated,
-				{},
+				{ notification },
 			);
 
 			return ServiceResponse.success("Visit recorded", null);

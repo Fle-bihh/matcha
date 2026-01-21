@@ -28,7 +28,7 @@ export enum WebSocketEvents {
 }
 
 export interface NotificationSocketDto {
-	notification?: Notification;
+	notification: Notification | null;
 }
 
 export interface WebSocketEventDtoMap {
@@ -36,14 +36,14 @@ export interface WebSocketEventDtoMap {
 	[WebSocketEvents.Disconnect]: string;
 	[WebSocketEvents.MatchCreated]: MatchWithDetails & NotificationSocketDto;
 	[WebSocketEvents.MatchDeleted]: DeleteMatchSocketDto &
-		NotificationSocketDto;
+		Partial<NotificationSocketDto>;
 	[WebSocketEvents.VisitCreated]: NotificationSocketDto;
 	[WebSocketEvents.Subscribe]: SubscribeChannelRequestDto;
 	[WebSocketEvents.Unsubscribe]: UnsubscribeChannelRequestDto;
 	[WebSocketEvents.SubscriptionConfirmed]: SubscriptionConfirmationDto;
 	[WebSocketEvents.UserStatusUpdate]: UserStatusUpdateDto;
 	[WebSocketEvents.LikeCreated]: LikeCreatedSocketDto & NotificationSocketDto;
-	[WebSocketEvents.LikeDeleted]: LikeDeletedSocketDto & NotificationSocketDto;
+	[WebSocketEvents.LikeDeleted]: LikeDeletedSocketDto;
 	[WebSocketEvents.BlockCreated]: BlockCreatedSocketDto;
 	[WebSocketEvents.MessageCreated]: MessageCreatedSocketDto &
 		NotificationSocketDto;
