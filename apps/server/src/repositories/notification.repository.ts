@@ -1,5 +1,10 @@
 import { BaseRepository } from "./base.repository";
-import { Notification, logger } from "@matcha/shared";
+import {
+	Notification,
+	logger,
+	NotificationType,
+	NotificationDataMap,
+} from "@matcha/shared";
 import { IContainer, IRepository, TableSchema } from "@/types";
 
 export class NotificationRepository
@@ -17,25 +22,29 @@ export class NotificationRepository
 			tableName: this.tableName,
 			fields: `
                 user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-                content TEXT NOT NULL
+                type VARCHAR(50) NOT NULL,
+				data JSON NOT NULL,
+				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             `,
 			constraints: ``,
 		};
 	}
 
-	public async createNotification(
+	public async createNotification<T extends NotificationType>(
 		userId: number,
-		content: string,
-	): Promise<Notification | null> {
-		try {
-			return await this.createDocument<Notification>(this.tableName, {
+		type: T,
+		data: NotificationDataMap[T],
+	): Promise<Notification> {
+		const notification = await this.createDocument<Notification>(
+			this.tableName,
+			{
 				user_id: userId,
-				content: content,
-			});
-		} catch (error) {
-			logger.error("Error creating notification:", error);
-			return null;
-		}
+				type,
+				data,
+			},
+		);
+
+		return notification;
 	}
 
 	public async getNotifications(

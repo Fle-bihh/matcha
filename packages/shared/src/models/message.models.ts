@@ -21,15 +21,15 @@ export enum SystemMessageType {
 	MatchStarted = "match_started",
 }
 
+export type SystemMessageDataMap = {
+	[SystemMessageType.MatchStarted]: MatchStartedSystemMessageData;
+};
+
 export interface MatchStartedSystemMessageData {
 	first_name_1: string;
 	first_name_2: string;
 	started_at: string;
 }
-
-export type SystemMessageDataMap = {
-	[SystemMessageType.MatchStarted]: MatchStartedSystemMessageData;
-};
 
 export interface SystemMessage extends BaseMessage {
 	system_type: SystemMessageType;

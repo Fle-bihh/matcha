@@ -5,6 +5,8 @@ import {
 	GetNotificationsResponseDto,
 	logger,
 	Notification,
+	NotificationType,
+	NotificationDataMap,
 	PaginationParams,
 	StatusCodes,
 	WebSocketEvents,
@@ -22,33 +24,27 @@ export class NotificationService extends BaseService {
 		);
 	}
 
-	public async createUserNotification(
+	public async createNotification<T extends NotificationType>(
 		userId: number,
-		content: string,
+		type: T,
+		data: NotificationDataMap[T],
 	): Promise<ServiceResponse<Notification | null>> {
 		try {
 			const notification =
 				await this.notificationRepository.createNotification(
 					userId,
-					content,
+					type,
+					data,
 				);
-
-			if (!notification) {
-				return ServiceResponse.failure(
-					"Failed to create notification",
-					null,
-					StatusCodes.INTERNAL_SERVER_ERROR,
-				);
-			}
 
 			return ServiceResponse.success(
-				"Notification sent successfully",
+				"Notification created successfully",
 				notification,
 			);
 		} catch (error) {
-			logger.error("Error creating user notification:", error);
+			logger.error("Error creating notification:", error);
 			return ServiceResponse.failure(
-				"An error occurred while sending the notification",
+				"An error occurred while creating notification",
 				null,
 				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
