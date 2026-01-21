@@ -1,7 +1,12 @@
 import { io, Socket } from "socket.io-client";
 import { BaseService } from "./base.service";
-import { EStorageKeys } from "@/types";
-import { logger, WebSocketEvents, WebSocketEventDtoMap } from "@matcha/shared";
+import { EEntityTypes, EStorageKeys } from "@/types";
+import {
+	logger,
+	WebSocketEvents,
+	WebSocketEventDtoMap,
+	Notification,
+} from "@matcha/shared";
 import { config } from "@/config";
 import { IContainer } from "@/types";
 import {
@@ -13,6 +18,7 @@ import {
 	VisitHandler,
 } from "@/handlers";
 import { MessageHandler } from "@/handlers/message.handler";
+import { setEntity } from "@/store";
 
 export class WebSocketService extends BaseService {
 	private socket: Socket | null = null;
@@ -116,12 +122,19 @@ export class WebSocketService extends BaseService {
 			if (dto && "notification" in dto) {
 				logger.debug(
 					`WebSocket event received with notification: ${event}`,
-					dto.notification,
+				);
+				const notification = dto.notification as Notification | null;
+				if (notification === null) return;
+				this.dispatch(
+					setEntity({
+						entityType: EEntityTypes.Notifications,
+						entity: notification,
+						id: notification.id.toString(),
+					}),
 				);
 			} else if (dto) {
 				logger.debug(
 					`WebSocket event received with dto only: ${event}`,
-					dto,
 				);
 			} else {
 				logger.debug(`WebSocket event received: ${event}`);

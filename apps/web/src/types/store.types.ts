@@ -4,6 +4,7 @@ import {
 	MatchWithDetails,
 	VisitWithVisitedUser,
 	Message,
+	Notification,
 } from "@matcha/shared";
 import { StoreUser } from "./user.types";
 import { StoreMatch } from "./match.types";
@@ -13,6 +14,7 @@ export enum EEntityTypes {
 	Matches = "matches",
 	Visits = "visits",
 	Messages = "messages",
+	Notifications = "notifications",
 }
 
 export interface IEntityTypeMap {
@@ -20,6 +22,7 @@ export interface IEntityTypeMap {
 	[EEntityTypes.Matches]: StoreMatch;
 	[EEntityTypes.Visits]: VisitWithVisitedUser;
 	[EEntityTypes.Messages]: Message;
+	[EEntityTypes.Notifications]: Notification;
 }
 
 export enum EStoreSlices {
