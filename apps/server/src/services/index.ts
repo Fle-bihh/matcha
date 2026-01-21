@@ -14,3 +14,4 @@ export * from "./websocket.service";
 export * from "./report.service";
 export * from "./block.service";
 export * from "./message.service";
+export * from "./notification.service";

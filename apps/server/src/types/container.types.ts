@@ -26,7 +26,7 @@ export enum ETokens {
 	BlockRepository = "BlockRepository",
 	BlockService = "BlockService",
 	MessageService = "MessageService",
-	// NotificationService = "NotificationService",
+	NotificationService = "NotificationService",
 	NotificationRepository = "NotificationRepository",
 }
 

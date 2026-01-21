@@ -59,7 +59,7 @@ export class VisitService extends BaseService {
 			this.webSocketService.emitToUser(
 				visited_id,
 				WebSocketEvents.VisitCreated,
-				undefined,
+				{},
 			);
 
 			return ServiceResponse.success("Visit recorded", null);

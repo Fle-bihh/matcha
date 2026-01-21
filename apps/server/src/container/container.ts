@@ -23,6 +23,7 @@ import {
 	MailService,
 	MatchService,
 	MessageService,
+	NotificationService,
 	PasswordResetService,
 	ReportService,
 	UserDeletionService,
@@ -64,6 +65,7 @@ const serviceRegistry: Record<ETokens, ServiceConstructor> = {
 	[ETokens.UserStatusRepository]: UserStatusRepository,
 	[ETokens.MessageService]: MessageService,
 	[ETokens.NotificationRepository]: NotificationRepository,
+	[ETokens.NotificationService]: NotificationService,
 } as const;
 
 export class Container implements IContainer {
