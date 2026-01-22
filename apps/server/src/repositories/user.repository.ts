@@ -45,6 +45,7 @@ export class UserRepository extends BaseRepository implements IRepository {
 	private readonly userInitialData = {
 		is_email_verified: false,
 		is_profile_complete: false,
+		is_admin: false,
 		gender: null,
 		orientation: null,
 		age: null,
@@ -65,6 +66,7 @@ export class UserRepository extends BaseRepository implements IRepository {
 			 password VARCHAR(255) NOT NULL,
        is_email_verified BOOLEAN NOT NULL,
        is_profile_complete BOOLEAN NOT NULL DEFAULT FALSE,
+	   is_admin BOOLEAN NOT NULL DEFAULT FALSE,
        gender VARCHAR(20),
        orientation VARCHAR(20),
        age INTEGER,

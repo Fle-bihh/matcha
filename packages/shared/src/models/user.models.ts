@@ -32,10 +32,11 @@ export interface AuthUser extends User {
 	username: string;
 	is_email_verified: boolean;
 	is_profile_complete: boolean;
+	is_admin: boolean;
 }
 
 export interface AuthUserWithPassword extends AuthUser {
-	password: string; // hashed password
+	password: string;
 }
 
 export type UserResult<T extends boolean> = T extends true

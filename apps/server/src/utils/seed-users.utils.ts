@@ -321,6 +321,7 @@ export function generateRandomUser(): OmitBaseEntity<AuthUserWithPassword> {
 		fame_score: fameScore,
 		is_email_verified: true,
 		is_profile_complete: true,
+		is_admin: false,
 		pictures_urls: [],
 	};
 }
@@ -338,6 +339,7 @@ const BASE_ADMIN_USER: Omit<
 	password: "pass",
 	is_email_verified: true,
 	is_profile_complete: true,
+	is_admin: true,
 	pictures_urls: [],
 	first_name: "Admin",
 	gender: Gender.Other,
