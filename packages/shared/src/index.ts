@@ -4,3 +4,4 @@ export * from "./logger";
 export * from "./dto";
 export * from "./constants";
 export * from "./validation";
+export * from "./utils";

@@ -3,7 +3,7 @@ import { BaseService } from "./base.service";
 import { BlockRepository } from "@/repositories";
 import {
 	CreateBlockDto,
-	EWebSocketEvents,
+	WebSocketEvents,
 	StatusCodes,
 	logger,
 } from "@matcha/shared";
@@ -90,7 +90,7 @@ export class BlockService extends BaseService {
 
 			this.webSocketService.emitToUser(
 				blocked_id,
-				EWebSocketEvents.BlockCreated,
+				WebSocketEvents.BlockCreated,
 				{
 					blocker_id: blockerId,
 				},

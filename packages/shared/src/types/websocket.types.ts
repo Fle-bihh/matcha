@@ -7,10 +7,11 @@ import {
 	LikeCreatedSocketDto,
 	LikeDeletedSocketDto,
 	BlockCreatedSocketDto,
+	MessageCreatedSocketDto,
 } from "../dto";
-import { Match, MatchWithDetails } from "../models";
+import { MatchWithDetails, Notification } from "../models";
 
-export enum EWebSocketEvents {
+export enum WebSocketEvents {
 	Connect = "connect",
 	Disconnect = "disconnect",
 	MatchCreated = "match:created",
@@ -23,19 +24,27 @@ export enum EWebSocketEvents {
 	SubscriptionConfirmed = "subscription:confirmed",
 	UserStatusUpdate = "user:status:update",
 	BlockCreated = "block:created",
+	MessageCreated = "message:created",
 }
 
-export interface IWebSocketEventDtoMap {
-	[EWebSocketEvents.Connect]: undefined;
-	[EWebSocketEvents.Disconnect]: string;
-	[EWebSocketEvents.MatchCreated]: MatchWithDetails;
-	[EWebSocketEvents.MatchDeleted]: DeleteMatchSocketDto;
-	[EWebSocketEvents.VisitCreated]: undefined;
-	[EWebSocketEvents.Subscribe]: SubscribeChannelRequestDto;
-	[EWebSocketEvents.Unsubscribe]: UnsubscribeChannelRequestDto;
-	[EWebSocketEvents.SubscriptionConfirmed]: SubscriptionConfirmationDto;
-	[EWebSocketEvents.UserStatusUpdate]: UserStatusUpdateDto;
-	[EWebSocketEvents.LikeCreated]: LikeCreatedSocketDto;
-	[EWebSocketEvents.LikeDeleted]: LikeDeletedSocketDto;
-	[EWebSocketEvents.BlockCreated]: BlockCreatedSocketDto;
+export interface NotificationSocketDto {
+	notification: Notification | null;
+}
+
+export interface WebSocketEventDtoMap {
+	[WebSocketEvents.Connect]: undefined;
+	[WebSocketEvents.Disconnect]: string;
+	[WebSocketEvents.MatchCreated]: MatchWithDetails & NotificationSocketDto;
+	[WebSocketEvents.MatchDeleted]: DeleteMatchSocketDto &
+		Partial<NotificationSocketDto>;
+	[WebSocketEvents.VisitCreated]: NotificationSocketDto;
+	[WebSocketEvents.Subscribe]: SubscribeChannelRequestDto;
+	[WebSocketEvents.Unsubscribe]: UnsubscribeChannelRequestDto;
+	[WebSocketEvents.SubscriptionConfirmed]: SubscriptionConfirmationDto;
+	[WebSocketEvents.UserStatusUpdate]: UserStatusUpdateDto;
+	[WebSocketEvents.LikeCreated]: LikeCreatedSocketDto & NotificationSocketDto;
+	[WebSocketEvents.LikeDeleted]: LikeDeletedSocketDto;
+	[WebSocketEvents.BlockCreated]: BlockCreatedSocketDto;
+	[WebSocketEvents.MessageCreated]: MessageCreatedSocketDto &
+		NotificationSocketDto;
 }

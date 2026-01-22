@@ -18,7 +18,9 @@ export const authenticateSocket = (
 		const decoded = JwtUtils.verifyToken(token);
 		(socket as AuthenticatedSocket).user = decoded;
 
-		logger.info(`Socket ${socket.id} authenticated as user ${decoded.id}`);
+		logger.info(
+			`Socket ${socket.id} authenticated as user ${decoded.user_id}`,
+		);
 		next();
 	} catch (error) {
 		logger.warn(`Socket ${socket.id} authentication failed:`, error);

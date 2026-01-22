@@ -1,5 +1,5 @@
 import { APP_ROUTES } from "@/constants";
-import { useAuthUser } from "@/hooks";
+import { useAuthUser, useMatches } from "@/hooks";
 import { FunctionComponent } from "react";
 import { Navigate } from "react-router-dom";
 
@@ -37,4 +37,18 @@ export function withEmailVerified(
 		!!authUser && authUser.is_email_verified,
 		redirectTo,
 	);
+}
+
+export function withMatchExists(
+	Component: React.FunctionComponent,
+	matchId: number | null,
+	redirectTo = APP_ROUTES.matches,
+) {
+	const { matches } = useMatches();
+	const matchExists = matches.some((match) => match.id === matchId);
+	console.log(
+		"If match does not exist, redirecting. Match exists:",
+		matchExists,
+	);
+	return withConditionPage(Component, matchExists, redirectTo);
 }

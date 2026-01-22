@@ -184,11 +184,21 @@ export class AuthService extends BaseService {
 		dto: RefreshTokenRequestDto,
 	): Promise<ServiceResponse<RefreshTokenResponseDto | null>> {
 		try {
-			const { userId } = JwtUtils.verifyRefreshToken(dto.refreshToken);
+			const { user_id, created_at } = JwtUtils.verifyRefreshToken(
+				dto.refreshToken,
+			);
 
-			const userResponse = await this.userService.findById(userId);
+			const userResponse = await this.userService.findById(user_id);
 
-			if (!this.isSuccess(userResponse) || !userResponse.data) {
+			const isFromOldUser =
+				new Date(created_at).getTime() <
+				new Date(userResponse.data?.created_at || 0).getTime();
+
+			if (
+				!this.isSuccess(userResponse) ||
+				!userResponse.data ||
+				isFromOldUser
+			) {
 				return ServiceResponse.failure(
 					"Invalid refresh token",
 					null,

@@ -17,9 +17,7 @@ export class MatchRepository extends BaseRepository implements IRepository {
 			tableName: this.tableName,
 			fields: `
 				user1_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-				user2_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-				unread_messages_count_user1 INTEGER DEFAULT 0 NOT NULL,
-				unread_messages_count_user2 INTEGER DEFAULT 0 NOT NULL
+				user2_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 			`,
 			constraints: `CONSTRAINT ordered_users CHECK (user1_id < user2_id)`,
 		};
@@ -36,8 +34,6 @@ export class MatchRepository extends BaseRepository implements IRepository {
 			return await this.createDocument<Match>(this.tableName, {
 				user1_id,
 				user2_id,
-				unread_messages_count_user1: 0,
-				unread_messages_count_user2: 0,
 			});
 		} catch (error) {
 			logger.error("Error creating match:", error);
@@ -75,8 +71,6 @@ export class MatchRepository extends BaseRepository implements IRepository {
 					m.id,
 					m.user1_id,
 					m.user2_id,
-					m.unread_messages_count_user1,
-					m.unread_messages_count_user2,
 					m.created_at,
 					m.updated_at,
 					m.deleted_at,
@@ -97,8 +91,10 @@ export class MatchRepository extends BaseRepository implements IRepository {
 					msg.id as last_message_id,
 					msg.sender_id as last_message_sender_id,
 					msg.match_id as last_message_match_id,
+					msg.type as last_message_type,
 					msg.content as last_message_content,
-					msg.is_read as last_message_is_read,
+					msg.system_type as last_message_system_type,
+					msg.data as last_message_data,
 					msg.created_at as last_message_created_at,
 					msg.updated_at as last_message_updated_at,
 					msg.deleted_at as last_message_deleted_at
@@ -106,7 +102,17 @@ export class MatchRepository extends BaseRepository implements IRepository {
 				LEFT JOIN users u ON u.id = m.user2_id AND m.user1_id = ${otherUserId}
 				LEFT JOIN users u2 ON u2.id = m.user1_id AND m.user2_id = ${otherUserId}
 				LEFT JOIN LATERAL (
-					SELECT id, sender_id, match_id, content, is_read, created_at, updated_at, deleted_at
+				SELECT 
+					id, 
+					sender_id, 
+					match_id, 
+					type,
+					content,
+					system_type,
+					data,
+					created_at, 
+					updated_at, 
+					deleted_at
 					FROM messages
 					WHERE match_id = m.id AND deleted_at IS NULL
 					ORDER BY created_at DESC
@@ -120,7 +126,7 @@ export class MatchRepository extends BaseRepository implements IRepository {
 			const [rows] = await this.executeQuery<any>(query, []);
 			if (rows.length === 0) return null;
 
-			return this.mapRowToMatchWithDetails(rows[0], otherUserId);
+			return this.mapRowToMatchWithDetails(rows[0]);
 		} catch (error) {
 			logger.error("Error fetching match with details:", error);
 			return null;
@@ -141,19 +147,11 @@ export class MatchRepository extends BaseRepository implements IRepository {
 		userId: number,
 		limit: number,
 		offset: number,
-		unreadOnly: boolean,
 	): Promise<MatchWithDetails[]> {
 		try {
-			const query = this.buildMatchesQuery(
-				userId,
-				limit,
-				offset,
-				unreadOnly,
-			);
+			const query = this.buildMatchesQuery(userId, limit, offset);
 			const [rows] = await this.executeQuery<any>(query, []);
-			return rows.map((row) =>
-				this.mapRowToMatchWithDetails(row, userId),
-			);
+			return rows.map((row) => this.mapRowToMatchWithDetails(row));
 		} catch (error) {
 			logger.error("Error fetching matches with details:", error);
 			throw error;
@@ -164,19 +162,12 @@ export class MatchRepository extends BaseRepository implements IRepository {
 		userId: number,
 		limit: number,
 		offset: number,
-		unreadOnly: boolean,
 	): string {
-		const unreadFilter = unreadOnly
-			? `AND ((m.user1_id = ${userId} AND m.unread_messages_count_user1 > 0) OR (m.user2_id = ${userId} AND m.unread_messages_count_user2 > 0))`
-			: "";
-
 		return `
 			SELECT 
 				m.id,
 				m.user1_id,
 				m.user2_id,
-				m.unread_messages_count_user1,
-				m.unread_messages_count_user2,
 				m.created_at,
 				m.updated_at,
 				m.deleted_at,
@@ -197,8 +188,10 @@ export class MatchRepository extends BaseRepository implements IRepository {
 				msg.id as last_message_id,
 				msg.sender_id as last_message_sender_id,
 				msg.match_id as last_message_match_id,
+				msg.type as last_message_type,
 				msg.content as last_message_content,
-				msg.is_read as last_message_is_read,
+				msg.system_type as last_message_system_type,
+				msg.data as last_message_data,
 				msg.created_at as last_message_created_at,
 				msg.updated_at as last_message_updated_at,
 				msg.deleted_at as last_message_deleted_at
@@ -206,7 +199,17 @@ export class MatchRepository extends BaseRepository implements IRepository {
 			LEFT JOIN users u ON u.id = m.user2_id AND m.user1_id = ${userId}
 			LEFT JOIN users u2 ON u2.id = m.user1_id AND m.user2_id = ${userId}
 			LEFT JOIN LATERAL (
-				SELECT id, sender_id, match_id, content, is_read, created_at, updated_at, deleted_at
+				SELECT 
+					id, 
+					sender_id, 
+					match_id, 
+					type,
+					content,
+					system_type,
+					data,
+					created_at, 
+					updated_at, 
+					deleted_at
 				FROM messages
 				WHERE match_id = m.id AND deleted_at IS NULL
 				ORDER BY created_at DESC
@@ -215,21 +218,16 @@ export class MatchRepository extends BaseRepository implements IRepository {
 			WHERE (m.user1_id = ${userId} OR m.user2_id = ${userId})
 				AND m.deleted_at IS NULL
 				AND (u.deleted_at IS NULL OR u2.deleted_at IS NULL)
-				${unreadFilter}
 			ORDER BY COALESCE(msg.created_at, m.created_at) DESC
 			LIMIT ${limit} OFFSET ${offset}
 		`;
 	}
 
-	private mapRowToMatchWithDetails(
-		row: any,
-		userId: number,
-	): MatchWithDetails {
+	private mapRowToMatchWithDetails(row: any): MatchWithDetails {
 		return {
 			...this.mapRowToMatch(row),
 			other_user: this.mapRowToUser(row),
 			last_message: this.mapRowToMessage(row),
-			unread_messages_count: this.getUnreadCount(row, userId),
 		};
 	}
 
@@ -238,8 +236,6 @@ export class MatchRepository extends BaseRepository implements IRepository {
 			id: row.id,
 			user1_id: row.user1_id,
 			user2_id: row.user2_id,
-			unread_messages_count_user1: row.unread_messages_count_user1,
-			unread_messages_count_user2: row.unread_messages_count_user2,
 			created_at: row.created_at,
 			updated_at: row.updated_at,
 			deleted_at: row.deleted_at,
@@ -268,39 +264,39 @@ export class MatchRepository extends BaseRepository implements IRepository {
 	private mapRowToMessage(row: any): Message | null {
 		if (!row.last_message_id) return null;
 
-		return {
+		const baseMessage = {
 			id: row.last_message_id,
-			sender_id: row.last_message_sender_id,
 			match_id: row.last_message_match_id,
-			content: row.last_message_content,
-			is_read: row.last_message_is_read,
+			type: row.last_message_type,
 			created_at: row.last_message_created_at,
 			updated_at: row.last_message_updated_at,
 			deleted_at: row.last_message_deleted_at,
 		};
+
+		if (row.last_message_type === "user") {
+			return {
+				...baseMessage,
+				type: row.last_message_type,
+				sender_id: row.last_message_sender_id,
+				content: row.last_message_content,
+			};
+		}
+
+		return {
+			...baseMessage,
+			type: row.last_message_type,
+			system_type: row.last_message_system_type,
+			data: row.last_message_data,
+		};
 	}
 
-	private getUnreadCount(row: any, userId: number): number {
-		return row.user1_id === userId
-			? row.unread_messages_count_user1
-			: row.unread_messages_count_user2;
-	}
-
-	public async countMatches(
-		userId: number,
-		unreadOnly: boolean,
-	): Promise<number> {
+	public async countMatches(userId: number): Promise<number> {
 		try {
-			const unreadFilter = unreadOnly
-				? `AND ((m.user1_id = ${userId} AND m.unread_messages_count_user1 > 0) OR (m.user2_id = ${userId} AND m.unread_messages_count_user2 > 0))`
-				: "";
-
 			const query = `
 				SELECT COUNT(*) as count
 				FROM matches m
 				WHERE (m.user1_id = ${userId} OR m.user2_id = ${userId})
 					AND m.deleted_at IS NULL
-					${unreadFilter}
 			`;
 
 			const [rows] = await this.executeQuery<any>(query, []);

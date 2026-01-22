@@ -6,12 +6,12 @@ import { TRootState } from "@/types";
 export function Snackbar() {
 	const dispatch = useDispatch();
 	const { open, message, severity } = useSelector(
-		(state: TRootState) => state.snackbar
+		(state: TRootState) => state.snackbar,
 	);
 
 	const handleClose = (
 		_event?: React.SyntheticEvent | Event,
-		reason?: string
+		reason?: string,
 	) => {
 		if (reason === "clickaway") {
 			return;
@@ -26,11 +26,7 @@ export function Snackbar() {
 			onClose={handleClose}
 			anchorOrigin={{ vertical: "top", horizontal: "center" }}
 		>
-			<Alert
-				onClose={handleClose}
-				severity={severity}
-				sx={{ width: "100%" }}
-			>
+			<Alert onClose={handleClose} severity={severity}>
 				{message}
 			</Alert>
 		</MuiSnackbar>

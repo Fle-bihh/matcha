@@ -13,10 +13,11 @@ import {
 	WebSocketSubscriptionService,
 	ReportService,
 	BlockService,
+	MessageService,
+	NotificationService,
 } from "@/services";
 import { LocationService } from "@/services";
-import { Store } from "@reduxjs/toolkit";
-import { TAppDispatch, TReduxStore, TRootState } from "@/types";
+import { TReduxStore } from "@/types";
 import { createStore } from "@/store";
 import { logger } from "@matcha/shared";
 import { RouterService } from "@/services";
@@ -39,6 +40,8 @@ const serviceConstructors: Record<ETokens, ServiceConstructor> = {
 	[ETokens.WebSocketSubscriptionService]: WebSocketSubscriptionService,
 	[ETokens.ReportService]: ReportService,
 	[ETokens.BlockService]: BlockService,
+	[ETokens.MessageService]: MessageService,
+	[ETokens.NotificationService]: NotificationService,
 } as const;
 
 export class Container implements IContainer {

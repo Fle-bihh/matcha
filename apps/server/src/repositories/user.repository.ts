@@ -10,7 +10,7 @@ import {
 } from "@matcha/shared";
 import { ETokens, IContainer, IRepository, TableSchema } from "@/types";
 import { config } from "@/config";
-import { HashUtils, generateRandomUsers } from "@/utils";
+import { HashUtils, generateAdminUsers, generateRandomUsers } from "@/utils";
 import { BrowsingRepository } from "./browsing.repository";
 
 export class UserRepository extends BaseRepository implements IRepository {
@@ -86,8 +86,9 @@ export class UserRepository extends BaseRepository implements IRepository {
 					"Database is empty. Seeding with 50 random users...",
 				);
 				const randomUsers = generateRandomUsers(50);
+				const admins = generateAdminUsers();
 
-				for (const userData of randomUsers) {
+				for (const userData of [...randomUsers, ...admins]) {
 					const hashedPassword = await HashUtils.hashPassword(
 						userData.password,
 					);

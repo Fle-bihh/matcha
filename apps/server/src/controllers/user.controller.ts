@@ -22,9 +22,9 @@ export class UserController extends BaseController {
 	@validate(UpdateProfileDtoSchema, "body")
 	@route("PATCH", "update-profile")
 	private async updateProfile(req: Request, res: Response): Promise<void> {
-		const { id } = req.user!;
+		const { user_id } = req.user!;
 		const result = await this.userService.updateUser(
-			id,
+			user_id,
 			req.validated?.body,
 		);
 		this.sendResult(res, result);
@@ -44,9 +44,9 @@ export class UserController extends BaseController {
 	): Promise<void> {
 		const imageFile = req.file!;
 		const { index } = req.validated?.body!;
-		const { id } = req.user!;
+		const { user_id } = req.user!;
 		const result = await this.userService.updateProfilePicture(
-			id,
+			user_id,
 			imageFile,
 			index,
 		);
@@ -57,9 +57,9 @@ export class UserController extends BaseController {
 	@validate(UpdateLocationDtoSchema, "body")
 	@route("PATCH", "update-location")
 	private async updateLocation(req: Request, res: Response): Promise<void> {
-		const { id } = req.user!;
+		const { user_id } = req.user!;
 		const result = await this.userService.updateLocation(
-			id,
+			user_id,
 			req.validated?.body,
 		);
 		this.sendResult(res, result);
@@ -71,7 +71,7 @@ export class UserController extends BaseController {
 	@route("GET", "get-users")
 	private async getUsers(req: Request, res: Response): Promise<void> {
 		const result = await this.userService.getUsers(
-			req.user?.id!,
+			req.user?.user_id!,
 			req.pagination!,
 			req.validated?.query!,
 		);
@@ -83,7 +83,10 @@ export class UserController extends BaseController {
 	@route("GET", "get-user-by-id")
 	private async getUserById(req: Request, res: Response): Promise<void> {
 		const { id } = req.validated?.params!;
-		const result = await this.userService.getUserById(req.user!.id, id);
+		const result = await this.userService.getUserById(
+			req.user!.user_id,
+			id,
+		);
 		this.sendResult(res, result);
 	}
 }

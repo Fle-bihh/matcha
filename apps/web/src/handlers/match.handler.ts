@@ -1,35 +1,34 @@
 import { BaseHandler } from "./base.handler";
 import { Socket } from "socket.io-client";
-import {
-	EWebSocketEvents,
-	IWebSocketEventDtoMap,
-	logger,
-} from "@matcha/shared";
-import { deleteEntity, patchEntity, setEntity } from "@/store";
+import { WebSocketEvents, WebSocketEventDtoMap } from "@matcha/shared";
+import { deleteEntity, patchEntity } from "@/store";
 import { EEntityTypes, ETokens } from "@/types";
-import { MatchService } from "@/services";
+import { MatchService, MessageService } from "@/services";
 
-type MatchCreatedDto = IWebSocketEventDtoMap[EWebSocketEvents.MatchCreated];
-type MatchDeletedDto = IWebSocketEventDtoMap[EWebSocketEvents.MatchDeleted];
+type MatchCreatedDto = WebSocketEventDtoMap[WebSocketEvents.MatchCreated];
+type MatchDeletedDto = WebSocketEventDtoMap[WebSocketEvents.MatchDeleted];
 
 export class MatchHandler extends BaseHandler {
 	public register(socket: Socket): void {
-		socket.on(EWebSocketEvents.MatchCreated, this.handleMatchCreated);
-		socket.on(EWebSocketEvents.MatchDeleted, this.handleMatchDeleted);
+		socket.on(WebSocketEvents.MatchCreated, this.handleMatchCreated);
+		socket.on(WebSocketEvents.MatchDeleted, this.handleMatchDeleted);
 	}
 
 	public unregister(socket: Socket): void {
-		socket.off(EWebSocketEvents.MatchCreated, this.handleMatchCreated);
-		socket.off(EWebSocketEvents.MatchDeleted, this.handleMatchDeleted);
+		socket.off(WebSocketEvents.MatchCreated, this.handleMatchCreated);
+		socket.off(WebSocketEvents.MatchDeleted, this.handleMatchDeleted);
 	}
 
 	protected get matchService(): MatchService {
 		return this.container.get<MatchService>(ETokens.MatchService);
 	}
 
+	protected get messageService(): MessageService {
+		return this.container.get<MessageService>(ETokens.MessageService);
+	}
+
 	private handleMatchCreated = (dto: MatchCreatedDto): void => {
 		this.matchService.handleMatchWithDetails(dto);
-		this.snackbar.success("You have a new match!");
 	};
 
 	private handleMatchDeleted = (dto: MatchDeletedDto): void => {
@@ -39,12 +38,16 @@ export class MatchHandler extends BaseHandler {
 				id: dto.match_id.toString(),
 			}),
 		);
+
+		this.messageService.deleteMessagesByMatchId(dto.match_id);
+
 		if (dto.unlike_id) {
 			const newEntity = {
 				is_liked: false,
 				is_matched: false,
 				has_liked_you: false,
 			};
+
 			this.dispatch(
 				patchEntity({
 					entityType: EEntityTypes.Users,
@@ -52,9 +55,6 @@ export class MatchHandler extends BaseHandler {
 					entity: newEntity,
 				}),
 			);
-		}
-		if (dto.message) {
-			this.snackbar.warning(dto.message);
 		}
 	};
 }

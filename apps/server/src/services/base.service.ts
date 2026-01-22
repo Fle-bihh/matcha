@@ -11,6 +11,8 @@ import { BlockService } from "./block.service";
 import { LikeService } from "./like.service";
 import { MatchService } from "./match.service";
 import { VisitService } from "./visit.service";
+import { MessageService } from "./message.service";
+import { NotificationService } from "./notification.service";
 
 export abstract class BaseService {
 	protected container: IContainer;
@@ -75,5 +77,15 @@ export abstract class BaseService {
 
 	protected get visitService(): VisitService {
 		return this.container.get<VisitService>(ETokens.VisitService);
+	}
+
+	protected get messageService(): MessageService {
+		return this.container.get<MessageService>(ETokens.MessageService);
+	}
+
+	protected get notificationService(): NotificationService {
+		return this.container.get<NotificationService>(
+			ETokens.NotificationService,
+		);
 	}
 }

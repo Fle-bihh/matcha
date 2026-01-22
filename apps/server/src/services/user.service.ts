@@ -122,6 +122,16 @@ export class UserService extends BaseService {
 		}
 	}
 
+	public async getUserFirstName(userId: number): Promise<string | null> {
+		try {
+			const user = await this.userRepository.findUserById(userId);
+			return user ? user.first_name : null;
+		} catch (error) {
+			logger.error("Error in getUserFirstName:", error);
+			return null;
+		}
+	}
+
 	public async getUserById(
 		requesterId: number,
 		targetUserId: number,

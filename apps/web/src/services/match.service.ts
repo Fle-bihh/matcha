@@ -10,11 +10,12 @@ import { EEntityTypes, ServiceResponse, StoreMatch } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
 import { EPagerKeys } from "@/constants";
-import { patchEntity, setEntities, setUnreadMatchesCount } from "@/store";
+import { patchEntity, setEntities } from "@/store";
+import { StoreMessage } from "@/types/message.types";
 
 export class MatchService extends BaseService {
 	async handleMatchWithDetails(match: MatchWithDetails): Promise<void> {
-		const { other_user, ...matchData } = match;
+		const { last_message, other_user, ...matchData } = match;
 
 		this.dispatch(
 			patchEntity({
@@ -36,6 +37,47 @@ export class MatchService extends BaseService {
 				},
 			}),
 		);
+
+		if (last_message) {
+			this.dispatch(
+				patchEntity({
+					entityType: EEntityTypes.Messages,
+					id: last_message.id.toString(),
+					entity: last_message,
+				}),
+			);
+		}
+	}
+
+	private async handleMatchesWithDetails(
+		matches: MatchWithDetails[],
+	): Promise<void> {
+		const otherUsers: User[] = [];
+		const storeMatches: StoreMatch[] = [];
+		const messages: StoreMessage[] = [];
+
+		matches.forEach((match) => {
+			const { other_user, last_message, ...matchData } = match;
+			otherUsers.push(other_user);
+			storeMatches.push(matchData);
+			if (last_message) {
+				messages.push(last_message);
+			}
+		});
+
+		this.dispatch(
+			setEntities({
+				entityType: EEntityTypes.Users,
+				entities: otherUsers,
+			}),
+		);
+
+		this.dispatch(
+			setEntities({
+				entityType: EEntityTypes.Messages,
+				entities: messages,
+			}),
+		);
 	}
 
 	@action({ showErrorMessage: false, showSuccessMessage: false })
@@ -48,14 +90,9 @@ export class MatchService extends BaseService {
 			return ServiceResponse.failure(response.message);
 		}
 
-		const otherUsers: User[] = [];
-		const matches: StoreMatch[] = [];
+		const matches = response.data.data;
 
-		response.data.data.forEach((match) => {
-			const { other_user, ...matchData } = match;
-			otherUsers.push(other_user);
-			matches.push(matchData);
-		});
+		await this.handleMatchesWithDetails(matches);
 
 		this.handlePaginatedResponse(
 			{ data: matches, meta: response.data.meta },
@@ -64,21 +101,6 @@ export class MatchService extends BaseService {
 			params?.refresh !== true,
 			params?.refresh === true,
 		);
-
-		this.dispatch(
-			setEntities({
-				entityType: EEntityTypes.Users,
-				entities: otherUsers,
-			}),
-		);
-
-		if (response.data.extra_data) {
-			this.dispatch(
-				setUnreadMatchesCount(
-					response.data.extra_data.unread_conversations_count,
-				),
-			);
-		}
 
 		return ServiceResponse.success(response.message);
 	}

@@ -1,16 +1,13 @@
 import { useCallback } from "react";
-import { useSelector } from "react-redux";
 import { usePager } from "./pagination.hook";
 import { useDispatchActions } from "./actions.hooks";
-import {
-	VisitActions,
-	selectAllEntities,
-	selectVisitsReceivedCount,
-} from "@/store";
+import { VisitActions, selectAllEntities } from "@/store";
 import { EPagerKeys } from "@/constants";
 import { EEntityTypes } from "@/types";
 import type { VisitWithVisitedUser } from "@matcha/shared";
 import type { PaginationDto } from "@/types";
+import { useCounter } from "./counter.hook";
+import { ECounterKeys } from "@/constants/counter.constants";
 
 export function useVisits(loadPagerData = false) {
 	const { createVisit, getVisitsReceived } = useDispatchActions({
@@ -31,7 +28,7 @@ export function useVisits(loadPagerData = false) {
 		loadData: loadPagerData,
 	});
 
-	const visitsReceivedCount = useSelector(selectVisitsReceivedCount);
+	const visitsReceivedCount = useCounter(ECounterKeys.VisitsReceived);
 
 	return {
 		createVisit,

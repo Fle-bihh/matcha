@@ -2,12 +2,13 @@ import { APP_NAME } from "@matcha/shared";
 import { AppBar, Toolbar, Typography, IconButton, Box } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountIcon from "@mui/icons-material/AccountCircle";
-import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import { useAuthUser } from "@/hooks";
 import { APP_ROUTES } from "@/constants";
 import { useHeaderRef } from "@/contexts";
 import { useRouting } from "@/hooks";
 import { withEmailVerifiedComponent } from "@/utils";
+import { MatchesHeaderIcon } from "../matches";
+import { NotificationsHeaderIcon } from "../notifications";
 
 const ProtectedButtons = () => {
 	const routing = useRouting();
@@ -15,19 +16,10 @@ const ProtectedButtons = () => {
 		routing.push(APP_ROUTES.profile);
 	};
 
-	const handleMatchesClick = () => {
-		routing.push(APP_ROUTES.matches);
-	};
-
 	return (
 		<>
-			<IconButton
-				color="inherit"
-				onClick={handleMatchesClick}
-				aria-label="matches"
-			>
-				<ChatBubbleIcon />
-			</IconButton>
+			<NotificationsHeaderIcon />
+			<MatchesHeaderIcon />
 			<IconButton
 				color="inherit"
 				onClick={handleAccountClick}
@@ -48,10 +40,6 @@ export function HomeHeader() {
 
 	const handleLogoClick = () => {
 		routing.push(APP_ROUTES.protected);
-	};
-
-	const handleAccountClick = () => {
-		routing.push(APP_ROUTES.profile);
 	};
 
 	const handleLogout = () => {

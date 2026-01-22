@@ -7,10 +7,10 @@ import type {
 import { EEntityTypes, ServiceResponse } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
-import { patchEntity, setEntity } from "@/store";
+import { patchEntity } from "@/store";
 
 export class LikeService extends BaseService {
-	@action({ showSuccessMessage: true, showErrorMessage: true })
+	@action({ showSuccessMessage: false, showErrorMessage: true })
 	async createLike(dto: CreateLikeDto): Promise<ServiceResponse> {
 		const response = await this.apiService.post<CreateLikeResponseDto>(
 			getRoute(ERouteGroups.Like, "like"),
@@ -29,9 +29,11 @@ export class LikeService extends BaseService {
 					entity: { is_liked: true },
 				}),
 			);
-		}
 
-		if (this.isSuccess(response)) {
+			if (!response.data.is_matched) {
+				this.snackbar.success(response.message);
+			}
+
 			return ServiceResponse.success(response.message);
 		} else {
 			return ServiceResponse.failure(response.message);

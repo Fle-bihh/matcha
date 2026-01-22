@@ -3,10 +3,12 @@ import { BaseService } from "./base.service";
 import { LikeRepository } from "@/repositories";
 import {
 	CreateLikeDto,
-	EWebSocketEvents,
+	WebSocketEvents,
 	Like,
 	StatusCodes,
 	logger,
+	CreateLikeResponseDto,
+	NotificationType,
 } from "@matcha/shared";
 
 export class LikeService extends BaseService {
@@ -46,7 +48,7 @@ export class LikeService extends BaseService {
 	public async createLike(
 		likerId: number,
 		data: CreateLikeDto,
-	): Promise<ServiceResponse> {
+	): Promise<ServiceResponse<CreateLikeResponseDto | null>> {
 		try {
 			const { liked_id } = data;
 
@@ -108,7 +110,7 @@ export class LikeService extends BaseService {
 					liked_id,
 				);
 
-				if (!this.isSuccess(matchResponse)) {
+				if (!this.isSuccess(matchResponse) || !matchResponse.data) {
 					await this.likeRepository.deleteLike(like.id);
 					return ServiceResponse.failure(
 						"Failed to create match after like",
@@ -116,19 +118,39 @@ export class LikeService extends BaseService {
 						StatusCodes.INTERNAL_SERVER_ERROR,
 					);
 				}
+
+				return ServiceResponse.success(
+					"User liked successfully, it's a match!",
+					{ is_matched: true },
+					StatusCodes.CREATED,
+				);
 			} else {
+				const userFirstName =
+					await this.userService.getUserFirstName(likerId);
+
+				const notification = userFirstName
+					? await this.notificationService.createNotification(
+							liked_id,
+							NotificationType.LikeReceived,
+							{
+								liker_first_name: userFirstName,
+							},
+						)
+					: null;
+
 				this.webSocketService.emitToUser(
 					liked_id,
-					EWebSocketEvents.LikeCreated,
+					WebSocketEvents.LikeCreated,
 					{
 						liker_id: likerId,
+						notification,
 					},
 				);
 			}
 
 			return ServiceResponse.success(
 				"User liked successfully",
-				null,
+				{ is_matched: false },
 				StatusCodes.CREATED,
 			);
 		} catch (error) {
@@ -177,18 +199,31 @@ export class LikeService extends BaseService {
 
 				this.webSocketService.emitToUser(
 					userAId,
-					EWebSocketEvents.MatchDeleted,
+					WebSocketEvents.MatchDeleted,
 					{
 						match_id: existingMatch.id,
 					},
 				);
+
+				const first_name =
+					await this.userService.getUserFirstName(userAId);
+				const notification = first_name
+					? await this.notificationService.createNotification(
+							userBId,
+							NotificationType.MatchCanceled,
+							{
+								match_first_name: first_name,
+							},
+						)
+					: null;
+
 				this.webSocketService.emitToUser(
 					userBId,
-					EWebSocketEvents.MatchDeleted,
+					WebSocketEvents.MatchDeleted,
 					{
 						match_id: existingMatch.id,
 						unlike_id: userAId,
-						message: webSocketEventMessage,
+						notification,
 					},
 				);
 			}
@@ -254,7 +289,7 @@ export class LikeService extends BaseService {
 			if (!res.data.match_deleted) {
 				this.webSocketService.emitToUser(
 					likedId,
-					EWebSocketEvents.LikeDeleted,
+					WebSocketEvents.LikeDeleted,
 					{
 						liker_id: likerId,
 					},

@@ -1,21 +1,24 @@
 import { BaseHandler } from "./base.handler";
 import { Socket } from "socket.io-client";
-import { EWebSocketEvents, LikeCreatedSocketDto } from "@matcha/shared";
+import { WebSocketEvents, WebSocketEventDtoMap } from "@matcha/shared";
 import { patchEntity } from "@/store";
 import { EEntityTypes } from "@/types";
 
+type LikeCreatedDto = WebSocketEventDtoMap[WebSocketEvents.LikeCreated];
+type LikeDeletedDto = WebSocketEventDtoMap[WebSocketEvents.LikeDeleted];
+
 export class LikeHandler extends BaseHandler {
 	public register(socket: Socket): void {
-		socket.on(EWebSocketEvents.LikeCreated, this.handleLikeCreated);
-		socket.on(EWebSocketEvents.LikeDeleted, this.handleLikeDeleted);
+		socket.on(WebSocketEvents.LikeCreated, this.handleLikeCreated);
+		socket.on(WebSocketEvents.LikeDeleted, this.handleLikeDeleted);
 	}
 
 	public unregister(socket: Socket): void {
-		socket.off(EWebSocketEvents.LikeCreated, this.handleLikeCreated);
-		socket.off(EWebSocketEvents.LikeDeleted, this.handleLikeDeleted);
+		socket.off(WebSocketEvents.LikeCreated, this.handleLikeCreated);
+		socket.off(WebSocketEvents.LikeDeleted, this.handleLikeDeleted);
 	}
 
-	private handleLikeCreated = (dto: LikeCreatedSocketDto): void => {
+	private handleLikeCreated = (dto: LikeCreatedDto): void => {
 		this.dispatch(
 			patchEntity({
 				entityType: EEntityTypes.Users,
@@ -23,10 +26,9 @@ export class LikeHandler extends BaseHandler {
 				entity: { has_liked_you: true },
 			}),
 		);
-		this.snackbar.success("You have a new like!");
 	};
 
-	private handleLikeDeleted = (dto: LikeCreatedSocketDto): void => {
+	private handleLikeDeleted = (dto: LikeDeletedDto): void => {
 		this.dispatch(
 			patchEntity({
 				entityType: EEntityTypes.Users,

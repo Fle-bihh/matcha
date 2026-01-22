@@ -3,7 +3,7 @@ import { emptyPaginatedResponse } from "@/utils";
 import { BaseService } from "./base.service";
 import { MatchRepository } from "@/repositories";
 import {
-	EWebSocketEvents,
+	WebSocketEvents,
 	GetMatchesResponseDto,
 	logger,
 	Match,
@@ -12,6 +12,8 @@ import {
 	PaginatedResponse,
 	PaginationParams,
 	StatusCodes,
+	SystemMessageType,
+	NotificationType,
 } from "@matcha/shared";
 
 export class MatchService extends BaseService {
@@ -26,7 +28,7 @@ export class MatchService extends BaseService {
 	public async createMatch(
 		likerId: number,
 		likedId: number,
-	): Promise<ServiceResponse> {
+	): Promise<ServiceResponse<MatchWithDetails | null>> {
 		try {
 			const match = await this.matchRepository.createMatch(
 				likerId,
@@ -62,20 +64,62 @@ export class MatchService extends BaseService {
 				);
 			}
 
+			const lastMessage = await this.messageService.createSystemMessage(
+				match.id,
+				SystemMessageType.MatchStarted,
+				{
+					first_name_1: matchDetailed.other_user.first_name,
+					first_name_2: otherUserMatchDetailed.other_user.first_name,
+					started_at: match.created_at,
+				},
+			);
+
+			const notification =
+				await this.notificationService.createNotification(
+					likerId,
+					NotificationType.NewMatch,
+					{
+						match_first_name: matchDetailed.other_user.first_name,
+					},
+				);
+
 			this.webSocketService.emitToUser(
 				likerId,
-				EWebSocketEvents.MatchCreated,
-				matchDetailed,
+				WebSocketEvents.MatchCreated,
+				{
+					...matchDetailed,
+					last_message: lastMessage,
+					notification: notification,
+				},
 			);
+
+			const otherNotification =
+				await this.notificationService.createNotification(
+					likedId,
+					NotificationType.NewMatch,
+					{
+						match_first_name: matchDetailed.other_user.first_name,
+					},
+				);
+
 			this.webSocketService.emitToUser(
 				likedId,
-				EWebSocketEvents.MatchCreated,
-				otherUserMatchDetailed,
+				WebSocketEvents.MatchCreated,
+				{
+					...otherUserMatchDetailed,
+					last_message: lastMessage,
+					notification: otherNotification,
+				},
 			);
+
+			const matchInformations: MatchWithDetails = {
+				...matchDetailed,
+				last_message: lastMessage,
+			};
 
 			return ServiceResponse.success(
 				"Match created successfully",
-				null,
+				matchInformations,
 				StatusCodes.CREATED,
 			);
 		} catch (error) {
@@ -131,6 +175,79 @@ export class MatchService extends BaseService {
 		}
 	}
 
+	public async getMatchById(
+		matchId: number,
+	): Promise<ServiceResponse<Match | null>> {
+		try {
+			const match = await this.matchRepository.getDoc<Match>(
+				"matches",
+				matchId,
+			);
+
+			if (!match) {
+				return ServiceResponse.failure<Match | null>(
+					"Match not found",
+					null,
+					StatusCodes.NOT_FOUND,
+				);
+			}
+
+			return ServiceResponse.success(
+				"Match retrieved successfully",
+				match,
+				StatusCodes.OK,
+			);
+		} catch (error) {
+			logger.error("Error in getMatchById:", error);
+			return ServiceResponse.failure(
+				"An error occurred while retrieving the match",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR,
+			);
+		}
+	}
+
+	public async verifyUserInMatch(
+		userId: number,
+		matchId: number,
+	): Promise<ServiceResponse<Match | null>> {
+		try {
+			const match = await this.matchRepository.getDoc<Match>(
+				"matches",
+				matchId,
+			);
+
+			if (!match) {
+				return ServiceResponse.failure<Match | null>(
+					"Match not found",
+					null,
+					StatusCodes.NOT_FOUND,
+				);
+			}
+
+			if (match.user1_id !== userId && match.user2_id !== userId) {
+				return ServiceResponse.failure<Match | null>(
+					"You are not part of this match",
+					null,
+					StatusCodes.FORBIDDEN,
+				);
+			}
+
+			return ServiceResponse.success<Match | null>(
+				"User verified in match",
+				match,
+				StatusCodes.OK,
+			);
+		} catch (error) {
+			logger.error("Error in verifyUserInMatch:", error);
+			return ServiceResponse.failure<Match | null>(
+				"An error occurred while verifying match access",
+				null,
+				StatusCodes.INTERNAL_SERVER_ERROR,
+			);
+		}
+	}
+
 	public async getMatches(
 		userId: number,
 		pagination: PaginationParams,
@@ -142,7 +259,6 @@ export class MatchService extends BaseService {
 		> | null>
 	> {
 		try {
-			const unreadOnly = filters.unread_only ?? false;
 			const offset = (pagination.page - 1) * pagination.limit;
 
 			const [matches, totalCount] = await Promise.all([
@@ -150,15 +266,9 @@ export class MatchService extends BaseService {
 					userId,
 					pagination.limit,
 					offset,
-					unreadOnly,
 				),
-				this.matchRepository.countMatches(userId, unreadOnly),
+				this.matchRepository.countMatches(userId),
 			]);
-
-			const unreadCount = await this.matchRepository.countMatches(
-				userId,
-				true,
-			);
 
 			const totalPages = Math.ceil(totalCount / pagination.limit);
 
@@ -175,18 +285,8 @@ export class MatchService extends BaseService {
 					has_next_page: pagination.page < totalPages,
 					has_previous_page: pagination.page > 1,
 				},
-				extra_data: {
-					unread_conversations_count: unreadCount,
-				},
+				extra_data: {},
 			};
-
-			logger.info(
-				`Retrieved ${
-					matches.length
-				} matches for user ID ${userId}. Details: ${JSON.stringify(
-					response.data,
-				)}`,
-			);
 
 			return ServiceResponse.success(
 				"Matches retrieved successfully",

@@ -1,7 +1,7 @@
 import { EStoreSlices } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { PaginationMeta } from "@matcha/shared";
-import { EPagerKeys } from "@/constants";
+import { TPagerKey } from "@/constants";
 
 export interface PagerState {
 	meta: PaginationMeta;
@@ -21,7 +21,7 @@ const pagersSlice = createSlice({
 		setPager: (
 			state,
 			action: PayloadAction<{
-				pagerKey: EPagerKeys;
+				pagerKey: TPagerKey;
 				meta: PaginationMeta;
 				entityKeys: string[];
 			}>,
@@ -35,7 +35,7 @@ const pagersSlice = createSlice({
 		updatePagerMeta: (
 			state,
 			action: PayloadAction<{
-				pagerKey: EPagerKeys;
+				pagerKey: TPagerKey;
 				meta: Partial<PaginationMeta>;
 			}>,
 		) => {
@@ -50,7 +50,7 @@ const pagersSlice = createSlice({
 		appendToPager: (
 			state,
 			action: PayloadAction<{
-				pagerKey: EPagerKeys;
+				pagerKey: TPagerKey;
 				meta: PaginationMeta;
 				entityKeys: string[];
 			}>,
@@ -73,7 +73,7 @@ const pagersSlice = createSlice({
 				};
 			}
 		},
-		clearPager: (state, action: PayloadAction<string>) => {
+		clearPager: (state, action: PayloadAction<TPagerKey>) => {
 			delete state[action.payload];
 		},
 		resetPagers: () => initialState,

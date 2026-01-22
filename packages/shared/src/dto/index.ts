@@ -9,3 +9,5 @@ export * from "./visit.dto";
 export * from "./websocket.dto";
 export * from "./report.dto";
 export * from "./block.dto";
+export * from "./message.dto";
+export * from "./notification.dto";

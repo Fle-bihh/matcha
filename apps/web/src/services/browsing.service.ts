@@ -52,7 +52,7 @@ export class BrowsingService extends BaseService {
 		return ServiceResponse.success("No saved filters");
 	}
 
-	@action({ showErrorMessage: false, showSuccessMessage: false })
+	@action()
 	async clearBrowsingFilters(): Promise<ServiceResponse> {
 		this.dispatch(clearFilters(FILTER_KEY));
 
@@ -63,7 +63,7 @@ export class BrowsingService extends BaseService {
 		return ServiceResponse.success("Filters cleared");
 	}
 
-	@action({ showErrorMessage: false, showSuccessMessage: false })
+	@action()
 	async getUsers(params: BrowsingParams): Promise<ServiceResponse> {
 		const response = await this.apiService.get<PaginatedResponse<User>>(
 			getRoute(ERouteGroups.User, "get-users"),
@@ -84,7 +84,7 @@ export class BrowsingService extends BaseService {
 		return ServiceResponse.success(response.message);
 	}
 
-	@action({ showErrorMessage: false, showSuccessMessage: false })
+	@action()
 	async applyBrowsingFilters(
 		filters: BrowsingFilters & {
 			currentLimit: number;

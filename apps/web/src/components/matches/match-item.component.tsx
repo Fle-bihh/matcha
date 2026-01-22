@@ -5,26 +5,35 @@ import {
 	ListItemText,
 	Avatar,
 	Typography,
+	CardMedia,
 } from "@mui/material";
-import { Match } from "@matcha/shared";
+import { useSelector } from "react-redux";
 import { useRouting } from "@/hooks";
 import { APP_ROUTES } from "@/constants";
-import { useAuthUser } from "@/hooks";
-import { StoreMatch } from "@/types";
+import { StoreMatch, TRootState } from "@/types";
+import { LastMessageInfo } from "./last-message-info.component";
+import { selectOtherUserInMatch } from "@/store";
+import { AuthImage } from "../utils";
+import MockImage from "@/assets/imperial-stormtrooper-picture.png";
 
 interface MatchItemProps {
 	match: StoreMatch;
 }
 
 export function MatchItem({ match }: MatchItemProps) {
-	const { authUser } = useAuthUser();
 	const { push } = useRouting();
+	const otherUser = useSelector((state: TRootState) =>
+		selectOtherUserInMatch(state, match),
+	);
 
 	const handleClick = () => {
-		const otherUserId =
-			authUser?.id === match.user1_id ? match.user2_id : match.user1_id;
-		push(APP_ROUTES.user(otherUserId.toString()));
+		push(APP_ROUTES.chat(match.id.toString()));
 	};
+
+	const displayName = otherUser
+		? `${otherUser.first_name} ${otherUser.last_name}`
+		: "Unknown User";
+	const profilePicture = otherUser?.pictures_urls?.[0];
 
 	return (
 		<ListItem
@@ -36,52 +45,49 @@ export function MatchItem({ match }: MatchItemProps) {
 				"&:hover": {
 					bgcolor: "action.hover",
 				},
+				gap: 2,
 			}}
 			onClick={handleClick}
 		>
 			<ListItemAvatar>
-				<Avatar
-					sx={{
-						width: 56,
-						height: 56,
-						mr: 2,
-					}}
-				>
-					{match.user1_id}
-				</Avatar>
+				<AuthImage
+					src={profilePicture}
+					alt={displayName}
+					width={56}
+					height={56}
+					sx={{ borderRadius: "50%" }}
+					fallback={
+						<CardMedia
+							component="img"
+							height="56"
+							image={MockImage}
+							alt="Fallback Image"
+							sx={{ borderRadius: "50%" }}
+						/>
+					}
+				/>
 			</ListItemAvatar>
 			<ListItemText
 				primary={
-					<Typography variant="subtitle1">
-						Match #{match.id}
-					</Typography>
+					<Typography variant="subtitle1">{displayName}</Typography>
 				}
 				secondary={
-					<Typography
-						variant="body2"
-						color="text.secondary"
-						noWrap
-						sx={{
-							maxWidth: "calc(100% - 80px)",
-						}}
-					>
-						Users: {match.user1_id} & {match.user2_id}
-					</Typography>
+					otherUser?.age && (
+						<Typography
+							variant="body2"
+							color="text.secondary"
+							noWrap
+							sx={{
+								maxWidth: "calc(100% - 80px)",
+							}}
+						>
+							{otherUser.age} years old
+						</Typography>
+					)
 				}
 				sx={{ pr: 2 }}
 			/>
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "flex-end",
-					minWidth: 80,
-				}}
-			>
-				<Typography variant="caption" color="text.secondary">
-					Placeholder
-				</Typography>
-			</Box>
+			<LastMessageInfo matchId={match.id} />
 		</ListItem>
 	);
 }

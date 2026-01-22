@@ -1,19 +1,12 @@
 import { ERouteGroups, getRoute } from "@matcha/shared";
-import type {
-	CreateVisitDto,
-	PaginatedResponse,
-	VisitWithVisitedUser,
-	VisitsMadeResponseDto,
-	BaseEntity,
-} from "@matcha/shared";
+import type { CreateVisitDto, VisitsMadeResponseDto } from "@matcha/shared";
 import { EEntityTypes, ServiceResponse } from "@/types";
 import type { PaginationDto } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
-import { EFlaggers, EPagerKeys } from "@/constants";
-import { setReceivedCount } from "@/store";
-
-type VisitEntity = VisitWithVisitedUser & Pick<BaseEntity, "updated_at">;
+import { EPagerKeys } from "@/constants";
+import { setCounter } from "@/store";
+import { ECounterKeys } from "@/constants/counter.constants";
 
 export class VisitService extends BaseService {
 	@action({ showSuccessMessage: false, showErrorMessage: true })
@@ -46,7 +39,7 @@ export class VisitService extends BaseService {
 
 		this.handlePaginatedResponse(
 			{
-				data: visitData.visitsMade.data as VisitEntity[],
+				data: visitData.visitsMade.data,
 				meta: visitData.visitsMade.meta,
 			},
 			EPagerKeys.Visits,
@@ -55,7 +48,10 @@ export class VisitService extends BaseService {
 		);
 
 		this.container.store.dispatch(
-			setReceivedCount(visitData.visitsReceivedCount),
+			setCounter({
+				key: ECounterKeys.VisitsReceived,
+				value: visitData.visitsReceivedCount,
+			}),
 		);
 
 		return ServiceResponse.success(response.message);

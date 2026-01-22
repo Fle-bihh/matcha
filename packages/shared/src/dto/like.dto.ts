@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MatchWithDetails } from "../models";
 
 export const CreateLikeDtoSchema = z.object({
 	liked_id: z.coerce
@@ -15,7 +16,9 @@ export const UnlikeUserDtoSchema = z.object({
 
 export type UnlikeUserDto = z.infer<typeof UnlikeUserDtoSchema>;
 
-export interface CreateLikeResponseDto {}
+export interface CreateLikeResponseDto {
+	is_matched: boolean;
+}
 
 export interface LikeCreatedSocketDto {
 	liker_id: number;

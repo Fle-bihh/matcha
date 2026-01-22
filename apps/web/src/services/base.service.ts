@@ -15,10 +15,11 @@ import {
 } from "@/store";
 import { ApiResponse, BaseEntity, PaginatedResponse } from "@matcha/shared";
 import { ApiRequestResponse } from "@/types";
-import { EPagerKeys } from "@/constants";
+import { EPagerKeys, TPagerKey } from "@/constants";
 import { BrowsingService } from "./browsing.service";
 import { MatchService } from "./match.service";
 import { WebSocketService } from "./websocket.service";
+import { NotificationService } from "./notification.service";
 
 export abstract class BaseService {
 	protected container: IContainer;
@@ -67,6 +68,12 @@ export abstract class BaseService {
 		return this.container.get<WebSocketService>(ETokens.WebSocketService);
 	}
 
+	protected get notificationService(): NotificationService {
+		return this.container.get<NotificationService>(
+			ETokens.NotificationService,
+		);
+	}
+
 	protected setFlagger(payload: SetFlaggerPayload) {
 		this.dispatch(setFlagger(payload));
 	}
@@ -77,7 +84,7 @@ export abstract class BaseService {
 
 	protected handlePaginatedResponse<T extends EEntityTypes>(
 		response: PaginatedResponse<IEntityTypeMap[T]>,
-		pagerKey: EPagerKeys,
+		pagerKey: TPagerKey,
 		entityType: T,
 		append?: boolean,
 		strict?: boolean,
