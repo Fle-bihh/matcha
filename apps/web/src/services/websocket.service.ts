@@ -19,7 +19,8 @@ import {
 	VisitHandler,
 } from "@/handlers";
 import { MessageHandler } from "@/handlers/message.handler";
-import { setEntity } from "@/store";
+import { incrementCounter, setEntity } from "@/store";
+import { ECounterKeys } from "@/constants";
 
 export class WebSocketService extends BaseService {
 	private socket: Socket | null = null;
@@ -134,6 +135,9 @@ export class WebSocketService extends BaseService {
 					}),
 				);
 				this.snackbar.info(getNotificationContent(notification));
+				this.dispatch(
+					incrementCounter(ECounterKeys.UnreadNotifications),
+				);
 			} else if (dto) {
 				logger.debug(
 					`WebSocket event received with dto only: ${event}`,

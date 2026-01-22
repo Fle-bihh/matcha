@@ -102,4 +102,18 @@ export class NotificationRepository
 			return { notifications: [], total: 0 };
 		}
 	}
+
+	public async countUnreadNotifications(userId: number): Promise<number> {
+		try {
+			const count = await this.countDocs(this.tableName, {
+				where: "user_id = ? AND read_at IS NULL",
+				values: [userId],
+			});
+
+			return count;
+		} catch (error) {
+			logger.error("Error counting unread notifications:", error);
+			return 0;
+		}
+	}
 }

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ECounterKeys } from "@/constants/counter.constants";
+import { EStoreSlices } from "@/types";
 
 export type CountersState = {
 	[key in ECounterKeys]: number;
@@ -7,10 +8,11 @@ export type CountersState = {
 
 const initialState: CountersState = {
 	[ECounterKeys.VisitsReceived]: 0,
+	[ECounterKeys.UnreadNotifications]: 0,
 };
 
 const countersSlice = createSlice({
-	name: "counters",
+	name: EStoreSlices.Counters,
 	initialState,
 	reducers: {
 		setCounter: (

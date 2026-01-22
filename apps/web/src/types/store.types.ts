@@ -34,6 +34,7 @@ export enum EStoreSlices {
 	Flaggers = "flaggers",
 	Snackbar = "snackbar",
 	Filters = "filters",
+	Counters = "counters",
 }
 
 export type TRootState = ReturnType<ReturnType<typeof createStore>["getState"]>;

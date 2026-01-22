@@ -62,9 +62,15 @@ export class NotificationService extends BaseService {
 
 			const totalPages = Math.ceil(total / limit);
 
+			const unreadNotificationsCount =
+				await this.notificationRepository.countUnreadNotifications(
+					userId,
+				);
+
 			return ServiceResponse.success(
 				"Notifications retrieved successfully",
 				{
+					unread_count: unreadNotificationsCount,
 					notifications: {
 						data: notifications,
 						meta: {
@@ -86,6 +92,7 @@ export class NotificationService extends BaseService {
 					notifications: emptyPaginatedResponse<Notification>(
 						pagination.limit,
 					),
+					unread_count: 0,
 				},
 				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
@@ -105,11 +112,9 @@ export class NotificationService extends BaseService {
 					StatusCodes.INTERNAL_SERVER_ERROR,
 				);
 
-			return ServiceResponse.success(
-				"Notifications marked as read",
-				{ notifications_ids: ids },
-				StatusCodes.NO_CONTENT,
-			);
+			return ServiceResponse.success("Notifications marked as read", {
+				notifications_ids: ids,
+			});
 		} catch (error) {
 			logger.error("Error marking notifications as read:", error);
 			return ServiceResponse.failure(

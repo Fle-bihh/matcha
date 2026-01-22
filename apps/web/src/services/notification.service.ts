@@ -7,8 +7,8 @@ import { EEntityTypes, ServiceResponse } from "@/types";
 import type { PaginationDto } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
-import { EPagerKeys } from "@/constants";
-import { selectEntitiesByType, setEntities } from "@/store";
+import { ECounterKeys, EPagerKeys } from "@/constants";
+import { selectEntitiesByType, setCounter, setEntities } from "@/store";
 
 export class NotificationService extends BaseService {
 	@action({ showErrorMessage: false, showSuccessMessage: false })
@@ -21,6 +21,13 @@ export class NotificationService extends BaseService {
 		if (!this.isSuccess(response)) {
 			return ServiceResponse.failure(response.message);
 		}
+
+		this.dispatch(
+			setCounter({
+				key: ECounterKeys.UnreadNotifications,
+				value: response.data.unread_count,
+			}),
+		);
 
 		this.handlePaginatedResponse(
 			{
@@ -54,22 +61,30 @@ export class NotificationService extends BaseService {
 				),
 			}),
 		);
+		this.dispatch(
+			setCounter({
+				key: ECounterKeys.UnreadNotifications,
+				value: 0,
+			}),
+		);
 	}
 
-	@action()
+	@action({ showErrorMessage: true, showSuccessMessage: true })
 	async readNotifications(): Promise<ServiceResponse> {
 		const response =
-			await this.apiService.patch<ReadNotificationsResponseDto>(
+			await this.apiService.patch<ReadNotificationsResponseDto | null>(
 				getRoute(ERouteGroups.Notification, "read-notifications"),
 				{},
 				{ auth: true },
 			);
 
-		if (!this.isSuccess(response) || !response.data.notifications_ids) {
+		if (!this.isSuccess(response) || !response.data?.notifications_ids) {
+			console.error("Failed to mark notifications as read in service");
 			return ServiceResponse.failure(response.message);
 		}
 		this.markNotificationsAsReadInState(response.data.notifications_ids);
 
+		console.log("Notifications marked as read in service");
 		return ServiceResponse.success(response.message);
 	}
 }
