@@ -23,7 +23,8 @@ export class NotificationRepository
 			fields: `
                 user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
                 type VARCHAR(50) NOT NULL,
-				data JSON NOT NULL
+				data JSON NOT NULL,
+				read_at TIMESTAMP NULL
             `,
 			constraints: ``,
 		};
@@ -40,10 +41,37 @@ export class NotificationRepository
 				user_id: userId,
 				type,
 				data,
+				read_at: null,
 			},
 		);
 
 		return notification;
+	}
+
+	public async markAllAsRead(userId: number): Promise<number[] | null> {
+		try {
+			const unreadNotifications = await this.getDocs<Notification>(
+				this.tableName,
+				{
+					where: "user_id = ? AND read_at IS NULL",
+					values: [userId],
+				},
+			);
+
+			if (unreadNotifications.length === 0) {
+				return [];
+			}
+
+			await this.executeQuery(
+				`UPDATE ${this.tableName} SET read_at = CURRENT_TIMESTAMP WHERE user_id = ? AND read_at IS NULL`,
+				[userId],
+			);
+
+			return unreadNotifications.map((n) => n.id);
+		} catch (error) {
+			logger.error("Error marking notifications as read:", error);
+			return null;
+		}
 	}
 
 	public async getNotifications(

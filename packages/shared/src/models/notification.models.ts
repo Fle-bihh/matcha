@@ -41,4 +41,5 @@ export interface Notification extends BaseEntity {
 	user_id: number;
 	type: NotificationType;
 	data: NotificationDataMap[NotificationType];
+	read_at: string | null;
 }

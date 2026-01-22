@@ -61,6 +61,7 @@ export const API_ROUTES = {
 	},
 	[ERouteGroups.Notification]: {
 		"get-notifications": "/",
+		"read-notifications": "/",
 	},
 } as const;
 

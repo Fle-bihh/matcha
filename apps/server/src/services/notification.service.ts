@@ -10,6 +10,7 @@ import {
 	PaginationParams,
 	StatusCodes,
 	WebSocketEvents,
+	ReadNotificationsResponseDto,
 } from "@matcha/shared";
 import { emptyPaginatedResponse } from "@/utils";
 
@@ -86,6 +87,34 @@ export class NotificationService extends BaseService {
 						pagination.limit,
 					),
 				},
+				StatusCodes.INTERNAL_SERVER_ERROR,
+			);
+		}
+	}
+
+	public async readNotifications(
+		userId: number,
+	): Promise<ServiceResponse<ReadNotificationsResponseDto | null>> {
+		try {
+			const ids = await this.notificationRepository.markAllAsRead(userId);
+
+			if (!ids)
+				return ServiceResponse.failure(
+					"Error marking notifications as read",
+					null,
+					StatusCodes.INTERNAL_SERVER_ERROR,
+				);
+
+			return ServiceResponse.success(
+				"Notifications marked as read",
+				{ notifications_ids: ids },
+				StatusCodes.NO_CONTENT,
+			);
+		} catch (error) {
+			logger.error("Error marking notifications as read:", error);
+			return ServiceResponse.failure(
+				"An error occurred while marking notifications as read",
+				null,
 				StatusCodes.INTERNAL_SERVER_ERROR,
 			);
 		}

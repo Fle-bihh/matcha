@@ -21,7 +21,7 @@ export function NotificationsPage() {
 		hasNextPage,
 		refreshNotifications,
 		fetchNextNotificationsPage,
-	} = useNotification();
+	} = useNotification(true);
 	const { isLoading } = useActionsData([EActionKeys.GetNotifications]);
 
 	return (

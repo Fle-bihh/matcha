@@ -11,6 +11,7 @@ function ChatPageComp() {
 
 	const { createMessage, fetchNextPage } = useMessages(matchId || "", true);
 	const { contentHeight } = useLayoutSizes();
+	const { scrollToTop } = useScroll();
 
 	const handleSendMessage = async (content: string) => {
 		if (!matchId) return;
@@ -21,11 +22,9 @@ function ChatPageComp() {
 		});
 	};
 
-	const { scrollToTop, scrollToBottom } = useScroll();
 	useEffect(() => {
 		scrollToTop();
-		console.log("Scroll to bottom on chat load");
-	}, [scrollToTop]);
+	}, []);
 
 	return (
 		<Container

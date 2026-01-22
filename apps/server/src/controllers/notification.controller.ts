@@ -26,4 +26,16 @@ export class NotificationController extends BaseController {
 		);
 		this.sendResult(res, serviceResponse);
 	}
+
+	@auth()
+	@route("PATCH", "read-notifications")
+	private async readNotifications(
+		req: Request,
+		res: Response,
+	): Promise<void> {
+		const userId = req.user!.user_id;
+		const response =
+			await this.notificationService.readNotifications(userId);
+		this.sendResult(res, response);
+	}
 }
