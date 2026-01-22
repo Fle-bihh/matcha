@@ -8,7 +8,7 @@ import actionsReducer from "./slices/actions.slice";
 import snackbarReducer from "./slices/snackbar.slice";
 import flaggersReducer from "./slices/flaggers.slice";
 import filtersReducer from "./slices/filters.slice";
-import visitsReducer from "./slices/visits.slice";
+import countersReducer from "./slices/counters.slice";
 
 export const createStore = (container: IContainer) => {
 	const store = configureStore({
@@ -29,7 +29,7 @@ export const createStore = (container: IContainer) => {
 
 			filters: filtersReducer,
 
-			visits: visitsReducer,
+			counters: countersReducer,
 		},
 		middleware: (getDefaultMiddleware) =>
 			getDefaultMiddleware({

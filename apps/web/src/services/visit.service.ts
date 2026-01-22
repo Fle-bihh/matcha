@@ -5,7 +5,8 @@ import type { PaginationDto } from "@/types";
 import { BaseService } from "./base.service";
 import { action } from "@/decorators";
 import { EPagerKeys } from "@/constants";
-import { setReceivedCount } from "@/store";
+import { setCounter } from "@/store";
+import { ECounterKeys } from "@/constants/counter.constants";
 
 export class VisitService extends BaseService {
 	@action({ showSuccessMessage: false, showErrorMessage: true })
@@ -47,7 +48,10 @@ export class VisitService extends BaseService {
 		);
 
 		this.container.store.dispatch(
-			setReceivedCount(visitData.visitsReceivedCount),
+			setCounter({
+				key: ECounterKeys.VisitsReceived,
+				value: visitData.visitsReceivedCount,
+			}),
 		);
 
 		return ServiceResponse.success(response.message);
