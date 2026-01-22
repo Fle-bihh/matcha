@@ -14,6 +14,13 @@ export enum Orientation {
 	Bisexual = "bisexual",
 }
 
+export enum UserVerificationStatus {
+	Unverified = "unverified",
+	Pending = "pending",
+	Verified = "verified",
+	Rejected = "rejected",
+}
+
 export interface User extends BaseEntity {
 	first_name: string;
 	last_name: string;
@@ -25,6 +32,7 @@ export interface User extends BaseEntity {
 	interests: UserInterest[] | null;
 	location: UserLocation | null;
 	fame_score: number;
+	is_profile_verified: boolean;
 }
 
 export interface AuthUser extends User {
@@ -33,6 +41,7 @@ export interface AuthUser extends User {
 	is_email_verified: boolean;
 	is_profile_complete: boolean;
 	is_admin: boolean;
+	verification_status: UserVerificationStatus;
 }
 
 export interface AuthUserWithPassword extends AuthUser {

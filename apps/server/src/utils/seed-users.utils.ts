@@ -8,6 +8,7 @@ import {
 	AuthUser,
 	AuthUserWithPassword,
 	OmitBaseEntity,
+	UserVerificationStatus,
 } from "@matcha/shared";
 
 const FIRST_NAMES = [
@@ -287,6 +288,12 @@ export function generateRandomUser(): OmitBaseEntity<AuthUserWithPassword> {
 		Orientation.Homosexual,
 		Orientation.Bisexual,
 	]);
+	const verification_status = randomElement([
+		UserVerificationStatus.Unverified,
+		UserVerificationStatus.Pending,
+		UserVerificationStatus.Verified,
+		UserVerificationStatus.Rejected,
+	]);
 	const age = randomNumber(18, 65);
 	const bio = randomElement(BIOS);
 	const interestsCount = randomNumber(3, 5);
@@ -321,6 +328,9 @@ export function generateRandomUser(): OmitBaseEntity<AuthUserWithPassword> {
 		fame_score: fameScore,
 		is_email_verified: true,
 		is_profile_complete: true,
+		verification_status,
+		is_profile_verified:
+			verification_status === UserVerificationStatus.Verified,
 		is_admin: false,
 		pictures_urls: [],
 	};
@@ -344,6 +354,8 @@ const BASE_ADMIN_USER: Omit<
 	first_name: "Admin",
 	gender: Gender.Other,
 	orientation: Orientation.Bisexual,
+	verification_status: UserVerificationStatus.Verified,
+	is_profile_verified: true,
 	bio: "Administrator account",
 	interests: [USER_INTERESTS[0], USER_INTERESTS[1]],
 	location: {

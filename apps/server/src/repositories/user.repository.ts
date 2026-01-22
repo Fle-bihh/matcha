@@ -7,6 +7,8 @@ import {
 	AuthUserWithPassword,
 	PartialBaseEntity,
 	BrowsingFiltersDto,
+	UserVerificationStatus,
+	OmitBaseEntity,
 } from "@matcha/shared";
 import { ETokens, IContainer, IRepository, TableSchema } from "@/types";
 import { config } from "@/config";
@@ -42,9 +44,13 @@ export class UserRepository extends BaseRepository implements IRepository {
 		return publicUser;
 	}
 
-	private readonly userInitialData = {
+	private readonly userInitialData: OmitBaseEntity<
+		Omit<AuthUser, keyof CreateUserDto>
+	> = {
 		is_email_verified: false,
 		is_profile_complete: false,
+		verification_status: UserVerificationStatus.Unverified,
+		is_profile_verified: false,
 		is_admin: false,
 		gender: null,
 		orientation: null,
@@ -66,7 +72,9 @@ export class UserRepository extends BaseRepository implements IRepository {
 			 password VARCHAR(255) NOT NULL,
        is_email_verified BOOLEAN NOT NULL,
        is_profile_complete BOOLEAN NOT NULL DEFAULT FALSE,
+	   is_profile_verified BOOLEAN NOT NULL DEFAULT FALSE,
 	   is_admin BOOLEAN NOT NULL DEFAULT FALSE,
+	   verification_status VARCHAR(20) NOT NULL DEFAULT ${UserVerificationStatus.Unverified},
        gender VARCHAR(20),
        orientation VARCHAR(20),
        age INTEGER,
