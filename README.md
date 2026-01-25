@@ -1,6 +1,6 @@
 # Matcha 💕
 
-🚧 **Project in active development for 42 Porto** 🚧
+🚧 **Project for 42 Porto** 🚧
 
 ## Introduction
 
@@ -22,4 +22,3 @@ make # Cleans, Sets up and Runs the project
 -   **Web Application**: http://localhost:3001
 -   **Database**: http://localhost:8080 (Adminer)
 
-## 📚 Documentation - Todo...
