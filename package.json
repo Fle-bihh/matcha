@@ -1,29 +1,29 @@
 {
-	"name": "matcha",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"build": "tsc --build"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/Fle-bihh/matcha.git"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"type": "commonjs",
-	"bugs": {
-		"url": "https://github.com/Fle-bihh/matcha/issues"
-	},
-	"homepage": "https://github.com/Fle-bihh/matcha#readme",
-	"workspaces": [
-		"packages/shared",
-		"apps/server",
-		"apps/web"
-	],
-	"devDependencies": {
-		"typescript": "^5.9.2"
-	}
+  "name": "matcha",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fle-bihh/matcha.git"
+  },
+  "keywords": [],
+  "author": "Félix Le Bihan",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Fle-bihh/matcha/issues"
+  },
+  "homepage": "https://github.com/Fle-bihh/matcha#readme",
+  "workspaces": [
+    "packages/shared",
+    "apps/server",
+    "apps/web"
+  ],
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
 }
